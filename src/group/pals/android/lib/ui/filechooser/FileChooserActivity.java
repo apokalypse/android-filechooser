@@ -63,6 +63,9 @@ public class FileChooserActivity extends Activity {
     selectionMode = getIntent().getIntExtra(SelectionMode, FilesOnly);
     root = new File(getIntent().getStringExtra(Rootpath) != null ?
         getIntent().getStringExtra(Rootpath) : "/");
+    if (!root.isDirectory())
+      root = new File("/");
+
     multiSelection = getIntent().getBooleanExtra(MultiSelection, false);
 
     btnLocation = (Button) findViewById(R.id.button_location);
