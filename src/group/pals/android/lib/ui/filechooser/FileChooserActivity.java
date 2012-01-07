@@ -25,6 +25,8 @@ public class FileChooserActivity extends Activity {
   public static final String Rootpath = "rootpath";
   public static final String SelectionMode = "selection_mode";
   public static final String MultiSelection = "multi_selection";
+  public static final String RegexFilenameFilter = "regex_filename_filter";
+  public static final String DisplayHiddenFiles = "display_hidden_files";
 
   public static final int FilesOnly = 0;
   public static final int DirectoriesOnly = 1;
@@ -38,6 +40,8 @@ public class FileChooserActivity extends Activity {
   private File root;
   private int selectionMode;
   private boolean multiSelection;
+  private String regexFilenameFilter;
+  private boolean displayHiddenFiles;
 
   /*
    * variables
@@ -67,6 +71,8 @@ public class FileChooserActivity extends Activity {
       root = new File("/");
 
     multiSelection = getIntent().getBooleanExtra(MultiSelection, false);
+    regexFilenameFilter = getIntent().getStringExtra(RegexFilenameFilter);
+    displayHiddenFiles = getIntent().getBooleanExtra(DisplayHiddenFiles, false);
 
     btnLocation = (Button) findViewById(R.id.button_location);
     listviewFiles = (ListView) findViewById(R.id.listview_files);
@@ -216,12 +222,19 @@ public class FileChooserActivity extends Activity {
 
         @Override
         public boolean accept(File pathname) {
+          if (!displayHiddenFiles && pathname.getName().startsWith("."))
+            return false;
+
           switch (selectionMode) {
             case FilesOnly:
+              if (regexFilenameFilter != null && pathname.isFile())
+                return pathname.getName().matches(regexFilenameFilter);
               return true;
             case DirectoriesOnly:
               return pathname.isDirectory();
             default:
+              if (regexFilenameFilter != null && pathname.isFile())
+                return pathname.getName().matches(regexFilenameFilter);
               return true;
           }
         }
