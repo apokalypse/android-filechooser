@@ -46,18 +46,54 @@
         android:id="@+id/listview_files"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/dim_15dp"
-        android:layout_marginTop="@dimen/dim_15dp"
+        android:layout_marginBottom="@dimen/dim_10dp"
+        android:layout_marginTop="@dimen/dim_10dp"
         android:layout_weight="0.1" >
 
     </ListView>
 
-    <Button
-        android:id="@+id/button_ok"
+    <LinearLayout
+        android:id="@+id/linearLayout3"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/button_ok"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:orientation="vertical" >
+
+        <EditText
+            android:id="@+id/text_saveas_filename"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dim_10dp"
+            android:hint="@string/hint_save_as_filename"
+            android:imeOptions="actionDone"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceLarge" >
+
+            <requestFocus />
+
+        </EditText>
+
+        <LinearLayout
+            android:id="@+id/linearLayout4"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/button_cancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:text="@string/button_cancel" />
+
+            <Button
+                android:id="@+id/button_ok"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:text="@string/button_ok" />
+        </LinearLayout>
+
+    </LinearLayout>
 
 </LinearLayout>

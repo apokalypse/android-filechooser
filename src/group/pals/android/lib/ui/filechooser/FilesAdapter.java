@@ -1,6 +1,6 @@
 package group.pals.android.lib.ui.filechooser;
 
-import group.pals.android.lib.math.Converter;
+import group.pals.android.lib.ui.filechooser.utils.Converter;
 
 import java.util.List;
 
@@ -15,11 +15,24 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+/**
+ * The adapter to be used in {@link android.widget.ListView}
+ * @author Haiti Meid
+ *
+ */
 public class FilesAdapter extends ArrayAdapter<DataModel> {
 
   private final boolean MultiSelection;
   private final int SelectionMode;
 
+  /**
+   * Creates new {@link FilesAdapter}
+   * @param context {@link Context}
+   * @param textViewResourceId resource id to be used for this adapter
+   * @param objects the data
+   * @param selectionMode see {@link FileChooserActivity}
+   * @param multiSelection see {@link FileChooserActivity}
+   */
   public FilesAdapter(Context context, int textViewResourceId,
       List<DataModel> objects, int selectionMode, boolean multiSelection) {
     super(context, textViewResourceId, objects);
@@ -27,6 +40,11 @@ public class FilesAdapter extends ArrayAdapter<DataModel> {
     this.MultiSelection = multiSelection;
   }
 
+  /**
+   * The "view holder"
+   * @author Haiti Meid
+   *
+   */
   private static final class Bag {
     TextView txtFileName;
     TextView txtFileInfo;
