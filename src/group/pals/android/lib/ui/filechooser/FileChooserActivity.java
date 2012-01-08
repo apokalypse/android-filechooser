@@ -152,16 +152,20 @@ public class FileChooserActivity extends Activity {
   }
 
   private void setupHeader() {
-    switch (selectionMode) {
-      case FilesOnly:
-        setTitle(R.string.title_choose_files);
-        break;
-      case FilesAndDirectories:
-        setTitle(R.string.title_choose_files_and_directories);
-        break;
-      case DirectoriesOnly:
-        setTitle(R.string.title_choose_directories);
-        break;
+    if (saveDialog) {
+      setTitle(R.string.title_save_as);
+    } else {
+      switch (selectionMode) {
+        case FilesOnly:
+          setTitle(R.string.title_choose_files);
+          break;
+        case FilesAndDirectories:
+          setTitle(R.string.title_choose_files_and_directories);
+          break;
+        case DirectoriesOnly:
+          setTitle(R.string.title_choose_directories);
+          break;
+      }
     }
 
     //single click to change path

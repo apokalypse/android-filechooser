@@ -49,5 +49,6 @@
         <string name="msg_filename_is_empty">Filename is empty</string>
         <string name="pmsg_confirm_replace_file">This file \&quot;%s\&quot; already exists.\n\nDo you want to replace it?</string>
         <string name="hint_save_as_filename">filename</string>
+        <string name="title_save_as">Save as...</string>
 
 </resources>

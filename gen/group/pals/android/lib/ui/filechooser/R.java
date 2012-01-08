@@ -66,6 +66,7 @@ public final class R {
         public static int title_choose_directories=0x7f050005;
         public static int title_choose_files=0x7f050004;
         public static int title_choose_files_and_directories=0x7f050006;
+        public static int title_save_as=0x7f05000c;
     }
     public static final class style {
         public static int button_dark_200x50=0x7f060002;
