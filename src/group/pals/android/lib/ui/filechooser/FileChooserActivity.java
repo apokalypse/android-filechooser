@@ -92,6 +92,9 @@ public class FileChooserActivity extends Activity {
    */
   public static final int FilesAndDirectories = 2;
 
+  /**
+   * Key to hold results (can be one or multiple files)
+   */
   public static final String Results = "results";
 
   /*
@@ -147,7 +150,7 @@ public class FileChooserActivity extends Activity {
     btnGoForward = (ImageButton) findViewById(R.id.button_go_forward);
     btnLocation = (Button) findViewById(R.id.button_location);
     listviewFiles = (ListView) findViewById(R.id.listview_files);
-    txtSaveasFilename = (EditText) findViewById(R.id.text_saveas_filename);
+    txtSaveasFilename = (EditText) findViewById(R.id.text_view_saveas_filename);
     btnOk = (Button) findViewById(R.id.button_ok);
     btnCancel = (Button) findViewById(R.id.button_cancel);
 
@@ -291,17 +294,20 @@ public class FileChooserActivity extends Activity {
               new AlertDialog.Builder(FileChooserActivity.this)
                 .setMessage(String.format(
                     getString(R.string.pmsg_confirm_replace_file), F.getName()))
-                .setPositiveButton(R.string.button_cancel, null)
-                .setNeutralButton(R.string.button_ok, new DialogInterface.OnClickListener(){
+                .setPositiveButton(R.string.cmd_cancel, null)
+                .setNeutralButton(R.string.cmd_ok, new DialogInterface.OnClickListener(){
 
                   @Override
                   public void onClick(DialogInterface dialog, int which) {
                     doFinish(F);
                   }})
                 .show();
-            } else {
+            } else if (F.isDirectory()) {
+              Toast.makeText(FileChooserActivity.this,
+                  String.format(getString(R.string.pmsg_filename_is_directory), F.getName()),
+                  Toast.LENGTH_SHORT).show();
+            } else
               doFinish(F);
-            }
           }
         }
       });
@@ -393,8 +399,7 @@ public class FileChooserActivity extends Activity {
     List<DataModel> list = new ArrayList<DataModel>();
     for (File f : files)
       list.add(new DataModel(f));
-    listviewFiles.setAdapter(new FilesAdapter(
-        this, R.layout.file_item, list, selectionMode, multiSelection));
+    listviewFiles.setAdapter(new FilesAdapter(this, list, selectionMode, multiSelection));
 
     if (path.getFile().getParentFile() != null &&
         path.getFile().getParentFile().getParentFile() != null)
@@ -461,7 +466,14 @@ public class FileChooserActivity extends Activity {
 
   private void doFinish(ArrayList<File> files) {
     Intent intent = new Intent();
+
+    //set results
     intent.putExtra(Results, files);
+
+    //return flags for further use (in case the caller needs)
+    intent.putExtra(SelectionMode, selectionMode);
+    intent.putExtra(SaveDialog, saveDialog);
+
     setResult(RESULT_OK, intent);
 
     finish();

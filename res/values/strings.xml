@@ -31,8 +31,8 @@
     <string name="pmsg_cannot_access_dir">Can not access \&quot;%s\&quot;</string>
     <string name="title_choose_files">Choose files...</string>
     <string name="title_choose_directories">Choose folders...</string>
-    <string name="title_choose_files_and_directories">Choose files/ directories...</string>
-    <string name="button_ok">Ok</string>
+    <string name="title_choose_files_and_directories">Choose files/ folders...</string>
+    <string name="cmd_ok">Ok</string>
     <style name="button_dark_200x50">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -45,10 +45,11 @@
         <item name="android:layout_margin">5dp</item>
         <item name="android:layout_gravity">center</item>
     </style>
-        <string name="button_cancel">Cancel</string>
+        <string name="cmd_cancel">Cancel</string>
         <string name="msg_filename_is_empty">Filename is empty</string>
         <string name="pmsg_confirm_replace_file">This file \&quot;%s\&quot; already exists.\n\nDo you want to replace it?</string>
         <string name="hint_save_as_filename">filename</string>
         <string name="title_save_as">Save as...</string>
+        <string name="pmsg_filename_is_directory">\&quot;%s\&quot; is a folder</string>
 
 </resources>

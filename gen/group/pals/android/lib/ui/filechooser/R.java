@@ -45,9 +45,9 @@ public final class R {
         public static int linearLayout3=0x7f070006;
         public static int linearLayout4=0x7f070008;
         public static int listview_files=0x7f070005;
-        public static int text_saveas_filename=0x7f070007;
         public static int text_view_file_info=0x7f07000d;
         public static int text_view_filename=0x7f07000c;
+        public static int text_view_saveas_filename=0x7f070007;
     }
     public static final class layout {
         public static int file_chooser=0x7f030000;
@@ -55,14 +55,15 @@ public final class R {
     }
     public static final class string {
         public static int app_name=0x7f050001;
-        public static int button_cancel=0x7f050008;
-        public static int button_ok=0x7f050007;
+        public static int cmd_cancel=0x7f050008;
+        public static int cmd_ok=0x7f050007;
         public static int hello=0x7f050000;
         public static int hint_long_click_to_select_files=0x7f050002;
         public static int hint_save_as_filename=0x7f05000b;
         public static int msg_filename_is_empty=0x7f050009;
         public static int pmsg_cannot_access_dir=0x7f050003;
         public static int pmsg_confirm_replace_file=0x7f05000a;
+        public static int pmsg_filename_is_directory=0x7f05000d;
         public static int title_choose_directories=0x7f050005;
         public static int title_choose_files=0x7f050004;
         public static int title_choose_files_and_directories=0x7f050006;

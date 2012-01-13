@@ -44,14 +44,13 @@ public class FilesAdapter extends ArrayAdapter<DataModel> {
   /**
    * Creates new {@link FilesAdapter}
    * @param context {@link Context}
-   * @param textViewResourceId resource id to be used for this adapter
    * @param objects the data
-   * @param selectionMode see {@link FileChooserActivity}
-   * @param multiSelection see {@link FileChooserActivity}
+   * @param selectionMode see {@link FileChooserActivity#SelectionMode}
+   * @param multiSelection see {@link FileChooserActivity#MultiSelection}
    */
-  public FilesAdapter(Context context, int textViewResourceId,
-      List<DataModel> objects, int selectionMode, boolean multiSelection) {
-    super(context, textViewResourceId, objects);
+  public FilesAdapter(Context context, List<DataModel> objects,
+      int selectionMode, boolean multiSelection) {
+    super(context, R.layout.file_item, objects);
     this.SelectionMode = selectionMode;
     this.MultiSelection = multiSelection;
   }
