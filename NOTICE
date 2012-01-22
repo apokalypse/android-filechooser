@@ -1,7 +1,7 @@
 android-filechooser
 Copyright 2012 Hai Bison
 
-Version: 1.6
+Version: 1.7
 
 This product includes software developed at
 http://code.google.com/p/android-filechooser/
@@ -21,6 +21,12 @@ limitations under the License.
 ===============================================================
 
 History:
+
++++ Version 1.7 +++
+ - Release 22 Jan, 2012
+
+ - add function to check if filename (in save dialog mode) is valid or not;
+ - change name FilesAdapter to FileAdapter;
 
 +++ Version 1.6 +++
  - Release 13 Jan, 2012

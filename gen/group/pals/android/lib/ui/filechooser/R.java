@@ -64,6 +64,7 @@ public final class R {
         public static int pmsg_cannot_access_dir=0x7f050003;
         public static int pmsg_confirm_replace_file=0x7f05000a;
         public static int pmsg_filename_is_directory=0x7f05000d;
+        public static int pmsg_filename_is_invalid=0x7f05000e;
         public static int title_choose_directories=0x7f050005;
         public static int title_choose_files=0x7f050004;
         public static int title_choose_files_and_directories=0x7f050006;

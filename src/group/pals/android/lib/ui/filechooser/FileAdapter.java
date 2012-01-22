@@ -36,19 +36,19 @@ import android.widget.TextView;
  * @author Hai Bison
  *
  */
-public class FilesAdapter extends ArrayAdapter<DataModel> {
+public class FileAdapter extends ArrayAdapter<DataModel> {
 
   private final boolean MultiSelection;
   private final int SelectionMode;
 
   /**
-   * Creates new {@link FilesAdapter}
+   * Creates new {@link FileAdapter}
    * @param context {@link Context}
    * @param objects the data
    * @param selectionMode see {@link FileChooserActivity#SelectionMode}
    * @param multiSelection see {@link FileChooserActivity#MultiSelection}
    */
-  public FilesAdapter(Context context, List<DataModel> objects,
+  public FileAdapter(Context context, List<DataModel> objects,
       int selectionMode, boolean multiSelection) {
     super(context, R.layout.file_item, objects);
     this.SelectionMode = selectionMode;

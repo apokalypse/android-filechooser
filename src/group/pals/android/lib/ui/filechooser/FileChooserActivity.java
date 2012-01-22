@@ -19,6 +19,7 @@ package group.pals.android.lib.ui.filechooser;
 import group.pals.android.lib.ui.filechooser.bean.FileContainer;
 import group.pals.android.lib.ui.filechooser.utils.HistoryPath;
 import group.pals.android.lib.ui.filechooser.utils.UI;
+import group.pals.android.lib.ui.filechooser.utils.Utils;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -32,6 +33,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -290,7 +292,12 @@ public class FileChooserActivity extends Activity {
                 Toast.LENGTH_SHORT).show();
           } else {
             final File F = new File(getLocation().getFile().getAbsolutePath() + "/" + filename);
-            if (F.isFile()) {
+
+            if (!Utils.isFilenameValid(filename)) {
+              Toast.makeText(FileChooserActivity.this,
+                  String.format(getString(R.string.pmsg_filename_is_invalid), filename),
+                  Toast.LENGTH_SHORT).show();
+            } else if (F.isFile()) {
               new AlertDialog.Builder(FileChooserActivity.this)
                 .setMessage(String.format(
                     getString(R.string.pmsg_confirm_replace_file), F.getName()))
@@ -399,7 +406,7 @@ public class FileChooserActivity extends Activity {
     List<DataModel> list = new ArrayList<DataModel>();
     for (File f : files)
       list.add(new DataModel(f));
-    listviewFiles.setAdapter(new FilesAdapter(this, list, selectionMode, multiSelection));
+    listviewFiles.setAdapter(new FileAdapter(this, list, selectionMode, multiSelection));
 
     if (path.getFile().getParentFile() != null &&
         path.getFile().getParentFile().getParentFile() != null)
