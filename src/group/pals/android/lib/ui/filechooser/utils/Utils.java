@@ -11,6 +11,6 @@ public class Utils {
    * @return {@code true} if the pathname is valid, and vice versa
    */
   public static boolean isFilenameValid(String name) {
-    return name.matches("[^\\\\/?%*:|\"<>]*");
+    return name != null && name.trim().matches("[^\\\\/?%*:|\"<>]+");
   }
 }
