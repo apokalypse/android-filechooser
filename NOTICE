@@ -23,26 +23,26 @@ limitations under the License.
 History:
 
 +++ Version 1.7 +++
- - Release 22 Jan, 2012
+ - Release Jan 22, 2012
 
  - add function to check if filename (in save dialog mode) is valid or not;
  - change name FilesAdapter to FileAdapter;
 
 +++ Version 1.6 +++
- - Release 13 Jan, 2012
+ - Release Jan 13, 2012
 
  - check and warn user if save as filename is a directory;
  - when finish, return some flags for further use (in case the
    caller needs);
 
 +++ Version 1.5 +++
- - Release: 13 Jan, 2012
+ - Release: Jan 13, 2012
 
  - apply Apache License 2.0;
  - set result code to RESULT_CANCELED when user clicks button Cancel;
 
 +++ Version 1.4 +++
- - Release: 08 Jan, 2012
+ - Release: Jan 08, 2012
 
  - first publishing;
  - choose file(s) dialog;
