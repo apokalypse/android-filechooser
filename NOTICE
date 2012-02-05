@@ -1,7 +1,7 @@
 android-filechooser
 Copyright 2012 Hai Bison
 
-Version: 1.7
+Version: 1.8
 
 This product includes software developed at
 http://code.google.com/p/android-filechooser/
@@ -22,14 +22,23 @@ limitations under the License.
 
 History:
 
++++ Version 1.8 +++
+ - Release: Feb 05, 2012
+
+ - Shows progress dialog while listing files of a directory;
+ - Adds flag max file count allowed, in case the directory has thousands of files,
+   the application can harm memory. Default value is 1,024;
+ - TODO: let the user cancel the method java.io.File.listFiles().
+   It seems this is up to Android developers  :-)
+
 +++ Version 1.7 +++
- - Release Jan 22, 2012
+ - Release: Jan 22, 2012
 
  - add function to check if filename (in save dialog mode) is valid or not;
  - change name FilesAdapter to FileAdapter;
 
 +++ Version 1.6 +++
- - Release Jan 13, 2012
+ - Release: Jan 13, 2012
 
  - check and warn user if save as filename is a directory;
  - when finish, return some flags for further use (in case the

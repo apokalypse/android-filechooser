@@ -19,34 +19,26 @@ package group.pals.android.lib.ui.filechooser.utils;
 public class Converter {
 
   /**
-   * Converts <code>size</code> (in bytes) to string.
+   * Converts {@code size} (in bytes) to string.
+   * This tip is from: http://stackoverflow.com/a/5599842/942821
    * @param size the size in bytes.
    * @return e.g.:<br>
-   * - 1 byte<br>
-   * - 128 bytes<br>
+   * - 128 B<br>
    * - 1.5 KB<br>
    * - 10 MB<br>
    * - ...
    */
   public static String sizeToStr(double size) {
-    final short BlockSize = 1024;
-    final String DisplayUnits[] = {"byte", "KB", "MB", "GB", "TB"};
+    if (size <= 0) return "0 B";
+    final String[] Units = new String[] {"B", "KB", "MB", "GB", "TB"};
+    final Short BlockSize = 1024;
 
-    byte i = 0;
-    while (true) {
-      if ((size < BlockSize) || (i == (DisplayUnits.length - 1))) {
-        if (i == 0) {
-          String result = String.format("%.0f %s", size, DisplayUnits[i]);
-          if (size > 1)
-            result += "s";
-          return result;
-        } else {
-          return String.format("%02.02f %s", size, DisplayUnits[i]);
-        }
-      } else {
-        size /= BlockSize;
-      }
-      i++;
-    }
+    int digitGroups = (int) (Math.log10(size) / Math.log10(BlockSize));
+    if (digitGroups >= Units.length) digitGroups = Units.length - 1;
+    size = size / Math.pow(BlockSize, digitGroups);
+
+    return String.format(
+        String.format("%s %%s", digitGroups == 0 ? "%,.0f" : "%,.2f"),
+        size, Units[digitGroups]);
   }//sizeToStr()
 }

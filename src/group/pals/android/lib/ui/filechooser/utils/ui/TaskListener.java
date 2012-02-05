@@ -14,21 +14,19 @@
  *   limitations under the License.
  */
 
-package group.pals.android.lib.ui.filechooser.utils;
+package group.pals.android.lib.ui.filechooser.utils.ui;
 
-import android.content.Context;
-import android.os.IBinder;
-import android.view.inputmethod.InputMethodManager;
+/**
+ * The listener for any task you want to assign to.
+ * @author Hai Bison
+ * @since v1.8
+ */
+public interface TaskListener {
 
-public class UI {
-
-  public static void hideSoftKeyboard(Context context, IBinder iBinder) {
-    /*
-     * hide soft keyboard
-     * http://stackoverflow.com/questions/1109022/how-to-close-hide-the-android-soft-keyboard
-     */
-    InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-    if (imm != null)
-      imm.hideSoftInputFromWindow(iBinder, 0);
-  }
+  /**
+   * Will be called after the task finished.
+   * @param ok {@code true} if everything is ok, {@code false} otherwise.
+   * @param any the user data, can be {@code null}.
+   */
+  public void onFinish(boolean ok, Object any);
 }
