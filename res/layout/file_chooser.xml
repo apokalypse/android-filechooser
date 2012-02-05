@@ -48,7 +48,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/dim_10dp"
         android:layout_marginTop="@dimen/dim_10dp"
-        android:layout_weight="0.1" >
+        android:layout_weight="0.1"
+        android:fastScrollEnabled="true" >
 
     </ListView>
 
