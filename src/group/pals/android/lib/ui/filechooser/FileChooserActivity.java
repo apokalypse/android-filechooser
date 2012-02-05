@@ -380,9 +380,12 @@ public class FileChooserActivity extends Activity {
           public void onClick(View v) {
             List<File> list = new ArrayList<File>();
             for (int i = 0; i < listviewFiles.getAdapter().getCount(); i++) {
-              DataModel dm = (DataModel) listviewFiles.getAdapter().getItem(i);
-              if (dm.isSelected())
-                list.add(dm.getFile());
+              //NOTE: header and footer don't have data
+              Object obj = listviewFiles.getAdapter().getItem(i);
+              if (obj instanceof DataModel) {
+                DataModel dm = (DataModel) obj;
+                if (dm.isSelected()) list.add(dm.getFile());
+              }
             }
             doFinish((ArrayList<File>) list);
           }
@@ -515,7 +518,7 @@ public class FileChooserActivity extends Activity {
 
       @Override
       public void onItemClick(AdapterView<?> av, View v, int position, long id) {
-        if (listviewFiles.getFooterViewsCount() > 0 && position == av.getCount() - 1)
+        if (!(av.getItemAtPosition(position) instanceof DataModel))
           return;
 
         DataModel data = (DataModel) av.getItemAtPosition(position);
@@ -543,7 +546,7 @@ public class FileChooserActivity extends Activity {
 
       @Override
       public boolean onItemLongClick(AdapterView<?> av, View v, int position, long id) {
-        if (multiSelection || (listviewFiles.getFooterViewsCount() > 0 && position == av.getCount() - 1))
+        if (multiSelection || !(av.getItemAtPosition(position) instanceof DataModel))
           return false;
 
         DataModel data = (DataModel) av.getItemAtPosition(position);
