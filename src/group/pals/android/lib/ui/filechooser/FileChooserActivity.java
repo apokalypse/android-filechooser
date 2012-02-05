@@ -177,8 +177,13 @@ public class FileChooserActivity extends Activity {
     setupHeader();
     setupListviewFiles();
     setupFooter();
-    setLocation(root, null);
-    history.push(getLocation(), getLocation());
+    setLocation(root, new TaskListener() {
+
+      @Override
+      public void onFinish(boolean ok, Object any) {
+        history.push(getLocation(), getLocation());
+      }
+    });
   }
 
   @Override

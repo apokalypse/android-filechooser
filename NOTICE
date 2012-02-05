@@ -22,6 +22,11 @@ limitations under the License.
 
 History:
 
++++ Version 1.8.1 +++
+ - Release: Feb 05, 2012
+
+ - Fix: it doesn't remember the first path (rootpath) in history;
+
 +++ Version 1.8 +++
  - Release: Feb 05, 2012
 
