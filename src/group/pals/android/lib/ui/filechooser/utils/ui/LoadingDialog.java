@@ -23,7 +23,11 @@ import android.os.Handler;
 import android.os.Message;
 
 /**
- * A thread, used to show {@link ProgressDialog} while doing some background tasks.
+ * A thread, used to show {@link ProgressDialog} while doing some background tasks.<br>
+ * Please read carefully about {@link LoadingDialog#onExecute()}.<br>
+ * Only {@link LoadingDialog#onFinish()} or {@link LoadingDialog#onRaise()} will be called once.
+ * It means if everything is ok, {@link LoadingDialog#onFinish()} will be called,
+ * but if an error occurs, {@link LoadingDialog#onRaise()} will be called.
  * @author Hai Bison
  * @since v1.8
  */
@@ -107,17 +111,27 @@ public abstract class LoadingDialog extends Thread {
   }
 
   /**
-   * Will be called inside {@code run} method.
+   * Your main task here. This method will be called inside {@link #run} method.<br>
+   * <b>Note:</b> You should <b><i>not</i></b> do any UI task in this method, otherwise
+   * things will get out of control.<br>
+   * If you need to interact with UI, you can use {@link Handler}. However,
+   * remember to test your {@link Handler} before you are sure things are ok.
+   * It is funny  :-)
+   * @throws Throwable you can throw any exception you want, {@link LoadingDialog} will
+   * call {@link #onRaise(Throwable)} and then exit the thread normally.
    */
   public abstract void onExecute() throws Throwable;
 
   /**
-   * Will be called after {@code run} method finished.
+   * Will be called at the end of {@link #run} method, after {@link #onExecute()},
+   * if there is no error occurs.
    */
   public abstract void onFinish();
 
   /**
-   * Will be called when any exception raises.
+   * Will be called when any exception raises, then exit the thread
+   * <b><i>without</b></i> touching {@link #onFinish()}.
+   * @param t - a {@link Throwable} got from {@link #onExecute()}
    */
   public abstract void onRaise(Throwable t);
 }
