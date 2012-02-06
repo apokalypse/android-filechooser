@@ -55,8 +55,7 @@ public class HistoryPath {
       list.add(newPath);
     }
 
-    if (list.size() > MaxSize)
-      list.remove(0);
+    if (list.size() > MaxSize) list.remove(0);
   }
 
   /**

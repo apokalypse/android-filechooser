@@ -2,7 +2,6 @@
 <resources>
 
     <string name="hello">Hello World, FileChooserActivity!</string>
-    <string name="app_name">FileChooser</string>
     <style name="button_go_forward_dark_48">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -55,5 +54,6 @@
         <string name="empty"/>
         <string name="msg_loading">Loading...</string>
         <string name="pmsg_max_file_count_allowed">...has more files, max allowed: %,d</string>
+        <string name="app_name">android-filechooser</string>
 
 </resources>

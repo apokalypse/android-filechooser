@@ -111,7 +111,7 @@ public abstract class LoadingDialog extends Thread {
   }
 
   /**
-   * Your main task here. This method will be called inside {@link #run} method.<br>
+   * Your main task here. This method will be called inside {@link #run()} method.<br>
    * <b>Note:</b> You should <b><i>not</i></b> do any UI task in this method, otherwise
    * things will get out of control.<br>
    * If you need to interact with UI, you can use {@link Handler}. However,
@@ -123,7 +123,7 @@ public abstract class LoadingDialog extends Thread {
   public abstract void onExecute() throws Throwable;
 
   /**
-   * Will be called at the end of {@link #run} method, after {@link #onExecute()},
+   * Will be called at the end of {@link #run()} method, after {@link #onExecute()},
    * if there is no error occurs.
    */
   public abstract void onFinish();

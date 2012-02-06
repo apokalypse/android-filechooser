@@ -17,6 +17,8 @@
 package group.pals.android.lib.ui.filechooser;
 
 import group.pals.android.lib.ui.filechooser.bean.FileContainer;
+import group.pals.android.lib.ui.filechooser.utils.E;
+import group.pals.android.lib.ui.filechooser.utils.FileComparator;
 import group.pals.android.lib.ui.filechooser.utils.HistoryPath;
 import group.pals.android.lib.ui.filechooser.utils.UI;
 import group.pals.android.lib.ui.filechooser.utils.Utils;
@@ -27,7 +29,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 import android.app.Activity;
@@ -337,37 +338,8 @@ public class FileChooserActivity extends Activity {
         @Override
         public void onClick(View v) {
           UI.hideSoftKeyboard(FileChooserActivity.this, txtSaveasFilename.getWindowToken());
-
           String filename = txtSaveasFilename.getText().toString().trim();
-          if (filename.length() == 0) {
-            Toast.makeText(FileChooserActivity.this, R.string.msg_filename_is_empty,
-                Toast.LENGTH_SHORT).show();
-          } else {
-            final File F = new File(getLocation().getFile().getAbsolutePath() + "/" + filename);
-
-            if (!Utils.isFilenameValid(filename)) {
-              Toast.makeText(FileChooserActivity.this,
-                  String.format(getString(R.string.pmsg_filename_is_invalid), filename),
-                  Toast.LENGTH_SHORT).show();
-            } else if (F.isFile()) {
-              new AlertDialog.Builder(FileChooserActivity.this)
-                .setMessage(String.format(
-                    getString(R.string.pmsg_confirm_replace_file), F.getName()))
-                .setPositiveButton(R.string.cmd_cancel, null)
-                .setNeutralButton(R.string.cmd_ok, new DialogInterface.OnClickListener(){
-
-                  @Override
-                  public void onClick(DialogInterface dialog, int which) {
-                    doFinish(F);
-                  }})
-                .show();
-            } else if (F.isDirectory()) {
-              Toast.makeText(FileChooserActivity.this,
-                  String.format(getString(R.string.pmsg_filename_is_directory), F.getName()),
-                  Toast.LENGTH_SHORT).show();
-            } else
-              doFinish(F);
-          }
+          checkSaveasFilenameAndFinish(filename);
         }
       });
     } else {//this is in open mode
@@ -394,6 +366,44 @@ public class FileChooserActivity extends Activity {
         btnOk.setVisibility(View.GONE);
     }//if saveDialog...
   }//setupFooter()
+
+  /**
+   * As the name means.
+   * @param filename
+   * @since v1.91
+   */
+  private void checkSaveasFilenameAndFinish(String filename) {
+    if (filename.length() == 0) {
+      Toast.makeText(FileChooserActivity.this, R.string.msg_filename_is_empty,
+          Toast.LENGTH_SHORT).show();
+    } else {
+      final File F = new File(
+          getLocation().getFile().getAbsolutePath() + File.separator + filename);
+
+      if (!Utils.isFilenameValid(filename)) {
+        Toast.makeText(FileChooserActivity.this,
+            String.format(getString(R.string.pmsg_filename_is_invalid), filename),
+            Toast.LENGTH_SHORT).show();
+      } else if (F.isFile()) {
+        new AlertDialog.Builder(FileChooserActivity.this)
+          .setMessage(String.format(
+              getString(R.string.pmsg_confirm_replace_file), F.getName()))
+          .setPositiveButton(R.string.cmd_cancel, null)
+          .setNeutralButton(R.string.cmd_ok, new DialogInterface.OnClickListener(){
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+              doFinish(F);
+            }})
+          .show();
+      } else if (F.isDirectory()) {
+        Toast.makeText(FileChooserActivity.this,
+            String.format(getString(R.string.pmsg_filename_is_directory), F.getName()),
+            Toast.LENGTH_SHORT).show();
+      } else
+        doFinish(F);
+    }
+  }//checkSaveasFilenameAndFinish()
 
   /**
    * Gets current location.
@@ -546,8 +556,12 @@ public class FileChooserActivity extends Activity {
 
       @Override
       public boolean onItemLongClick(AdapterView<?> av, View v, int position, long id) {
-        if (multiSelection || !(av.getItemAtPosition(position) instanceof DataModel))
+        if (multiSelection) return false;
+        if (!(av.getItemAtPosition(position) instanceof DataModel)) {
+          // no comments  :-D
+          E.show(FileChooserActivity.this);
           return false;
+        }
 
         DataModel data = (DataModel) av.getItemAtPosition(position);
 
@@ -557,7 +571,6 @@ public class FileChooserActivity extends Activity {
         //if selectionMode == DirectoriesOnly, files won't be shown
 
         doFinish(data.getFile());
-
         return false;
       }
     });//long click
@@ -575,8 +588,8 @@ public class FileChooserActivity extends Activity {
    */
   private File[] listFiles(File dir, TaskListener listener) {
     /*
-     * if list of file exceed max file count allowed, Flag contains 'true',
-     * otherwise 'false'
+     * if list of file exceed max file count allowed, HasMoreFiles contains "true",
+     * otherwise "false"
      * TODO: bad way :-(
      */
     final StringBuffer HasMoreFiles = new StringBuffer(Boolean.toString(false));
@@ -621,23 +634,7 @@ public class FileChooserActivity extends Activity {
         }
       });//dir.listFiles()
 
-      if (files != null) {
-        //sort: directories first, and ignore case
-        Arrays.sort(files, new Comparator<File>() {
-  
-          @Override
-          public int compare(File lhs, File rhs) {
-            if ((lhs.isDirectory() && rhs.isDirectory()) ||
-                (lhs.isFile() && rhs.isFile()))
-              return lhs.getName().compareToIgnoreCase(rhs.getName());
-  
-            if (lhs.isDirectory())
-              return -1;
-            else
-              return 1;
-          }
-        });
-      }//if files != null
+      if (files != null) Arrays.sort(files, new FileComparator());
 
       if (listener != null)
         listener.onFinish(Boolean.toString(true).equals(HasMoreFiles.toString()), null);
@@ -648,8 +645,7 @@ public class FileChooserActivity extends Activity {
 
   private void doFinish(File... files) {
     List<File> list = new ArrayList<File>();
-    for (File f : files)
-      list.add(f);
+    for (File f : files) list.add(f);
     doFinish((ArrayList<File>) list);
   }
 

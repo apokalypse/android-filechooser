@@ -18,6 +18,8 @@ package group.pals.android.lib.ui.filechooser;
 
 import group.pals.android.lib.ui.filechooser.utils.Converter;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import android.app.Activity;
@@ -37,6 +39,18 @@ import android.widget.TextView;
  *
  */
 public class FileAdapter extends ArrayAdapter<DataModel> {
+
+  /**
+   * Default short format for file time. Value = {@code "yyyy.MM.dd kk:mm"}<br>
+   * See <a href="http://developer.android.com/reference/java/text/SimpleDateFormat.html">API docs</a>.
+   */
+  public static final String DefFileTimeShortFormat = "yyyy.MM.dd kk:mm";
+  /**
+   * You can set your own short format for file time by this variable.
+   * If the value is in wrong format, {@link #DefFileTimeShortFormat} will be used.<br>
+   * See <a href="http://developer.android.com/reference/java/text/SimpleDateFormat.html">API docs</a>.
+   */
+  public static String fileTimeShortFormat = DefFileTimeShortFormat;
 
   private final boolean MultiSelection;
   private final int SelectionMode;
@@ -100,7 +114,18 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
     if (Data.getFile().isDirectory())
       bag.txtFileInfo.setVisibility(View.GONE);
     else {
-      bag.txtFileInfo.setText(Converter.sizeToStr(Data.getFile().length()));
+      String time = null;
+      try {
+        time = new SimpleDateFormat(fileTimeShortFormat).format(Data.getFile().lastModified());
+      } catch (Exception e) {
+        try {
+          time = new SimpleDateFormat(DefFileTimeShortFormat).format(Data.getFile().lastModified());
+        } catch (Exception ex) {
+          time = new Date(Data.getFile().lastModified()).toLocaleString();
+        }
+      }
+
+      bag.txtFileInfo.setText(String.format("%s, %s", Converter.sizeToStr(Data.getFile().length()), time));
       bag.txtFileInfo.setVisibility(View.VISIBLE);
     }
 

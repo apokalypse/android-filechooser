@@ -15,6 +15,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:layout_marginRight="@dimen/dim_5dp"
         android:layout_weight="0.1"
         android:orientation="vertical" >
 
