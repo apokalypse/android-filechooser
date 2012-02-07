@@ -19,7 +19,8 @@ package group.pals.android.lib.ui.filechooser;
 import group.pals.android.lib.ui.filechooser.bean.FileContainer;
 import group.pals.android.lib.ui.filechooser.utils.E;
 import group.pals.android.lib.ui.filechooser.utils.FileComparator;
-import group.pals.android.lib.ui.filechooser.utils.HistoryPath;
+import group.pals.android.lib.ui.filechooser.utils.History;
+import group.pals.android.lib.ui.filechooser.utils.HistoryStore;
 import group.pals.android.lib.ui.filechooser.utils.UI;
 import group.pals.android.lib.ui.filechooser.utils.Utils;
 import group.pals.android.lib.ui.filechooser.utils.ui.LoadingDialog;
@@ -128,7 +129,7 @@ public class FileChooserActivity extends Activity {
   /*
    * variables
    */
-  private HistoryPath history;
+  private History<FileContainer> history;
 
   /*
    * controls
@@ -173,7 +174,7 @@ public class FileChooserActivity extends Activity {
     btnOk = (Button) findViewById(R.id.button_ok);
     btnCancel = (Button) findViewById(R.id.button_cancel);
 
-    history = new HistoryPath(0);
+    history = new HistoryStore<FileContainer>(0);
 
     setupHeader();
     setupListviewFiles();
@@ -259,14 +260,14 @@ public class FileChooserActivity extends Activity {
 
       @Override
       public void onClick(View v) {
-        FileContainer path = history.getPrev(getLocation());
+        FileContainer path = history.prevOf(getLocation());
         if (path != null) {
           setLocation(path, new TaskListener() {
 
             @Override
             public void onFinish(boolean ok, Object any) {
               if (ok) {
-                btnGoBack.setEnabled(history.getPrev(getLocation()) != null);
+                btnGoBack.setEnabled(history.prevOf(getLocation()) != null);
                 btnGoForward.setEnabled(true);
               }
             }
@@ -282,7 +283,7 @@ public class FileChooserActivity extends Activity {
 
       @Override
       public void onClick(View v) {
-        FileContainer path = history.getNext(getLocation());
+        FileContainer path = history.nextOf(getLocation());
         if (path != null) {
           setLocation(path, new TaskListener() {
 
@@ -290,7 +291,7 @@ public class FileChooserActivity extends Activity {
             public void onFinish(boolean ok, Object any) {
               if (ok) {
                 btnGoBack.setEnabled(true);
-                btnGoForward.setEnabled(history.getNext(getLocation()) != null);
+                btnGoForward.setEnabled(history.nextOf(getLocation()) != null);
               }
             }
           });
@@ -455,12 +456,18 @@ public class FileChooserActivity extends Activity {
          */
         updateListviewFilesFooter(hasMoreFiles);
 
-        //add files to list view
+        /*
+         * add files to list view
+         */
         List<DataModel> list = new ArrayList<DataModel>();
         for (File f : files)
           list.add(new DataModel(f));
         listviewFiles.setAdapter(new FileAdapter(
             FileChooserActivity.this, list, selectionMode, multiSelection));
+
+        /*
+         * navigation buttons
+         */
 
         if (Path.getFile().getParentFile() != null &&
             Path.getFile().getParentFile().getParentFile() != null)
@@ -588,7 +595,7 @@ public class FileChooserActivity extends Activity {
    */
   private File[] listFiles(File dir, TaskListener listener) {
     /*
-     * if list of file exceed max file count allowed, HasMoreFiles contains "true",
+     * if total files exceeds max file count allowed, HasMoreFiles contains "true",
      * otherwise "false"
      * TODO: bad way :-(
      */
@@ -643,12 +650,20 @@ public class FileChooserActivity extends Activity {
     } catch (Exception e) { return null; }
   }//listFiles()
 
+  /**
+   * Finishes this activity.
+   * @param files list of {@link File}
+   */
   private void doFinish(File... files) {
     List<File> list = new ArrayList<File>();
     for (File f : files) list.add(f);
     doFinish((ArrayList<File>) list);
   }
 
+  /**
+   * Finishes this activity.
+   * @param files list of {@link File}
+   */
   private void doFinish(ArrayList<File> files) {
     Intent intent = new Intent();
 

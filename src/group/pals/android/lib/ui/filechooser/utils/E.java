@@ -41,7 +41,7 @@ public class E {
           "http://sites.google.com/site/haitimeid/\n\n" +
           "Hope you enjoy this library!",
           "android-filechooser",
-          "1.91");
+          "2.0 alpha");
     } catch (Exception e) {
       msg = "Oops... You've found a broken Easter egg, try again later  :-(";
     }
