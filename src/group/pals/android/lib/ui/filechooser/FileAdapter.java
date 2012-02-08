@@ -18,6 +18,7 @@ package group.pals.android.lib.ui.filechooser;
 
 import group.pals.android.lib.ui.filechooser.utils.Converter;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -101,37 +102,51 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
       bag = (Bag) convertView.getTag();
     }
 
+    //update view
+    updateView(bag, Data, Data.getFile());
+
+    return convertView;
+  }
+
+  /**
+   * Updates the view.
+   * @param bag the "view holder", see {@link Bag}
+   * @param Dm {@link DataModel}
+   * @param file {@link File}
+   * @since v2.0 alpha
+   */
+  private void updateView(Bag bag, final DataModel Dm, File file) {
     //image icon
-    if (Data.getFile().isDirectory())
+    if (file.isDirectory())
       bag.imageIcon.setImageResource(R.drawable.folder48);
     else
       bag.imageIcon.setImageResource(R.drawable.file48);
 
     //filename
-    bag.txtFileName.setText(Data.getFile().getName());
+    bag.txtFileName.setText(file.getName());
 
     //file info
-    if (Data.getFile().isDirectory())
+    if (file.isDirectory())
       bag.txtFileInfo.setVisibility(View.GONE);
     else {
       String time = null;
       try {
-        time = new SimpleDateFormat(fileTimeShortFormat).format(Data.getFile().lastModified());
+        time = new SimpleDateFormat(fileTimeShortFormat).format(file.lastModified());
       } catch (Exception e) {
         try {
-          time = new SimpleDateFormat(DefFileTimeShortFormat).format(Data.getFile().lastModified());
+          time = new SimpleDateFormat(DefFileTimeShortFormat).format(file.lastModified());
         } catch (Exception ex) {
-          time = new Date(Data.getFile().lastModified()).toLocaleString();
+          time = new Date(file.lastModified()).toLocaleString();
         }
       }
 
-      bag.txtFileInfo.setText(String.format("%s, %s", Converter.sizeToStr(Data.getFile().length()), time));
+      bag.txtFileInfo.setText(String.format("%s, %s", Converter.sizeToStr(file.length()), time));
       bag.txtFileInfo.setVisibility(View.VISIBLE);
     }
 
     //checkbox
     if (MultiSelection) {
-      if (SelectionMode == FileChooserActivity.FilesOnly && Data.getFile().isDirectory()) {
+      if (SelectionMode == FileChooserActivity.FilesOnly && file.isDirectory()) {
         bag.checkboxSelection.setVisibility(View.GONE);
       } else {
         bag.checkboxSelection.setVisibility(View.VISIBLE);
@@ -141,14 +156,12 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
   
               @Override
               public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Data.setSelected(isChecked);
+                Dm.setSelected(isChecked);
               }
             });
-        bag.checkboxSelection.setChecked(Data.isSelected());
+        bag.checkboxSelection.setChecked(Dm.isSelected());
       }
     } else
       bag.checkboxSelection.setVisibility(View.GONE);
-
-    return convertView;
   }
 }
