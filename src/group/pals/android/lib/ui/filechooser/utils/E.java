@@ -16,39 +16,35 @@
 
 package group.pals.android.lib.ui.filechooser.utils;
 
-import group.pals.android.lib.ui.filechooser.R;
 import android.app.AlertDialog;
 import android.content.Context;
 
 /**
- * Something funny  :-)
+ * Something funny :-)
+ * 
  * @author Hai Bison
- *
+ * 
  */
 public class E {
 
-  /**
-   * Shows it!
-   * @param context {@link Context}
-   */
-  public static void show(Context context) {
-    String msg = null;
-    try {
-      msg = String.format(
-          "Hi pal, you've found Easter egg  :-)\n\n" +
-          "%s v%s\n" +
-          "...by hai bison\n\n" +
-          "http://sites.google.com/site/haitimeid/\n\n" +
-          "Hope you enjoy this library!",
-          "android-filechooser",
-          "2.0 alpha");
-    } catch (Exception e) {
-      msg = "Oops... You've found a broken Easter egg, try again later  :-(";
-    }
+    /**
+     * Shows it!
+     * 
+     * @param context
+     *            {@link Context}
+     */
+    public static void show(Context context) {
+        String msg = null;
+        try {
+            msg = String.format("Hi pal, you've found Easter egg  :-)\n\n"
+                    + "%s v%s\n" + "...by hai bison\n\n"
+                    + "http://sites.google.com/site/haitimeid/\n\n"
+                    + "Hope you enjoy this library!", "android-filechooser",
+                    "2.0 alpha");
+        } catch (Exception e) {
+            msg = "Oops... You've found a broken Easter egg, try again later  :-(";
+        }
 
-    new AlertDialog.Builder(context)
-      .setTitle("...")
-      .setMessage(msg)
-      .show();
-  }
+        new AlertDialog.Builder(context).setTitle("...").setMessage(msg).show();
+    }
 }

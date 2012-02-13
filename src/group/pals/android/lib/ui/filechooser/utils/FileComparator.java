@@ -24,16 +24,17 @@ import java.util.Comparator;
  * Rules:<br>
  * - directories first;<br>
  * - names in alphabetical order (case insensitive);
+ * 
  * @author Hai Bison
  * @since v1.91
  */
 public class FileComparator implements Comparator<File> {
 
-  @Override
-  public int compare(File lhs, File rhs) {
-    if ((lhs.isDirectory() && rhs.isDirectory()) ||
-        (lhs.isFile() && rhs.isFile()))
-      return lhs.getName().compareToIgnoreCase(rhs.getName());
-    return lhs.isDirectory() ? -1 : 1;
-  }
+    @Override
+    public int compare(File lhs, File rhs) {
+        if ((lhs.isDirectory() && rhs.isDirectory())
+                || (lhs.isFile() && rhs.isFile()))
+            return lhs.getName().compareToIgnoreCase(rhs.getName());
+        return lhs.isDirectory() ? -1 : 1;
+    }
 }

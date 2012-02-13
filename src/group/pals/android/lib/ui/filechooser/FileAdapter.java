@@ -36,132 +36,158 @@ import android.widget.TextView;
 
 /**
  * The adapter to be used in {@link android.widget.ListView}
+ * 
  * @author Hai Bison
- *
+ * 
  */
 public class FileAdapter extends ArrayAdapter<DataModel> {
 
-  /**
-   * Default short format for file time. Value = {@code "yyyy.MM.dd kk:mm"}<br>
-   * See <a href="http://developer.android.com/reference/java/text/SimpleDateFormat.html">API docs</a>.
-   */
-  public static final String DefFileTimeShortFormat = "yyyy.MM.dd kk:mm";
-  /**
-   * You can set your own short format for file time by this variable.
-   * If the value is in wrong format, {@link #DefFileTimeShortFormat} will be used.<br>
-   * See <a href="http://developer.android.com/reference/java/text/SimpleDateFormat.html">API docs</a>.
-   */
-  public static String fileTimeShortFormat = DefFileTimeShortFormat;
+    /**
+     * Default short format for file time. Value = {@code "yyyy.MM.dd kk:mm"}<br>
+     * See <a href=
+     * "http://developer.android.com/reference/java/text/SimpleDateFormat.html"
+     * >API docs</a>.
+     */
+    public static final String DefFileTimeShortFormat = "yyyy.MM.dd kk:mm";
+    /**
+     * You can set your own short format for file time by this variable. If the
+     * value is in wrong format, {@link #DefFileTimeShortFormat} will be used.<br>
+     * See <a href=
+     * "http://developer.android.com/reference/java/text/SimpleDateFormat.html"
+     * >API docs</a>.
+     */
+    public static String fileTimeShortFormat = DefFileTimeShortFormat;
 
-  private final boolean MultiSelection;
-  private final int SelectionMode;
+    private final boolean MultiSelection;
+    private final int SelectionMode;
 
-  /**
-   * Creates new {@link FileAdapter}
-   * @param context {@link Context}
-   * @param objects the data
-   * @param selectionMode see {@link FileChooserActivity#SelectionMode}
-   * @param multiSelection see {@link FileChooserActivity#MultiSelection}
-   */
-  public FileAdapter(Context context, List<DataModel> objects,
-      int selectionMode, boolean multiSelection) {
-    super(context, R.layout.file_item, objects);
-    this.SelectionMode = selectionMode;
-    this.MultiSelection = multiSelection;
-  }
-
-  /**
-   * The "view holder"
-   * @author Hai Bison
-   *
-   */
-  private static final class Bag {
-    TextView txtFileName;
-    TextView txtFileInfo;
-    CheckBox checkboxSelection;
-    ImageView imageIcon;
-  }
-
-  @Override
-  public View getView(int position, View convertView, ViewGroup parent) {
-    final DataModel Data = getItem(position);
-    Bag bag;
-
-    if (convertView == null) {
-      LayoutInflater layoutInflater = ((Activity) getContext()).getLayoutInflater();
-      convertView = layoutInflater.inflate(R.layout.file_item, null);
-
-      bag = new Bag();
-      bag.txtFileName = (TextView) convertView.findViewById(R.id.text_view_filename);
-      bag.txtFileInfo = (TextView) convertView.findViewById(R.id.text_view_file_info);
-      bag.checkboxSelection = (CheckBox) convertView.findViewById(R.id.checkbox_selection);
-      bag.imageIcon = (ImageView) convertView.findViewById(R.id.image_view_icon);
-
-      convertView.setTag(bag);
-    } else {
-      bag = (Bag) convertView.getTag();
+    /**
+     * Creates new {@link FileAdapter}
+     * 
+     * @param context
+     *            {@link Context}
+     * @param objects
+     *            the data
+     * @param selectionMode
+     *            see {@link FileChooserActivity#SelectionMode}
+     * @param multiSelection
+     *            see {@link FileChooserActivity#MultiSelection}
+     */
+    public FileAdapter(Context context, List<DataModel> objects,
+            int selectionMode, boolean multiSelection) {
+        super(context, R.layout.file_item, objects);
+        this.SelectionMode = selectionMode;
+        this.MultiSelection = multiSelection;
     }
 
-    //update view
-    updateView(bag, Data, Data.getFile());
+    /**
+     * The "view holder"
+     * 
+     * @author Hai Bison
+     * 
+     */
+    private static final class Bag {
 
-    return convertView;
-  }
+        TextView txtFileName;
+        TextView txtFileInfo;
+        CheckBox checkboxSelection;
+        ImageView imageIcon;
+    }
 
-  /**
-   * Updates the view.
-   * @param bag the "view holder", see {@link Bag}
-   * @param Dm {@link DataModel}
-   * @param file {@link File}
-   * @since v2.0 alpha
-   */
-  private void updateView(Bag bag, final DataModel Dm, File file) {
-    //image icon
-    if (file.isDirectory())
-      bag.imageIcon.setImageResource(R.drawable.folder48);
-    else
-      bag.imageIcon.setImageResource(R.drawable.file48);
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        final DataModel Data = getItem(position);
+        Bag bag;
 
-    //filename
-    bag.txtFileName.setText(file.getName());
+        if (convertView == null) {
+            LayoutInflater layoutInflater = ((Activity) getContext())
+                    .getLayoutInflater();
+            convertView = layoutInflater.inflate(R.layout.file_item, null);
 
-    //file info
-    if (file.isDirectory())
-      bag.txtFileInfo.setVisibility(View.GONE);
-    else {
-      String time = null;
-      try {
-        time = new SimpleDateFormat(fileTimeShortFormat).format(file.lastModified());
-      } catch (Exception e) {
-        try {
-          time = new SimpleDateFormat(DefFileTimeShortFormat).format(file.lastModified());
-        } catch (Exception ex) {
-          time = new Date(file.lastModified()).toLocaleString();
+            bag = new Bag();
+            bag.txtFileName = (TextView) convertView
+                    .findViewById(R.id.text_view_filename);
+            bag.txtFileInfo = (TextView) convertView
+                    .findViewById(R.id.text_view_file_info);
+            bag.checkboxSelection = (CheckBox) convertView
+                    .findViewById(R.id.checkbox_selection);
+            bag.imageIcon = (ImageView) convertView
+                    .findViewById(R.id.image_view_icon);
+
+            convertView.setTag(bag);
+        } else {
+            bag = (Bag) convertView.getTag();
         }
-      }
 
-      bag.txtFileInfo.setText(String.format("%s, %s", Converter.sizeToStr(file.length()), time));
-      bag.txtFileInfo.setVisibility(View.VISIBLE);
+        // update view
+        updateView(bag, Data, Data.getFile());
+
+        return convertView;
     }
 
-    //checkbox
-    if (MultiSelection) {
-      if (SelectionMode == FileChooserActivity.FilesOnly && file.isDirectory()) {
-        bag.checkboxSelection.setVisibility(View.GONE);
-      } else {
-        bag.checkboxSelection.setVisibility(View.VISIBLE);
-        bag.checkboxSelection.setFocusable(false);
-        bag.checkboxSelection.setOnCheckedChangeListener(
-            new CompoundButton.OnCheckedChangeListener() {
-  
-              @Override
-              public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Dm.setSelected(isChecked);
-              }
-            });
-        bag.checkboxSelection.setChecked(Dm.isSelected());
-      }
-    } else
-      bag.checkboxSelection.setVisibility(View.GONE);
-  }
+    /**
+     * Updates the view.
+     * 
+     * @param bag
+     *            the "view holder", see {@link Bag}
+     * @param Dm
+     *            {@link DataModel}
+     * @param file
+     *            {@link File}
+     * @since v2.0 alpha
+     */
+    private void updateView(Bag bag, final DataModel Dm, File file) {
+        // image icon
+        if (file.isDirectory())
+            bag.imageIcon.setImageResource(R.drawable.folder48);
+        else
+            bag.imageIcon.setImageResource(R.drawable.file48);
+
+        // filename
+        bag.txtFileName.setText(file.getName());
+
+        // file info
+        if (file.isDirectory())
+            bag.txtFileInfo.setVisibility(View.GONE);
+        else {
+            String time = null;
+            try {
+                time = new SimpleDateFormat(fileTimeShortFormat).format(file
+                        .lastModified());
+            } catch (Exception e) {
+                try {
+                    time = new SimpleDateFormat(DefFileTimeShortFormat)
+                            .format(file.lastModified());
+                } catch (Exception ex) {
+                    time = new Date(file.lastModified()).toLocaleString();
+                }
+            }
+
+            bag.txtFileInfo.setText(String.format("%s, %s",
+                    Converter.sizeToStr(file.length()), time));
+            bag.txtFileInfo.setVisibility(View.VISIBLE);
+        }
+
+        // checkbox
+        if (MultiSelection) {
+            if (SelectionMode == FileChooserActivity.FilesOnly
+                    && file.isDirectory()) {
+                bag.checkboxSelection.setVisibility(View.GONE);
+            } else {
+                bag.checkboxSelection.setVisibility(View.VISIBLE);
+                bag.checkboxSelection.setFocusable(false);
+                bag.checkboxSelection
+                        .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+                            @Override
+                            public void onCheckedChanged(
+                                    CompoundButton buttonView, boolean isChecked) {
+                                Dm.setSelected(isChecked);
+                            }
+                        });
+                bag.checkboxSelection.setChecked(Dm.isSelected());
+            }
+        } else
+            bag.checkboxSelection.setVisibility(View.GONE);
+    }//updateView
 }

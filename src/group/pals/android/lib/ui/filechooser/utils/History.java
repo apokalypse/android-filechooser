@@ -18,46 +18,58 @@ package group.pals.android.lib.ui.filechooser.utils;
 
 /**
  * A history store of any object.
+ * 
  * @author Hai Bison
- *
- * @param <A> any type
+ * 
+ * @param <A>
+ *            any type
  * @since v2.0 alpha
  */
 public interface History<A> {
 
-  /**
-   * Pushes new item to the history.
-   * @param currentItem usage: assume we have history of: 1-2-3-4,
-   * if current item is 3, and we push 5 to the history, then 4 will be truncated,
-   * and new history will be 1-2-3-5
-   * @param newItem the new item
-   */
-  public void push(A currentItem, A newItem);
+    /**
+     * Pushes new item to the history.
+     * 
+     * @param currentItem
+     *            usage: assume we have history of: 1-2-3-4, if current item is
+     *            3, and we push 5 to the history, then 4 will be truncated, and
+     *            new history will be 1-2-3-5
+     * @param newItem
+     *            the new item
+     */
+    public void push(A currentItem, A newItem);
 
-  /**
-   * Gets size of the history
-   * @return the size of the history
-   */
-  public int size();
+    /**
+     * Gets size of the history
+     * 
+     * @return the size of the history
+     */
+    public int size();
 
-  /**
-   * Gets index of item {@code a} 
-   * @param a an item
-   * @return index of the {@code a}, or -1 if there is no one
-   */
-  public int indexOf(A a);
+    /**
+     * Gets index of item {@code a}
+     * 
+     * @param a
+     *            an item
+     * @return index of the {@code a}, or -1 if there is no one
+     */
+    public int indexOf(A a);
 
-  /**
-   * Gets previous item of {@code a}
-   * @param a current item
-   * @return the previous item, can be {@code null}
-   */
-  public A prevOf(A a);
+    /**
+     * Gets previous item of {@code a}
+     * 
+     * @param a
+     *            current item
+     * @return the previous item, can be {@code null}
+     */
+    public A prevOf(A a);
 
-  /**
-   * Gets next item of {@code a}
-   * @param a current item
-   * @return the next item, can be {@code null}
-   */
-  public A nextOf(A a);
+    /**
+     * Gets next item of {@code a}
+     * 
+     * @param a
+     *            current item
+     * @return the next item, can be {@code null}
+     */
+    public A nextOf(A a);
 }
