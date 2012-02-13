@@ -43,12 +43,12 @@ import android.widget.TextView;
 public class FileAdapter extends ArrayAdapter<DataModel> {
 
     /**
-     * Default short format for file time. Value = {@code "yyyy.MM.dd kk:mm"}<br>
+     * Default short format for file time. Value = {@code "yyyy.MM.dd hh:mm a"}<br>
      * See <a href=
      * "http://developer.android.com/reference/java/text/SimpleDateFormat.html"
      * >API docs</a>.
      */
-    public static final String DefFileTimeShortFormat = "yyyy.MM.dd kk:mm";
+    public static final String DefFileTimeShortFormat = "yyyy.MM.dd hh:mm a";
     /**
      * You can set your own short format for file time by this variable. If the
      * value is in wrong format, {@link #DefFileTimeShortFormat} will be used.<br>
