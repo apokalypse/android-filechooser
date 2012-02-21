@@ -37,6 +37,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -151,10 +152,16 @@ public class FileChooserActivity extends Activity {
 
         selectionMode = getIntent().getIntExtra(SelectionMode, FilesOnly);
         maxFileCount = getIntent().getIntExtra(MaxFileCount, 1024);
-        root = new File(
-                getIntent().getStringExtra(Rootpath) != null ? getIntent()
-                        .getStringExtra(Rootpath) : "/");
-        if (!root.isDirectory())
+
+        /*
+         * set root path, if not specified, try using sdcard, if sdcard is not
+         * available, use "/"
+         */
+        if (getIntent().getStringExtra(Rootpath) == null)
+            root = Environment.getExternalStorageDirectory();
+        else
+            root = new File(getIntent().getStringExtra(Rootpath));
+        if (root == null || !root.isDirectory())
             root = new File("/");
 
         multiSelection = getIntent().getBooleanExtra(MultiSelection, false);
@@ -239,9 +246,9 @@ public class FileChooserActivity extends Activity {
      */
     private void setupListviewFiles() {
         listviewFiles.setFooterDividersEnabled(true);
-        //single click to open directory (if the item is directory)
+        // single click to open directory (if the item is directory)
         listviewFiles.setOnItemClickListener(ListviewFilesOnItemClickListener);
-        //long click to select item (if this is single mode)
+        // long click to select item (if this is single mode)
         listviewFiles
                 .setOnItemLongClickListener(ListviewFilesOnItemLongClickListener);
     }// setupListviewFiles()
