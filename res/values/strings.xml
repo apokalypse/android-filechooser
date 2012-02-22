@@ -55,5 +55,8 @@
         <string name="msg_loading">Loading...</string>
         <string name="pmsg_max_file_count_allowed">...has more files, max allowed: %,d</string>
         <string name="app_name">android-filechooser</string>
+        <string name="cmd_sort_by_name">Sort by name</string>
+        <string name="cmd_sort_by_size">Sort by size</string>
+        <string name="cmd_sort_by_date">Sort by date</string>
 
 </resources>

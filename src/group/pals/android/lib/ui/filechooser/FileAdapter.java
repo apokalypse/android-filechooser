@@ -147,25 +147,23 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
         bag.txtFileName.setText(file.getName());
 
         // file info
-        if (file.isDirectory())
-            bag.txtFileInfo.setVisibility(View.GONE);
-        else {
-            String time = null;
+        String time = null;
+        try {
+            time = new SimpleDateFormat(fileTimeShortFormat).format(file
+                    .lastModified());
+        } catch (Exception e) {
             try {
-                time = new SimpleDateFormat(fileTimeShortFormat).format(file
-                        .lastModified());
-            } catch (Exception e) {
-                try {
-                    time = new SimpleDateFormat(DefFileTimeShortFormat)
-                            .format(file.lastModified());
-                } catch (Exception ex) {
-                    time = new Date(file.lastModified()).toLocaleString();
-                }
+                time = new SimpleDateFormat(DefFileTimeShortFormat)
+                        .format(file.lastModified());
+            } catch (Exception ex) {
+                time = new Date(file.lastModified()).toLocaleString();
             }
-
+        }
+        if (file.isDirectory())
+            bag.txtFileInfo.setText(time);
+        else {
             bag.txtFileInfo.setText(String.format("%s, %s",
                     Converter.sizeToStr(file.length()), time));
-            bag.txtFileInfo.setVisibility(View.VISIBLE);
         }
 
         // checkbox

@@ -1,7 +1,7 @@
 android-filechooser
 Copyright 2012 Hai Bison
 
-Version: 2.0 alpha
+Version: 2.0
 
 This product includes software developed at
 http://code.google.com/p/android-filechooser/
@@ -21,6 +21,14 @@ limitations under the License.
 ===============================================================
 
 History:
+
++++ Version 2.0 +++
+ - Release: Feb 22, 2012
+
+ - change default date format to "yyyy.MM.dd hh:mm a";
+ - try using sdcard as rootpath if it is not specified; if sdcard is not available, use "/";
+ - add sorter (by name/ size/ date);
+ - show directories' date (last modified);
 
 +++ Version 1.91 +++
  - Release: Feb 06, 2012

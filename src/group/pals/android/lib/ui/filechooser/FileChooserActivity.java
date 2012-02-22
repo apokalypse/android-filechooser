@@ -36,10 +36,15 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
@@ -66,10 +71,35 @@ public class FileChooserActivity extends Activity {
      * Key to hold the root path, default = "/"
      */
     public static final String Rootpath = "rootpath";
+
+    // ---------------------------------------------------------
+
     /**
-     * Key to hold selection mode, default = @ #FilesOnly}
+     * Key to hold selection mode, default = {@link #FilesOnly}.<br>
+     * Acceptable values:<br>
+     * - {@link #FilesOnly}<br>
+     * - {@link #DirectoriesOnly}<br>
+     * - {@link #FilesAndDirectories}
      */
     public static final String SelectionMode = "selection_mode";
+
+    // flags
+
+    /**
+     * User can choose files only
+     */
+    public static final int FilesOnly = 0;
+    /**
+     * User can choose directories only
+     */
+    public static final int DirectoriesOnly = 1;
+    /**
+     * User can choose files or directories
+     */
+    public static final int FilesAndDirectories = 2;
+
+    // ---------------------------------------------------------
+
     /**
      * Key to hold max file count that's allowed to be listed, default =
      * {@code 1024}
@@ -87,6 +117,56 @@ public class FileChooserActivity extends Activity {
      * Key to hold display-hidden-files, default = {@code false}
      */
     public static final String DisplayHiddenFiles = "display_hidden_files";
+
+    // ---------------------------------------------------------
+
+    /**
+     * Key to hold sort type, default = {@link #SortByName}.<br>
+     * Acceptable values:<br>
+     * - {@link #SortByName}<br>
+     * - {@link #SortBySize}<br>
+     * - {@link #SortByDate}
+     */
+    public static final String SortType = "sort-type";
+
+    // flags
+
+    /**
+     * Sort by name, (directories first, case-insensitive)
+     */
+    public static final int SortByName = 0;
+    /**
+     * Sort by size (directories first)
+     */
+    public static final int SortBySize = 1;
+    /**
+     * Sort by date (directories first)
+     */
+    public static final int SortByDate = 2;
+
+    // ---------------------------------------------------------
+
+    /**
+     * Key to hold sort order, default = {@link #Ascending}.<br>
+     * Acceptable values:<br>
+     * - {@link #Ascending}<br>
+     * - {@link #Descending}
+     */
+    public static final String SortOrder = "sort-order";
+
+    // flags
+
+    /**
+     * Sort ascending.
+     */
+    public static final int Ascending = 0;
+    /**
+     * Sort descending.
+     */
+    public static final int Descending = 1;
+
+    // ---------------------------------------------------------
+
     /**
      * Key to hold property save-dialog, default = {@code false}
      */
@@ -100,26 +180,17 @@ public class FileChooserActivity extends Activity {
      */
     public static final String Results = "results";
 
-    /*----------------------------------------------------
-     * FLAGS
-     */
-
-    /**
-     * User can choose files only
-     */
-    public static final int FilesOnly = 0;
-    /**
-     * User can choose directories only
-     */
-    public static final int DirectoriesOnly = 1;
-    /**
-     * User can choose files or directories
-     */
-    public static final int FilesAndDirectories = 2;
-
     /*
      * "constant" variables
      */
+
+    /**
+     * Used to store preferences. Currently it just stores {@link #SortType} and
+     * {@link #SortOrder}
+     * 
+     * @since v2.0 alpha
+     */
+    private SharedPreferences prefs;
     private File root;
     private int selectionMode;
     private int maxFileCount;
@@ -150,6 +221,8 @@ public class FileChooserActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.file_chooser);
 
+        loadPreferences();
+
         selectionMode = getIntent().getIntExtra(SelectionMode, FilesOnly);
         maxFileCount = getIntent().getIntExtra(MaxFileCount, 1024);
 
@@ -168,6 +241,7 @@ public class FileChooserActivity extends Activity {
         regexFilenameFilter = getIntent().getStringExtra(RegexFilenameFilter);
         displayHiddenFiles = getIntent().getBooleanExtra(DisplayHiddenFiles,
                 false);
+
         saveDialog = getIntent().getBooleanExtra(SaveDialog, false);
         if (saveDialog) {
             selectionMode = FilesOnly;
@@ -195,7 +269,98 @@ public class FileChooserActivity extends Activity {
                 history.push(getLocation(), getLocation());
             }
         });
-    }
+    }// onCreate
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.file_chooser_activity, menu);
+        return true;
+    }// onCreateOptionsMenu
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        final int LastSortType = prefs.getInt(FileChooserActivity.SortType,
+                SortByName);
+        final boolean LastSortAscending = prefs.getInt(
+                FileChooserActivity.SortOrder, Ascending) == Ascending;
+        Editor editor = prefs.edit();
+
+        if (item.getItemId() == R.id.menuitem_sort_by_name) {
+            if (LastSortType == SortByName)
+                editor.putInt(SortOrder, LastSortAscending ? Descending
+                        : Ascending);
+            else {
+                editor.putInt(FileChooserActivity.SortType, SortByName);
+                editor.putInt(SortOrder, Ascending);
+            }
+        } else if (item.getItemId() == R.id.menuitem_sort_by_size) {
+            if (LastSortType == SortBySize)
+                editor.putInt(SortOrder, LastSortAscending ? Descending
+                        : Ascending);
+            else {
+                editor.putInt(FileChooserActivity.SortType, SortBySize);
+                editor.putInt(SortOrder, Ascending);
+            }
+        } else if (item.getItemId() == R.id.menuitem_sort_by_date) {
+            if (LastSortType == SortByDate)
+                editor.putInt(SortOrder, LastSortAscending ? Descending
+                        : Ascending);
+            else {
+                editor.putInt(FileChooserActivity.SortType, SortByDate);
+                editor.putInt(SortOrder, Ascending);
+            }
+        }
+
+        editor.commit();
+
+        /*
+         * Re-sort the listview by re-loading current location; NOTE: re-sort
+         * the adapter does not repaint the listview, even if we call
+         * notifyDataSetChanged(), invalidateViews()...
+         */
+        setLocation(getLocation(), null);
+
+        return true;
+    }// onOptionsItemSelected
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        /*
+         * sorting
+         */
+
+        // clear all icons
+        final int[] SorterIds = { R.id.menuitem_sort_by_name,
+                R.id.menuitem_sort_by_size, R.id.menuitem_sort_by_date };
+        for (int id : SorterIds)
+            menu.findItem(id).setIcon(0);
+
+        final int SortType = prefs.getInt(FileChooserActivity.SortType,
+                SortByName);
+        final boolean SortAscending = prefs.getInt(
+                FileChooserActivity.SortOrder, Ascending) == Ascending;
+
+        switch (SortType) {
+        case SortByName:
+            menu.findItem(R.id.menuitem_sort_by_name).setIcon(
+                    SortAscending ? R.drawable.ic_menu_sort_up
+                            : R.drawable.ic_menu_sort_down);
+            break;
+        case SortBySize:
+            menu.findItem(R.id.menuitem_sort_by_size).setIcon(
+                    SortAscending ? R.drawable.ic_menu_sort_up
+                            : R.drawable.ic_menu_sort_down);
+            break;
+        case SortByDate:
+            menu.findItem(R.id.menuitem_sort_by_date).setIcon(
+                    SortAscending ? R.drawable.ic_menu_sort_up
+                            : R.drawable.ic_menu_sort_down);
+            break;
+        }
+
+        return true;
+    }// onPrepareOptionsMenu
 
     @Override
     protected void onStart() {
@@ -203,7 +368,35 @@ public class FileChooserActivity extends Activity {
         if (!multiSelection && !saveDialog)
             Toast.makeText(this, R.string.hint_long_click_to_select_files,
                     Toast.LENGTH_SHORT).show();
-    }
+    }// onStart
+
+    /**
+     * Loads preferences.
+     */
+    private void loadPreferences() {
+        prefs = getSharedPreferences(FileChooserActivity.class.getSimpleName(),
+                0);
+
+        Editor editor = prefs.edit();
+
+        /*
+         * sort
+         */
+
+        if (getIntent().hasExtra(SortType))
+            editor.putInt(SortType,
+                    getIntent().getIntExtra(SortType, SortByName));
+        else if (!prefs.contains(SortType))
+            editor.putInt(SortType, SortByName);
+
+        if (getIntent().hasExtra(SortOrder))
+            editor.putInt(SortOrder,
+                    getIntent().getIntExtra(SortOrder, Ascending));
+        else if (!prefs.contains(SortOrder))
+            editor.putInt(SortOrder, Ascending);
+
+        editor.commit();
+    }// loadPreferences
 
     /**
      * Setup:<br>
@@ -532,7 +725,9 @@ public class FileChooserActivity extends Activity {
             });// dir.listFiles()
 
             if (files != null)
-                Arrays.sort(files, new FileComparator());
+                Arrays.sort(files,
+                        new FileComparator(prefs.getInt(SortType, SortByName),
+                                prefs.getInt(SortOrder, Ascending)));
 
             if (listener != null)
                 listener.onFinish(
