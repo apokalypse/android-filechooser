@@ -280,46 +280,49 @@ public class FileChooserActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        final int LastSortType = prefs.getInt(FileChooserActivity.SortType,
-                SortByName);
-        final boolean LastSortAscending = prefs.getInt(
-                FileChooserActivity.SortOrder, Ascending) == Ascending;
-        Editor editor = prefs.edit();
+        // TODO: split into multiple methods
+        if (item.getGroupId() == R.id.menugroup_sorter) {
+            final int LastSortType = prefs.getInt(FileChooserActivity.SortType,
+                    SortByName);
+            final boolean LastSortAscending = prefs.getInt(
+                    FileChooserActivity.SortOrder, Ascending) == Ascending;
+            Editor editor = prefs.edit();
 
-        if (item.getItemId() == R.id.menuitem_sort_by_name) {
-            if (LastSortType == SortByName)
-                editor.putInt(SortOrder, LastSortAscending ? Descending
-                        : Ascending);
-            else {
-                editor.putInt(FileChooserActivity.SortType, SortByName);
-                editor.putInt(SortOrder, Ascending);
+            if (item.getItemId() == R.id.menuitem_sort_by_name) {
+                if (LastSortType == SortByName)
+                    editor.putInt(SortOrder, LastSortAscending ? Descending
+                            : Ascending);
+                else {
+                    editor.putInt(FileChooserActivity.SortType, SortByName);
+                    editor.putInt(SortOrder, Ascending);
+                }
+            } else if (item.getItemId() == R.id.menuitem_sort_by_size) {
+                if (LastSortType == SortBySize)
+                    editor.putInt(SortOrder, LastSortAscending ? Descending
+                            : Ascending);
+                else {
+                    editor.putInt(FileChooserActivity.SortType, SortBySize);
+                    editor.putInt(SortOrder, Ascending);
+                }
+            } else if (item.getItemId() == R.id.menuitem_sort_by_date) {
+                if (LastSortType == SortByDate)
+                    editor.putInt(SortOrder, LastSortAscending ? Descending
+                            : Ascending);
+                else {
+                    editor.putInt(FileChooserActivity.SortType, SortByDate);
+                    editor.putInt(SortOrder, Ascending);
+                }
             }
-        } else if (item.getItemId() == R.id.menuitem_sort_by_size) {
-            if (LastSortType == SortBySize)
-                editor.putInt(SortOrder, LastSortAscending ? Descending
-                        : Ascending);
-            else {
-                editor.putInt(FileChooserActivity.SortType, SortBySize);
-                editor.putInt(SortOrder, Ascending);
-            }
-        } else if (item.getItemId() == R.id.menuitem_sort_by_date) {
-            if (LastSortType == SortByDate)
-                editor.putInt(SortOrder, LastSortAscending ? Descending
-                        : Ascending);
-            else {
-                editor.putInt(FileChooserActivity.SortType, SortByDate);
-                editor.putInt(SortOrder, Ascending);
-            }
-        }
 
-        editor.commit();
+            editor.commit();
 
-        /*
-         * Re-sort the listview by re-loading current location; NOTE: re-sort
-         * the adapter does not repaint the listview, even if we call
-         * notifyDataSetChanged(), invalidateViews()...
-         */
-        setLocation(getLocation(), null);
+            /*
+             * Re-sort the listview by re-loading current location; NOTE:
+             * re-sort the adapter does not repaint the listview, even if we
+             * call notifyDataSetChanged(), invalidateViews()...
+             */
+            setLocation(getLocation(), null);
+        }//group_sorter
 
         return true;
     }// onOptionsItemSelected
