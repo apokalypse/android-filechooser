@@ -68,7 +68,8 @@ public class FileChooserActivity extends Activity {
      */
 
     /**
-     * Key to hold the fRoot path, default = "/"
+     * Key to hold the root path, default is sdcard, if sdcard is not available,
+     * "/" will be used
      */
     public static final String Rootpath = "rootpath";
 
@@ -282,8 +283,8 @@ public class FileChooserActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // TODO: split into multiple methods
         if (item.getGroupId() == R.id.menugroup_sorter) {
-            final int LastSortType = fPrefs.getInt(FileChooserActivity.SortType,
-                    SortByName);
+            final int LastSortType = fPrefs.getInt(
+                    FileChooserActivity.SortType, SortByName);
             final boolean LastSortAscending = fPrefs.getInt(
                     FileChooserActivity.SortOrder, Ascending) == Ascending;
             Editor editor = fPrefs.edit();
@@ -322,7 +323,7 @@ public class FileChooserActivity extends Activity {
              * call notifyDataSetChanged(), invalidateViews()...
              */
             setLocation(getLocation(), null);
-        }//group_sorter
+        }// group_sorter
 
         return true;
     }// onOptionsItemSelected
@@ -377,8 +378,8 @@ public class FileChooserActivity extends Activity {
      * Loads preferences.
      */
     private void loadPreferences() {
-        fPrefs = getSharedPreferences(FileChooserActivity.class.getSimpleName(),
-                0);
+        fPrefs = getSharedPreferences(
+                FileChooserActivity.class.getSimpleName(), 0);
 
         Editor editor = fPrefs.edit();
 
