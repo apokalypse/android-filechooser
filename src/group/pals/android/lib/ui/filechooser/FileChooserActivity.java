@@ -68,7 +68,7 @@ public class FileChooserActivity extends Activity {
      */
 
     /**
-     * Key to hold the root path, default = "/"
+     * Key to hold the fRoot path, default = "/"
      */
     public static final String Rootpath = "rootpath";
 
@@ -190,14 +190,14 @@ public class FileChooserActivity extends Activity {
      * 
      * @since v2.0 alpha
      */
-    private SharedPreferences prefs;
-    private File root;
-    private int selectionMode;
-    private int maxFileCount;
-    private boolean multiSelection;
-    private String regexFilenameFilter;
-    private boolean displayHiddenFiles;
-    private boolean saveDialog;
+    private SharedPreferences fPrefs;
+    private File fRoot;
+    private int fSelectionMode;
+    private int fMaxFileCount;
+    private boolean fMultiSelection;
+    private String fRegexFilenameFilter;
+    private boolean fDisplayHiddenFiles;
+    private boolean fSaveDialog;
 
     /*
      * variables
@@ -223,30 +223,30 @@ public class FileChooserActivity extends Activity {
 
         loadPreferences();
 
-        selectionMode = getIntent().getIntExtra(SelectionMode, FilesOnly);
-        maxFileCount = getIntent().getIntExtra(MaxFileCount, 1024);
+        fSelectionMode = getIntent().getIntExtra(SelectionMode, FilesOnly);
+        fMaxFileCount = getIntent().getIntExtra(MaxFileCount, 1024);
 
         /*
-         * set root path, if not specified, try using sdcard, if sdcard is not
+         * set fRoot path, if not specified, try using sdcard, if sdcard is not
          * available, use "/"
          */
         if (getIntent().getStringExtra(Rootpath) == null)
-            root = Environment.getExternalStorageDirectory();
+            fRoot = Environment.getExternalStorageDirectory();
         else
-            root = new File(getIntent().getStringExtra(Rootpath));
-        if (root == null || !root.isDirectory())
-            root = new File("/");
+            fRoot = new File(getIntent().getStringExtra(Rootpath));
+        if (fRoot == null || !fRoot.isDirectory())
+            fRoot = new File("/");
 
-        multiSelection = getIntent().getBooleanExtra(MultiSelection, false);
-        regexFilenameFilter = getIntent().getStringExtra(RegexFilenameFilter);
-        displayHiddenFiles = getIntent().getBooleanExtra(DisplayHiddenFiles,
+        fMultiSelection = getIntent().getBooleanExtra(MultiSelection, false);
+        fRegexFilenameFilter = getIntent().getStringExtra(RegexFilenameFilter);
+        fDisplayHiddenFiles = getIntent().getBooleanExtra(DisplayHiddenFiles,
                 false);
 
-        saveDialog = getIntent().getBooleanExtra(SaveDialog, false);
-        if (saveDialog) {
-            selectionMode = FilesOnly;
-            multiSelection = false;
-            regexFilenameFilter = null;
+        fSaveDialog = getIntent().getBooleanExtra(SaveDialog, false);
+        if (fSaveDialog) {
+            fSelectionMode = FilesOnly;
+            fMultiSelection = false;
+            fRegexFilenameFilter = null;
         }
 
         btnGoBack = (ImageButton) findViewById(R.id.button_go_back);
@@ -262,7 +262,7 @@ public class FileChooserActivity extends Activity {
         setupHeader();
         setupListviewFiles();
         setupFooter();
-        setLocation(root, new TaskListener() {
+        setLocation(fRoot, new TaskListener() {
 
             @Override
             public void onFinish(boolean ok, Object any) {
@@ -282,11 +282,11 @@ public class FileChooserActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // TODO: split into multiple methods
         if (item.getGroupId() == R.id.menugroup_sorter) {
-            final int LastSortType = prefs.getInt(FileChooserActivity.SortType,
+            final int LastSortType = fPrefs.getInt(FileChooserActivity.SortType,
                     SortByName);
-            final boolean LastSortAscending = prefs.getInt(
+            final boolean LastSortAscending = fPrefs.getInt(
                     FileChooserActivity.SortOrder, Ascending) == Ascending;
-            Editor editor = prefs.edit();
+            Editor editor = fPrefs.edit();
 
             if (item.getItemId() == R.id.menuitem_sort_by_name) {
                 if (LastSortType == SortByName)
@@ -339,9 +339,9 @@ public class FileChooserActivity extends Activity {
         for (int id : SorterIds)
             menu.findItem(id).setIcon(0);
 
-        final int SortType = prefs.getInt(FileChooserActivity.SortType,
+        final int SortType = fPrefs.getInt(FileChooserActivity.SortType,
                 SortByName);
-        final boolean SortAscending = prefs.getInt(
+        final boolean SortAscending = fPrefs.getInt(
                 FileChooserActivity.SortOrder, Ascending) == Ascending;
 
         switch (SortType) {
@@ -368,7 +368,7 @@ public class FileChooserActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (!multiSelection && !saveDialog)
+        if (!fMultiSelection && !fSaveDialog)
             Toast.makeText(this, R.string.hint_long_click_to_select_files,
                     Toast.LENGTH_SHORT).show();
     }// onStart
@@ -377,10 +377,10 @@ public class FileChooserActivity extends Activity {
      * Loads preferences.
      */
     private void loadPreferences() {
-        prefs = getSharedPreferences(FileChooserActivity.class.getSimpleName(),
+        fPrefs = getSharedPreferences(FileChooserActivity.class.getSimpleName(),
                 0);
 
-        Editor editor = prefs.edit();
+        Editor editor = fPrefs.edit();
 
         /*
          * sort
@@ -389,13 +389,13 @@ public class FileChooserActivity extends Activity {
         if (getIntent().hasExtra(SortType))
             editor.putInt(SortType,
                     getIntent().getIntExtra(SortType, SortByName));
-        else if (!prefs.contains(SortType))
+        else if (!fPrefs.contains(SortType))
             editor.putInt(SortType, SortByName);
 
         if (getIntent().hasExtra(SortOrder))
             editor.putInt(SortOrder,
                     getIntent().getIntExtra(SortOrder, Ascending));
-        else if (!prefs.contains(SortOrder))
+        else if (!fPrefs.contains(SortOrder))
             editor.putInt(SortOrder, Ascending);
 
         editor.commit();
@@ -409,10 +409,10 @@ public class FileChooserActivity extends Activity {
      * - button go forward;
      */
     private void setupHeader() {
-        if (saveDialog) {
+        if (fSaveDialog) {
             setTitle(R.string.title_save_as);
         } else {
-            switch (selectionMode) {
+            switch (fSelectionMode) {
             case FilesOnly:
                 setTitle(R.string.title_choose_files);
                 break;
@@ -458,7 +458,7 @@ public class FileChooserActivity extends Activity {
     private void setupFooter() {
         btnCancel.setOnClickListener(BtnCancelOnClickListener);
 
-        if (saveDialog) {
+        if (fSaveDialog) {
             txtSaveasFilename.setText(getIntent().getStringExtra(
                     DefaultFilename));
             txtSaveasFilename
@@ -467,11 +467,11 @@ public class FileChooserActivity extends Activity {
         } else {// this is in open mode
             txtSaveasFilename.setVisibility(View.GONE);
 
-            if (multiSelection)
+            if (fMultiSelection)
                 btnOk.setOnClickListener(BtnOk_OpenDialog_OnClickListener);
             else
                 btnOk.setVisibility(View.GONE);
-        }// if saveDialog...
+        }// if fSaveDialog...
     }// setupFooter()
 
     /**
@@ -590,8 +590,8 @@ public class FileChooserActivity extends Activity {
                 for (File f : files)
                     list.add(new DataModel(f));
                 listviewFiles.setAdapter(new FileAdapter(
-                        FileChooserActivity.this, list, selectionMode,
-                        multiSelection));
+                        FileChooserActivity.this, list, fSelectionMode,
+                        fMultiSelection));
 
                 /*
                  * navigation buttons
@@ -654,7 +654,7 @@ public class FileChooserActivity extends Activity {
                     .findViewById(R.id.text_view_msg_hasmorefiles);
             txt.setText(String.format(
                     getString(R.string.pmsg_max_file_count_allowed),
-                    maxFileCount));
+                    fMaxFileCount));
         } else {
             listviewFiles.removeFooterView((View) listviewFiles.getTag());
             listviewFiles.setTag(null);
@@ -665,7 +665,7 @@ public class FileChooserActivity extends Activity {
      * Lists files inside {@code dir}
      * 
      * @param dir
-     *            the root directory which needs to list files
+     *            the fRoot directory which needs to list files
      * @param listener
      *            {@link TaskListener} used to notify caller:<br>
      *            - {@link TaskListener#onFinish(boolean, Object)} ->
@@ -691,10 +691,10 @@ public class FileChooserActivity extends Activity {
 
                 @Override
                 public boolean accept(File pathname) {
-                    if (!displayHiddenFiles
+                    if (!fDisplayHiddenFiles
                             && pathname.getName().startsWith("."))
                         return false;
-                    if (fileCount >= maxFileCount) {
+                    if (fileCount >= fMaxFileCount) {
                         if (!flagIsSet) {
                             HasMoreFiles.setLength(0);
                             HasMoreFiles.append(Boolean.toString(true));
@@ -703,11 +703,11 @@ public class FileChooserActivity extends Activity {
                         return false;
                     }
 
-                    switch (selectionMode) {
+                    switch (fSelectionMode) {
                     case FilesOnly:
-                        if (regexFilenameFilter != null && pathname.isFile())
+                        if (fRegexFilenameFilter != null && pathname.isFile())
                             return pathname.getName().matches(
-                                    regexFilenameFilter);
+                                    fRegexFilenameFilter);
 
                         fileCount++;
                         return true;
@@ -717,9 +717,9 @@ public class FileChooserActivity extends Activity {
                             fileCount++;
                         return ok;
                     default:
-                        if (regexFilenameFilter != null && pathname.isFile())
+                        if (fRegexFilenameFilter != null && pathname.isFile())
                             return pathname.getName().matches(
-                                    regexFilenameFilter);
+                                    fRegexFilenameFilter);
 
                         fileCount++;
                         return true;
@@ -729,8 +729,8 @@ public class FileChooserActivity extends Activity {
 
             if (files != null)
                 Arrays.sort(files,
-                        new FileComparator(prefs.getInt(SortType, SortByName),
-                                prefs.getInt(SortOrder, Ascending)));
+                        new FileComparator(fPrefs.getInt(SortType, SortByName),
+                                fPrefs.getInt(SortOrder, Ascending)));
 
             if (listener != null)
                 listener.onFinish(
@@ -769,8 +769,8 @@ public class FileChooserActivity extends Activity {
         intent.putExtra(Results, files);
 
         // return flags for further use (in case the caller needs)
-        intent.putExtra(SelectionMode, selectionMode);
-        intent.putExtra(SaveDialog, saveDialog);
+        intent.putExtra(SelectionMode, fSelectionMode);
+        intent.putExtra(SaveDialog, fSaveDialog);
 
         setResult(RESULT_OK, intent);
 
@@ -829,7 +829,7 @@ public class FileChooserActivity extends Activity {
 
         @Override
         public boolean onLongClick(View v) {
-            if (multiSelection || selectionMode == FilesOnly || saveDialog)
+            if (fMultiSelection || fSelectionMode == FilesOnly || fSaveDialog)
                 return false;
 
             doFinish(getLocation().getFile());
@@ -937,7 +937,7 @@ public class FileChooserActivity extends Activity {
                     }
                 });
             } else {
-                if (saveDialog)
+                if (fSaveDialog)
                     txtSaveasFilename.setText(data.getFile().getName());
             }
         }
@@ -948,7 +948,7 @@ public class FileChooserActivity extends Activity {
         @Override
         public boolean onItemLongClick(AdapterView<?> av, View v, int position,
                 long id) {
-            if (multiSelection)
+            if (fMultiSelection)
                 return false;
             if (!(av.getItemAtPosition(position) instanceof DataModel)) {
                 // no comments :-D
@@ -958,10 +958,10 @@ public class FileChooserActivity extends Activity {
 
             DataModel data = (DataModel) av.getItemAtPosition(position);
 
-            if (data.getFile().isDirectory() && selectionMode == FilesOnly)
+            if (data.getFile().isDirectory() && fSelectionMode == FilesOnly)
                 return false;
 
-            // if selectionMode == DirectoriesOnly, files won't be
+            // if fSelectionMode == DirectoriesOnly, files won't be
             // shown
 
             doFinish(data.getFile());
