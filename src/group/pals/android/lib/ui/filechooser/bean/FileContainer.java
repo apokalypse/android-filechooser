@@ -19,7 +19,15 @@ package group.pals.android.lib.ui.filechooser.bean;
 import java.io.File;
 
 /**
- * To store {@link File}
+ * This class is used to wrap {@link File}<br>
+ * <br>
+ * Because a {@link File} equals to another one which has same pathname, so we
+ * can't use {@link File} in a history list. For example:<br>
+ * - {@code 1-2-3-2-4-5} -> {@link java.util.List#indexOf(Object)} will always
+ * return {@code 1} for "2", even we have two "2"'s.<br>
+ * <br>
+ * So {@code FileContainer} is used to distinguish the position of files in a
+ * {@link java.util.List}.
  * 
  * @author Hai Bison
  * 
