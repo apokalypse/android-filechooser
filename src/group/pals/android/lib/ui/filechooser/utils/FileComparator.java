@@ -53,33 +53,26 @@ public class FileComparator implements Comparator<File> {
     public int compare(File lhs, File rhs) {
         if ((lhs.isDirectory() && rhs.isDirectory())
                 || (lhs.isFile() && rhs.isFile())) {
-            int res = 0;
+            // default is to compare by name (case insensitive)
+            int res = lhs.getName().compareToIgnoreCase(rhs.getName());
+
             switch (SortType) {
             case FileChooserActivity.SortByName:
-                res = lhs.getName().compareToIgnoreCase(rhs.getName());
                 break;// SortByName
 
             case FileChooserActivity.SortBySize:
                 if (lhs.length() > rhs.length())
                     res = 1;
-                else if (lhs.length() == rhs.length())
-                    res = lhs.getName().compareToIgnoreCase(rhs.getName());
-                else
+                else if (lhs.length() < rhs.length())
                     res = -1;
                 break;// SortBySize
 
             case FileChooserActivity.SortByDate:
                 if (lhs.lastModified() > rhs.lastModified())
                     res = 1;
-                else if (lhs.lastModified() == rhs.lastModified())
-                    res = lhs.getName().compareToIgnoreCase(rhs.getName());
-                else
+                else if (lhs.lastModified() < rhs.lastModified())
                     res = -1;
                 break;// SortByDate
-
-            default:
-                res = lhs.getName().compareToIgnoreCase(rhs.getName());
-                break;
             }
 
             return SortOrder == FileChooserActivity.Ascending ? res : -res;
