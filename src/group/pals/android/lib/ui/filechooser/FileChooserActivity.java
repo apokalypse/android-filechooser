@@ -228,7 +228,7 @@ public class FileChooserActivity extends Activity {
         fMaxFileCount = getIntent().getIntExtra(MaxFileCount, 1024);
 
         /*
-         * set fRoot path, if not specified, try using sdcard, if sdcard is not
+         * set root path, if not specified, try using sdcard, if sdcard is not
          * available, use "/"
          */
         if (getIntent().getStringExtra(Rootpath) == null)
@@ -283,31 +283,31 @@ public class FileChooserActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // TODO: split into multiple methods
         if (item.getGroupId() == R.id.menugroup_sorter) {
-            final int LastSortType = fPrefs.getInt(
+            final int fLastSortType = fPrefs.getInt(
                     FileChooserActivity.SortType, SortByName);
-            final boolean LastSortAscending = fPrefs.getInt(
+            final boolean fLastSortAscending = fPrefs.getInt(
                     FileChooserActivity.SortOrder, Ascending) == Ascending;
             Editor editor = fPrefs.edit();
 
             if (item.getItemId() == R.id.menuitem_sort_by_name) {
-                if (LastSortType == SortByName)
-                    editor.putInt(SortOrder, LastSortAscending ? Descending
+                if (fLastSortType == SortByName)
+                    editor.putInt(SortOrder, fLastSortAscending ? Descending
                             : Ascending);
                 else {
                     editor.putInt(FileChooserActivity.SortType, SortByName);
                     editor.putInt(SortOrder, Ascending);
                 }
             } else if (item.getItemId() == R.id.menuitem_sort_by_size) {
-                if (LastSortType == SortBySize)
-                    editor.putInt(SortOrder, LastSortAscending ? Descending
+                if (fLastSortType == SortBySize)
+                    editor.putInt(SortOrder, fLastSortAscending ? Descending
                             : Ascending);
                 else {
                     editor.putInt(FileChooserActivity.SortType, SortBySize);
                     editor.putInt(SortOrder, Ascending);
                 }
             } else if (item.getItemId() == R.id.menuitem_sort_by_date) {
-                if (LastSortType == SortByDate)
-                    editor.putInt(SortOrder, LastSortAscending ? Descending
+                if (fLastSortType == SortByDate)
+                    editor.putInt(SortOrder, fLastSortAscending ? Descending
                             : Ascending);
                 else {
                     editor.putInt(FileChooserActivity.SortType, SortByDate);
@@ -335,30 +335,30 @@ public class FileChooserActivity extends Activity {
          */
 
         // clear all icons
-        final int[] SorterIds = { R.id.menuitem_sort_by_name,
+        final int[] fSorterIds = { R.id.menuitem_sort_by_name,
                 R.id.menuitem_sort_by_size, R.id.menuitem_sort_by_date };
-        for (int id : SorterIds)
+        for (int id : fSorterIds)
             menu.findItem(id).setIcon(0);
 
-        final int SortType = fPrefs.getInt(FileChooserActivity.SortType,
+        final int fSortType = fPrefs.getInt(FileChooserActivity.SortType,
                 SortByName);
-        final boolean SortAscending = fPrefs.getInt(
+        final boolean fSortAscending = fPrefs.getInt(
                 FileChooserActivity.SortOrder, Ascending) == Ascending;
 
-        switch (SortType) {
+        switch (fSortType) {
         case SortByName:
             menu.findItem(R.id.menuitem_sort_by_name).setIcon(
-                    SortAscending ? R.drawable.ic_menu_sort_up
+                    fSortAscending ? R.drawable.ic_menu_sort_up
                             : R.drawable.ic_menu_sort_down);
             break;
         case SortBySize:
             menu.findItem(R.id.menuitem_sort_by_size).setIcon(
-                    SortAscending ? R.drawable.ic_menu_sort_up
+                    fSortAscending ? R.drawable.ic_menu_sort_up
                             : R.drawable.ic_menu_sort_down);
             break;
         case SortByDate:
             menu.findItem(R.id.menuitem_sort_by_date).setIcon(
-                    SortAscending ? R.drawable.ic_menu_sort_up
+                    fSortAscending ? R.drawable.ic_menu_sort_up
                             : R.drawable.ic_menu_sort_down);
             break;
         }
@@ -427,15 +427,15 @@ public class FileChooserActivity extends Activity {
         }// title of activity
 
         // single click to change path
-        btnLocation.setOnClickListener(BtnLocationOnClickListener);
+        btnLocation.setOnClickListener(fBtnLocationOnClickListener);
         // long click to select current directory
-        btnLocation.setOnLongClickListener(BtnLocationOnLongClickListener);
+        btnLocation.setOnLongClickListener(fBtnLocationOnLongClickListener);
 
         btnGoBack.setEnabled(false);
-        btnGoBack.setOnClickListener(BtnGoBackOnClickListener);
+        btnGoBack.setOnClickListener(fBtnGoBackOnClickListener);
 
         btnGoForward.setEnabled(false);
-        btnGoForward.setOnClickListener(BtnGoForwardOnClickListener);
+        btnGoForward.setOnClickListener(fBtnGoForwardOnClickListener);
     }// setupHeader()
 
     /**
@@ -444,10 +444,10 @@ public class FileChooserActivity extends Activity {
     private void setupListviewFiles() {
         listviewFiles.setFooterDividersEnabled(true);
         // single click to open directory (if the item is directory)
-        listviewFiles.setOnItemClickListener(ListviewFilesOnItemClickListener);
+        listviewFiles.setOnItemClickListener(fListviewFilesOnItemClickListener);
         // long click to select item (if this is single mode)
         listviewFiles
-                .setOnItemLongClickListener(ListviewFilesOnItemLongClickListener);
+                .setOnItemLongClickListener(fListviewFilesOnItemLongClickListener);
     }// setupListviewFiles()
 
     /**
@@ -457,19 +457,19 @@ public class FileChooserActivity extends Activity {
      * - button Ok;
      */
     private void setupFooter() {
-        btnCancel.setOnClickListener(BtnCancelOnClickListener);
+        btnCancel.setOnClickListener(fBtnCancelOnClickListener);
 
         if (fSaveDialog) {
             txtSaveasFilename.setText(getIntent().getStringExtra(
                     DefaultFilename));
             txtSaveasFilename
-                    .setOnEditorActionListener(TxtFilenameOnEditorActionListener);
-            btnOk.setOnClickListener(BtnOk_SaveDialog_OnClickListener);
+                    .setOnEditorActionListener(fTxtFilenameOnEditorActionListener);
+            btnOk.setOnClickListener(fBtnOk_SaveDialog_OnClickListener);
         } else {// this is in open mode
             txtSaveasFilename.setVisibility(View.GONE);
 
             if (fMultiSelection)
-                btnOk.setOnClickListener(BtnOk_OpenDialog_OnClickListener);
+                btnOk.setOnClickListener(fBtnOk_OpenDialog_OnClickListener);
             else
                 btnOk.setVisibility(View.GONE);
         }// if fSaveDialog...
@@ -486,7 +486,7 @@ public class FileChooserActivity extends Activity {
             Toast.makeText(FileChooserActivity.this,
                     R.string.msg_filename_is_empty, Toast.LENGTH_SHORT).show();
         } else {
-            final File F = new File(getLocation().getFile().getAbsolutePath()
+            final File fFile = new File(getLocation().getFile().getAbsolutePath()
                     + File.separator + filename);
 
             if (!Utils.isFilenameValid(filename)) {
@@ -495,12 +495,12 @@ public class FileChooserActivity extends Activity {
                         String.format(
                                 getString(R.string.pmsg_filename_is_invalid),
                                 filename), Toast.LENGTH_SHORT).show();
-            } else if (F.isFile()) {
+            } else if (fFile.isFile()) {
                 new AlertDialog.Builder(FileChooserActivity.this)
                         .setMessage(
                                 String.format(
                                         getString(R.string.pmsg_confirm_replace_file),
-                                        F.getName()))
+                                        fFile.getName()))
                         .setPositiveButton(R.string.cmd_cancel, null)
                         .setNeutralButton(R.string.cmd_ok,
                                 new DialogInterface.OnClickListener() {
@@ -508,17 +508,17 @@ public class FileChooserActivity extends Activity {
                                     @Override
                                     public void onClick(DialogInterface dialog,
                                             int which) {
-                                        doFinish(F);
+                                        doFinish(fFile);
                                     }
                                 }).show();
-            } else if (F.isDirectory()) {
+            } else if (fFile.isDirectory()) {
                 Toast.makeText(
                         FileChooserActivity.this,
                         String.format(
                                 getString(R.string.pmsg_filename_is_directory),
-                                F.getName()), Toast.LENGTH_SHORT).show();
+                                fFile.getName()), Toast.LENGTH_SHORT).show();
             } else
-                doFinish(F);
+                doFinish(fFile);
         }
     }// checkSaveasFilenameAndFinish()
 
@@ -546,13 +546,13 @@ public class FileChooserActivity extends Activity {
     /**
      * Sets current location
      * 
-     * @param Path
+     * @param fPath
      *            the path
-     * @param Listener
+     * @param fListener
      *            {@link TaskListener}
      */
-    private void setLocation(final FileContainer Path,
-            final TaskListener Listener) {
+    private void setLocation(final FileContainer fPath,
+            final TaskListener fListener) {
         // TODO: let the user to be able to cancel the task
         new LoadingDialog(this, R.string.msg_loading, false) {
 
@@ -571,10 +571,10 @@ public class FileChooserActivity extends Activity {
                             FileChooserActivity.this,
                             String.format(
                                     getString(R.string.pmsg_cannot_access_dir),
-                                    Path.getFile().getName()),
+                                    fPath.getFile().getName()),
                             Toast.LENGTH_SHORT).show();
-                    if (Listener != null)
-                        Listener.onFinish(false, null);
+                    if (fListener != null)
+                        fListener.onFinish(false, null);
                     return;
                 }
 
@@ -598,24 +598,24 @@ public class FileChooserActivity extends Activity {
                  * navigation buttons
                  */
 
-                if (Path.getFile().getParentFile() != null
-                        && Path.getFile().getParentFile().getParentFile() != null)
-                    btnLocation.setText("../" + Path.getFile().getName());
+                if (fPath.getFile().getParentFile() != null
+                        && fPath.getFile().getParentFile().getParentFile() != null)
+                    btnLocation.setText("../" + fPath.getFile().getName());
                 else
-                    btnLocation.setText(Path.getFile().getAbsolutePath());
-                btnLocation.setTag(Path);
+                    btnLocation.setText(fPath.getFile().getAbsolutePath());
+                btnLocation.setTag(fPath);
 
-                int idx = history.indexOf(Path);
+                int idx = history.indexOf(fPath);
                 btnGoBack.setEnabled(idx > 0);
                 btnGoForward.setEnabled(idx >= 0 && idx < history.size() - 2);
 
-                if (Listener != null)
-                    Listener.onFinish(true, null);
+                if (fListener != null)
+                    fListener.onFinish(true, null);
             }// onFinish
 
             @Override
             public void onExecute() throws Throwable {
-                files = listFiles(Path.getFile(), new TaskListener() {
+                files = listFiles(fPath.getFile(), new TaskListener() {
 
                     @Override
                     public void onFinish(boolean ok, Object any) {
@@ -666,7 +666,7 @@ public class FileChooserActivity extends Activity {
      * Lists files inside {@code dir}
      * 
      * @param dir
-     *            the fRoot directory which needs to list files
+     *            the root directory which needs to list files
      * @param listener
      *            {@link TaskListener} used to notify caller:<br>
      *            - {@link TaskListener#onFinish(boolean, Object)} ->
@@ -681,7 +681,7 @@ public class FileChooserActivity extends Activity {
          * if total files exceeds max file count allowed, HasMoreFiles contains
          * "true", otherwise "false" TODO: bad way :-(
          */
-        final StringBuffer HasMoreFiles = new StringBuffer(
+        final StringBuffer fHasMoreFiles = new StringBuffer(
                 Boolean.toString(false));
 
         try {
@@ -697,8 +697,8 @@ public class FileChooserActivity extends Activity {
                         return false;
                     if (fileCount >= fMaxFileCount) {
                         if (!flagIsSet) {
-                            HasMoreFiles.setLength(0);
-                            HasMoreFiles.append(Boolean.toString(true));
+                            fHasMoreFiles.setLength(0);
+                            fHasMoreFiles.append(Boolean.toString(true));
                             flagIsSet = true;
                         }
                         return false;
@@ -735,7 +735,7 @@ public class FileChooserActivity extends Activity {
 
             if (listener != null)
                 listener.onFinish(
-                        Boolean.toString(true).equals(HasMoreFiles.toString()),
+                        Boolean.toString(true).equals(fHasMoreFiles.toString()),
                         null);
 
             return files;
@@ -782,7 +782,7 @@ public class FileChooserActivity extends Activity {
      * BUTTON LISTENERS
      */
 
-    private final View.OnClickListener BtnGoBackOnClickListener = new View.OnClickListener() {
+    private final View.OnClickListener fBtnGoBackOnClickListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -802,21 +802,21 @@ public class FileChooserActivity extends Activity {
                 btnGoBack.setEnabled(false);
             }
         }
-    };// BtnGoBackOnClickListener
+    };// fBtnGoBackOnClickListener
 
-    private final View.OnClickListener BtnLocationOnClickListener = new View.OnClickListener() {
+    private final View.OnClickListener fBtnLocationOnClickListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
             if (getLocation().getFile().getParentFile() != null) {
-                final FileContainer LastPath = getLocation();
+                final FileContainer fLastPath = getLocation();
                 setLocation(getLocation().getFile().getParentFile(),
                         new TaskListener() {
 
                             @Override
                             public void onFinish(boolean ok, Object any) {
                                 if (ok) {
-                                    history.push(LastPath, getLocation());
+                                    history.push(fLastPath, getLocation());
                                     btnGoBack.setEnabled(true);
                                     btnGoForward.setEnabled(false);
                                 }
@@ -824,9 +824,9 @@ public class FileChooserActivity extends Activity {
                         });// setLocation()
             }
         }
-    };// BtnLocationOnClickListener
+    };// fBtnLocationOnClickListener
 
-    private final View.OnLongClickListener BtnLocationOnLongClickListener = new View.OnLongClickListener() {
+    private final View.OnLongClickListener fBtnLocationOnLongClickListener = new View.OnLongClickListener() {
 
         @Override
         public boolean onLongClick(View v) {
@@ -838,9 +838,9 @@ public class FileChooserActivity extends Activity {
             return false;
         }
 
-    };// BtnLocationOnLongClickListener
+    };// fBtnLocationOnLongClickListener
 
-    private final View.OnClickListener BtnGoForwardOnClickListener = new View.OnClickListener() {
+    private final View.OnClickListener fBtnGoForwardOnClickListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -861,9 +861,9 @@ public class FileChooserActivity extends Activity {
                 btnGoForward.setEnabled(false);
             }
         }
-    };// BtnGoForwardOnClickListener
+    };// fBtnGoForwardOnClickListener
 
-    private final View.OnClickListener BtnCancelOnClickListener = new View.OnClickListener() {
+    private final View.OnClickListener fBtnCancelOnClickListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -871,9 +871,9 @@ public class FileChooserActivity extends Activity {
             setResult(RESULT_CANCELED);
             finish();
         }
-    };// BtnCancelOnClickListener
+    };// fBtnCancelOnClickListener
 
-    private final TextView.OnEditorActionListener TxtFilenameOnEditorActionListener = new TextView.OnEditorActionListener() {
+    private final TextView.OnEditorActionListener fTxtFilenameOnEditorActionListener = new TextView.OnEditorActionListener() {
 
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -885,9 +885,9 @@ public class FileChooserActivity extends Activity {
             }
             return false;
         }
-    };// TxtFilenameOnEditorActionListener
+    };// fTxtFilenameOnEditorActionListener
 
-    private final View.OnClickListener BtnOk_SaveDialog_OnClickListener = new View.OnClickListener() {
+    private final View.OnClickListener fBtnOk_SaveDialog_OnClickListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -896,9 +896,9 @@ public class FileChooserActivity extends Activity {
             String filename = txtSaveasFilename.getText().toString().trim();
             checkSaveasFilenameAndFinish(filename);
         }
-    };// BtnOk_SaveDialog_OnClickListener
+    };// fBtnOk_SaveDialog_OnClickListener
 
-    private final View.OnClickListener BtnOk_OpenDialog_OnClickListener = new View.OnClickListener() {
+    private final View.OnClickListener fBtnOk_OpenDialog_OnClickListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -914,9 +914,9 @@ public class FileChooserActivity extends Activity {
             }
             doFinish((ArrayList<File>) list);
         }
-    };// BtnOk_OpenDialog_OnClickListener
+    };// fBtnOk_OpenDialog_OnClickListener
 
-    private final AdapterView.OnItemClickListener ListviewFilesOnItemClickListener = new AdapterView.OnItemClickListener() {
+    private final AdapterView.OnItemClickListener fListviewFilesOnItemClickListener = new AdapterView.OnItemClickListener() {
 
         @Override
         public void onItemClick(AdapterView<?> av, View v, int position, long id) {
@@ -925,13 +925,13 @@ public class FileChooserActivity extends Activity {
 
             DataModel data = (DataModel) av.getItemAtPosition(position);
             if (data.getFile().isDirectory()) {
-                final FileContainer LastPath = getLocation();
+                final FileContainer fLastPath = getLocation();
                 setLocation(data.getFile(), new TaskListener() {
 
                     @Override
                     public void onFinish(boolean ok, Object any) {
                         if (ok) {
-                            history.push(LastPath, getLocation());
+                            history.push(fLastPath, getLocation());
                             btnGoBack.setEnabled(true);
                             btnGoForward.setEnabled(false);
                         }
@@ -942,9 +942,9 @@ public class FileChooserActivity extends Activity {
                     txtSaveasFilename.setText(data.getFile().getName());
             }
         }
-    };// ListviewFilesOnItemClickListener
+    };// fListviewFilesOnItemClickListener
 
-    private final AdapterView.OnItemLongClickListener ListviewFilesOnItemLongClickListener = new AdapterView.OnItemLongClickListener() {
+    private final AdapterView.OnItemLongClickListener fListviewFilesOnItemLongClickListener = new AdapterView.OnItemLongClickListener() {
 
         @Override
         public boolean onItemLongClick(AdapterView<?> av, View v, int position,
@@ -968,5 +968,5 @@ public class FileChooserActivity extends Activity {
             doFinish(data.getFile());
             return false;
         }
-    };// ListviewFilesOnItemLongClickListener
+    };// fListviewFilesOnItemLongClickListener
 }

@@ -36,13 +36,13 @@ import android.os.Message;
  */
 public abstract class LoadingDialog extends Thread {
 
-    private final ProgressDialog Dialog;
+    private final ProgressDialog fDialog;
 
-    private final int MsgShowProgressDialog = 0;
-    private final int MsgShowException = 1;
-    private final int MsgFinish = 2;
+    private final int fMsgShowProgressDialog = 0;
+    private final int fMsgShowException = 1;
+    private final int fMsgFinish = 2;
 
-    private final Handler _Handler;
+    private final Handler fHandler;
 
     /**
      * Creates new {@link LoadingDialog}
@@ -55,23 +55,23 @@ public abstract class LoadingDialog extends Thread {
      *            as the name means.
      */
     public LoadingDialog(Context context, String msg, boolean cancelable) {
-        Dialog = new ProgressDialog(context);
-        Dialog.setMessage(msg);
-        Dialog.setIndeterminate(true);
-        Dialog.setCancelable(cancelable);
+        fDialog = new ProgressDialog(context);
+        fDialog.setMessage(msg);
+        fDialog.setIndeterminate(true);
+        fDialog.setCancelable(cancelable);
 
-        _Handler = new Handler() {
+        fHandler = new Handler() {
 
             @Override
             public void handleMessage(Message msg) {
                 switch (msg.what) {
-                case MsgShowProgressDialog:
-                    Dialog.show();
+                case fMsgShowProgressDialog:
+                    fDialog.show();
                     break;
-                case MsgShowException:
+                case fMsgShowException:
                     onRaise((Throwable) msg.obj);
                     break;
-                case MsgFinish:
+                case fMsgFinish:
                     onFinish();
                     break;
                 }
@@ -95,7 +95,7 @@ public abstract class LoadingDialog extends Thread {
 
     @Override
     public void run() {
-        _Handler.sendEmptyMessage(MsgShowProgressDialog);
+        fHandler.sendEmptyMessage(fMsgShowProgressDialog);
 
         boolean hasError = false;
         try {
@@ -105,12 +105,12 @@ public abstract class LoadingDialog extends Thread {
 
             Message msg = new Message();
             msg.obj = t;
-            msg.what = MsgShowException;
-            _Handler.sendMessage(msg);
+            msg.what = fMsgShowException;
+            fHandler.sendMessage(msg);
         } finally {
-            Dialog.dismiss();
+            fDialog.dismiss();
             if (!hasError)
-                _Handler.sendEmptyMessage(MsgFinish);
+                fHandler.sendEmptyMessage(fMsgFinish);
         }
     }// run
 
@@ -122,7 +122,7 @@ public abstract class LoadingDialog extends Thread {
      *            {@link DialogInterface.OnCancelListener}
      */
     public void setOnCancelListener(DialogInterface.OnCancelListener listener) {
-        Dialog.setOnCancelListener(listener);
+        fDialog.setOnCancelListener(listener);
     }
 
     /**

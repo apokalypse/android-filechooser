@@ -28,7 +28,7 @@ import java.util.List;
 public class HistoryStore<A> implements History<A> {
 
     private List<A> list = new ArrayList<A>();
-    private final int MaxSize;
+    private final int fMaxSize;
 
     /**
      * Creates new {@link HistoryStore}
@@ -38,7 +38,7 @@ public class HistoryStore<A> implements History<A> {
      *            {@code 11} will be used
      */
     public HistoryStore(int maxSize) {
-        this.MaxSize = maxSize > 0 ? maxSize : 11;
+        this.fMaxSize = maxSize > 0 ? maxSize : 11;
     }
 
     @Override
@@ -51,7 +51,7 @@ public class HistoryStore<A> implements History<A> {
             list.add(newItem);
         }
 
-        if (list.size() > MaxSize)
+        if (list.size() > fMaxSize)
             list.remove(0);
     }
 

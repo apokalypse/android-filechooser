@@ -58,8 +58,8 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
      */
     public static String fileTimeShortFormat = DefFileTimeShortFormat;
 
-    private final boolean MultiSelection;
-    private final int SelectionMode;
+    private final boolean fMultiSelection;
+    private final int fSelectionMode;
 
     /**
      * Creates new {@link FileAdapter}
@@ -76,8 +76,8 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
     public FileAdapter(Context context, List<DataModel> objects,
             int selectionMode, boolean multiSelection) {
         super(context, R.layout.file_item, objects);
-        this.SelectionMode = selectionMode;
-        this.MultiSelection = multiSelection;
+        this.fSelectionMode = selectionMode;
+        this.fMultiSelection = multiSelection;
     }
 
     /**
@@ -96,7 +96,7 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        final DataModel Data = getItem(position);
+        final DataModel fData = getItem(position);
         Bag bag;
 
         if (convertView == null) {
@@ -120,7 +120,7 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
         }
 
         // update view
-        updateView(bag, Data, Data.getFile());
+        updateView(bag, fData, fData.getFile());
 
         return convertView;
     }
@@ -130,13 +130,13 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
      * 
      * @param bag
      *            the "view holder", see {@link Bag}
-     * @param Dm
+     * @param fData
      *            {@link DataModel}
      * @param file
      *            {@link File}
      * @since v2.0 alpha
      */
-    private void updateView(Bag bag, final DataModel Dm, File file) {
+    private void updateView(Bag bag, final DataModel fData, File file) {
         // image icon
         if (file.isDirectory())
             bag.imageIcon.setImageResource(R.drawable.folder48);
@@ -167,8 +167,8 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
         }
 
         // checkbox
-        if (MultiSelection) {
-            if (SelectionMode == FileChooserActivity.FilesOnly
+        if (fMultiSelection) {
+            if (fSelectionMode == FileChooserActivity.FilesOnly
                     && file.isDirectory()) {
                 bag.checkboxSelection.setVisibility(View.GONE);
             } else {
@@ -180,10 +180,10 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
                             @Override
                             public void onCheckedChanged(
                                     CompoundButton buttonView, boolean isChecked) {
-                                Dm.setSelected(isChecked);
+                                fData.setSelected(isChecked);
                             }
                         });
-                bag.checkboxSelection.setChecked(Dm.isSelected());
+                bag.checkboxSelection.setChecked(fData.isSelected());
             }
         } else
             bag.checkboxSelection.setVisibility(View.GONE);

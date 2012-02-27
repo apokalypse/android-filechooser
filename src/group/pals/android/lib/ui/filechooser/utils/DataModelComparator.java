@@ -29,7 +29,7 @@ import java.util.Comparator;
  */
 public class DataModelComparator implements Comparator<DataModel> {
 
-    private final FileComparator _FileComparator;
+    private final FileComparator fFileComparator;
 
     /**
      * Creates new {@link DataModelComparator}
@@ -40,11 +40,11 @@ public class DataModelComparator implements Comparator<DataModel> {
      *            see {@link FileChooserActivity#SortOrder}
      */
     public DataModelComparator(int sortType, int sortOrder) {
-        _FileComparator = new FileComparator(sortType, sortOrder);
+        fFileComparator = new FileComparator(sortType, sortOrder);
     }
 
     @Override
     public int compare(DataModel lhs, DataModel rhs) {
-        return _FileComparator.compare(lhs.getFile(), rhs.getFile());
+        return fFileComparator.compare(lhs.getFile(), rhs.getFile());
     }
 }
