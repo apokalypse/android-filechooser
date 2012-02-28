@@ -96,7 +96,7 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        final DataModel fData = getItem(position);
+        DataModel data = getItem(position);
         Bag bag;
 
         if (convertView == null) {
@@ -120,7 +120,7 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
         }
 
         // update view
-        updateView(bag, fData, fData.getFile());
+        updateView(bag, data, data.getFile());
 
         return convertView;
     }

@@ -199,11 +199,7 @@ public class FileChooserActivity extends Activity {
     private String fRegexFilenameFilter;
     private boolean fDisplayHiddenFiles;
     private boolean fSaveDialog;
-
-    /*
-     * variables
-     */
-    private History<FileContainer> history;
+    private History<FileContainer> fHistory;
 
     /*
      * controls
@@ -258,7 +254,7 @@ public class FileChooserActivity extends Activity {
         btnOk = (Button) findViewById(R.id.button_ok);
         btnCancel = (Button) findViewById(R.id.button_cancel);
 
-        history = new HistoryStore<FileContainer>(0);
+        fHistory = new HistoryStore<FileContainer>(0);
 
         setupHeader();
         setupListviewFiles();
@@ -267,7 +263,7 @@ public class FileChooserActivity extends Activity {
 
             @Override
             public void onFinish(boolean ok, Object any) {
-                history.push(getLocation(), getLocation());
+                fHistory.push(getLocation(), getLocation());
             }
         });
     }// onCreate
@@ -605,9 +601,9 @@ public class FileChooserActivity extends Activity {
                     btnLocation.setText(fPath.getFile().getAbsolutePath());
                 btnLocation.setTag(fPath);
 
-                int idx = history.indexOf(fPath);
+                int idx = fHistory.indexOf(fPath);
                 btnGoBack.setEnabled(idx > 0);
-                btnGoForward.setEnabled(idx >= 0 && idx < history.size() - 2);
+                btnGoForward.setEnabled(idx >= 0 && idx < fHistory.size() - 2);
 
                 if (fListener != null)
                     fListener.onFinish(true, null);
@@ -786,14 +782,14 @@ public class FileChooserActivity extends Activity {
 
         @Override
         public void onClick(View v) {
-            FileContainer path = history.prevOf(getLocation());
+            FileContainer path = fHistory.prevOf(getLocation());
             if (path != null) {
                 setLocation(path, new TaskListener() {
 
                     @Override
                     public void onFinish(boolean ok, Object any) {
                         if (ok) {
-                            btnGoBack.setEnabled(history.prevOf(getLocation()) != null);
+                            btnGoBack.setEnabled(fHistory.prevOf(getLocation()) != null);
                             btnGoForward.setEnabled(true);
                         }
                     }
@@ -816,7 +812,7 @@ public class FileChooserActivity extends Activity {
                             @Override
                             public void onFinish(boolean ok, Object any) {
                                 if (ok) {
-                                    history.push(fLastPath, getLocation());
+                                    fHistory.push(fLastPath, getLocation());
                                     btnGoBack.setEnabled(true);
                                     btnGoForward.setEnabled(false);
                                 }
@@ -844,7 +840,7 @@ public class FileChooserActivity extends Activity {
 
         @Override
         public void onClick(View v) {
-            FileContainer path = history.nextOf(getLocation());
+            FileContainer path = fHistory.nextOf(getLocation());
             if (path != null) {
                 setLocation(path, new TaskListener() {
 
@@ -852,7 +848,7 @@ public class FileChooserActivity extends Activity {
                     public void onFinish(boolean ok, Object any) {
                         if (ok) {
                             btnGoBack.setEnabled(true);
-                            btnGoForward.setEnabled(history
+                            btnGoForward.setEnabled(fHistory
                                     .nextOf(getLocation()) != null);
                         }
                     }
@@ -931,7 +927,7 @@ public class FileChooserActivity extends Activity {
                     @Override
                     public void onFinish(boolean ok, Object any) {
                         if (ok) {
-                            history.push(fLastPath, getLocation());
+                            fHistory.push(fLastPath, getLocation());
                             btnGoBack.setEnabled(true);
                             btnGoForward.setEnabled(false);
                         }
