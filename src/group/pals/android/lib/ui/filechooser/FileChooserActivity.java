@@ -482,8 +482,8 @@ public class FileChooserActivity extends Activity {
             Toast.makeText(FileChooserActivity.this,
                     R.string.msg_filename_is_empty, Toast.LENGTH_SHORT).show();
         } else {
-            final File fFile = new File(getLocation().getFile().getAbsolutePath()
-                    + File.separator + filename);
+            final File fFile = new File(getLocation().getFile()
+                    .getAbsolutePath() + File.separator + filename);
 
             if (!Utils.isFilenameValid(filename)) {
                 Toast.makeText(
@@ -674,17 +674,15 @@ public class FileChooserActivity extends Activity {
      */
     private File[] listFiles(File dir, TaskListener listener) {
         /*
-         * if total files exceeds max file count allowed, HasMoreFiles contains
-         * "true", otherwise "false" TODO: bad way :-(
+         * if total files exceeds max file count allowed, fHasMoreFiles[0] is
+         * true, otherwise false
          */
-        final StringBuffer fHasMoreFiles = new StringBuffer(
-                Boolean.toString(false));
+        final boolean[] fHasMoreFiles = { false };
 
         try {
             File[] files = dir.listFiles(new FileFilter() {
 
                 int fileCount = 0;
-                boolean flagIsSet = false;
 
                 @Override
                 public boolean accept(File pathname) {
@@ -692,11 +690,7 @@ public class FileChooserActivity extends Activity {
                             && pathname.getName().startsWith("."))
                         return false;
                     if (fileCount >= fMaxFileCount) {
-                        if (!flagIsSet) {
-                            fHasMoreFiles.setLength(0);
-                            fHasMoreFiles.append(Boolean.toString(true));
-                            flagIsSet = true;
-                        }
+                        fHasMoreFiles[0] = true;
                         return false;
                     }
 
@@ -730,9 +724,7 @@ public class FileChooserActivity extends Activity {
                                 fPrefs.getInt(SortOrder, Ascending)));
 
             if (listener != null)
-                listener.onFinish(
-                        Boolean.toString(true).equals(fHasMoreFiles.toString()),
-                        null);
+                listener.onFinish(fHasMoreFiles[0], null);
 
             return files;
         } catch (Exception e) {
