@@ -26,7 +26,7 @@ import android.os.Message;
  * A thread, used to show {@link ProgressDialog} while doing some background
  * tasks.<br>
  * Please read carefully about {@link LoadingDialog#onExecute()}.<br>
- * Only {@link LoadingDialog#onFinish()} or {@link LoadingDialog#onRaise()} will
+ * Only {@link LoadingDialog#onFinish()} or {@link LoadingDialog#onRaise(Throwable)} will
  * be called once. It means if everything is ok,
  * {@link LoadingDialog#onFinish()} will be called, but if an error occurs,
  * {@link LoadingDialog#onRaise()} will be called.
