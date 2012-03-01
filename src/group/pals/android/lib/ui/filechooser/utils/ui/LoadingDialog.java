@@ -26,10 +26,10 @@ import android.os.Message;
  * A thread, used to show {@link ProgressDialog} while doing some background
  * tasks.<br>
  * Please read carefully about {@link LoadingDialog#onExecute()}.<br>
- * Only {@link LoadingDialog#onFinish()} or {@link LoadingDialog#onRaise(Throwable)} will
- * be called once. It means if everything is ok,
- * {@link LoadingDialog#onFinish()} will be called, but if an error occurs,
- * {@link LoadingDialog#onRaise()} will be called.
+ * Only {@link LoadingDialog#onFinish()} or
+ * {@link LoadingDialog#onRaise(Throwable)} will be called once. It means if
+ * everything is ok, {@link LoadingDialog#onFinish()} will be called, but if an
+ * error occurs, {@link LoadingDialog#onRaise(Throwable)} will be called.
  * 
  * @author Hai Bison
  * @since v1.8
@@ -77,7 +77,7 @@ public abstract class LoadingDialog extends Thread {
                 }
             }
         };
-    }//LoadingDialog
+    }// LoadingDialog
 
     /**
      * Creates new {@link LoadingDialog}
@@ -93,8 +93,12 @@ public abstract class LoadingDialog extends Thread {
         this(context, context.getString(msgId), cancelable);
     }
 
+    /**
+     * Main task of {@link LoadingDialog}, you should not override this method
+     * in your extending class.
+     */
     @Override
-    public void run() {
+    public final void run() {
         fHandler.sendEmptyMessage(fMsgShowProgressDialog);
 
         boolean hasError = false;
