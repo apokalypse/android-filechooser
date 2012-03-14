@@ -375,7 +375,7 @@ public class FileChooserActivity extends Activity {
      */
     private void loadPreferences() {
         fPrefs = getSharedPreferences(
-                FileChooserActivity.class.getSimpleName(), 0);
+                FileChooserActivity.class.getName(), 0);
 
         Editor editor = fPrefs.edit();
 
