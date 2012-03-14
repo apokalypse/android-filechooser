@@ -556,12 +556,22 @@ public class FileChooserActivity extends Activity {
             boolean hasMoreFiles = false;
 
             @Override
-            public void onRaise(Throwable t) {
-                // TODO: code here
-            }// onRaise
+            protected Object doInBackground(Void... params) {
+                files = listFiles(fPath.getFile(), new TaskListener() {
+
+                    @Override
+                    public void onFinish(boolean ok, Object any) {
+                        hasMoreFiles = ok;
+                    }
+                });
+                
+                return null;
+            }// doInBackground()
 
             @Override
-            public void onFinish() {
+            protected void onPostExecute(Object result) {
+                super.onPostExecute(result);
+
                 if (files == null) {
                     Toast.makeText(
                             FileChooserActivity.this,
@@ -607,19 +617,8 @@ public class FileChooserActivity extends Activity {
 
                 if (fListener != null)
                     fListener.onFinish(true, null);
-            }// onFinish
-
-            @Override
-            public void onExecute() throws Throwable {
-                files = listFiles(fPath.getFile(), new TaskListener() {
-
-                    @Override
-                    public void onFinish(boolean ok, Object any) {
-                        hasMoreFiles = ok;
-                    }
-                });
-            }// onExecute
-        }.start();// new LoadingDialog()
+            }// onPostExecute()
+        }.execute((Void[]) null);// new LoadingDialog()
     }// setLocation()
 
     /**

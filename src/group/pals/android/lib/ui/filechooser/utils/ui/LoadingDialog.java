@@ -19,30 +19,18 @@ package group.pals.android.lib.ui.filechooser.utils.ui;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Handler;
-import android.os.Message;
+import android.os.AsyncTask;
 
 /**
- * A thread, used to show {@link ProgressDialog} while doing some background
+ * An {@link AsyncTask}, used to show {@link ProgressDialog} while doing some background
  * tasks.<br>
- * Please read carefully about {@link LoadingDialog#onExecute()}.<br>
- * Only {@link LoadingDialog#onFinish()} or
- * {@link LoadingDialog#onRaise(Throwable)} will be called once. It means if
- * everything is ok, {@link LoadingDialog#onFinish()} will be called, but if an
- * error occurs, {@link LoadingDialog#onRaise(Throwable)} will be called.
  * 
  * @author Hai Bison
- * @since v1.8
+ * @since v2.1 alpha
  */
-public abstract class LoadingDialog extends Thread {
+public abstract class LoadingDialog extends AsyncTask<Void, Void, Object> {
 
     private final ProgressDialog fDialog;
-
-    private final int fMsgShowProgressDialog = 0;
-    private final int fMsgShowException = 1;
-    private final int fMsgFinish = 2;
-
-    private final Handler fHandler;
 
     /**
      * Creates new {@link LoadingDialog}
@@ -60,23 +48,13 @@ public abstract class LoadingDialog extends Thread {
         fDialog.setIndeterminate(true);
         fDialog.setCancelable(cancelable);
 
-        fHandler = new Handler() {
+        fDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
 
             @Override
-            public void handleMessage(Message msg) {
-                switch (msg.what) {
-                case fMsgShowProgressDialog:
-                    fDialog.show();
-                    break;
-                case fMsgShowException:
-                    onRaise((Throwable) msg.obj);
-                    break;
-                case fMsgFinish:
-                    onFinish();
-                    break;
-                }
+            public void onCancel(DialogInterface dialog) {
+                cancel(false);
             }
-        };
+        });
     }// LoadingDialog
 
     /**
@@ -93,70 +71,16 @@ public abstract class LoadingDialog extends Thread {
         this(context, context.getString(msgId), cancelable);
     }
 
-    /**
-     * Main task of {@link LoadingDialog}, you should not override this method
-     * in your extending class.
-     */
-    @Override
-    public final void run() {
-        fHandler.sendEmptyMessage(fMsgShowProgressDialog);
+    protected void onPreExecute() {
+        fDialog.show();
+    }// onPreExecute()
 
-        boolean hasError = false;
-        try {
-            onExecute();
-        } catch (Throwable t) {
-            hasError = true;
+    protected void onPostExecute(Object result) {
+        fDialog.dismiss();
+    }// onPostExecute()
 
-            Message msg = new Message();
-            msg.obj = t;
-            msg.what = fMsgShowException;
-            fHandler.sendMessage(msg);
-        } finally {
-            fDialog.dismiss();
-            if (!hasError)
-                fHandler.sendEmptyMessage(fMsgFinish);
-        }
-    }// run
-
-    /**
-     * See
-     * {@link ProgressDialog#setOnCancelListener(android.content.DialogInterface.OnCancelListener)}
-     * 
-     * @param listener
-     *            {@link DialogInterface.OnCancelListener}
-     */
-    public void setOnCancelListener(DialogInterface.OnCancelListener listener) {
-        fDialog.setOnCancelListener(listener);
-    }
-
-    /**
-     * Your main task here. This method will be called inside {@link #run()}
-     * method.<br>
-     * <b>Note:</b> You should <b><i>not</i></b> do any UI task in this method,
-     * otherwise things will get out of control.<br>
-     * If you need to interact with UI, you can use {@link Handler}. However,
-     * remember to test your {@link Handler} before you are sure things are ok.
-     * It is funny :-)
-     * 
-     * @throws Throwable
-     *             you can throw any exception you want, {@link LoadingDialog}
-     *             will call {@link #onRaise(Throwable)} and then exit the
-     *             thread normally.
-     */
-    public abstract void onExecute() throws Throwable;
-
-    /**
-     * Will be called at the end of {@link #run()} method, after
-     * {@link #onExecute()}, if there is no error occurs.
-     */
-    public abstract void onFinish();
-
-    /**
-     * Will be called when any exception raises, then exit the thread
-     * <b><i>without</b></i> touching {@link #onFinish()}.
-     * 
-     * @param t
-     *            - a {@link Throwable} got from {@link #onExecute()}
-     */
-    public abstract void onRaise(Throwable t);
+    protected void onCancelled () {
+        fDialog.dismiss();
+        super.onCancelled();
+    }// onCancelled()
 }
