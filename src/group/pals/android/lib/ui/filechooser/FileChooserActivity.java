@@ -91,7 +91,7 @@ public class FileChooserActivity extends Activity {
     // ---------------------------------------------------------
 
     /**
-     * Key to hold {@link IFileProvider.FilterMode}, default =
+     * Key to hold {@link IFileProvider.FilterMode}, default is
      * {@link IFileProvider.FilterMode#FilesOnly}.
      */
     public static final String FilterMode = IFileProvider.FilterMode.class
@@ -122,8 +122,8 @@ public class FileChooserActivity extends Activity {
     // ---------------------------------------------------------
 
     /**
-     * Key to hold {@link IFileProvider#SortType}, default =
-     * {@link IFileProvider#SortType#SortByName}
+     * Key to hold {@link IFileProvider.SortType}, default =
+     * {@link IFileProvider.SortType#SortByName}
      */
     public static final String SortType = IFileProvider.SortType.class
             .getName();
@@ -131,8 +131,8 @@ public class FileChooserActivity extends Activity {
     // ---------------------------------------------------------
 
     /**
-     * Key to hold {@link IFileProvider#SortOrder}, default =
-     * {@link IFileProvider#SortOrder#Ascending}
+     * Key to hold {@link IFileProvider.SortOrder}, default =
+     * {@link IFileProvider.SortOrder#Ascending}
      */
     public static final String SortOrder = IFileProvider.SortOrder.class
             .getName();

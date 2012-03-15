@@ -75,7 +75,11 @@ public interface IFileProvider {
     }// SortOrder
 
     /**
-     * The filter.
+     * The filter of {@link File}.<br>
+     * Includes:<br>
+     * - {@link #FilesOnly}<br>
+     * - {@link #DirectoriesOnly}<br>
+     * - {@link #FilesAndDirectories}
      * 
      * @author Hai Bison
      * @since v2.1 alpha

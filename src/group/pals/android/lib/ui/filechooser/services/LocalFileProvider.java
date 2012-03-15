@@ -36,6 +36,9 @@ import android.os.IBinder;
  */
 public class LocalFileProvider extends Service implements IFileProvider {
 
+    /**
+     * The action name for this service.
+     */
     public static final String ServiceActionName = LocalFileProvider.class
             .getName() + ".60cf767c.6fe6.41ad.90ce.e94657bde773";
 
