@@ -1,7 +1,7 @@
 android-filechooser
 Copyright 2012 Hai Bison
 
-Version: 2.1 alpha
+Version: 3.0
 
 This product includes software developed at
 http://code.google.com/p/android-filechooser/
@@ -21,6 +21,17 @@ limitations under the License.
 ===============================================================
 
 History:
+
++++ Version 3.0 +++
+ - Release: March 15, 2012
+
+ - move file listing functions to external service;
+ - change project name from FileChooser to android-filechooser  :-D
+ - some minor changes:
+   + UI messages;
+   + icons;
+   + make LoadingDialog use AsyncTask instead of Thread;
+   + ...
 
 +++ Version 2.0 +++
  - Release: Feb 22, 2012
