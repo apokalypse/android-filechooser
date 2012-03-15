@@ -100,8 +100,7 @@ public abstract class LoadingDialog extends AsyncTask<Void, Void, Object> {
      * {@code super.onPostExecute(result)} at very first of the method.
      */
     protected void onPostExecute(Object result) {
-        finished = true;
-        fDialog.dismiss();
+        doFinish();
     }// onPostExecute()
 
     /**
@@ -109,10 +108,14 @@ public abstract class LoadingDialog extends AsyncTask<Void, Void, Object> {
      * very first of the method.
      */
     protected void onCancelled() {
-        finished = true;
-        fDialog.dismiss();
+        doFinish();
         super.onCancelled();
     }// onCancelled()
+
+    private void doFinish() {
+        finished = true;
+        fDialog.dismiss();
+    }// doFinish()
 
     /**
      * Gets the delay time before showing the dialog.
