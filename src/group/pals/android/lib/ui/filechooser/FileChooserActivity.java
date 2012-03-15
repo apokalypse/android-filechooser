@@ -265,7 +265,7 @@ public class FileChooserActivity extends Activity {
             }
 
             @Override
-            public void onPostExecute(Object result) {
+            protected void onPostExecute(Object result) {
                 super.onPostExecute(result);
 
                 if (fFileProvider == null) {
