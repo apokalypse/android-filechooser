@@ -295,7 +295,7 @@ public class FileChooserActivity extends Activity {
                     });
                 }
             }// onPostExecute()
-        }.execute((Void[]) null);// LoadingDialog
+        }.execute();// LoadingDialog
     }// bindService()
 
     private final ServiceConnection fServiceConnection = new ServiceConnection() {
@@ -758,7 +758,7 @@ public class FileChooserActivity extends Activity {
                 if (fListener != null)
                     fListener.onFinish(true, null);
             }// onPostExecute()
-        }.execute((Void[]) null);// new LoadingDialog()
+        }.execute();// new LoadingDialog()
     }// setLocation()
 
     /**
