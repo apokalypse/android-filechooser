@@ -16,6 +16,8 @@
 
 package group.pals.android.lib.ui.filechooser;
 
+import group.pals.android.lib.ui.filechooser.services.IFileProvider;
+import group.pals.android.lib.ui.filechooser.services.IFileProvider.FilterMode;
 import group.pals.android.lib.ui.filechooser.utils.Converter;
 
 import java.io.File;
@@ -59,7 +61,7 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
     public static String fileTimeShortFormat = DefFileTimeShortFormat;
 
     private final boolean fMultiSelection;
-    private final int fSelectionMode;
+    private final IFileProvider.FilterMode fSelectionMode;
 
     /**
      * Creates new {@link FileAdapter}
@@ -68,15 +70,15 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
      *            {@link Context}
      * @param objects
      *            the data
-     * @param selectionMode
-     *            see {@link FileChooserActivity#SelectionMode}
+     * @param filterMode
+     *            see {@link IFileProvider#FilterMode}
      * @param multiSelection
      *            see {@link FileChooserActivity#MultiSelection}
      */
     public FileAdapter(Context context, List<DataModel> objects,
-            int selectionMode, boolean multiSelection) {
+            IFileProvider.FilterMode filterMode, boolean multiSelection) {
         super(context, R.layout.file_item, objects);
-        this.fSelectionMode = selectionMode;
+        this.fSelectionMode = filterMode;
         this.fMultiSelection = multiSelection;
     }
 
@@ -168,7 +170,7 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
 
         // checkbox
         if (fMultiSelection) {
-            if (fSelectionMode == FileChooserActivity.FilesOnly
+            if (fSelectionMode == FilterMode.FilesOnly
                     && file.isDirectory()) {
                 bag.checkboxSelection.setVisibility(View.GONE);
             } else {

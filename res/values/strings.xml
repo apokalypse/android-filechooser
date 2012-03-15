@@ -58,5 +58,10 @@
         <string name="cmd_sort_by_name">Sort by name</string>
         <string name="cmd_sort_by_size">Sort by size</string>
         <string name="cmd_sort_by_date">Sort by date</string>
+        <string name="msg_cannot_connect_to_file_provider_service">Can not connect to file provider service</string>
+        <string name="pmsg_unknown_error">Unknown error: %s</string>
+        <string name="title_error">Error</string>
+        <string name="title_info">Info</string>
+        <string name="title_alert">Alert</string>
 
 </resources>

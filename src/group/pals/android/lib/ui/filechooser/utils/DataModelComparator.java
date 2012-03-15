@@ -17,7 +17,7 @@
 package group.pals.android.lib.ui.filechooser.utils;
 
 import group.pals.android.lib.ui.filechooser.DataModel;
-import group.pals.android.lib.ui.filechooser.FileChooserActivity;
+import group.pals.android.lib.ui.filechooser.services.IFileProvider;
 
 import java.util.Comparator;
 
@@ -35,11 +35,12 @@ public class DataModelComparator implements Comparator<DataModel> {
      * Creates new {@link DataModelComparator}
      * 
      * @param sortType
-     *            see {@link FileChooserActivity#SortType}
+     *            see {@link IFileProvider#SortType}
      * @param sortOrder
-     *            see {@link FileChooserActivity#SortOrder}
+     *            see {@link IFileProvider#SortOrder}
      */
-    public DataModelComparator(int sortType, int sortOrder) {
+    public DataModelComparator(IFileProvider.SortType sortType,
+            IFileProvider.SortOrder sortOrder) {
         fFileComparator = new FileComparator(sortType, sortOrder);
     }
 

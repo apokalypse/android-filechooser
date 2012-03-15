@@ -16,7 +16,7 @@
 
 package group.pals.android.lib.ui.filechooser.utils;
 
-import group.pals.android.lib.ui.filechooser.FileChooserActivity;
+import group.pals.android.lib.ui.filechooser.services.IFileProvider;
 
 import java.io.File;
 import java.util.Comparator;
@@ -26,25 +26,26 @@ import java.util.Comparator;
  * Rules:<br>
  * - directories first;<br>
  * - other properties are based on parameters given in constructor, see
- * {@link #FileComparator(int, int)};
+ * {@link #FileComparator(IFileProvider.SortType, IFileProvider.SortOrder)};
  * 
  * @author Hai Bison
  * @since v1.91
  */
 public class FileComparator implements Comparator<File> {
 
-    private final int fSortType;
-    private final int fSortOrder;
+    private final IFileProvider.SortType fSortType;
+    private final IFileProvider.SortOrder fSortOrder;
 
     /**
      * Creates new {@link FileComparator}
      * 
      * @param sortType
-     *            see {@link FileChooserActivity#SortType}
+     *            see {@link IFileProvider.SortType}
      * @param sortOrder
-     *            see {@link FileChooserActivity#SortOrder}
+     *            see {@link IFileProvider.SortOrder}
      */
-    public FileComparator(int sortType, int sortOrder) {
+    public FileComparator(IFileProvider.SortType sortType,
+            IFileProvider.SortOrder sortOrder) {
         fSortType = sortType;
         fSortOrder = sortOrder;
     }
@@ -57,17 +58,17 @@ public class FileComparator implements Comparator<File> {
             int res = lhs.getName().compareToIgnoreCase(rhs.getName());
 
             switch (fSortType) {
-            case FileChooserActivity.SortByName:
+            case SortByName:
                 break;// SortByName
 
-            case FileChooserActivity.SortBySize:
+            case SortBySize:
                 if (lhs.length() > rhs.length())
                     res = 1;
                 else if (lhs.length() < rhs.length())
                     res = -1;
                 break;// SortBySize
 
-            case FileChooserActivity.SortByDate:
+            case SortByDate:
                 if (lhs.lastModified() > rhs.lastModified())
                     res = 1;
                 else if (lhs.lastModified() < rhs.lastModified())
@@ -75,7 +76,7 @@ public class FileComparator implements Comparator<File> {
                 break;// SortByDate
             }
 
-            return fSortOrder == FileChooserActivity.Ascending ? res : -res;
+            return fSortOrder == IFileProvider.SortOrder.Ascending ? res : -res;
         }
 
         return lhs.isDirectory() ? -1 : 1;
