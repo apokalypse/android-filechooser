@@ -50,73 +50,6 @@ public class LocalFileProvider extends FileProviderService {
      * IFileProvider
      */
 
-    private boolean displayHiddenFiles = false;
-    private String regexFilenameFilter = null;
-    private FilterMode filterMode = FilterMode.FilesOnly;
-    private int maxFileCount = 1024;
-    private SortType sortType = SortType.SortByName;
-    private SortOrder sortOrder = SortOrder.Ascending;
-
-    @Override
-    public void setDisplayHiddenFiles(boolean display) {
-        displayHiddenFiles = display;
-    };
-
-    @Override
-    public boolean isDisplayHiddenFiles() {
-        return displayHiddenFiles;
-    }
-
-    @Override
-    public void setRegexFilenameFilter(String regex) {
-        regexFilenameFilter = regex;
-    };
-
-    @Override
-    public String getRegexFilenameFilter() {
-        return regexFilenameFilter;
-    }
-
-    @Override
-    public void setFilterMode(FilterMode fm) {
-        filterMode = fm;
-    }
-
-    @Override
-    public FilterMode getFilterMode() {
-        return filterMode;
-    }
-
-    @Override
-    public void setSortType(SortType st) {
-        sortType = st;
-    }
-
-    @Override
-    public SortType getSortType() {
-        return sortType;
-    }
-
-    @Override
-    public void setSortOrder(SortOrder so) {
-        sortOrder = so;
-    }
-
-    @Override
-    public SortOrder getSortOrder() {
-        return sortOrder;
-    }
-
-    @Override
-    public void setMaxFileCount(int max) {
-        maxFileCount = max;
-    };
-
-    @Override
-    public int getMaxFileCount() {
-        return maxFileCount;
-    }
-
     @Override
     public File[] listFiles(File dir, final boolean[] fHasMoreFiles) {
         if (fHasMoreFiles != null && fHasMoreFiles.length > 0)
@@ -129,20 +62,20 @@ public class LocalFileProvider extends FileProviderService {
 
                 @Override
                 public boolean accept(File pathname) {
-                    if (!displayHiddenFiles
+                    if (!isDisplayHiddenFiles()
                             && pathname.getName().startsWith("."))
                         return false;
-                    if (fileCount >= maxFileCount) {
+                    if (fileCount >= getMaxFileCount()) {
                         if (fHasMoreFiles != null && fHasMoreFiles.length > 0)
                             fHasMoreFiles[0] = true;
                         return false;
                     }
 
-                    switch (filterMode) {
+                    switch (getFilterMode()) {
                     case FilesOnly:
-                        if (regexFilenameFilter != null && pathname.isFile())
+                        if (getRegexFilenameFilter() != null && pathname.isFile())
                             return pathname.getName().matches(
-                                    regexFilenameFilter);
+                                    getRegexFilenameFilter());
 
                         fileCount++;
                         return true;
@@ -152,9 +85,9 @@ public class LocalFileProvider extends FileProviderService {
                             fileCount++;
                         return ok;
                     default:
-                        if (regexFilenameFilter != null && pathname.isFile())
+                        if (getRegexFilenameFilter() != null && pathname.isFile())
                             return pathname.getName().matches(
-                                    regexFilenameFilter);
+                                    getRegexFilenameFilter());
 
                         fileCount++;
                         return true;
@@ -163,7 +96,7 @@ public class LocalFileProvider extends FileProviderService {
             });// dir.listFiles()
 
             if (files != null)
-                Arrays.sort(files, new FileComparator(sortType, sortOrder));
+                Arrays.sort(files, new FileComparator(getSortType(), getSortOrder()));
 
             return files;
         } catch (Exception e) {

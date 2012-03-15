@@ -30,6 +30,10 @@ import android.os.IBinder;
 public abstract class FileProviderService extends Service implements
         IFileProvider {
 
+    /*-------------------------------------------------------------------
+     * Service
+     */
+
     @Override
     public IBinder onBind(Intent intent) {
         return fBinder;
@@ -49,4 +53,75 @@ public abstract class FileProviderService extends Service implements
     // This is the object that receives interactions from clients. See
     // RemoteService for a more complete example.
     private final IBinder fBinder = new LocalBinder();
+
+    /*-------------------------------------------------------------------
+     * IFileProvider
+     */
+
+    private boolean displayHiddenFiles = false;
+    private String regexFilenameFilter = null;
+    private FilterMode filterMode = FilterMode.FilesOnly;
+    private int maxFileCount = 1024;
+    private SortType sortType = SortType.SortByName;
+    private SortOrder sortOrder = SortOrder.Ascending;
+
+    @Override
+    public void setDisplayHiddenFiles(boolean display) {
+        displayHiddenFiles = display;
+    };
+
+    @Override
+    public boolean isDisplayHiddenFiles() {
+        return displayHiddenFiles;
+    }
+
+    @Override
+    public void setRegexFilenameFilter(String regex) {
+        regexFilenameFilter = regex;
+    };
+
+    @Override
+    public String getRegexFilenameFilter() {
+        return regexFilenameFilter;
+    }
+
+    @Override
+    public void setFilterMode(FilterMode fm) {
+        filterMode = fm;
+    }
+
+    @Override
+    public FilterMode getFilterMode() {
+        return filterMode;
+    }
+
+    @Override
+    public void setSortType(SortType st) {
+        sortType = st;
+    }
+
+    @Override
+    public SortType getSortType() {
+        return sortType;
+    }
+
+    @Override
+    public void setSortOrder(SortOrder so) {
+        sortOrder = so;
+    }
+
+    @Override
+    public SortOrder getSortOrder() {
+        return sortOrder;
+    }
+
+    @Override
+    public void setMaxFileCount(int max) {
+        maxFileCount = max;
+    };
+
+    @Override
+    public int getMaxFileCount() {
+        return maxFileCount;
+    }
 }
