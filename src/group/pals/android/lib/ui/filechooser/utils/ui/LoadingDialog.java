@@ -41,6 +41,8 @@ public abstract class LoadingDialog extends AsyncTask<Void, Void, Object> {
      */
     private boolean finished = false;
 
+    private Throwable lastException;
+
     /**
      * Creates new {@link LoadingDialog}
      * 
@@ -136,5 +138,25 @@ public abstract class LoadingDialog extends AsyncTask<Void, Void, Object> {
     public LoadingDialog setDelayTime(int delayTime) {
         this.delayTime = delayTime >= 0 ? delayTime : 0;
         return this;
+    }
+
+    /**
+     * Sets last exception. This method is useful in case an exception raises
+     * inside {@link #doInBackground(Void...)}
+     * 
+     * @param t
+     *            {@link Throwable}
+     */
+    protected void setLastException(Throwable t) {
+        lastException = t;
+    }
+
+    /**
+     * Gets last exception.
+     * 
+     * @return {@link Throwable}
+     */
+    protected Throwable getLastException() {
+        return lastException;
     }
 }
