@@ -83,7 +83,8 @@ public class FileChooserActivity extends Activity {
     public static final String Rootpath = "rootpath";
 
     /**
-     * Key to hold the service action name of {@link IFileProvider}
+     * Key to hold the service action name of {@link IFileProvider}.<br>
+     * Default is {@link LocalFileProvider#ServiceActionName}
      */
     public static final String FileProviderActionName = "file_provider_action_name";
 
@@ -233,9 +234,13 @@ public class FileChooserActivity extends Activity {
      * {@link Activity#RESULT_CANCELED}
      */
     private void bindService() {
-        bindService(
-                new Intent(getIntent().getStringExtra(FileProviderActionName)),
-                fServiceConnection, Context.BIND_AUTO_CREATE);
+        String serviceActionName = getIntent().getStringExtra(
+                FileProviderActionName);
+        if (serviceActionName == null)
+            serviceActionName = LocalFileProvider.ServiceActionName;
+
+        bindService(new Intent(serviceActionName), fServiceConnection,
+                Context.BIND_AUTO_CREATE);
 
         new LoadingDialog(this, R.string.msg_loading, false) {
 

@@ -18,6 +18,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name=".services.LocalFileProvider">
+            <intent-filter>
+                <action android:name="group.pals.android.lib.ui.filechooser.services.LocalFileProvider.60cf767c.6fe6.41ad.90ce.e94657bde773"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
