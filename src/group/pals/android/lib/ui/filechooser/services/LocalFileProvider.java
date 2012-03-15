@@ -22,11 +22,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.Arrays;
 
-import android.app.Service;
-import android.content.Intent;
-import android.os.Binder;
-import android.os.IBinder;
-
 /**
  * This is simple local file provider - as its name means.<br>
  * It handles file request on local device.
@@ -34,7 +29,7 @@ import android.os.IBinder;
  * @author Hai Bison
  * @since v2.1 alpha
  */
-public class LocalFileProvider extends Service implements IFileProvider {
+public class LocalFileProvider extends FileProviderService {
 
     /**
      * The action name for this service.
@@ -46,30 +41,10 @@ public class LocalFileProvider extends Service implements IFileProvider {
      * Service
      */
 
-    /**
-     * Class for clients to access. Because we know this service always runs in
-     * the same process as its clients, we don't need to deal with IPC.
-     */
-    public class LocalBinder extends Binder {
-
-        public LocalFileProvider getService() {
-            return LocalFileProvider.this;
-        }
-    }// LocalBinder
-
     @Override
     public void onCreate() {
         // TODO
     }// onCreate()
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return fBinder;
-    }
-
-    // This is the object that receives interactions from clients. See
-    // RemoteService for a more complete example.
-    private final IBinder fBinder = new LocalBinder();
 
     /*-------------------------------------------------------------------
      * IFileProvider

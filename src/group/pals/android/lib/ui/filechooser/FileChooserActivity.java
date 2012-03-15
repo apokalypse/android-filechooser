@@ -17,6 +17,7 @@
 package group.pals.android.lib.ui.filechooser;
 
 import group.pals.android.lib.ui.filechooser.bean.FileContainer;
+import group.pals.android.lib.ui.filechooser.services.FileProviderService;
 import group.pals.android.lib.ui.filechooser.services.IFileProvider;
 import group.pals.android.lib.ui.filechooser.services.IFileProvider.FilterMode;
 import group.pals.android.lib.ui.filechooser.services.LocalFileProvider;
@@ -308,7 +309,7 @@ public class FileChooserActivity extends Activity {
              * that we know is running in our own process, we can cast its
              * IBinder to a concrete class and directly access it.
              */
-            fFileProvider = ((LocalFileProvider.LocalBinder) service)
+            fFileProvider = ((FileProviderService.LocalBinder) service)
                     .getService();
         }
 
