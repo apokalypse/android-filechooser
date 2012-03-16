@@ -16,7 +16,7 @@
 
 package group.pals.android.lib.ui.filechooser;
 
-import group.pals.android.lib.ui.filechooser.bean.FileContainer;
+import group.pals.android.lib.ui.filechooser.io.IFile;
 import group.pals.android.lib.ui.filechooser.services.FileProviderService;
 import group.pals.android.lib.ui.filechooser.services.IFileProvider;
 import group.pals.android.lib.ui.filechooser.services.IFileProvider.FilterMode;
@@ -44,7 +44,6 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.IBinder;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -79,7 +78,7 @@ public class FileChooserActivity extends Activity {
      * Key to hold the root path, default is sdcard, if sdcard is not available,
      * "/" will be used.<br>
      * <br>
-     * Note</b>: The value of this key is a {@link File}
+     * <b>Note</b>: The value of this key is a {@link IFile}
      */
     public static final String Rootpath = "rootpath";
 
@@ -170,14 +169,14 @@ public class FileChooserActivity extends Activity {
      */
     private SharedPreferences fPrefs;
 
-    private File fRoot;
+    private IFile fRoot;
     private boolean fMultiSelection;
     private boolean fSaveDialog;
 
     /**
      * The history.
      */
-    private History<FileContainer> fHistory;
+    private History<IFile> fHistory;
 
     /*
      * controls
@@ -198,17 +197,6 @@ public class FileChooserActivity extends Activity {
 
         loadPreferences();
 
-        /*
-         * set root path, if not specified, try using sdcard, if sdcard is not
-         * available, use "/"
-         */
-        if (getIntent().getSerializableExtra(Rootpath) == null)
-            fRoot = Environment.getExternalStorageDirectory();
-        else
-            fRoot = (File) getIntent().getSerializableExtra(Rootpath);
-        if (fRoot == null || !fRoot.isDirectory())
-            fRoot = new File("/");
-
         fMultiSelection = getIntent().getBooleanExtra(MultiSelection, false);
 
         fSaveDialog = getIntent().getBooleanExtra(SaveDialog, false);
@@ -224,7 +212,7 @@ public class FileChooserActivity extends Activity {
         btnOk = (Button) findViewById(R.id.button_ok);
         btnCancel = (Button) findViewById(R.id.button_cancel);
 
-        fHistory = new HistoryStore<FileContainer>(0);
+        fHistory = new HistoryStore<IFile>(0);
 
         bindService();
     }// onCreate()
@@ -332,6 +320,15 @@ public class FileChooserActivity extends Activity {
      * - ...
      */
     private void setupService() {
+        /*
+         * set root path, if not specified, try using sdcard, if sdcard is not
+         * available, use "/"
+         */
+        if (getIntent().getSerializableExtra(Rootpath) != null)
+            fRoot = (IFile) getIntent().getSerializableExtra(Rootpath);
+        if (fRoot == null || !fRoot.isDirectory())
+            fRoot = fFileProvider.defaultPath();
+
         FilterMode filterMode = (FilterMode) getIntent().getSerializableExtra(
                 FilterMode);
         if (filterMode == null)
@@ -630,7 +627,7 @@ public class FileChooserActivity extends Activity {
             Toast.makeText(FileChooserActivity.this,
                     R.string.msg_filename_is_empty, Toast.LENGTH_SHORT).show();
         } else {
-            final File fFile = new File(getLocation().getFile()
+            final IFile fFile = fFileProvider.fromPath(getLocation()
                     .getAbsolutePath() + File.separator + filename);
 
             if (!Utils.isFilenameValid(filename)) {
@@ -671,21 +668,9 @@ public class FileChooserActivity extends Activity {
      * 
      * @return current location.
      */
-    private FileContainer getLocation() {
-        return (FileContainer) btnLocation.getTag();
+    private IFile getLocation() {
+        return (IFile) btnLocation.getTag();
     }// getLocation()
-
-    /**
-     * Sets current location
-     * 
-     * @param path
-     *            the path
-     * @param listener
-     *            {@link TaskListener}
-     */
-    private void setLocation(File path, TaskListener listener) {
-        setLocation(new FileContainer(path), listener);
-    }// setLocation()
 
     /**
      * Sets current location
@@ -695,17 +680,21 @@ public class FileChooserActivity extends Activity {
      * @param fListener
      *            {@link TaskListener}
      */
-    private void setLocation(final FileContainer fPath,
-            final TaskListener fListener) {
+    private void setLocation(final IFile fPath, final TaskListener fListener) {
         // TODO: let the user to be able to cancel the task
         new LoadingDialog(this, R.string.msg_loading, false) {
 
-            File[] files = new File[0];
+            IFile[] files = new IFile[0];
             boolean hasMoreFiles[] = { false };
 
             @Override
             protected Object doInBackground(Void... params) {
-                files = fFileProvider.listFiles(fPath.getFile(), hasMoreFiles);
+                try {
+                    files = fFileProvider.listFiles(fPath, hasMoreFiles);
+                } catch (Exception e) {
+                    setLastException(e);
+                    cancel(false);
+                }
                 return null;
             }// doInBackground()
 
@@ -718,8 +707,8 @@ public class FileChooserActivity extends Activity {
                             FileChooserActivity.this,
                             String.format(
                                     getString(R.string.pmsg_cannot_access_dir),
-                                    fPath.getFile().getName()),
-                            Toast.LENGTH_SHORT).show();
+                                    fPath.getName()), Toast.LENGTH_SHORT)
+                            .show();
                     if (fListener != null)
                         fListener.onFinish(false, null);
                     return;
@@ -735,7 +724,7 @@ public class FileChooserActivity extends Activity {
                  * add files to list view
                  */
                 List<DataModel> list = new ArrayList<DataModel>();
-                for (File f : files)
+                for (IFile f : files)
                     list.add(new DataModel(f));
                 listviewFiles.setAdapter(new FileAdapter(
                         FileChooserActivity.this, list, fFileProvider
@@ -745,11 +734,11 @@ public class FileChooserActivity extends Activity {
                  * navigation buttons
                  */
 
-                if (fPath.getFile().getParentFile() != null
-                        && fPath.getFile().getParentFile().getParentFile() != null)
-                    btnLocation.setText("../" + fPath.getFile().getName());
+                if (fPath.parentFile() != null
+                        && fPath.parentFile().parentFile() != null)
+                    btnLocation.setText("../" + fPath.getName());
                 else
-                    btnLocation.setText(fPath.getFile().getAbsolutePath());
+                    btnLocation.setText(fPath.getAbsolutePath());
                 btnLocation.setTag(fPath);
 
                 int idx = fHistory.indexOf(fPath);
@@ -802,22 +791,22 @@ public class FileChooserActivity extends Activity {
      * Finishes this activity.
      * 
      * @param files
-     *            list of {@link File}
+     *            list of {@link IFile}
      */
-    private void doFinish(File... files) {
-        List<File> list = new ArrayList<File>();
-        for (File f : files)
+    private void doFinish(IFile... files) {
+        List<IFile> list = new ArrayList<IFile>();
+        for (IFile f : files)
             list.add(f);
-        doFinish((ArrayList<File>) list);
+        doFinish((ArrayList<IFile>) list);
     }
 
     /**
      * Finishes this activity.
      * 
      * @param files
-     *            list of {@link File}
+     *            list of {@link IFile}
      */
-    private void doFinish(ArrayList<File> files) {
+    private void doFinish(ArrayList<IFile> files) {
         Intent intent = new Intent();
 
         // set results
@@ -840,7 +829,7 @@ public class FileChooserActivity extends Activity {
 
         @Override
         public void onClick(View v) {
-            FileContainer path = fHistory.prevOf(getLocation());
+            IFile path = fHistory.prevOf(getLocation());
             if (path != null) {
                 setLocation(path, new TaskListener() {
 
@@ -862,20 +851,19 @@ public class FileChooserActivity extends Activity {
 
         @Override
         public void onClick(View v) {
-            if (getLocation().getFile().getParentFile() != null) {
-                final FileContainer fLastPath = getLocation();
-                setLocation(getLocation().getFile().getParentFile(),
-                        new TaskListener() {
+            if (getLocation().parentFile() != null) {
+                final IFile fLastPath = getLocation();
+                setLocation(getLocation().parentFile(), new TaskListener() {
 
-                            @Override
-                            public void onFinish(boolean ok, Object any) {
-                                if (ok) {
-                                    fHistory.push(fLastPath, getLocation());
-                                    btnGoBack.setEnabled(true);
-                                    btnGoForward.setEnabled(false);
-                                }
-                            }
-                        });// setLocation()
+                    @Override
+                    public void onFinish(boolean ok, Object any) {
+                        if (ok) {
+                            fHistory.push(fLastPath, getLocation());
+                            btnGoBack.setEnabled(true);
+                            btnGoForward.setEnabled(false);
+                        }
+                    }
+                });// setLocation()
             }
         }
     };// fBtnLocationOnClickListener
@@ -889,7 +877,7 @@ public class FileChooserActivity extends Activity {
                     || fSaveDialog)
                 return false;
 
-            doFinish(getLocation().getFile());
+            doFinish(getLocation());
 
             return false;
         }
@@ -900,7 +888,7 @@ public class FileChooserActivity extends Activity {
 
         @Override
         public void onClick(View v) {
-            FileContainer path = fHistory.nextOf(getLocation());
+            IFile path = fHistory.nextOf(getLocation());
             if (path != null) {
                 setLocation(path, new TaskListener() {
 
@@ -958,7 +946,7 @@ public class FileChooserActivity extends Activity {
 
         @Override
         public void onClick(View v) {
-            List<File> list = new ArrayList<File>();
+            List<IFile> list = new ArrayList<IFile>();
             for (int i = 0; i < listviewFiles.getAdapter().getCount(); i++) {
                 // NOTE: header and footer don't have data
                 Object obj = listviewFiles.getAdapter().getItem(i);
@@ -968,7 +956,7 @@ public class FileChooserActivity extends Activity {
                         list.add(dm.getFile());
                 }
             }
-            doFinish((ArrayList<File>) list);
+            doFinish((ArrayList<IFile>) list);
         }
     };// fBtnOk_OpenDialog_OnClickListener
 
@@ -981,7 +969,7 @@ public class FileChooserActivity extends Activity {
 
             DataModel data = (DataModel) av.getItemAtPosition(position);
             if (data.getFile().isDirectory()) {
-                final FileContainer fLastPath = getLocation();
+                final IFile fLastPath = getLocation();
                 setLocation(data.getFile(), new TaskListener() {
 
                     @Override

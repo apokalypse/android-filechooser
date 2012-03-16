@@ -16,13 +16,11 @@
 
 package group.pals.android.lib.ui.filechooser.services;
 
-import java.io.File;
+import group.pals.android.lib.ui.filechooser.io.IFile;
 
 /**
- * Interface for {@link File} providers.<br>
+ * Interface for {@link IFile} providers.<br>
  * <br>
- * This interface if useful in case you have your own file system, and want to
- * use this library to let the user browse the system.
  * 
  * @author Hai Bison
  * @since v2.1 alpha
@@ -30,7 +28,7 @@ import java.io.File;
 public interface IFileProvider {
 
     /**
-     * {@link File} sorting parameters.<br>
+     * {@link IFile} sorting parameters.<br>
      * Includes:<br>
      * - {@link #SortByName}<br>
      * - {@link #SortBySize}<br>
@@ -55,7 +53,7 @@ public interface IFileProvider {
     }// SortType
 
     /**
-     * {@link File} sorting parameters.<br>
+     * {@link IFile} sorting parameters.<br>
      * Includes:<br>
      * - {@link #Ascending}<br>
      * - {@link #Descending}
@@ -75,7 +73,7 @@ public interface IFileProvider {
     }// SortOrder
 
     /**
-     * The filter of {@link File}.<br>
+     * The filter of {@link IFile}.<br>
      * Includes:<br>
      * - {@link #FilesOnly}<br>
      * - {@link #DirectoriesOnly}<br>
@@ -181,6 +179,22 @@ public interface IFileProvider {
     int getMaxFileCount();
 
     /**
+     * Gets default path of file provider.
+     * 
+     * @return {@link IFile}
+     */
+    IFile defaultPath();
+
+    /**
+     * Gets path from pathname.
+     * 
+     * @param pathname
+     *            a {@link String}
+     * @return the path from {@code pathname}
+     */
+    IFile fromPath(String pathname);
+
+    /**
      * Lists files inside {@code dir}, the result should be sorted with
      * {@link SortType} and {@link SortOrder}
      * 
@@ -192,8 +206,9 @@ public interface IFileProvider {
      *            the {@code dir} has more files than max file count allowed,
      *            the element returns {@code true}, otherwise it is
      *            {@code false}
-     * @return list of files, or {@code null} if an exception occurs, see
-     *         {@link File#listFiles()}
+     * @return an array of files, or {@code null} if an exception occurs.
+     * @throws a
+     *             {@link Exception}
      */
-    File[] listFiles(File dir, boolean[] hasMoreFiles);
+    IFile[] listFiles(IFile dir, boolean[] hasMoreFiles) throws Exception;
 }

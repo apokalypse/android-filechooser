@@ -16,11 +16,15 @@
 
 package group.pals.android.lib.ui.filechooser.services;
 
+import group.pals.android.lib.ui.filechooser.io.IFile;
+import group.pals.android.lib.ui.filechooser.io.LocalFile;
 import group.pals.android.lib.ui.filechooser.utils.FileComparator;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.util.Arrays;
+
+import android.os.Environment;
 
 /**
  * This is simple local file provider - as its name means.<br>
@@ -51,12 +55,27 @@ public class LocalFileProvider extends FileProviderService {
      */
 
     @Override
-    public File[] listFiles(File dir, final boolean[] fHasMoreFiles) {
+    public IFile defaultPath() {
+        File res = Environment.getExternalStorageDirectory();
+        return res == null ? fromPath("/") : new LocalFile(res);
+    }// defaultPath()
+
+    @Override
+    public IFile fromPath(String pathname) {
+        return new LocalFile(pathname);
+    }// defaultPath()
+
+    @Override
+    public IFile[] listFiles(IFile dir, final boolean[] fHasMoreFiles)
+            throws Exception {
+        if (!(dir instanceof File))
+            return null;
+
         if (fHasMoreFiles != null && fHasMoreFiles.length > 0)
             fHasMoreFiles[0] = false;
 
         try {
-            File[] files = dir.listFiles(new FileFilter() {
+            File[] files = ((File) dir).listFiles(new FileFilter() {
 
                 int fileCount = 0;
 
@@ -73,7 +92,8 @@ public class LocalFileProvider extends FileProviderService {
 
                     switch (getFilterMode()) {
                     case FilesOnly:
-                        if (getRegexFilenameFilter() != null && pathname.isFile())
+                        if (getRegexFilenameFilter() != null
+                                && pathname.isFile())
                             return pathname.getName().matches(
                                     getRegexFilenameFilter());
 
@@ -85,7 +105,8 @@ public class LocalFileProvider extends FileProviderService {
                             fileCount++;
                         return ok;
                     default:
-                        if (getRegexFilenameFilter() != null && pathname.isFile())
+                        if (getRegexFilenameFilter() != null
+                                && pathname.isFile())
                             return pathname.getName().matches(
                                     getRegexFilenameFilter());
 
@@ -95,10 +116,17 @@ public class LocalFileProvider extends FileProviderService {
                 }
             });// dir.listFiles()
 
-            if (files != null)
-                Arrays.sort(files, new FileComparator(getSortType(), getSortOrder()));
+            if (files != null) {
+                IFile[] res = new IFile[files.length];
+                for (int i = 0; i < files.length; i++)
+                    res[i] = new LocalFile(files[i]);
+                Arrays.sort(res, new FileComparator(getSortType(),
+                        getSortOrder()));
 
-            return files;
+                return res;
+            }
+
+            return null;
         } catch (Exception e) {
             return null;
         }

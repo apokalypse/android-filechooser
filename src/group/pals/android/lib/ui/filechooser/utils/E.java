@@ -40,7 +40,7 @@ public class E {
                     + "%s v%s\n" + "...by hai bison\n\n"
                     + "http://sites.google.com/site/haitimeid/\n\n"
                     + "Hope you enjoy this library!", "android-filechooser",
-                    "3.1");
+                    "3.2");
         } catch (Exception e) {
             msg = "Oops... You've found a broken Easter egg, try again later  :-(";
         }

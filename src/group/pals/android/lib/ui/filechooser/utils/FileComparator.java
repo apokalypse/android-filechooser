@@ -16,13 +16,13 @@
 
 package group.pals.android.lib.ui.filechooser.utils;
 
+import group.pals.android.lib.ui.filechooser.io.IFile;
 import group.pals.android.lib.ui.filechooser.services.IFileProvider;
 
-import java.io.File;
 import java.util.Comparator;
 
 /**
- * {@link File} comparator.<br>
+ * {@link IFile} comparator.<br>
  * Rules:<br>
  * - directories first;<br>
  * - other properties are based on parameters given in constructor, see
@@ -31,7 +31,7 @@ import java.util.Comparator;
  * @author Hai Bison
  * @since v1.91
  */
-public class FileComparator implements Comparator<File> {
+public class FileComparator implements Comparator<IFile> {
 
     private final IFileProvider.SortType fSortType;
     private final IFileProvider.SortOrder fSortOrder;
@@ -51,7 +51,7 @@ public class FileComparator implements Comparator<File> {
     }
 
     @Override
-    public int compare(File lhs, File rhs) {
+    public int compare(IFile lhs, IFile rhs) {
         if ((lhs.isDirectory() && rhs.isDirectory())
                 || (lhs.isFile() && rhs.isFile())) {
             // default is to compare by name (case insensitive)

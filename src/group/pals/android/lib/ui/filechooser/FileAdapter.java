@@ -16,11 +16,11 @@
 
 package group.pals.android.lib.ui.filechooser;
 
+import group.pals.android.lib.ui.filechooser.io.IFile;
 import group.pals.android.lib.ui.filechooser.services.IFileProvider;
 import group.pals.android.lib.ui.filechooser.services.IFileProvider.FilterMode;
 import group.pals.android.lib.ui.filechooser.utils.Converter;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -135,10 +135,10 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
      * @param fData
      *            {@link DataModel}
      * @param file
-     *            {@link File}
+     *            {@link IFile}
      * @since v2.0 alpha
      */
-    private void updateView(Bag bag, final DataModel fData, File file) {
+    private void updateView(Bag bag, final DataModel fData, IFile file) {
         // image icon
         if (file.isDirectory())
             bag.imageIcon.setImageResource(R.drawable.folder48);
@@ -155,8 +155,8 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
                     .lastModified());
         } catch (Exception e) {
             try {
-                time = new SimpleDateFormat(DefFileTimeShortFormat)
-                        .format(file.lastModified());
+                time = new SimpleDateFormat(DefFileTimeShortFormat).format(file
+                        .lastModified());
             } catch (Exception ex) {
                 time = new Date(file.lastModified()).toLocaleString();
             }
@@ -170,8 +170,7 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
 
         // checkbox
         if (fMultiSelection) {
-            if (fSelectionMode == FilterMode.FilesOnly
-                    && file.isDirectory()) {
+            if (fSelectionMode == FilterMode.FilesOnly && file.isDirectory()) {
                 bag.checkboxSelection.setVisibility(View.GONE);
             } else {
                 bag.checkboxSelection.setVisibility(View.VISIBLE);
@@ -189,5 +188,5 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
             }
         } else
             bag.checkboxSelection.setVisibility(View.GONE);
-    }//updateView
+    }// updateView
 }

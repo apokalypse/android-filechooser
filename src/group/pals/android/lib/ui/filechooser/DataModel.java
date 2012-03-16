@@ -16,10 +16,10 @@
 
 package group.pals.android.lib.ui.filechooser;
 
-import java.io.File;
+import group.pals.android.lib.ui.filechooser.io.IFile;
 
 /**
- * This class is used to hold data ({@link File}) in
+ * This class is used to hold data ({@link IFile}) in
  * {@link android.widget.ArrayAdapter}
  * 
  * @author Hai Bison
@@ -27,24 +27,24 @@ import java.io.File;
  */
 public class DataModel {
 
-    private File file;
+    private IFile file;
     private boolean selected;
 
     /**
-     * Creates new {@link DataModel} with a {@link File}
+     * Creates new {@link DataModel} with a {@link IFile}
      * 
      * @param file
      */
-    public DataModel(File file) {
+    public DataModel(IFile file) {
         this.file = file;
     }
 
     /**
      * Gets the file.
      * 
-     * @return {@link File}
+     * @return {@link IFile}
      */
-    public File getFile() {
+    public IFile getFile() {
         return file;
     }
 
