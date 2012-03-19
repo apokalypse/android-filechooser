@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.util.Log;
 
 /**
  * An {@link AsyncTask}, used to show {@link ProgressDialog} while doing some
@@ -30,6 +31,8 @@ import android.os.Handler;
  * @since v2.1 alpha
  */
 public abstract class LoadingDialog extends AsyncTask<Void, Void, Object> {
+
+    public static final String ClassName = LoadingDialog.class.getName();
 
     private final ProgressDialog fDialog;
     /**
@@ -91,8 +94,18 @@ public abstract class LoadingDialog extends AsyncTask<Void, Void, Object> {
 
             @Override
             public void run() {
-                if (!finished)
-                    fDialog.show();
+                if (!finished) {
+                    try {
+                        /*
+                         * sometime the activity has been finished before we
+                         * show this dialog, it will raise error
+                         */
+                        fDialog.show();
+                    } catch (Throwable t) {
+                        // TODO
+                        Log.e(ClassName, "onPreExecute() - show dialog: " + t);
+                    }
+                }
             }
         }, getDelayTime());
     }// onPreExecute()
@@ -116,7 +129,16 @@ public abstract class LoadingDialog extends AsyncTask<Void, Void, Object> {
 
     private void doFinish() {
         finished = true;
-        fDialog.dismiss();
+        try {
+            /*
+             * sometime the activity has been finished before we dismiss this
+             * dialog, it will raise error
+             */
+            fDialog.dismiss();
+        } catch (Throwable t) {
+            // TODO
+            Log.e(ClassName, "doFinish() - dismiss dialog: " + t);
+        }
     }// doFinish()
 
     /**
