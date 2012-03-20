@@ -51,6 +51,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -194,6 +195,17 @@ public class FileChooserActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.file_chooser);
+        /*
+         * Thanks to Matthias.
+         * http://stackoverflow.com/questions/1362723/how-can-i-get-a
+         * -dialog-style-activity-window-to-fill-the-screen
+         * 
+         * But I can't check if you set the theme in xml to dialog or another
+         * else. The SDK does not mention this.
+         */
+        // if (getTheme().??? == android.R.style.Theme_Dialog)
+        getWindow().setLayout(LayoutParams.FILL_PARENT,
+                LayoutParams.FILL_PARENT);
 
         loadPreferences();
 
