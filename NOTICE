@@ -1,7 +1,7 @@
 android-filechooser
 Copyright 2012 Hai Bison
 
-Version: 3.2
+Version: 3.3
 
 This product includes software developed at
 http://code.google.com/p/android-filechooser/
@@ -21,6 +21,14 @@ limitations under the License.
 ===============================================================
 
 History:
+
++++ Version 3.3 +++
+ - Release: March 22, 2012
+
+ - fix bug in LoadingDialog: if the user finishes the owner activity,
+   the application can crash if the dialog is going to show up or dismiss;
+ - improve FileChooserActivity: make its height and width always fit the
+   screen size in dialog theme;
 
 +++ Version 3.2 +++
  - Release: March 16, 2012
