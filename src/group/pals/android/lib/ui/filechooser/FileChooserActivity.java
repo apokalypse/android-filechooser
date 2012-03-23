@@ -45,6 +45,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -69,7 +70,10 @@ import android.widget.Toast;
  */
 public class FileChooserActivity extends Activity {
 
-    public static final String LogTag = FileChooserActivity.class.getName();
+    /**
+     * The full name of this class. Generally used for debugging.
+     */
+    public static final String ClassName = FileChooserActivity.class.getName();
 
     /*---------------------------------------------
      * KEYS
@@ -84,10 +88,10 @@ public class FileChooserActivity extends Activity {
     public static final String Rootpath = "rootpath";
 
     /**
-     * Key to hold the service action name of {@link IFileProvider}.<br>
-     * Default is {@link LocalFileProvider#ServiceActionName}
+     * Key to hold the service class which implements {@link IFileProvider}.<br>
+     * Default is {@link LocalFileProvider}
      */
-    public static final String FileProviderActionName = "file_provider_action_name";
+    public static final String FileProviderClass = "file_provider_class";
 
     // ---------------------------------------------------------
 
@@ -204,7 +208,7 @@ public class FileChooserActivity extends Activity {
          * else. The SDK does not mention this.
          */
         // if (getTheme().??? == android.R.style.Theme_Dialog)
-        getWindow().setLayout(LayoutParams.FILL_PARENT,
+        getWindow().setLayout(LayoutParams.WRAP_CONTENT,
                 LayoutParams.FILL_PARENT);
 
         loadPreferences();
@@ -235,12 +239,12 @@ public class FileChooserActivity extends Activity {
      * {@link Activity#RESULT_CANCELED}
      */
     private void bindService() {
-        String serviceActionName = getIntent().getStringExtra(
-                FileProviderActionName);
-        if (serviceActionName == null)
-            serviceActionName = LocalFileProvider.ServiceActionName;
+        Class<?> serviceClass = (Class<?>) getIntent().getSerializableExtra(
+                FileProviderClass);
+        if (serviceClass == null)
+            serviceClass = LocalFileProvider.class;
 
-        bindService(new Intent(serviceActionName), fServiceConnection,
+        bindService(new Intent(this, serviceClass), fServiceConnection,
                 Context.BIND_AUTO_CREATE);
 
         new LoadingDialog(this, R.string.msg_loading, false) {
@@ -309,9 +313,14 @@ public class FileChooserActivity extends Activity {
              * that we know is running in our own process, we can cast its
              * IBinder to a concrete class and directly access it.
              */
-            fFileProvider = ((FileProviderService.LocalBinder) service)
-                    .getService();
-        }
+            try {
+                fFileProvider = ((FileProviderService.LocalBinder) service)
+                        .getService();
+            } catch (Throwable t) {
+                Log.e(ClassName, "fServiceConnection.onServiceConnected() -> "
+                        + t);
+            }
+        }// onServiceConnected()
 
         public void onServiceDisconnected(ComponentName className) {
             /*
@@ -321,7 +330,7 @@ public class FileChooserActivity extends Activity {
              * this happen.
              */
             fFileProvider = null;
-        }
+        }// onServiceDisconnected()
     };// fServiceConnection
 
     /**

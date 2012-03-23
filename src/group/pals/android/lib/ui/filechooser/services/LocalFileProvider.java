@@ -35,12 +35,6 @@ import android.os.Environment;
  */
 public class LocalFileProvider extends FileProviderService {
 
-    /**
-     * The action name for this service.
-     */
-    public static final String ServiceActionName = LocalFileProvider.class
-            .getName() + ".60cf767c.6fe6.41ad.90ce.e94657bde773";
-
     /*-------------------------------------------------------------------
      * Service
      */
