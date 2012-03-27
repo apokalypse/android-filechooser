@@ -60,7 +60,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * Main activity for this library.
@@ -80,8 +79,10 @@ public class FileChooserActivity extends Activity {
      */
 
     /**
-     * Key to hold the root path, default is sdcard, if sdcard is not available,
-     * "/" will be used.<br>
+     * Key to hold the root path.<br>
+     * <br>
+     * If {@link LocalFileProvider} is used, then default is sdcard, if sdcard
+     * is not available, "/" will be used.<br>
      * <br>
      * <b>Note</b>: The value of this key is a {@link IFile}
      */
@@ -342,16 +343,16 @@ public class FileChooserActivity extends Activity {
      */
     private void setupService() {
         /*
-         * set root path, if not specified, try using sdcard, if sdcard is not
-         * available, use "/"
+         * set root path, if not specified, try using
+         * IFileProvider#defaultPath()
          */
         if (getIntent().getSerializableExtra(Rootpath) != null)
             fRoot = (IFile) getIntent().getSerializableExtra(Rootpath);
         if (fRoot == null || !fRoot.isDirectory())
             fRoot = fFileProvider.defaultPath();
 
-        FilterMode filterMode = (FilterMode) getIntent().getSerializableExtra(
-                FilterMode);
+        IFileProvider.FilterMode filterMode = (FilterMode) getIntent()
+                .getSerializableExtra(FilterMode);
         if (filterMode == null)
             filterMode = IFileProvider.FilterMode.FilesOnly;
 
@@ -360,6 +361,7 @@ public class FileChooserActivity extends Activity {
             sortType = IFileProvider.SortType.valueOf(fPrefs.getString(
                     SortType, IFileProvider.SortType.SortByName.name()));
         } catch (Exception e) {
+            // ignore it
         }
 
         boolean sortAscending = IFileProvider.SortOrder.Ascending.name()
@@ -526,8 +528,8 @@ public class FileChooserActivity extends Activity {
     protected void onStart() {
         super.onStart();
         if (!fMultiSelection && !fSaveDialog)
-            Toast.makeText(this, R.string.hint_long_click_to_select_files,
-                    Toast.LENGTH_SHORT).show();
+            Dlg.toast(this, R.string.hint_long_click_to_select_files,
+                    Dlg.LENGTH_SHORT);
     }// onStart()
 
     @Override
@@ -645,18 +647,16 @@ public class FileChooserActivity extends Activity {
      */
     private void checkSaveasFilenameAndFinish(String filename) {
         if (filename.length() == 0) {
-            Toast.makeText(FileChooserActivity.this,
-                    R.string.msg_filename_is_empty, Toast.LENGTH_SHORT).show();
+            Dlg.toast(this, R.string.msg_filename_is_empty, Dlg.LENGTH_SHORT);
         } else {
             final IFile fFile = fFileProvider.fromPath(getLocation()
                     .getAbsolutePath() + File.separator + filename);
 
             if (!Utils.isFilenameValid(filename)) {
-                Toast.makeText(
-                        FileChooserActivity.this,
+                Dlg.toast(this,
                         String.format(
                                 getString(R.string.pmsg_filename_is_invalid),
-                                filename), Toast.LENGTH_SHORT).show();
+                                filename), Dlg.LENGTH_SHORT);
             } else if (fFile.isFile()) {
                 new AlertDialog.Builder(FileChooserActivity.this)
                         .setMessage(
@@ -674,11 +674,9 @@ public class FileChooserActivity extends Activity {
                                     }
                                 }).show();
             } else if (fFile.isDirectory()) {
-                Toast.makeText(
-                        FileChooserActivity.this,
-                        String.format(
-                                getString(R.string.pmsg_filename_is_directory),
-                                fFile.getName()), Toast.LENGTH_SHORT).show();
+                Dlg.toast(this, String.format(
+                        getString(R.string.pmsg_filename_is_directory),
+                        fFile.getName()), Dlg.LENGTH_SHORT);
             } else
                 doFinish(fFile);
         }
@@ -724,12 +722,9 @@ public class FileChooserActivity extends Activity {
                 super.onPostExecute(result);
 
                 if (files == null) {
-                    Toast.makeText(
-                            FileChooserActivity.this,
-                            String.format(
-                                    getString(R.string.pmsg_cannot_access_dir),
-                                    fPath.getName()), Toast.LENGTH_SHORT)
-                            .show();
+                    Dlg.toast(FileChooserActivity.this, String.format(
+                            getString(R.string.pmsg_cannot_access_dir),
+                            fPath.getName()), Dlg.LENGTH_SHORT);
                     if (fListener != null)
                         fListener.onFinish(false, null);
                     return;
