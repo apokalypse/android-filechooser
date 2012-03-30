@@ -46,31 +46,24 @@ public class Dlg {
     }// toast()
 
     public static void showInfo(Context context, CharSequence msg) {
-        new AlertDialog.Builder(context)
-                .setIcon(android.R.drawable.ic_dialog_info)
-                .setTitle(R.string.title_info).setMessage(msg).show();
+        new AlertDialog.Builder(context).setIcon(android.R.drawable.ic_dialog_info).setTitle(R.string.title_info)
+                .setMessage(msg).show();
     }// showInfo()
 
     public static void showInfo(Context context, int msgId) {
         showInfo(context, context.getString(msgId));
     }// showInfo()
 
-    public static void showError(Context context, CharSequence msg,
-            DialogInterface.OnCancelListener listener) {
-        new AlertDialog.Builder(context)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle(R.string.title_error).setMessage(msg)
-                .setOnCancelListener(listener).show();
+    public static void showError(Context context, CharSequence msg, DialogInterface.OnCancelListener listener) {
+        new AlertDialog.Builder(context).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.title_error)
+                .setMessage(msg).setOnCancelListener(listener).show();
     }// showError()
 
-    public static void showError(Context context, int msgId,
-            DialogInterface.OnCancelListener listener) {
+    public static void showError(Context context, int msgId, DialogInterface.OnCancelListener listener) {
         showError(context, context.getString(msgId), listener);
     }// showError()
 
-    public static void showUnknownError(Context context, Throwable t,
-            DialogInterface.OnCancelListener listener) {
-        showError(context, String.format(
-                context.getString(R.string.pmsg_unknown_error), t), listener);
+    public static void showUnknownError(Context context, Throwable t, DialogInterface.OnCancelListener listener) {
+        showError(context, String.format(context.getString(R.string.pmsg_unknown_error), t), listener);
     }// showUnknownError()
 }

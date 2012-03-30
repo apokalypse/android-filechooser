@@ -100,8 +100,7 @@ public class FileChooserActivity extends Activity {
      * Key to hold {@link IFileProvider.FilterMode}, default is
      * {@link IFileProvider.FilterMode#FilesOnly}.
      */
-    public static final String FilterMode = IFileProvider.FilterMode.class
-            .getName();
+    public static final String FilterMode = IFileProvider.FilterMode.class.getName();
 
     // flags
 
@@ -131,8 +130,7 @@ public class FileChooserActivity extends Activity {
      * Key to hold {@link IFileProvider.SortType}, default =
      * {@link IFileProvider.SortType#SortByName}
      */
-    public static final String SortType = IFileProvider.SortType.class
-            .getName();
+    public static final String SortType = IFileProvider.SortType.class.getName();
 
     // ---------------------------------------------------------
 
@@ -140,8 +138,7 @@ public class FileChooserActivity extends Activity {
      * Key to hold {@link IFileProvider.SortOrder}, default =
      * {@link IFileProvider.SortOrder#Ascending}
      */
-    public static final String SortOrder = IFileProvider.SortOrder.class
-            .getName();
+    public static final String SortOrder = IFileProvider.SortOrder.class.getName();
 
     // ---------------------------------------------------------
 
@@ -209,8 +206,7 @@ public class FileChooserActivity extends Activity {
          * else. The SDK does not mention this.
          */
         // if (getTheme().??? == android.R.style.Theme_Dialog)
-        getWindow().setLayout(LayoutParams.WRAP_CONTENT,
-                LayoutParams.FILL_PARENT);
+        getWindow().setLayout(LayoutParams.WRAP_CONTENT, LayoutParams.FILL_PARENT);
 
         loadPreferences();
 
@@ -240,13 +236,11 @@ public class FileChooserActivity extends Activity {
      * {@link Activity#RESULT_CANCELED}
      */
     private void bindService() {
-        Class<?> serviceClass = (Class<?>) getIntent().getSerializableExtra(
-                FileProviderClass);
+        Class<?> serviceClass = (Class<?>) getIntent().getSerializableExtra(FileProviderClass);
         if (serviceClass == null)
             serviceClass = LocalFileProvider.class;
 
-        bindService(new Intent(this, serviceClass), fServiceConnection,
-                Context.BIND_AUTO_CREATE);
+        bindService(new Intent(this, serviceClass), fServiceConnection, Context.BIND_AUTO_CREATE);
 
         new LoadingDialog(this, R.string.msg_loading, false) {
 
@@ -275,9 +269,7 @@ public class FileChooserActivity extends Activity {
                 super.onPostExecute(result);
 
                 if (fFileProvider == null) {
-                    Dlg.showError(
-                            FileChooserActivity.this,
-                            R.string.msg_cannot_connect_to_file_provider_service,
+                    Dlg.showError(FileChooserActivity.this, R.string.msg_cannot_connect_to_file_provider_service,
                             new DialogInterface.OnCancelListener() {
 
                                 @Override
@@ -315,11 +307,9 @@ public class FileChooserActivity extends Activity {
              * IBinder to a concrete class and directly access it.
              */
             try {
-                fFileProvider = ((FileProviderService.LocalBinder) service)
-                        .getService();
+                fFileProvider = ((FileProviderService.LocalBinder) service).getService();
             } catch (Throwable t) {
-                Log.e(ClassName, "fServiceConnection.onServiceConnected() -> "
-                        + t);
+                Log.e(ClassName, "fServiceConnection.onServiceConnected() -> " + t);
             }
         }// onServiceConnected()
 
@@ -351,35 +341,27 @@ public class FileChooserActivity extends Activity {
         if (fRoot == null || !fRoot.isDirectory())
             fRoot = fFileProvider.defaultPath();
 
-        IFileProvider.FilterMode filterMode = (FilterMode) getIntent()
-                .getSerializableExtra(FilterMode);
+        IFileProvider.FilterMode filterMode = (FilterMode) getIntent().getSerializableExtra(FilterMode);
         if (filterMode == null)
             filterMode = IFileProvider.FilterMode.FilesOnly;
 
         IFileProvider.SortType sortType = IFileProvider.SortType.SortByName;
         try {
-            sortType = IFileProvider.SortType.valueOf(fPrefs.getString(
-                    SortType, IFileProvider.SortType.SortByName.name()));
+            sortType = IFileProvider.SortType.valueOf(fPrefs.getString(SortType,
+                    IFileProvider.SortType.SortByName.name()));
         } catch (Exception e) {
             // ignore it
         }
 
-        boolean sortAscending = IFileProvider.SortOrder.Ascending.name()
-                .equals(fPrefs.getString(SortOrder,
-                        IFileProvider.SortOrder.Ascending.name()));
+        boolean sortAscending = IFileProvider.SortOrder.Ascending.name().equals(
+                fPrefs.getString(SortOrder, IFileProvider.SortOrder.Ascending.name()));
 
-        fFileProvider.setDisplayHiddenFiles(getIntent().getBooleanExtra(
-                DisplayHiddenFiles, false));
-        fFileProvider
-                .setFilterMode(fSaveDialog ? IFileProvider.FilterMode.FilesOnly
-                        : filterMode);
-        fFileProvider.setMaxFileCount(getIntent().getIntExtra(MaxFileCount,
-                1024));
-        fFileProvider.setRegexFilenameFilter(fSaveDialog ? null : getIntent()
-                .getStringExtra(RegexFilenameFilter));
-        fFileProvider
-                .setSortOrder(sortAscending ? IFileProvider.SortOrder.Ascending
-                        : IFileProvider.SortOrder.Descending);
+        fFileProvider.setDisplayHiddenFiles(getIntent().getBooleanExtra(DisplayHiddenFiles, false));
+        fFileProvider.setFilterMode(fSaveDialog ? IFileProvider.FilterMode.FilesOnly : filterMode);
+        fFileProvider.setMaxFileCount(getIntent().getIntExtra(MaxFileCount, 1024));
+        fFileProvider.setRegexFilenameFilter(fSaveDialog ? null : getIntent().getStringExtra(RegexFilenameFilter));
+        fFileProvider.setSortOrder(sortAscending ? IFileProvider.SortOrder.Ascending
+                : IFileProvider.SortOrder.Descending);
         fFileProvider.setSortType(sortType);
     }// setupService()
 
@@ -408,55 +390,39 @@ public class FileChooserActivity extends Activity {
     private void doResortFileList(int menuItemId) {
         IFileProvider.SortType lastSortType = IFileProvider.SortType.SortByName;
         try {
-            lastSortType = IFileProvider.SortType.valueOf(fPrefs.getString(
-                    SortType, IFileProvider.SortType.SortByName.name()));
+            lastSortType = IFileProvider.SortType.valueOf(fPrefs.getString(SortType,
+                    IFileProvider.SortType.SortByName.name()));
         } catch (Exception e) {
         }
 
-        boolean lastSortAscending = IFileProvider.SortOrder.Ascending.name()
-                .equals(fPrefs.getString(SortOrder,
-                        IFileProvider.SortOrder.Ascending.name()));
+        boolean lastSortAscending = IFileProvider.SortOrder.Ascending.name().equals(
+                fPrefs.getString(SortOrder, IFileProvider.SortOrder.Ascending.name()));
 
         Editor editor = fPrefs.edit();
 
         if (menuItemId == R.id.menuitem_sort_by_name) {
             if (lastSortType == IFileProvider.SortType.SortByName)
-                editor.putString(
-                        SortOrder,
-                        lastSortAscending ? IFileProvider.SortOrder.Descending
-                                .name() : IFileProvider.SortOrder.Ascending
-                                .name());
+                editor.putString(SortOrder, lastSortAscending ? IFileProvider.SortOrder.Descending.name()
+                        : IFileProvider.SortOrder.Ascending.name());
             else {
-                editor.putString(SortType,
-                        IFileProvider.SortType.SortByName.name());
-                editor.putString(SortOrder,
-                        IFileProvider.SortOrder.Ascending.name());
+                editor.putString(SortType, IFileProvider.SortType.SortByName.name());
+                editor.putString(SortOrder, IFileProvider.SortOrder.Ascending.name());
             }
         } else if (menuItemId == R.id.menuitem_sort_by_size) {
             if (lastSortType == IFileProvider.SortType.SortBySize)
-                editor.putString(
-                        SortOrder,
-                        lastSortAscending ? IFileProvider.SortOrder.Descending
-                                .name() : IFileProvider.SortOrder.Ascending
-                                .name());
+                editor.putString(SortOrder, lastSortAscending ? IFileProvider.SortOrder.Descending.name()
+                        : IFileProvider.SortOrder.Ascending.name());
             else {
-                editor.putString(SortType,
-                        IFileProvider.SortType.SortBySize.name());
-                editor.putString(SortOrder,
-                        IFileProvider.SortOrder.Ascending.name());
+                editor.putString(SortType, IFileProvider.SortType.SortBySize.name());
+                editor.putString(SortOrder, IFileProvider.SortOrder.Ascending.name());
             }
         } else if (menuItemId == R.id.menuitem_sort_by_date) {
             if (lastSortType == IFileProvider.SortType.SortByDate)
-                editor.putString(
-                        SortOrder,
-                        lastSortAscending ? IFileProvider.SortOrder.Descending
-                                .name() : IFileProvider.SortOrder.Ascending
-                                .name());
+                editor.putString(SortOrder, lastSortAscending ? IFileProvider.SortOrder.Descending.name()
+                        : IFileProvider.SortOrder.Ascending.name());
             else {
-                editor.putString(SortType,
-                        IFileProvider.SortType.SortByDate.name());
-                editor.putString(SortOrder,
-                        IFileProvider.SortOrder.Ascending.name());
+                editor.putString(SortType, IFileProvider.SortType.SortByDate.name());
+                editor.putString(SortOrder, IFileProvider.SortOrder.Ascending.name());
             }
         }
 
@@ -468,12 +434,10 @@ public class FileChooserActivity extends Activity {
          * notifyDataSetChanged(), invalidateViews()...
          */
         try {
-            fFileProvider.setSortType(IFileProvider.SortType.valueOf(fPrefs
-                    .getString(SortType,
-                            IFileProvider.SortType.SortByName.name())));
-            fFileProvider.setSortOrder(IFileProvider.SortOrder.valueOf(fPrefs
-                    .getString(SortOrder,
-                            IFileProvider.SortOrder.Ascending.name())));
+            fFileProvider.setSortType(IFileProvider.SortType.valueOf(fPrefs.getString(SortType,
+                    IFileProvider.SortType.SortByName.name())));
+            fFileProvider.setSortOrder(IFileProvider.SortOrder.valueOf(fPrefs.getString(SortOrder,
+                    IFileProvider.SortOrder.Ascending.name())));
         } catch (Exception e) {
             // TODO
         }
@@ -487,37 +451,32 @@ public class FileChooserActivity extends Activity {
          */
 
         // clear all icons
-        final int[] fSorterIds = { R.id.menuitem_sort_by_name,
-                R.id.menuitem_sort_by_size, R.id.menuitem_sort_by_date };
+        final int[] fSorterIds = { R.id.menuitem_sort_by_name, R.id.menuitem_sort_by_size, R.id.menuitem_sort_by_date };
         for (int id : fSorterIds)
             menu.findItem(id).setIcon(0);
 
         IFileProvider.SortType sortType = IFileProvider.SortType.SortByName;
         try {
-            sortType = IFileProvider.SortType.valueOf(fPrefs.getString(
-                    SortType, IFileProvider.SortType.SortByName.name()));
+            sortType = IFileProvider.SortType.valueOf(fPrefs.getString(SortType,
+                    IFileProvider.SortType.SortByName.name()));
         } catch (Exception e) {
         }
 
-        final boolean fSortAscending = IFileProvider.SortOrder.Ascending.name()
-                .equals(fPrefs.getString(SortOrder,
-                        IFileProvider.SortOrder.Ascending.name()));
+        final boolean fSortAscending = IFileProvider.SortOrder.Ascending.name().equals(
+                fPrefs.getString(SortOrder, IFileProvider.SortOrder.Ascending.name()));
 
         switch (sortType) {
         case SortByName:
             menu.findItem(R.id.menuitem_sort_by_name).setIcon(
-                    fSortAscending ? R.drawable.ic_menu_sort_up
-                            : R.drawable.ic_menu_sort_down);
+                    fSortAscending ? R.drawable.ic_menu_sort_up : R.drawable.ic_menu_sort_down);
             break;
         case SortBySize:
             menu.findItem(R.id.menuitem_sort_by_size).setIcon(
-                    fSortAscending ? R.drawable.ic_menu_sort_up
-                            : R.drawable.ic_menu_sort_down);
+                    fSortAscending ? R.drawable.ic_menu_sort_up : R.drawable.ic_menu_sort_down);
             break;
         case SortByDate:
             menu.findItem(R.id.menuitem_sort_by_date).setIcon(
-                    fSortAscending ? R.drawable.ic_menu_sort_up
-                            : R.drawable.ic_menu_sort_down);
+                    fSortAscending ? R.drawable.ic_menu_sort_up : R.drawable.ic_menu_sort_down);
             break;
         }
 
@@ -528,8 +487,7 @@ public class FileChooserActivity extends Activity {
     protected void onStart() {
         super.onStart();
         if (!fMultiSelection && !fSaveDialog)
-            Dlg.toast(this, R.string.hint_long_click_to_select_files,
-                    Dlg.LENGTH_SHORT);
+            Dlg.toast(this, R.string.hint_long_click_to_select_files, Dlg.LENGTH_SHORT);
     }// onStart()
 
     @Override
@@ -551,17 +509,14 @@ public class FileChooserActivity extends Activity {
          */
 
         if (getIntent().hasExtra(SortType))
-            editor.putString(SortType, ((IFileProvider.SortType) getIntent()
-                    .getSerializableExtra(SortType)).name());
+            editor.putString(SortType, ((IFileProvider.SortType) getIntent().getSerializableExtra(SortType)).name());
         else if (!fPrefs.contains(SortType))
             editor.putString(SortType, IFileProvider.SortType.SortByName.name());
 
         if (getIntent().hasExtra(SortOrder))
-            editor.putString(SortOrder, ((IFileProvider.SortOrder) getIntent()
-                    .getSerializableExtra(SortOrder)).name());
+            editor.putString(SortOrder, ((IFileProvider.SortOrder) getIntent().getSerializableExtra(SortOrder)).name());
         else if (!fPrefs.contains(SortOrder))
-            editor.putString(SortOrder,
-                    IFileProvider.SortOrder.Ascending.name());
+            editor.putString(SortOrder, IFileProvider.SortOrder.Ascending.name());
 
         editor.commit();
     }// loadPreferences()
@@ -610,8 +565,7 @@ public class FileChooserActivity extends Activity {
         // single click to open directory (if the item is directory)
         listviewFiles.setOnItemClickListener(fListviewFilesOnItemClickListener);
         // long click to select item (if this is single mode)
-        listviewFiles
-                .setOnItemLongClickListener(fListviewFilesOnItemLongClickListener);
+        listviewFiles.setOnItemLongClickListener(fListviewFilesOnItemLongClickListener);
     }// setupListviewFiles()
 
     /**
@@ -624,10 +578,8 @@ public class FileChooserActivity extends Activity {
         btnCancel.setOnClickListener(fBtnCancelOnClickListener);
 
         if (fSaveDialog) {
-            txtSaveasFilename.setText(getIntent().getStringExtra(
-                    DefaultFilename));
-            txtSaveasFilename
-                    .setOnEditorActionListener(fTxtFilenameOnEditorActionListener);
+            txtSaveasFilename.setText(getIntent().getStringExtra(DefaultFilename));
+            txtSaveasFilename.setOnEditorActionListener(fTxtFilenameOnEditorActionListener);
             btnOk.setOnClickListener(fBtnOk_SaveDialog_OnClickListener);
         } else {// this is in open mode
             txtSaveasFilename.setVisibility(View.GONE);
@@ -649,34 +601,24 @@ public class FileChooserActivity extends Activity {
         if (filename.length() == 0) {
             Dlg.toast(this, R.string.msg_filename_is_empty, Dlg.LENGTH_SHORT);
         } else {
-            final IFile fFile = fFileProvider.fromPath(getLocation()
-                    .getAbsolutePath() + File.separator + filename);
+            final IFile fFile = fFileProvider.fromPath(getLocation().getAbsolutePath() + File.separator + filename);
 
             if (!Utils.isFilenameValid(filename)) {
-                Dlg.toast(this,
-                        String.format(
-                                getString(R.string.pmsg_filename_is_invalid),
-                                filename), Dlg.LENGTH_SHORT);
+                Dlg.toast(this, String.format(getString(R.string.pmsg_filename_is_invalid), filename), Dlg.LENGTH_SHORT);
             } else if (fFile.isFile()) {
                 new AlertDialog.Builder(FileChooserActivity.this)
-                        .setMessage(
-                                String.format(
-                                        getString(R.string.pmsg_confirm_replace_file),
-                                        fFile.getName()))
+                        .setMessage(String.format(getString(R.string.pmsg_confirm_replace_file), fFile.getName()))
                         .setPositiveButton(R.string.cmd_cancel, null)
-                        .setNeutralButton(R.string.cmd_ok,
-                                new DialogInterface.OnClickListener() {
+                        .setNeutralButton(R.string.cmd_ok, new DialogInterface.OnClickListener() {
 
-                                    @Override
-                                    public void onClick(DialogInterface dialog,
-                                            int which) {
-                                        doFinish(fFile);
-                                    }
-                                }).show();
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                doFinish(fFile);
+                            }
+                        }).show();
             } else if (fFile.isDirectory()) {
-                Dlg.toast(this, String.format(
-                        getString(R.string.pmsg_filename_is_directory),
-                        fFile.getName()), Dlg.LENGTH_SHORT);
+                Dlg.toast(this, String.format(getString(R.string.pmsg_filename_is_directory), fFile.getName()),
+                        Dlg.LENGTH_SHORT);
             } else
                 doFinish(fFile);
         }
@@ -722,9 +664,9 @@ public class FileChooserActivity extends Activity {
                 super.onPostExecute(result);
 
                 if (files == null) {
-                    Dlg.toast(FileChooserActivity.this, String.format(
-                            getString(R.string.pmsg_cannot_access_dir),
-                            fPath.getName()), Dlg.LENGTH_SHORT);
+                    Dlg.toast(FileChooserActivity.this,
+                            String.format(getString(R.string.pmsg_cannot_access_dir), fPath.getName()),
+                            Dlg.LENGTH_SHORT);
                     if (fListener != null)
                         fListener.onFinish(false, null);
                     return;
@@ -742,16 +684,14 @@ public class FileChooserActivity extends Activity {
                 List<DataModel> list = new ArrayList<DataModel>();
                 for (IFile f : files)
                     list.add(new DataModel(f));
-                listviewFiles.setAdapter(new FileAdapter(
-                        FileChooserActivity.this, list, fFileProvider
-                                .getFilterMode(), fMultiSelection));
+                listviewFiles.setAdapter(new FileAdapter(FileChooserActivity.this, list, fFileProvider.getFilterMode(),
+                        fMultiSelection));
 
                 /*
                  * navigation buttons
                  */
 
-                if (fPath.parentFile() != null
-                        && fPath.parentFile().parentFile() != null)
+                if (fPath.parentFile() != null && fPath.parentFile().parentFile() != null)
                     btnLocation.setText("../" + fPath.getName());
                 else
                     btnLocation.setText(fPath.getAbsolutePath());
@@ -783,20 +723,15 @@ public class FileChooserActivity extends Activity {
             if (listviewFiles.getTag() instanceof View) {
                 footer = (View) listviewFiles.getTag();
             } else {
-                LayoutInflater layoutInflater = FileChooserActivity.this
-                        .getLayoutInflater();
-                footer = layoutInflater.inflate(R.layout.listview_files_footer,
-                        null);
+                LayoutInflater layoutInflater = FileChooserActivity.this.getLayoutInflater();
+                footer = layoutInflater.inflate(R.layout.listview_files_footer, null);
                 listviewFiles.setTag(footer);
                 listviewFiles.addFooterView(footer);
             }
 
             footer.setEnabled(false);
-            TextView txt = (TextView) footer
-                    .findViewById(R.id.text_view_msg_hasmorefiles);
-            txt.setText(String.format(
-                    getString(R.string.pmsg_max_file_count_allowed),
-                    fFileProvider.getMaxFileCount()));
+            TextView txt = (TextView) footer.findViewById(R.id.text_view_msg_hasmorefiles);
+            txt.setText(String.format(getString(R.string.pmsg_max_file_count_allowed), fFileProvider.getMaxFileCount()));
         } else {
             listviewFiles.removeFooterView((View) listviewFiles.getTag());
             listviewFiles.setTag(null);
@@ -888,9 +823,7 @@ public class FileChooserActivity extends Activity {
 
         @Override
         public boolean onLongClick(View v) {
-            if (fMultiSelection
-                    || fFileProvider.getFilterMode() == IFileProvider.FilterMode.FilesOnly
-                    || fSaveDialog)
+            if (fMultiSelection || fFileProvider.getFilterMode() == IFileProvider.FilterMode.FilesOnly || fSaveDialog)
                 return false;
 
             doFinish(getLocation());
@@ -912,8 +845,7 @@ public class FileChooserActivity extends Activity {
                     public void onFinish(boolean ok, Object any) {
                         if (ok) {
                             btnGoBack.setEnabled(true);
-                            btnGoForward.setEnabled(fHistory
-                                    .nextOf(getLocation()) != null);
+                            btnGoForward.setEnabled(fHistory.nextOf(getLocation()) != null);
                         }
                     }
                 });
@@ -938,8 +870,7 @@ public class FileChooserActivity extends Activity {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                UI.hideSoftKeyboard(FileChooserActivity.this,
-                        txtSaveasFilename.getWindowToken());
+                UI.hideSoftKeyboard(FileChooserActivity.this, txtSaveasFilename.getWindowToken());
                 btnOk.performClick();
                 return true;
             }
@@ -951,8 +882,7 @@ public class FileChooserActivity extends Activity {
 
         @Override
         public void onClick(View v) {
-            UI.hideSoftKeyboard(FileChooserActivity.this,
-                    txtSaveasFilename.getWindowToken());
+            UI.hideSoftKeyboard(FileChooserActivity.this, txtSaveasFilename.getWindowToken());
             String filename = txtSaveasFilename.getText().toString().trim();
             checkSaveasFilenameAndFinish(filename);
         }
@@ -1007,8 +937,7 @@ public class FileChooserActivity extends Activity {
     private final AdapterView.OnItemLongClickListener fListviewFilesOnItemLongClickListener = new AdapterView.OnItemLongClickListener() {
 
         @Override
-        public boolean onItemLongClick(AdapterView<?> av, View v, int position,
-                long id) {
+        public boolean onItemLongClick(AdapterView<?> av, View v, int position, long id) {
             if (fMultiSelection)
                 return false;
             if (!(av.getItemAtPosition(position) instanceof DataModel)) {
@@ -1019,8 +948,7 @@ public class FileChooserActivity extends Activity {
 
             DataModel data = (DataModel) av.getItemAtPosition(position);
 
-            if (data.getFile().isDirectory()
-                    && fFileProvider.getFilterMode() == IFileProvider.FilterMode.FilesOnly)
+            if (data.getFile().isDirectory() && fFileProvider.getFilterMode() == IFileProvider.FilterMode.FilesOnly)
                 return false;
 
             // if fFilterMode == DirectoriesOnly, files won't be

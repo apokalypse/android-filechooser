@@ -32,7 +32,7 @@ import android.os.Parcelable;
  * @since v3.2
  */
 public interface IFile {
-    
+
     /**
      * Returns the absolute pathname string of this abstract pathname.
      * 

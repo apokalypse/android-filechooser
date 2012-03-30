@@ -39,8 +39,7 @@ public class DataModelComparator implements Comparator<DataModel> {
      * @param sortOrder
      *            see {@link IFileProvider#SortOrder}
      */
-    public DataModelComparator(IFileProvider.SortType sortType,
-            IFileProvider.SortOrder sortOrder) {
+    public DataModelComparator(IFileProvider.SortType sortType, IFileProvider.SortOrder sortOrder) {
         fFileComparator = new FileComparator(sortType, sortOrder);
     }
 

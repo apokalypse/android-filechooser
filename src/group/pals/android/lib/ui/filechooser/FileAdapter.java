@@ -75,8 +75,8 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
      * @param multiSelection
      *            see {@link FileChooserActivity#MultiSelection}
      */
-    public FileAdapter(Context context, List<DataModel> objects,
-            IFileProvider.FilterMode filterMode, boolean multiSelection) {
+    public FileAdapter(Context context, List<DataModel> objects, IFileProvider.FilterMode filterMode,
+            boolean multiSelection) {
         super(context, R.layout.file_item, objects);
         this.fSelectionMode = filterMode;
         this.fMultiSelection = multiSelection;
@@ -102,19 +102,14 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
         Bag bag;
 
         if (convertView == null) {
-            LayoutInflater layoutInflater = ((Activity) getContext())
-                    .getLayoutInflater();
+            LayoutInflater layoutInflater = ((Activity) getContext()).getLayoutInflater();
             convertView = layoutInflater.inflate(R.layout.file_item, null);
 
             bag = new Bag();
-            bag.txtFileName = (TextView) convertView
-                    .findViewById(R.id.text_view_filename);
-            bag.txtFileInfo = (TextView) convertView
-                    .findViewById(R.id.text_view_file_info);
-            bag.checkboxSelection = (CheckBox) convertView
-                    .findViewById(R.id.checkbox_selection);
-            bag.imageIcon = (ImageView) convertView
-                    .findViewById(R.id.image_view_icon);
+            bag.txtFileName = (TextView) convertView.findViewById(R.id.text_view_filename);
+            bag.txtFileInfo = (TextView) convertView.findViewById(R.id.text_view_file_info);
+            bag.checkboxSelection = (CheckBox) convertView.findViewById(R.id.checkbox_selection);
+            bag.imageIcon = (ImageView) convertView.findViewById(R.id.image_view_icon);
 
             convertView.setTag(bag);
         } else {
@@ -151,12 +146,10 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
         // file info
         String time = null;
         try {
-            time = new SimpleDateFormat(fileTimeShortFormat).format(file
-                    .lastModified());
+            time = new SimpleDateFormat(fileTimeShortFormat).format(file.lastModified());
         } catch (Exception e) {
             try {
-                time = new SimpleDateFormat(DefFileTimeShortFormat).format(file
-                        .lastModified());
+                time = new SimpleDateFormat(DefFileTimeShortFormat).format(file.lastModified());
             } catch (Exception ex) {
                 time = new Date(file.lastModified()).toLocaleString();
             }
@@ -164,8 +157,7 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
         if (file.isDirectory())
             bag.txtFileInfo.setText(time);
         else {
-            bag.txtFileInfo.setText(String.format("%s, %s",
-                    Converter.sizeToStr(file.length()), time));
+            bag.txtFileInfo.setText(String.format("%s, %s", Converter.sizeToStr(file.length()), time));
         }
 
         // checkbox
@@ -175,15 +167,13 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
             } else {
                 bag.checkboxSelection.setVisibility(View.VISIBLE);
                 bag.checkboxSelection.setFocusable(false);
-                bag.checkboxSelection
-                        .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                bag.checkboxSelection.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
-                            @Override
-                            public void onCheckedChanged(
-                                    CompoundButton buttonView, boolean isChecked) {
-                                fData.setSelected(isChecked);
-                            }
-                        });
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        fData.setSelected(isChecked);
+                    }
+                });
                 bag.checkboxSelection.setChecked(fData.isSelected());
             }
         } else

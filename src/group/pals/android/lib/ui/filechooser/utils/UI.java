@@ -28,8 +28,7 @@ public class UI {
          * http://stackoverflow.com/questions/1109022/how-to-close
          * -hide-the-android-soft-keyboard
          */
-        InputMethodManager imm = (InputMethodManager) context
-                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null)
             imm.hideSoftInputFromWindow(iBinder, 0);
     }

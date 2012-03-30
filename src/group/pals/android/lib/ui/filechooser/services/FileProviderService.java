@@ -27,8 +27,7 @@ import android.os.IBinder;
  * @author Hai Bison
  * @since v3.1
  */
-public abstract class FileProviderService extends Service implements
-        IFileProvider {
+public abstract class FileProviderService extends Service implements IFileProvider {
 
     /*-------------------------------------------------------------------
      * Service

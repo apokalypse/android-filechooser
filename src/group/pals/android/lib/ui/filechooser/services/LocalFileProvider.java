@@ -60,8 +60,7 @@ public class LocalFileProvider extends FileProviderService {
     }// defaultPath()
 
     @Override
-    public IFile[] listFiles(IFile dir, final boolean[] fHasMoreFiles)
-            throws Exception {
+    public IFile[] listFiles(IFile dir, final boolean[] fHasMoreFiles) throws Exception {
         if (!(dir instanceof File))
             return null;
 
@@ -75,8 +74,7 @@ public class LocalFileProvider extends FileProviderService {
 
                 @Override
                 public boolean accept(File pathname) {
-                    if (!isDisplayHiddenFiles()
-                            && pathname.getName().startsWith("."))
+                    if (!isDisplayHiddenFiles() && pathname.getName().startsWith("."))
                         return false;
                     if (fileCount >= getMaxFileCount()) {
                         if (fHasMoreFiles != null && fHasMoreFiles.length > 0)
@@ -86,10 +84,8 @@ public class LocalFileProvider extends FileProviderService {
 
                     switch (getFilterMode()) {
                     case FilesOnly:
-                        if (getRegexFilenameFilter() != null
-                                && pathname.isFile())
-                            return pathname.getName().matches(
-                                    getRegexFilenameFilter());
+                        if (getRegexFilenameFilter() != null && pathname.isFile())
+                            return pathname.getName().matches(getRegexFilenameFilter());
 
                         fileCount++;
                         return true;
@@ -99,10 +95,8 @@ public class LocalFileProvider extends FileProviderService {
                             fileCount++;
                         return ok;
                     default:
-                        if (getRegexFilenameFilter() != null
-                                && pathname.isFile())
-                            return pathname.getName().matches(
-                                    getRegexFilenameFilter());
+                        if (getRegexFilenameFilter() != null && pathname.isFile())
+                            return pathname.getName().matches(getRegexFilenameFilter());
 
                         fileCount++;
                         return true;
@@ -114,8 +108,7 @@ public class LocalFileProvider extends FileProviderService {
                 IFile[] res = new IFile[files.length];
                 for (int i = 0; i < files.length; i++)
                     res[i] = new LocalFile(files[i]);
-                Arrays.sort(res, new FileComparator(getSortType(),
-                        getSortOrder()));
+                Arrays.sort(res, new FileComparator(getSortType(), getSortOrder()));
 
                 return res;
             }

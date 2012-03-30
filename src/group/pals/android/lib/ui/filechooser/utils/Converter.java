@@ -41,8 +41,6 @@ public class Converter {
             digitGroups = Units.length - 1;
         size = size / Math.pow(BlockSize, digitGroups);
 
-        return String.format(
-                String.format("%s %%s", digitGroups == 0 ? "%,.0f" : "%,.2f"),
-                size, Units[digitGroups]);
+        return String.format(String.format("%s %%s", digitGroups == 0 ? "%,.0f" : "%,.2f"), size, Units[digitGroups]);
     }// sizeToStr()
 }

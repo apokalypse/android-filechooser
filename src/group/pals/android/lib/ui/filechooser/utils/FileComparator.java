@@ -44,16 +44,14 @@ public class FileComparator implements Comparator<IFile> {
      * @param sortOrder
      *            see {@link IFileProvider.SortOrder}
      */
-    public FileComparator(IFileProvider.SortType sortType,
-            IFileProvider.SortOrder sortOrder) {
+    public FileComparator(IFileProvider.SortType sortType, IFileProvider.SortOrder sortOrder) {
         fSortType = sortType;
         fSortOrder = sortOrder;
     }
 
     @Override
     public int compare(IFile lhs, IFile rhs) {
-        if ((lhs.isDirectory() && rhs.isDirectory())
-                || (lhs.isFile() && rhs.isFile())) {
+        if ((lhs.isDirectory() && rhs.isDirectory()) || (lhs.isFile() && rhs.isFile())) {
             // default is to compare by name (case insensitive)
             int res = lhs.getName().compareToIgnoreCase(rhs.getName());
 
