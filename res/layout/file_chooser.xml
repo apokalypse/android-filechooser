@@ -31,7 +31,6 @@
                 android:layout_weight="0.1"
                 android:text="location"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
-
         </LinearLayout>
 
         <ImageButton
@@ -39,7 +38,6 @@
             style="@style/button_go_forward_dark_48"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-
     </LinearLayout>
 
     <ListView
@@ -50,7 +48,6 @@
         android:layout_marginTop="@dimen/dim_10dp"
         android:layout_weight="0.1"
         android:fastScrollEnabled="true" >
-
     </ListView>
 
     <LinearLayout
@@ -70,31 +67,14 @@
             android:textAppearance="?android:attr/textAppearanceLarge" >
 
             <requestFocus />
-
         </EditText>
 
-        <LinearLayout
-            android:id="@+id/linearLayout4"
+        <Button
+            android:id="@+id/button_ok"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
-
-            <Button
-                android:id="@+id/button_cancel"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:text="@string/cmd_cancel" />
-
-            <Button
-                android:id="@+id/button_ok"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:text="@string/cmd_ok" />
-        </LinearLayout>
-
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/cmd_ok" />
     </LinearLayout>
 
 </LinearLayout>

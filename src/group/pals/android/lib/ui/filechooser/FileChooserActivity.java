@@ -187,7 +187,6 @@ public class FileChooserActivity extends Activity {
     private Button btnLocation;
     private ListView listviewFiles;
     private Button btnOk;
-    private Button btnCancel;
     private EditText txtSaveasFilename;
     private ImageButton btnGoBack;
     private ImageButton btnGoForward;
@@ -223,9 +222,11 @@ public class FileChooserActivity extends Activity {
         listviewFiles = (ListView) findViewById(R.id.listview_files);
         txtSaveasFilename = (EditText) findViewById(R.id.text_view_saveas_filename);
         btnOk = (Button) findViewById(R.id.button_ok);
-        btnCancel = (Button) findViewById(R.id.button_cancel);
 
         fHistory = new HistoryStore<IFile>(0);
+
+        // make sure RESULT_CANCELED is default
+        setResult(RESULT_CANCELED);
 
         bindService();
     }// onCreate()
@@ -575,8 +576,6 @@ public class FileChooserActivity extends Activity {
      * - button Ok;
      */
     private void setupFooter() {
-        btnCancel.setOnClickListener(fBtnCancelOnClickListener);
-
         if (fSaveDialog) {
             txtSaveasFilename.setText(getIntent().getStringExtra(DefaultFilename));
             txtSaveasFilename.setOnEditorActionListener(fTxtFilenameOnEditorActionListener);
@@ -768,7 +767,6 @@ public class FileChooserActivity extends Activity {
         intent.putExtra(SaveDialog, fSaveDialog);
 
         setResult(RESULT_OK, intent);
-
         finish();
     }
 
@@ -854,16 +852,6 @@ public class FileChooserActivity extends Activity {
             }
         }
     };// fBtnGoForwardOnClickListener
-
-    private final View.OnClickListener fBtnCancelOnClickListener = new View.OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            // make sure RESULT_CANCELED is returned
-            setResult(RESULT_CANCELED);
-            finish();
-        }
-    };// fBtnCancelOnClickListener
 
     private final TextView.OnEditorActionListener fTxtFilenameOnEditorActionListener = new TextView.OnEditorActionListener() {
 

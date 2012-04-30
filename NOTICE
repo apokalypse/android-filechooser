@@ -1,7 +1,7 @@
 android-filechooser
 Copyright 2012 Hai Bison
 
-Version: 3.4
+Version: 3.5 - May Day
 
 This product includes software developed at
 http://code.google.com/p/android-filechooser/
@@ -21,6 +21,12 @@ limitations under the License.
 ===============================================================
 
 History:
+
++++ Version 3.5 +++
+ - Release: May 01, 2012
+
+ - remove button Cancel (use default Back button of system)
+ - hello May Day  :-)
 
 +++ Version 3.4 +++
  - Release: March 23, 2012
