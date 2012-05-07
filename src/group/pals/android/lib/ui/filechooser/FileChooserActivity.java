@@ -452,10 +452,11 @@ public class FileChooserActivity extends Activity {
      * Confirms user to create new directory.
      */
     private void doCreateNewDir() {
-        final EditText fTxtFile = new EditText(this);
+        View view = getLayoutInflater().inflate(R.layout.simple_text_input_view, null);
+        final EditText fTxtFile = (EditText) view.findViewById(R.id.simple_text_input_view_text1);
         fTxtFile.setHint(R.string.hint_folder_name);
 
-        new AlertDialog.Builder(this).setView(fTxtFile).setTitle(R.string.cmd_new_folder)
+        new AlertDialog.Builder(this).setView(view).setTitle(R.string.cmd_new_folder)
                 .setIcon(android.R.drawable.ic_menu_add).setNegativeButton(android.R.string.cancel, null)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 
