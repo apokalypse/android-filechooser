@@ -60,8 +60,8 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
      */
     public static String fileTimeShortFormat = DefFileTimeShortFormat;
 
-    private final boolean fMultiSelection;
-    private final IFileProvider.FilterMode fSelectionMode;
+    private final boolean mIsMultiSelection;
+    private final IFileProvider.FilterMode mSelectionMode;
 
     /**
      * Creates new {@link FileAdapter}
@@ -78,8 +78,8 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
     public FileAdapter(Context context, List<DataModel> objects, IFileProvider.FilterMode filterMode,
             boolean multiSelection) {
         super(context, R.layout.file_item, objects);
-        this.fSelectionMode = filterMode;
-        this.fMultiSelection = multiSelection;
+        this.mSelectionMode = filterMode;
+        this.mIsMultiSelection = multiSelection;
     }
 
     /**
@@ -161,8 +161,8 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
         }
 
         // checkbox
-        if (fMultiSelection) {
-            if (fSelectionMode == FilterMode.FilesOnly && file.isDirectory()) {
+        if (mIsMultiSelection) {
+            if (mSelectionMode == FilterMode.FilesOnly && file.isDirectory()) {
                 bag.checkboxSelection.setVisibility(View.GONE);
             } else {
                 bag.checkboxSelection.setVisibility(View.VISIBLE);

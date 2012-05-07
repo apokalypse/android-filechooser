@@ -33,8 +33,8 @@ import java.util.Comparator;
  */
 public class FileComparator implements Comparator<IFile> {
 
-    private final IFileProvider.SortType fSortType;
-    private final IFileProvider.SortOrder fSortOrder;
+    private final IFileProvider.SortType mSortType;
+    private final IFileProvider.SortOrder mSortOrder;
 
     /**
      * Creates new {@link FileComparator}
@@ -45,8 +45,8 @@ public class FileComparator implements Comparator<IFile> {
      *            see {@link IFileProvider.SortOrder}
      */
     public FileComparator(IFileProvider.SortType sortType, IFileProvider.SortOrder sortOrder) {
-        fSortType = sortType;
-        fSortOrder = sortOrder;
+        mSortType = sortType;
+        mSortOrder = sortOrder;
     }
 
     @Override
@@ -55,7 +55,7 @@ public class FileComparator implements Comparator<IFile> {
             // default is to compare by name (case insensitive)
             int res = lhs.getName().compareToIgnoreCase(rhs.getName());
 
-            switch (fSortType) {
+            switch (mSortType) {
             case SortByName:
                 break;// SortByName
 
@@ -74,7 +74,7 @@ public class FileComparator implements Comparator<IFile> {
                 break;// SortByDate
             }
 
-            return fSortOrder == IFileProvider.SortOrder.Ascending ? res : -res;
+            return mSortOrder == IFileProvider.SortOrder.Ascending ? res : -res;
         }
 
         return lhs.isDirectory() ? -1 : 1;

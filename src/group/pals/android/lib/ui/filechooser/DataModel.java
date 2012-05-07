@@ -2,7 +2,7 @@
  *   Copyright 2012 Hai Bison
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
+ *   you may not use this mFile except in compliance with the License.
  *   You may obtain a copy of the License at
  *
  *       http://www.apache.org/licenses/LICENSE-2.0
@@ -27,42 +27,42 @@ import group.pals.android.lib.ui.filechooser.io.IFile;
  */
 public class DataModel {
 
-    private IFile file;
-    private boolean selected;
+    private IFile mFile;
+    private boolean mSelected;
 
     /**
      * Creates new {@link DataModel} with a {@link IFile}
      * 
-     * @param file
+     * @param mFile
      */
     public DataModel(IFile file) {
-        this.file = file;
+        this.mFile = file;
     }
 
     /**
-     * Gets the file.
+     * Gets the mFile.
      * 
      * @return {@link IFile}
      */
     public IFile getFile() {
-        return file;
+        return mFile;
     }
 
     /**
      * Gets the status of this item (listed in {@link android.widget.ListView})
      * 
-     * @return {@code true} if the item is selected, {@code false} otherwise
+     * @return {@code true} if the item is mSelected, {@code false} otherwise
      */
     public boolean isSelected() {
-        return selected;
+        return mSelected;
     }
 
     /**
      * Sets the status of this item (listed in {@link android.widget.ListView})
      * 
-     * @param selected
+     * @param mSelected
      */
     public void setSelected(boolean selected) {
-        this.selected = selected;
+        this.mSelected = selected;
     }
 }

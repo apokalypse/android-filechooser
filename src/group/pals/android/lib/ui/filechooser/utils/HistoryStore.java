@@ -27,8 +27,8 @@ import java.util.List;
  */
 public class HistoryStore<A> implements History<A> {
 
-    private List<A> list = new ArrayList<A>();
-    private final int fMaxSize;
+    private List<A> mList = new ArrayList<A>();
+    private final int mMaxSize;
 
     /**
      * Creates new {@link HistoryStore}
@@ -38,46 +38,46 @@ public class HistoryStore<A> implements History<A> {
      *            {@code 11} will be used
      */
     public HistoryStore(int maxSize) {
-        this.fMaxSize = maxSize > 0 ? maxSize : 11;
+        this.mMaxSize = maxSize > 0 ? maxSize : 11;
     }
 
     @Override
     public void push(A currentItem, A newItem) {
-        int idx = currentItem == null ? -1 : list.indexOf(currentItem);
+        int idx = currentItem == null ? -1 : mList.indexOf(currentItem);
         if (idx < 0 || idx == size() - 1)
-            list.add(newItem);
+            mList.add(newItem);
         else {
-            list = list.subList(0, idx + 1);
-            list.add(newItem);
+            mList = mList.subList(0, idx + 1);
+            mList.add(newItem);
         }
 
-        if (list.size() > fMaxSize)
-            list.remove(0);
+        if (mList.size() > mMaxSize)
+            mList.remove(0);
     }
 
     @Override
     public int size() {
-        return list.size();
+        return mList.size();
     }
 
     @Override
     public int indexOf(A a) {
-        return list.indexOf(a);
+        return mList.indexOf(a);
     }
 
     @Override
     public A prevOf(A a) {
-        int idx = list.indexOf(a);
+        int idx = mList.indexOf(a);
         if (idx > 0)
-            return list.get(idx - 1);
+            return mList.get(idx - 1);
         return null;
     }
 
     @Override
     public A nextOf(A a) {
-        int idx = list.indexOf(a);
-        if (idx >= 0 && idx < list.size() - 1)
-            return list.get(idx + 1);
+        int idx = mList.indexOf(a);
+        if (idx >= 0 && idx < mList.size() - 1)
+            return mList.get(idx + 1);
         return null;
     }
 }

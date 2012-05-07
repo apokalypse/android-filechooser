@@ -1,57 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="button_navi">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">#ffffff</item>
-        <item name="android:shadowColor">#000000</item>
-        <item name="android:shadowDx">1</item>
-        <item name="android:shadowDy">1</item>
-        <item name="android:shadowRadius">2</item>
-        <item name="android:background">@drawable/selector_button_navi</item>
-        <item name="android:layout_margin">5dp</item>
-        <item name="android:layout_gravity">center</item>
-    </style>
-
     <string name="hint_long_click_to_select_files">Touch and hold to select files/ folders</string>
-    <string name="pmsg_cannot_access_dir">Can not access \"%s\"</string>
-    <string name="title_choose_files">Choose files...</string>
-    <string name="title_choose_directories">Choose folders...</string>
-    <string name="title_choose_files_and_directories">Choose files/ folders...</string>
-    <string name="cmd_ok">Ok</string>
-
-    <style name="button_location">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">#ffffff</item>
-        <item name="android:shadowColor">#000000</item>
-        <item name="android:shadowDx">1</item>
-        <item name="android:shadowDy">1</item>
-        <item name="android:shadowRadius">2</item>
-        <item name="android:background">@drawable/selector_button_location</item>
-        <item name="android:layout_margin">5dp</item>
-        <item name="android:layout_gravity">center</item>
-    </style>
-
-    <string name="cmd_cancel">Cancel</string>
+    <string name="pmsg_cannot_access_dir">Can not access \&quot;%1$s\&quot;</string>
+    <string name="title_choose_files">Choose files…</string>
+    <string name="title_choose_directories">Choose folders…</string>
+    <string name="title_choose_files_and_directories">Choose files/ folders…</string>
     <string name="msg_filename_is_empty">Filename is empty</string>
-    <string name="pmsg_confirm_replace_file">This file \"%s\" already exists.\n\nDo you want to replace it?</string>
+    <string name="pmsg_confirm_replace_file">This file \&quot;%1$s\&quot; already exists.\n\nDo you want to replace it?</string>
     <string name="hint_save_as_filename">filename</string>
-    <string name="title_save_as">Save as...</string>
-    <string name="pmsg_filename_is_directory">\"%s\" is a folder</string>
-    <string name="pmsg_filename_is_invalid">Filename \"%s\" is invalid</string>
+    <string name="title_save_as">Save as…</string>
+    <string name="pmsg_filename_is_directory">\&quot;%1$s\&quot; is a folder</string>
+    <string name="pmsg_filename_is_invalid">Filename \&quot;%1$s\&quot; is invalid</string>
     <string name="empty" />
-    <string name="msg_loading">Loading...</string>
-    <string name="pmsg_max_file_count_allowed">...has more files, max allowed: %,d</string>
+    <string name="msg_loading">Loading…</string>
+    <string name="pmsg_max_file_count_allowed">…has more files, max allowed: %1$,d</string>
     <string name="app_name">android-filechooser</string>
     <string name="cmd_sort_by_name">Sort by name</string>
     <string name="cmd_sort_by_size">Sort by size</string>
     <string name="cmd_sort_by_date">Sort by date</string>
     <string name="msg_cannot_connect_to_file_provider_service">Can not connect to file provider service</string>
-    <string name="pmsg_unknown_error">Unknown error: %s</string>
+    <string name="pmsg_unknown_error">Unknown error: %1$s</string>
     <string name="title_error">Error</string>
     <string name="title_info">Info</string>
     <string name="title_alert">Alert</string>
+    <string name="cmd_new_folder">New folder…</string>
+    <string name="hint_folder_name">folder name</string>
+    <string name="msg_done">Done</string>
+    <string name="pmsg_cannot_create_folder">Can not create folder \&quot;%1$s\&quot;</string>
 
 </resources>

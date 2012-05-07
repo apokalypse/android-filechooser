@@ -34,17 +34,17 @@ public abstract class LoadingDialog extends AsyncTask<Void, Void, Object> {
 
     public static final String ClassName = LoadingDialog.class.getName();
 
-    private final ProgressDialog fDialog;
+    private final ProgressDialog mDialog;
     /**
      * Default is {@code 500}ms
      */
-    private int delayTime = 500;
+    private int mDelayTime = 500;
     /**
-     * Flag to use along with {@link #delayTime}
+     * Flag to use along with {@link #mDelayTime}
      */
-    private boolean finished = false;
+    private boolean mFinished = false;
 
-    private Throwable lastException;
+    private Throwable mLastException;
 
     /**
      * Creates new {@link LoadingDialog}
@@ -57,12 +57,12 @@ public abstract class LoadingDialog extends AsyncTask<Void, Void, Object> {
      *            as the name means.
      */
     public LoadingDialog(Context context, String msg, boolean cancelable) {
-        fDialog = new ProgressDialog(context);
-        fDialog.setMessage(msg);
-        fDialog.setIndeterminate(true);
-        fDialog.setCancelable(cancelable);
+        mDialog = new ProgressDialog(context);
+        mDialog.setMessage(msg);
+        mDialog.setIndeterminate(true);
+        mDialog.setCancelable(cancelable);
 
-        fDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+        mDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
 
             @Override
             public void onCancel(DialogInterface dialog) {
@@ -94,13 +94,13 @@ public abstract class LoadingDialog extends AsyncTask<Void, Void, Object> {
 
             @Override
             public void run() {
-                if (!finished) {
+                if (!mFinished) {
                     try {
                         /*
-                         * sometime the activity has been finished before we
+                         * sometime the activity has been mFinished before we
                          * show this dialog, it will raise error
                          */
-                        fDialog.show();
+                        mDialog.show();
                     } catch (Throwable t) {
                         // TODO
                         Log.e(ClassName, "onPreExecute() - show dialog: " + t);
@@ -128,13 +128,13 @@ public abstract class LoadingDialog extends AsyncTask<Void, Void, Object> {
     }// onCancelled()
 
     private void doFinish() {
-        finished = true;
+        mFinished = true;
         try {
             /*
-             * sometime the activity has been finished before we dismiss this
+             * sometime the activity has been mFinished before we dismiss this
              * dialog, it will raise error
              */
-            fDialog.dismiss();
+            mDialog.dismiss();
         } catch (Throwable t) {
             // TODO
             Log.e(ClassName, "doFinish() - dismiss dialog: " + t);
@@ -144,21 +144,21 @@ public abstract class LoadingDialog extends AsyncTask<Void, Void, Object> {
     /**
      * Gets the delay time before showing the dialog.
      * 
-     * @return the delayTime
+     * @return the mDelayTime
      */
     public int getDelayTime() {
-        return delayTime;
+        return mDelayTime;
     }
 
     /**
      * Sets the delay time before showing the dialog.
      * 
-     * @param delayTime
-     *            the delayTime to set
+     * @param mDelayTime
+     *            the mDelayTime to set
      * @return {@link LoadingDialog}
      */
     public LoadingDialog setDelayTime(int delayTime) {
-        this.delayTime = delayTime >= 0 ? delayTime : 0;
+        this.mDelayTime = delayTime >= 0 ? delayTime : 0;
         return this;
     }
 
@@ -170,7 +170,7 @@ public abstract class LoadingDialog extends AsyncTask<Void, Void, Object> {
      *            {@link Throwable}
      */
     protected void setLastException(Throwable t) {
-        lastException = t;
+        mLastException = t;
     }
 
     /**
@@ -179,6 +179,6 @@ public abstract class LoadingDialog extends AsyncTask<Void, Void, Object> {
      * @return {@link Throwable}
      */
     protected Throwable getLastException() {
-        return lastException;
+        return mLastException;
     }
 }

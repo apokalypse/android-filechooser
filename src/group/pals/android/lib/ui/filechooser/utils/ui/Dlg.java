@@ -32,18 +32,18 @@ public class Dlg {
     public static final int LENGTH_SHORT = android.widget.Toast.LENGTH_SHORT;
     public static final int LENGTH_LONG = android.widget.Toast.LENGTH_LONG;
 
-    private static android.widget.Toast toast;
+    private static android.widget.Toast mToast;
 
     public static void toast(Context context, CharSequence msg, int duration) {
-        if (toast != null)
-            toast.cancel();
-        toast = android.widget.Toast.makeText(context, msg, duration);
-        toast.show();
-    }// toast()
+        if (mToast != null)
+            mToast.cancel();
+        mToast = android.widget.Toast.makeText(context, msg, duration);
+        mToast.show();
+    }// mToast()
 
     public static void toast(Context context, int msgId, int duration) {
         toast(context, context.getString(msgId), duration);
-    }// toast()
+    }// mToast()
 
     public static void showInfo(Context context, CharSequence msg) {
         new AlertDialog.Builder(context).setIcon(android.R.drawable.ic_dialog_info).setTitle(R.string.title_info)

@@ -35,7 +35,7 @@ public abstract class FileProviderService extends Service implements IFileProvid
 
     @Override
     public IBinder onBind(Intent intent) {
-        return fBinder;
+        return mBinder;
     }
 
     /**
@@ -51,76 +51,76 @@ public abstract class FileProviderService extends Service implements IFileProvid
 
     // This is the object that receives interactions from clients. See
     // RemoteService for a more complete example.
-    private final IBinder fBinder = new LocalBinder();
+    private final IBinder mBinder = new LocalBinder();
 
     /*-------------------------------------------------------------------
      * IFileProvider
      */
 
-    private boolean displayHiddenFiles = false;
-    private String regexFilenameFilter = null;
-    private FilterMode filterMode = FilterMode.FilesOnly;
-    private int maxFileCount = 1024;
-    private SortType sortType = SortType.SortByName;
-    private SortOrder sortOrder = SortOrder.Ascending;
+    private boolean mDisplayHiddenFiles = false;
+    private String mRegexFilenameFilter = null;
+    private FilterMode mFilterMode = FilterMode.FilesOnly;
+    private int mMaxFileCount = 1024;
+    private SortType mSortType = SortType.SortByName;
+    private SortOrder mSortOrder = SortOrder.Ascending;
 
     @Override
     public void setDisplayHiddenFiles(boolean display) {
-        displayHiddenFiles = display;
+        mDisplayHiddenFiles = display;
     };
 
     @Override
     public boolean isDisplayHiddenFiles() {
-        return displayHiddenFiles;
+        return mDisplayHiddenFiles;
     }
 
     @Override
     public void setRegexFilenameFilter(String regex) {
-        regexFilenameFilter = regex;
+        mRegexFilenameFilter = regex;
     };
 
     @Override
     public String getRegexFilenameFilter() {
-        return regexFilenameFilter;
+        return mRegexFilenameFilter;
     }
 
     @Override
     public void setFilterMode(FilterMode fm) {
-        filterMode = fm;
+        mFilterMode = fm;
     }
 
     @Override
     public FilterMode getFilterMode() {
-        return filterMode;
+        return mFilterMode;
     }
 
     @Override
     public void setSortType(SortType st) {
-        sortType = st;
+        mSortType = st;
     }
 
     @Override
     public SortType getSortType() {
-        return sortType;
+        return mSortType;
     }
 
     @Override
     public void setSortOrder(SortOrder so) {
-        sortOrder = so;
+        mSortOrder = so;
     }
 
     @Override
     public SortOrder getSortOrder() {
-        return sortOrder;
+        return mSortOrder;
     }
 
     @Override
     public void setMaxFileCount(int max) {
-        maxFileCount = max;
+        mMaxFileCount = max;
     };
 
     @Override
     public int getMaxFileCount() {
-        return maxFileCount;
+        return mMaxFileCount;
     }
 }

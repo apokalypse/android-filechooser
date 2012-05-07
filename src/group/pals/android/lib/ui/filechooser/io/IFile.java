@@ -121,4 +121,12 @@ public interface IFile {
      *         a parent
      */
     IFile parentFile();
+
+    /**
+     * Creates directory.
+     * 
+     * @return {@code true} if the directory has been created
+     * @since v4.0 beta
+     */
+    boolean mkdir();
 }
