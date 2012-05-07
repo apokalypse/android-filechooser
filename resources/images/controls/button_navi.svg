@@ -17,9 +17,9 @@
    version="1.1"
    inkscape:version="0.48.1 r9760"
    sodipodi:docname="button_navi.svg"
-   inkscape:export-filename="/media/truecrypt64/projs/eclipse/android/library/android-filechooser/res/drawable-ldpi/button_navi_pressed.png"
-   inkscape:export-xdpi="67.5"
-   inkscape:export-ydpi="67.5">
+   inkscape:export-filename="/media/truecrypt64/projs/eclipse/android/library/android-filechooser/res/drawable-xhdpi/button_navi_disabled.png"
+   inkscape:export-xdpi="180"
+   inkscape:export-ydpi="180">
   <defs
      id="defs4">
     <linearGradient
@@ -433,7 +433,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="3.959798"
-     inkscape:cx="-10.281183"
+     inkscape:cx="-42.606064"
      inkscape:cy="7.6147438"
      inkscape:document-units="px"
      inkscape:current-layer="layer3"
@@ -472,7 +472,7 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="enabled"
-     style="display:inline">
+     style="display:none">
     <path
        style="fill:#8b4513;fill-opacity:1;fill-rule:nonzero;stroke:none;filter:url(#filter4201)"
        d="M 38.46875,-5.3125 38.4375,-5.15625 1.71875,-1.1875 1.84375,-1.125 -5.75,35.03125 -5.625,34.9375 26.4375,53.3125 26.34375,53.1875 53.75,28.375 53.59375,28.40625 38.46875,-5.3125 z m -18.40625,15 13.6875,6.03125 0.0625,-0.0625 -1.53125,14.96875 -14.65625,3.1875 0,0.0625 -7.53125,-13 -0.0625,0.03125 L 20.0625,9.6875 z"
@@ -484,7 +484,7 @@
      inkscape:groupmode="layer"
      id="layer7"
      inkscape:label="disabled"
-     style="display:none">
+     style="display:inline">
     <path
        style="fill:#505050;fill-opacity:1;fill-rule:nonzero;stroke:none;display:inline;filter:url(#filter4201-3)"
        d="M 38.46875,-5.3125 38.4375,-5.15625 1.71875,-1.1875 1.84375,-1.125 -5.75,35.03125 -5.625,34.9375 26.4375,53.3125 26.34375,53.1875 53.75,28.375 53.59375,28.40625 38.46875,-5.3125 z m -18.40625,15 13.6875,6.03125 0.0625,-0.0625 -1.53125,14.96875 -14.65625,3.1875 0,0.0625 -7.53125,-13 -0.0625,0.03125 L 20.0625,9.6875 z"
@@ -496,10 +496,10 @@
      inkscape:groupmode="layer"
      id="layer3"
      inkscape:label="pressed"
-     style="display:inline">
+     style="display:none">
     <path
        sodipodi:type="arc"
-       style="fill:none;stroke:url(#radialGradient4288);stroke-width:14.55098531;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
+       style="fill:none;stroke:url(#radialGradient4288);stroke-width:14.55098534;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
        id="path4280"
        sodipodi:cx="25.001276"
        sodipodi:cy="26.281721"
