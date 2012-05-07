@@ -7,35 +7,28 @@
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
 
         <ImageButton
             android:id="@+id/button_go_back"
-            style="@style/button_go_back_dark_48"
+            style="@style/button_navi"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <LinearLayout
-            android:id="@+id/linearLayout2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.1"
-            android:orientation="horizontal" >
-
-            <Button
-                android:id="@+id/button_location"
-                style="@style/button_dark_200x50"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="0.1"
-                android:text="location"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
-        </LinearLayout>
+        <Button
+            android:id="@+id/button_location"
+            style="@style/button_location"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:text="location"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <ImageButton
             android:id="@+id/button_go_forward"
-            style="@style/button_go_forward_dark_48"
+            style="@style/button_navi"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>

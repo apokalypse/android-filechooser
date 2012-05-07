@@ -136,9 +136,9 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
     private void updateView(Bag bag, final DataModel fData, IFile file) {
         // image icon
         if (file.isDirectory())
-            bag.imageIcon.setImageResource(R.drawable.folder48);
+            bag.imageIcon.setImageResource(R.drawable.folder);
         else
-            bag.imageIcon.setImageResource(R.drawable.file48);
+            bag.imageIcon.setImageResource(R.drawable.file);
 
         // filename
         bag.txtFileName.setText(file.getName());
