@@ -66,4 +66,10 @@ public class Dlg {
     public static void showUnknownError(Context context, Throwable t, DialogInterface.OnCancelListener listener) {
         showError(context, String.format(context.getString(R.string.pmsg_unknown_error), t), listener);
     }// showUnknownError()
+
+    public static void confirmYesno(Context context, CharSequence msg, DialogInterface.OnClickListener onYes) {
+        new AlertDialog.Builder(context).setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle(R.string.title_confirmation).setMessage(msg).setPositiveButton(android.R.string.yes, onYes)
+                .setNegativeButton(android.R.string.no, null).show();
+    }// confirmYesno()
 }

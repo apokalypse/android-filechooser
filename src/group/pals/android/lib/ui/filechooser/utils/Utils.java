@@ -16,6 +16,11 @@
 
 package group.pals.android.lib.ui.filechooser.utils;
 
+import group.pals.android.lib.ui.filechooser.io.IFile;
+import group.pals.android.lib.ui.filechooser.services.IFileProvider;
+
+import java.util.List;
+
 /**
  * Utilities.
  */
@@ -34,4 +39,69 @@ public class Utils {
     public static boolean isFilenameValid(String name) {
         return name != null && name.trim().matches("[^\\\\/?%*:|\"<>]+");
     }
+
+    /**
+     * Deletes a file or directory.
+     * 
+     * @param fFile
+     *            {@link IFile}
+     * @param fFileProvider
+     *            {@link IFileProvider}
+     * @param fRecursive
+     *            if {@code true} and {@code file} is a directory, browses the
+     *            directory and deletes all of its sub files
+     * @return the thread which is deleting files
+     */
+    public static Thread createDeleteFileThread(final IFile fFile, final IFileProvider fFileProvider,
+            final boolean fRecursive) {
+        return new Thread() {
+
+            @Override
+            public void run() {
+                deleteFile(fFile);
+            }// run()
+
+            private void deleteFile(IFile file) {
+                if (isInterrupted())
+                    return;
+
+                if (file.isFile()) {
+                    file.delete();
+                    return;
+                } else if (!file.isDirectory())
+                    return;
+
+                if (!fRecursive) {
+                    file.delete();
+                    return;
+                }
+
+                try {
+                    List<IFile> files = fFileProvider.listAllFiles(file);
+                    if (files == null) {
+                        file.delete();
+                        return;
+                    }
+
+                    for (IFile f : files) {
+                        if (isInterrupted())
+                            return;
+
+                        if (f.isFile())
+                            f.delete();
+                        else if (f.isDirectory()) {
+                            if (fRecursive)
+                                deleteFile(f);
+                            else
+                                f.delete();
+                        }
+                    }
+
+                    file.delete();
+                } catch (Throwable t) {
+                    // TODO
+                }
+            }// deleteFile()
+        };
+    }// deleteFile()
 }

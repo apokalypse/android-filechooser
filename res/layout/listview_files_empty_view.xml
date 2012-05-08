@@ -5,14 +5,14 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/listview_footer_text_view_msg_hasmorefiles"
+        android:id="@+id/listview_files_empty_view_text_view1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_margin="@dimen/dim_10dp"
         android:enabled="false"
         android:gravity="center"
-        android:text="@string/pmsg_max_file_count_allowed"
+        android:text="@string/msg_empty"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textStyle="italic" />
 

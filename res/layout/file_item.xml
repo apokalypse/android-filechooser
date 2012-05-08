@@ -1,45 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ViewFlipper xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="horizontal" >
-
-    <ImageView
-        android:id="@+id/image_view_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+    android:layout_height="wrap_content" >
 
     <LinearLayout
-        android:id="@+id/linearLayout1"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginRight="@dimen/dim_5dp"
-        android:layout_weight="0.1"
-        android:orientation="vertical" >
+        android:layout_height="fill_parent"
+        android:orientation="horizontal" >
 
-        <TextView
-            android:id="@+id/text_view_filename"
+        <ImageView
+            android:id="@+id/image_view_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="filename"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:layout_gravity="center" />
 
-        <TextView
-            android:id="@+id/text_view_file_info"
+        <LinearLayout
+            android:id="@+id/linearLayout1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="@dimen/dim_5dp"
+            android:layout_weight="0.1"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/text_view_filename"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="filename"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/text_view_file_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:gravity="right"
+                android:text="fileinfo" />
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/checkbox_selection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:gravity="right"
-            android:text="fileinfo" />
-
+            android:layout_gravity="center_vertical" />
     </LinearLayout>
 
-    <CheckBox
-        android:id="@+id/checkbox_selection"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical" />
-
-</LinearLayout>
+</ViewFlipper>

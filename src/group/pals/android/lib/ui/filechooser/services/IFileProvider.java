@@ -16,6 +16,8 @@
 
 package group.pals.android.lib.ui.filechooser.services;
 
+import java.util.List;
+
 import group.pals.android.lib.ui.filechooser.io.IFile;
 
 /**
@@ -198,6 +200,8 @@ public interface IFileProvider {
      * Lists files inside {@code dir}, the result should be sorted with
      * {@link SortType} and {@link SortOrder}
      * 
+     * @deprecated
+     * 
      * @param dir
      *            the root directory which needs to list files
      * @param hasMoreFiles
@@ -211,4 +215,35 @@ public interface IFileProvider {
      *             {@link Exception}
      */
     IFile[] listFiles(IFile dir, boolean[] hasMoreFiles) throws Exception;
+
+    /**
+     * Lists files inside {@code dir}, the result should be sorted with
+     * {@link SortType} and {@link SortOrder}
+     * 
+     * @param dir
+     *            the root directory which needs to list files
+     * @param hasMoreFiles
+     *            since Java does not allow variable parameters, so we use this
+     *            trick. To use this parameter, set its size to {@code 1}. If
+     *            the {@code dir} has more files than max file count allowed,
+     *            the element returns {@code true}, otherwise it is
+     *            {@code false}
+     * @return an array of files, or {@code null} if an exception occurs.
+     * @throws a
+     *             {@link Exception}
+     * @since v4.0 beta
+     */
+    List<IFile> listAllFiles(IFile dir, boolean[] hasMoreFiles) throws Exception;
+
+    /**
+     * Lists all files inside {@code dir}, <b><i>no</b></i> filter.
+     * 
+     * @param dir
+     *            the root directory which needs to list files
+     * @return a list of files, or {@code null} if an exception occurs.
+     * @throws a
+     *             {@link Exception}
+     * @since v4.0 beta
+     */
+    List<IFile> listAllFiles(IFile dir) throws Exception;
 }

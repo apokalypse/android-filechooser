@@ -29,6 +29,7 @@ public class HistoryStore<A> implements History<A> {
 
     private List<A> mList = new ArrayList<A>();
     private final int mMaxSize;
+    private final List<HistoryListener<A>> mListeners = new ArrayList<HistoryListener<A>>();
 
     /**
      * Creates new {@link HistoryStore}
@@ -53,6 +54,16 @@ public class HistoryStore<A> implements History<A> {
 
         if (mList.size() > mMaxSize)
             mList.remove(0);
+
+        for (HistoryListener<A> listener : mListeners)
+            listener.onChanged(this);
+    }
+
+    @Override
+    public void remove(A item) {
+        if (mList.remove(item))
+            for (HistoryListener<A> listener : mListeners)
+                listener.onChanged(this);
     }
 
     @Override
@@ -79,5 +90,15 @@ public class HistoryStore<A> implements History<A> {
         if (idx >= 0 && idx < mList.size() - 1)
             return mList.get(idx + 1);
         return null;
+    }
+
+    @Override
+    public void addListener(HistoryListener<A> listener) {
+        mListeners.add(listener);
+    }
+
+    @Override
+    public void removeListener(HistoryListener<A> listener) {
+        mListeners.remove(listener);
     }
 }

@@ -123,10 +123,32 @@ public interface IFile {
     IFile parentFile();
 
     /**
-     * Creates directory.
+     * Returns a boolean indicating whether this file can be found on the
+     * underlying file system.
      * 
-     * @return {@code true} if the directory has been created
+     * @return {@code true} if this file exists, {@code false} otherwise.
+     */
+    public boolean exists();
+
+    /**
+     * Creates the directory named by the trailing filename of this file. Does
+     * not create the complete path required to create this directory.<br>
+     * Note that this method does not throw any exception on failure. Callers
+     * must check the return value.
+     * 
+     * @return {@code true} if the necessary directories have been created,
+     *         {@code false} if the target directory already exists or one of
+     *         the directories can not be created.
      * @since v4.0 beta
      */
     boolean mkdir();
+
+    /**
+     * Deletes this file. Directories must be empty before they will be deleted.<br>
+     * Note that this method does not throw any exception on failure. Callers
+     * must check the return value.
+     * 
+     * @return {@code true} if this file was deleted, {@code false} otherwise.
+     */
+    boolean delete();
 }

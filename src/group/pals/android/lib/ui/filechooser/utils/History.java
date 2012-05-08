@@ -37,14 +37,23 @@ public interface History<A> {
      * @param newItem
      *            the new item
      */
-    public void push(A currentItem, A newItem);
+    void push(A currentItem, A newItem);
+
+    /**
+     * Removes an item.
+     * 
+     * @param item
+     *            {@link A}
+     * @since v4.0 beta
+     */
+    void remove(A item);
 
     /**
      * Gets size of the history
      * 
      * @return the size of the history
      */
-    public int size();
+    int size();
 
     /**
      * Gets index of item {@code a}
@@ -53,7 +62,7 @@ public interface History<A> {
      *            an item
      * @return index of the {@code a}, or -1 if there is no one
      */
-    public int indexOf(A a);
+    int indexOf(A a);
 
     /**
      * Gets previous item of {@code a}
@@ -62,7 +71,7 @@ public interface History<A> {
      *            current item
      * @return the previous item, can be {@code null}
      */
-    public A prevOf(A a);
+    A prevOf(A a);
 
     /**
      * Gets next item of {@code a}
@@ -71,5 +80,24 @@ public interface History<A> {
      *            current item
      * @return the next item, can be {@code null}
      */
-    public A nextOf(A a);
+    A nextOf(A a);
+
+    /**
+     * Adds a {@link HistoryListener}
+     * 
+     * @param listener
+     *            {@link HistoryListener}
+     * @since v4.0 beta
+     */
+    void addListener(HistoryListener<A> listener);
+
+    /**
+     * Removes a {@link HistoryListener}
+     * 
+     * @param listener
+     *            {@link HistoryListener}
+     * @return the removed listener
+     * @since v4.0 beta
+     */
+    void removeListener(HistoryListener<A> listener);
 }

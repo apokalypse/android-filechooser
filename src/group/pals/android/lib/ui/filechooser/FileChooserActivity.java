@@ -23,6 +23,7 @@ import group.pals.android.lib.ui.filechooser.services.IFileProvider.FilterMode;
 import group.pals.android.lib.ui.filechooser.services.LocalFileProvider;
 import group.pals.android.lib.ui.filechooser.utils.E;
 import group.pals.android.lib.ui.filechooser.utils.History;
+import group.pals.android.lib.ui.filechooser.utils.HistoryListener;
 import group.pals.android.lib.ui.filechooser.utils.HistoryStore;
 import group.pals.android.lib.ui.filechooser.utils.UI;
 import group.pals.android.lib.ui.filechooser.utils.Utils;
@@ -43,23 +44,28 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
+import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
 
 /**
  * Main activity for this library.
@@ -181,11 +187,18 @@ public class FileChooserActivity extends Activity {
      */
     private History<IFile> mHistory;
 
+    /**
+     * The adapter of list view.
+     */
+    private FileAdapter mFileAdapter;
+
     /*
      * controls
      */
     private Button mBtnLocation;
     private ListView mListviewFiles;
+    private View mListviewFooter;
+    private View mListviewEmptyView;
     private Button mBtnOk;
     private EditText mTxtSaveas;
     private ImageButton mBtnGoBack;
@@ -216,14 +229,25 @@ public class FileChooserActivity extends Activity {
             mIsMultiSelection = false;
         }
 
-        mBtnGoBack = (ImageButton) findViewById(R.id.button_go_back);
-        mBtnGoForward = (ImageButton) findViewById(R.id.button_go_forward);
-        mBtnLocation = (Button) findViewById(R.id.button_location);
-        mListviewFiles = (ListView) findViewById(R.id.listview_files);
-        mTxtSaveas = (EditText) findViewById(R.id.text_view_saveas_filename);
-        mBtnOk = (Button) findViewById(R.id.button_ok);
+        mBtnGoBack = (ImageButton) findViewById(R.id.filechooser_activity_button_go_back);
+        mBtnGoForward = (ImageButton) findViewById(R.id.filechooser_activity_button_go_forward);
+        mBtnLocation = (Button) findViewById(R.id.filechooser_activity_button_location);
+        mListviewFiles = (ListView) findViewById(R.id.filechooser_activity_listview_files);
+        mListviewFooter = getLayoutInflater().inflate(R.layout.listview_files_footer, null);
+        mListviewEmptyView = getLayoutInflater().inflate(R.layout.listview_files_empty_view, null);
+        mTxtSaveas = (EditText) findViewById(R.id.filechooser_activity_text_view_saveas_filename);
+        mBtnOk = (Button) findViewById(R.id.filechooser_activity_button_ok);
 
         mHistory = new HistoryStore<IFile>(0);
+        mHistory.addListener(new HistoryListener<IFile>() {
+
+            @Override
+            public void onChanged(History<IFile> history) {
+                int idx = mHistory.indexOf(getLocation());
+                mBtnGoBack.setEnabled(idx > 0);
+                mBtnGoForward.setEnabled(idx >= 0 && idx < mHistory.size() - 2);
+            }
+        });
 
         // make sure RESULT_CANCELED is default
         setResult(RESULT_CANCELED);
@@ -462,7 +486,7 @@ public class FileChooserActivity extends Activity {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String name = fTxtFile.getText().toString();
+                        String name = fTxtFile.getText().toString().trim();
                         if (!Utils.isFilenameValid(name)) {
                             Dlg.toast(FileChooserActivity.this, getString(R.string.pmsg_filename_is_invalid, name),
                                     Dlg.LENGTH_SHORT);
@@ -480,6 +504,88 @@ public class FileChooserActivity extends Activity {
                     }// onClick()
                 }).show();
     }// doCreateNewDir()
+
+    /**
+     * Deletes a file.
+     * 
+     * @param file
+     *            {@link IFile}
+     */
+    private void doDeleteFile(final DataModel fData) {
+        Dlg.confirmYesno(
+                this,
+                getString(R.string.pmsg_confirm_delete_file, fData.getFile().isFile() ? getString(R.string.file)
+                        : getString(R.string.folder), fData.getFile().getName()),
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        new LoadingDialog(FileChooserActivity.this, getString(R.string.pmsg_deleting_file, fData
+                                .getFile().isFile() ? getString(R.string.file) : getString(R.string.folder), fData
+                                .getFile().getName()), true) {
+
+                            private Thread mThread = Utils.createDeleteFileThread(fData.getFile(), mFileProvider, true);
+
+                            private void notifyFileDeleted() {
+                                mFileAdapter.remove(fData);
+                                mFileAdapter.notifyDataSetChanged();
+                                mHistory.remove(fData.getFile());
+                                Dlg.toast(
+                                        FileChooserActivity.this,
+                                        getString(R.string.pmsg_file_has_been_deleted,
+                                                fData.getFile().isFile() ? getString(R.string.file)
+                                                        : getString(R.string.folder), fData.getFile().getName()),
+                                        Dlg.LENGTH_SHORT);
+                            }// notifyFileDeleted()
+
+                            @Override
+                            protected void onPreExecute() {
+                                super.onPreExecute();
+                                mThread.start();
+                            }// onPreExecute()
+
+                            @Override
+                            protected Object doInBackground(Void... arg0) {
+                                while (mThread.isAlive()) {
+                                    try {
+                                        Thread.sleep(500);
+                                    } catch (InterruptedException e) {
+                                        mThread.interrupt();
+                                    }
+                                }
+                                return null;
+                            }// doInBackground()
+
+                            @Override
+                            protected void onCancelled() {
+                                mThread.interrupt();
+
+                                if (fData.getFile().exists())
+                                    Dlg.toast(FileChooserActivity.this, R.string.msg_cancelled, Dlg.LENGTH_SHORT);
+                                else
+                                    notifyFileDeleted();
+
+                                super.onCancelled();
+                            }// onCancelled()
+
+                            @Override
+                            protected void onPostExecute(Object result) {
+                                super.onPostExecute(result);
+
+                                if (fData.getFile().exists())
+                                    Dlg.toast(
+                                            FileChooserActivity.this,
+                                            getString(R.string.pmsg_cannot_delete_file,
+                                                    fData.getFile().isFile() ? getString(R.string.file)
+                                                            : getString(R.string.folder), fData.getFile().getName()),
+                                            Dlg.LENGTH_SHORT);
+                                else
+                                    notifyFileDeleted();
+                            }// onPostExecute()
+                        }.execute();// LoadingDialog
+                    }// onClick()
+                });
+    }// doDeleteFile()
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -524,7 +630,7 @@ public class FileChooserActivity extends Activity {
     protected void onStart() {
         super.onStart();
         if (!mIsMultiSelection && !mIsSaveDialog)
-            Dlg.toast(this, R.string.hint_long_click_to_select_files, Dlg.LENGTH_SHORT);
+            Dlg.toast(this, R.string.hint_double_tap_to_select_files, Dlg.LENGTH_SHORT);
     }// onStart()
 
     @Override
@@ -583,26 +689,41 @@ public class FileChooserActivity extends Activity {
         }// title of activity
 
         // single click to change path
-        mBtnLocation.setOnClickListener(fBtnLocationOnClickListener);
+        mBtnLocation.setOnClickListener(mBtnLocationOnClickListener);
         // long click to select current directory
-        mBtnLocation.setOnLongClickListener(fBtnLocationOnLongClickListener);
+        mBtnLocation.setOnLongClickListener(mBtnLocationOnLongClickListener);
 
         mBtnGoBack.setEnabled(false);
-        mBtnGoBack.setOnClickListener(fBtnGoBackOnClickListener);
+        mBtnGoBack.setOnClickListener(mBtnGoBackOnClickListener);
 
         mBtnGoForward.setEnabled(false);
-        mBtnGoForward.setOnClickListener(fBtnGoForwardOnClickListener);
+        mBtnGoForward.setOnClickListener(mBtnGoForwardOnClickListener);
     }// setupHeader()
 
     /**
      * As the name means :-)
      */
     private void setupListviewFiles() {
-        mListviewFiles.setFooterDividersEnabled(true);
-        // single click to open directory (if the item is directory)
-        mListviewFiles.setOnItemClickListener(fListviewFilesOnItemClickListener);
-        // long click to select item (if this is single mode)
-        mListviewFiles.setOnItemLongClickListener(fListviewFilesOnItemLongClickListener);
+        mListviewFiles.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return mListviewFilesGestureDetector.onTouchEvent(event);
+            }
+        });
+
+        mListviewEmptyView.setEnabled(false);
+        mListviewFiles.addFooterView(mListviewEmptyView);
+
+        TextView txt = (TextView) mListviewFooter.findViewById(R.id.listview_footer_text_view_msg_hasmorefiles);
+        txt.setText(getString(R.string.pmsg_max_file_count_allowed, mFileProvider.getMaxFileCount()));
+        mListviewFooter.setEnabled(false);
+        mListviewFooter.setVisibility(View.GONE);
+        mListviewFiles.addFooterView(mListviewFooter);
+
+        mFileAdapter = new FileAdapter(FileChooserActivity.this, new ArrayList<DataModel>(),
+                mFileProvider.getFilterMode(), mIsMultiSelection);
+        mListviewFiles.setAdapter(mFileAdapter);
     }// setupListviewFiles()
 
     /**
@@ -614,13 +735,13 @@ public class FileChooserActivity extends Activity {
     private void setupFooter() {
         if (mIsSaveDialog) {
             mTxtSaveas.setText(getIntent().getStringExtra(DefaultFilename));
-            mTxtSaveas.setOnEditorActionListener(fTxtFilenameOnEditorActionListener);
-            mBtnOk.setOnClickListener(fBtnOk_SaveDialog_OnClickListener);
+            mTxtSaveas.setOnEditorActionListener(mTxtFilenameOnEditorActionListener);
+            mBtnOk.setOnClickListener(mBtnOk_SaveDialog_OnClickListener);
         } else {// this is in open mode
             mTxtSaveas.setVisibility(View.GONE);
 
             if (mIsMultiSelection)
-                mBtnOk.setOnClickListener(fBtnOk_OpenDialog_OnClickListener);
+                mBtnOk.setOnClickListener(mBtnOk_OpenDialog_OnClickListener);
             else
                 mBtnOk.setVisibility(View.GONE);
         }// if mIsSaveDialog...
@@ -679,26 +800,34 @@ public class FileChooserActivity extends Activity {
         // TODO: let the user to be able to cancel the task
         new LoadingDialog(this, R.string.msg_loading, false) {
 
-            IFile[] files = new IFile[0];
+            // IFile[] files = new IFile[0];
+            List<IFile> files;
             boolean hasMoreFiles[] = { false };
-            int selected = -1;
-            String lastPath = null;
+            int shouldBeSelectedIdx = -1;
+            IFile lastPath = null;
 
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                if (getLocation() != null)
-                    lastPath = getLocation().getName();
+                lastPath = getLocation();
+                if (lastPath != null && fPath != null) {
+                    if (lastPath.parentFile() == null)
+                        lastPath = null;
+                    else if (!lastPath.parentFile().getAbsolutePath().equals(fPath.getAbsolutePath()))
+                        lastPath = null;
+                }
             }
 
             @Override
             protected Object doInBackground(Void... params) {
                 try {
-                    files = mFileProvider.listFiles(fPath, hasMoreFiles);
+                    files = mFileProvider.listAllFiles(fPath, hasMoreFiles);
                     if (files != null && lastPath != null) {
-                        for (int i = 0; i < files.length; i++) {
-                            if (files[i].getName().equals(lastPath)) {
-                                selected = i;
+                        for (int i = 0; i < files.size(); i++) {
+                            IFile f = files.get(i);
+                            if (f.isDirectory() && f.getName().equals(lastPath.getName())
+                                    && f.lastModified() == lastPath.lastModified()) {
+                                shouldBeSelectedIdx = i;
                                 break;
                             }
                         }
@@ -722,24 +851,28 @@ public class FileChooserActivity extends Activity {
                     return;
                 }
 
-                /*
-                 * add footer if has more files, NOTE: do this before setting
-                 * adapter to list view
-                 */
-                updateListviewFilesFooter(hasMoreFiles[0]);
+                // update list view
 
-                /*
-                 * add files to list view
-                 */
-                List<DataModel> list = new ArrayList<DataModel>();
+                mFileAdapter.clear();
                 for (IFile f : files)
-                    list.add(new DataModel(f));
-                mListviewFiles.setAdapter(new FileAdapter(FileChooserActivity.this, list,
-                        mFileProvider.getFilterMode(), mIsMultiSelection));
-                if (selected >= 0) {
-                    mListviewFiles.setSelection(selected);
-                    mListviewFiles.setItemChecked(selected, true);
+                    mFileAdapter.add(new DataModel(f));
+                mFileAdapter.notifyDataSetChanged();
+
+                // update footers
+
+                mListviewFooter.setVisibility(hasMoreFiles[0] ? View.VISIBLE : View.GONE);
+                mListviewEmptyView.setVisibility(mFileAdapter.isEmpty() ? View.VISIBLE : View.GONE);
+
+                for (View footer : new View[] { mListviewEmptyView, mListviewFooter }) {
+                    LayoutParams lp = footer.getLayoutParams();
+                    if (lp != null) {
+                        lp.height = footer.getVisibility() == View.GONE ? 1 : AbsListView.LayoutParams.WRAP_CONTENT;
+                        footer.setLayoutParams(lp);
+                    }
                 }
+
+                if (shouldBeSelectedIdx >= 0)
+                    mListviewFiles.setSelection(shouldBeSelectedIdx);
 
                 /*
                  * navigation buttons
@@ -751,46 +884,11 @@ public class FileChooserActivity extends Activity {
                     mBtnLocation.setText(fPath.getAbsolutePath());
                 mBtnLocation.setTag(fPath);
 
-                int idx = mHistory.indexOf(fPath);
-                mBtnGoBack.setEnabled(idx > 0);
-                mBtnGoForward.setEnabled(idx >= 0 && idx < mHistory.size() - 2);
-
                 if (fListener != null)
                     fListener.onFinish(true, null);
             }// onPostExecute()
         }.execute();// new LoadingDialog()
     }// setLocation()
-
-    /**
-     * As the name means.<br>
-     * <b>Note:</b> Do this before changing listview's adapter, or error will
-     * occur. See {@link ListView#addFooterView(View)}.
-     * 
-     * @param hasMoreFiles
-     *            - if {@code true}, add a footer showing that there are more
-     *            files but can not be shown;<br>
-     *            - if {@code false}, remove any footer;
-     */
-    private void updateListviewFilesFooter(boolean hasMoreFiles) {
-        if (hasMoreFiles) {
-            View footer = null;
-            if (mListviewFiles.getTag() instanceof View) {
-                footer = (View) mListviewFiles.getTag();
-            } else {
-                LayoutInflater layoutInflater = FileChooserActivity.this.getLayoutInflater();
-                footer = layoutInflater.inflate(R.layout.listview_files_footer, null);
-                mListviewFiles.setTag(footer);
-                mListviewFiles.addFooterView(footer);
-            }
-
-            footer.setEnabled(false);
-            TextView txt = (TextView) footer.findViewById(R.id.text_view_msg_hasmorefiles);
-            txt.setText(getString(R.string.pmsg_max_file_count_allowed, mFileProvider.getMaxFileCount()));
-        } else {
-            mListviewFiles.removeFooterView((View) mListviewFiles.getTag());
-            mListviewFiles.setTag(null);
-        }
-    }// updateListviewFilesFooter()
 
     /**
      * Finishes this activity.
@@ -829,7 +927,7 @@ public class FileChooserActivity extends Activity {
      * BUTTON LISTENERS
      */
 
-    private final View.OnClickListener fBtnGoBackOnClickListener = new View.OnClickListener() {
+    private final View.OnClickListener mBtnGoBackOnClickListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -849,9 +947,9 @@ public class FileChooserActivity extends Activity {
                 mBtnGoBack.setEnabled(false);
             }
         }
-    };// fBtnGoBackOnClickListener
+    };// mBtnGoBackOnClickListener
 
-    private final View.OnClickListener fBtnLocationOnClickListener = new View.OnClickListener() {
+    private final View.OnClickListener mBtnLocationOnClickListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -861,18 +959,15 @@ public class FileChooserActivity extends Activity {
 
                     @Override
                     public void onFinish(boolean ok, Object any) {
-                        if (ok) {
+                        if (ok)
                             mHistory.push(fLastPath, getLocation());
-                            mBtnGoBack.setEnabled(true);
-                            mBtnGoForward.setEnabled(false);
-                        }
                     }
                 });// setLocation()
             }
         }
-    };// fBtnLocationOnClickListener
+    };// mBtnLocationOnClickListener
 
-    private final View.OnLongClickListener fBtnLocationOnLongClickListener = new View.OnLongClickListener() {
+    private final View.OnLongClickListener mBtnLocationOnLongClickListener = new View.OnLongClickListener() {
 
         @Override
         public boolean onLongClick(View v) {
@@ -885,9 +980,9 @@ public class FileChooserActivity extends Activity {
             return false;
         }
 
-    };// fBtnLocationOnLongClickListener
+    };// mBtnLocationOnLongClickListener
 
-    private final View.OnClickListener fBtnGoForwardOnClickListener = new View.OnClickListener() {
+    private final View.OnClickListener mBtnGoForwardOnClickListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -907,9 +1002,9 @@ public class FileChooserActivity extends Activity {
                 mBtnGoForward.setEnabled(false);
             }
         }
-    };// fBtnGoForwardOnClickListener
+    };// mBtnGoForwardOnClickListener
 
-    private final TextView.OnEditorActionListener fTxtFilenameOnEditorActionListener = new TextView.OnEditorActionListener() {
+    private final TextView.OnEditorActionListener mTxtFilenameOnEditorActionListener = new TextView.OnEditorActionListener() {
 
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -920,9 +1015,9 @@ public class FileChooserActivity extends Activity {
             }
             return false;
         }
-    };// fTxtFilenameOnEditorActionListener
+    };// mTxtFilenameOnEditorActionListener
 
-    private final View.OnClickListener fBtnOk_SaveDialog_OnClickListener = new View.OnClickListener() {
+    private final View.OnClickListener mBtnOk_SaveDialog_OnClickListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -930,9 +1025,9 @@ public class FileChooserActivity extends Activity {
             String filename = mTxtSaveas.getText().toString().trim();
             checkSaveasFilenameAndFinish(filename);
         }
-    };// fBtnOk_SaveDialog_OnClickListener
+    };// mBtnOk_SaveDialog_OnClickListener
 
-    private final View.OnClickListener fBtnOk_OpenDialog_OnClickListener = new View.OnClickListener() {
+    private final View.OnClickListener mBtnOk_OpenDialog_OnClickListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -948,58 +1043,120 @@ public class FileChooserActivity extends Activity {
             }
             doFinish((ArrayList<IFile>) list);
         }
-    };// fBtnOk_OpenDialog_OnClickListener
+    };// mBtnOk_OpenDialog_OnClickListener
 
-    private final AdapterView.OnItemClickListener fListviewFilesOnItemClickListener = new AdapterView.OnItemClickListener() {
+    private final GestureDetector mListviewFilesGestureDetector = new GestureDetector(
+            new GestureDetector.SimpleOnGestureListener() {
 
-        @Override
-        public void onItemClick(AdapterView<?> av, View v, int position, long id) {
-            if (!(av.getItemAtPosition(position) instanceof DataModel))
-                return;
+                private Animation mInAnimation;
+                private Animation mOutAnimation;
 
-            DataModel data = (DataModel) av.getItemAtPosition(position);
-            if (data.getFile().isDirectory()) {
-                final IFile fLastPath = getLocation();
-                setLocation(data.getFile(), new TaskListener() {
+                private void prepareAnimations(boolean isLeftToRight) {
+                    mInAnimation = AnimationUtils.loadAnimation(FileChooserActivity.this,
+                            isLeftToRight ? R.anim.push_left_in : R.anim.push_right_in);
+                    mOutAnimation = AnimationUtils.loadAnimation(FileChooserActivity.this,
+                            isLeftToRight ? R.anim.push_left_out : R.anim.push_right_out);
+                }
 
-                    @Override
-                    public void onFinish(boolean ok, Object any) {
-                        if (ok) {
-                            mHistory.push(fLastPath, getLocation());
-                            mBtnGoBack.setEnabled(true);
-                            mBtnGoForward.setEnabled(false);
+                private Object getData(float x, float y) {
+                    int i = getSubViewId(x, y);
+                    if (i >= 0)
+                        return mListviewFiles.getItemAtPosition(mListviewFiles.getFirstVisiblePosition() + i);
+                    return null;
+                }// getSubView()
+
+                private View getSubView(float x, float y) {
+                    int i = getSubViewId(x, y);
+                    if (i >= 0)
+                        return mListviewFiles.getChildAt(i);
+                    return null;
+                }// getSubView()
+
+                private int getSubViewId(float x, float y) {
+                    Rect r = new Rect();
+                    for (int i = 0; i < mListviewFiles.getChildCount(); i++) {
+                        mListviewFiles.getChildAt(i).getHitRect(r);
+                        if (r.contains((int) x, (int) y))
+                            return i;
+                    }
+
+                    return -1;
+                }// getSubViewId()
+
+                @Override
+                public boolean onSingleTapConfirmed(MotionEvent e) {
+                    Object o = getData(e.getX(), e.getY());
+                    if (!(o instanceof DataModel))
+                        return true;
+
+                    DataModel data = (DataModel) o;
+                    if (data.getFile().isDirectory()) {
+                        final IFile fLastPath = getLocation();
+                        setLocation(data.getFile(), new TaskListener() {
+
+                            @Override
+                            public void onFinish(boolean ok, Object any) {
+                                if (ok)
+                                    mHistory.push(fLastPath, getLocation());
+                            }
+                        });
+                    } else {
+                        if (mIsSaveDialog)
+                            mTxtSaveas.setText(data.getFile().getName());
+                    }
+
+                    return false;
+                }// onSingleTapConfirmed()
+
+                @Override
+                public boolean onDoubleTap(MotionEvent e) {
+                    if (mIsMultiSelection)
+                        return false;
+
+                    Object o = getData(e.getX(), e.getY());
+                    if (!(o instanceof DataModel)) {
+                        if (mListviewFooter.equals(getSubView(e.getX(), e.getY())))
+                            // no comments :-D
+                            E.show(FileChooserActivity.this);
+                        return false;
+                    }
+
+                    DataModel data = (DataModel) o;
+
+                    if (data.getFile().isDirectory()
+                            && mFileProvider.getFilterMode() == IFileProvider.FilterMode.FilesOnly)
+                        return false;
+
+                    // if fFilterMode == DirectoriesOnly, files won't be
+                    // shown
+
+                    doFinish(data.getFile());
+
+                    return false;
+                }// onDoubleTap()
+
+                @Override
+                public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                    final int fMax_y_distance = 19;// 10 is too short :-D
+                    final int fMin_x_distance = 80;
+                    final int fMin_x_velocity = 200;
+                    if (Math.abs(e1.getY() - e2.getY()) < fMax_y_distance
+                            && Math.abs(e1.getX() - e2.getX()) > fMin_x_distance
+                            && Math.abs(velocityX) > fMin_x_velocity) {
+                        Object o = getData(e1.getX(), e1.getY());
+                        if (o instanceof DataModel) {
+                            View v = getSubView(e1.getX(), e1.getY());
+                            if (v != null && v instanceof ViewFlipper) {
+                                prepareAnimations(velocityX <= 0);
+                                ((ViewFlipper) v).setInAnimation(mInAnimation);
+                                ((ViewFlipper) v).setOutAnimation(mOutAnimation);
+                                ((ViewFlipper) v).showNext();
+                            }
+                            doDeleteFile((DataModel) o);
                         }
                     }
-                });
-            } else {
-                if (mIsSaveDialog)
-                    mTxtSaveas.setText(data.getFile().getName());
-            }
-        }
-    };// fListviewFilesOnItemClickListener
 
-    private final AdapterView.OnItemLongClickListener fListviewFilesOnItemLongClickListener = new AdapterView.OnItemLongClickListener() {
-
-        @Override
-        public boolean onItemLongClick(AdapterView<?> av, View v, int position, long id) {
-            if (mIsMultiSelection)
-                return false;
-            if (!(av.getItemAtPosition(position) instanceof DataModel)) {
-                // no comments :-D
-                E.show(FileChooserActivity.this);
-                return false;
-            }
-
-            DataModel data = (DataModel) av.getItemAtPosition(position);
-
-            if (data.getFile().isDirectory() && mFileProvider.getFilterMode() == IFileProvider.FilterMode.FilesOnly)
-                return false;
-
-            // if fFilterMode == DirectoriesOnly, files won't be
-            // shown
-
-            doFinish(data.getFile());
-            return false;
-        }
-    };// fListviewFilesOnItemLongClickListener
+                    return false;
+                }
+            });// mListviewFilesGestureDetector
 }

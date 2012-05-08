@@ -5,52 +5,55 @@
     android:orientation="vertical" >
 
     <LinearLayout
-        android:id="@+id/linearLayout1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
         <ImageButton
-            android:id="@+id/button_go_back"
+            android:id="@+id/filechooser_activity_button_go_back"
             style="@style/button_navi"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <Button
-            android:id="@+id/button_location"
+            android:id="@+id/filechooser_activity_button_location"
             style="@style/button_location"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:text="location"
+            android:ellipsize="middle"
+            android:lines="1"
+            android:paddingLeft="@dimen/dim_10dp"
+            android:paddingRight="@dimen/dim_10dp"
+            android:scrollHorizontally="true"
+            android:text="@string/ellipsize"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <ImageButton
-            android:id="@+id/button_go_forward"
+            android:id="@+id/filechooser_activity_button_go_forward"
             style="@style/button_navi"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
 
     <ListView
-        android:id="@+id/listview_files"
+        android:id="@+id/filechooser_activity_listview_files"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/dim_10dp"
         android:layout_marginTop="@dimen/dim_10dp"
-        android:layout_weight="0.1"
+        android:layout_weight="1"
         android:fastScrollEnabled="true" >
     </ListView>
 
     <LinearLayout
-        android:id="@+id/linearLayout3"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
         <EditText
-            android:id="@+id/text_view_saveas_filename"
+            android:id="@+id/filechooser_activity_text_view_saveas_filename"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dim_10dp"
@@ -63,7 +66,7 @@
         </EditText>
 
         <Button
-            android:id="@+id/button_ok"
+            android:id="@+id/filechooser_activity_button_ok"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

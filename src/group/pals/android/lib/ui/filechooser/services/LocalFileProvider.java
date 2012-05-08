@@ -22,7 +22,9 @@ import group.pals.android.lib.ui.filechooser.utils.FileComparator;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import android.os.Environment;
 
@@ -61,22 +63,30 @@ public class LocalFileProvider extends FileProviderService {
 
     @Override
     public IFile[] listFiles(IFile dir, final boolean[] fHasMoreFiles) throws Exception {
+        List<IFile> files = listAllFiles(dir, fHasMoreFiles);
+        if (files == null)
+            return null;
+        return files.toArray(new IFile[] {});
+    }// listFiles()
+
+    @Override
+    public List<IFile> listAllFiles(IFile dir, final boolean[] fHasMoreFiles) throws Exception {
         if (!(dir instanceof File))
             return null;
 
         if (fHasMoreFiles != null && fHasMoreFiles.length > 0)
             fHasMoreFiles[0] = false;
 
+        final List<IFile> fFiles = new ArrayList<IFile>();
+
         try {
             File[] files = ((File) dir).listFiles(new FileFilter() {
-
-                int fileCount = 0;
 
                 @Override
                 public boolean accept(File pathname) {
                     if (!isDisplayHiddenFiles() && pathname.getName().startsWith("."))
                         return false;
-                    if (fileCount >= getMaxFileCount()) {
+                    if (fFiles.size() >= getMaxFileCount()) {
                         if (fHasMoreFiles != null && fHasMoreFiles.length > 0)
                             fHasMoreFiles[0] = true;
                         return false;
@@ -87,35 +97,61 @@ public class LocalFileProvider extends FileProviderService {
                         if (getRegexFilenameFilter() != null && pathname.isFile())
                             return pathname.getName().matches(getRegexFilenameFilter());
 
-                        fileCount++;
-                        return true;
+                        fFiles.add(new LocalFile(pathname));
+                        break;// FilesOnly
+
                     case DirectoriesOnly:
                         boolean ok = pathname.isDirectory();
                         if (ok)
-                            fileCount++;
-                        return ok;
+                            fFiles.add(new LocalFile(pathname));
+
+                        break;// DirectoriesOnly
+
                     default:
                         if (getRegexFilenameFilter() != null && pathname.isFile())
                             return pathname.getName().matches(getRegexFilenameFilter());
 
-                        fileCount++;
-                        return true;
+                        fFiles.add(new LocalFile(pathname));
+                        break;// default
                     }
+
+                    return false;
                 }
             });// dir.listFiles()
 
             if (files != null) {
-                IFile[] res = new IFile[files.length];
-                for (int i = 0; i < files.length; i++)
-                    res[i] = new LocalFile(files[i]);
-                Arrays.sort(res, new FileComparator(getSortType(), getSortOrder()));
-
-                return res;
+                Collections.sort(fFiles, new FileComparator(getSortType(), getSortOrder()));
+                return fFiles;
             }
 
             return null;
-        } catch (Exception e) {
+        } catch (Throwable t) {
             return null;
         }
-    }// listFiles()
+    }// listAllFiles()
+
+    @Override
+    public List<IFile> listAllFiles(IFile dir) throws Exception {
+        if (!(dir instanceof File))
+            return null;
+
+        try {
+            final List<IFile> fFiles = new ArrayList<IFile>();
+
+            File[] files = ((File) dir).listFiles(new FileFilter() {
+
+                @Override
+                public boolean accept(File pathname) {
+                    fFiles.add(new LocalFile(pathname));
+                    return false;
+                }
+            });
+
+            if (files != null)
+                return fFiles;
+            return null;
+        } catch (Throwable t) {
+            return null;
+        }
+    }// listAllFiles()
 }
