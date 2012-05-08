@@ -911,6 +911,8 @@ public class FileChooserActivity extends Activity {
                 Log.d(ClassName, String.format("setLocation() - shouldBeSelectedIdx = %,d", shouldBeSelectedIdx));
                 if (shouldBeSelectedIdx >= 0 && shouldBeSelectedIdx < mFileAdapter.getCount())
                     mListviewFiles.setSelection(shouldBeSelectedIdx);
+                else if (!mFileAdapter.isEmpty())
+                    mListviewFiles.setSelection(0);
 
                 /*
                  * navigation buttons
