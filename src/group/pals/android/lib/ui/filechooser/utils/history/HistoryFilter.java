@@ -14,21 +14,22 @@
  *   limitations under the License.
  */
 
-package group.pals.android.lib.ui.filechooser.utils;
+package group.pals.android.lib.ui.filechooser.utils.history;
 
 /**
- * Listener of {@link History}
+ * Filter of {@link History}
  * 
  * @author Hai Bison
  * @since v4.0 beta
  */
-public interface HistoryListener<A> {
+public interface HistoryFilter<A> {
 
     /**
-     * Will be called after the history changed.
+     * Filter item.
      * 
-     * @param history
-     *            {@link History}
+     * @param item
+     *            {@link A}
+     * @return {@code true} if the {@code item} is accepted
      */
-    void onChanged(History<A> history);
+    boolean accept(A item);
 }

@@ -16,7 +16,7 @@
 
 package group.pals.android.lib.ui.filechooser.io;
 
-import group.pals.android.lib.ui.filechooser.utils.History;
+import group.pals.android.lib.ui.filechooser.utils.history.History;
 
 import java.io.File;
 import java.util.List;
@@ -63,4 +63,9 @@ public class LocalFile extends File implements IFile {
     public boolean equals(Object obj) {
         return this == obj;
     }
+
+    @Override
+    public boolean equalsToPath(IFile file) {
+        return file == null ? false : getAbsolutePath().equals(file.getAbsolutePath());
+    }// equalsToPath()
 }

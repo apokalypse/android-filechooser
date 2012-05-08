@@ -151,4 +151,14 @@ public interface IFile {
      * @return {@code true} if this file was deleted, {@code false} otherwise.
      */
     boolean delete();
+
+    /**
+     * Compares to another file by its path name
+     * 
+     * @param file
+     *            {@link IFile}
+     * @return {@code true} if this has same path name to {@code file}
+     * @since v4.0 beta
+     */
+    boolean equalsToPath(IFile file);
 }

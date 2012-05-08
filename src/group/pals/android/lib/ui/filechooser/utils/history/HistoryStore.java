@@ -14,7 +14,7 @@
  *   limitations under the License.
  */
 
-package group.pals.android.lib.ui.filechooser.utils;
+package group.pals.android.lib.ui.filechooser.utils.history;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,15 +55,34 @@ public class HistoryStore<A> implements History<A> {
         if (mList.size() > mMaxSize)
             mList.remove(0);
 
-        for (HistoryListener<A> listener : mListeners)
-            listener.onChanged(this);
-    }
+        notifyHistoryChanged();
+    }// push()
 
     @Override
     public void remove(A item) {
         if (mList.remove(item))
-            for (HistoryListener<A> listener : mListeners)
-                listener.onChanged(this);
+            notifyHistoryChanged();
+    }
+
+    @Override
+    public void removeAll(HistoryFilter<A> filter) {
+        boolean changed = false;
+        for (int i = mList.size() - 1; i >= 0; i--) {
+            if (filter.accept(mList.get(i))) {
+                mList.remove(i);
+                if (!changed)
+                    changed = true;
+            }
+        }// for
+
+        if (changed)
+            notifyHistoryChanged();
+    }// removeAll()
+
+    @Override
+    public void notifyHistoryChanged() {
+        for (HistoryListener<A> listener : mListeners)
+            listener.onChanged(this);
     }
 
     @Override

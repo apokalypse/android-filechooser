@@ -14,7 +14,7 @@
  *   limitations under the License.
  */
 
-package group.pals.android.lib.ui.filechooser.utils;
+package group.pals.android.lib.ui.filechooser.utils.history;
 
 /**
  * A history store of any object.
@@ -47,6 +47,15 @@ public interface History<A> {
      * @since v4.0 beta
      */
     void remove(A item);
+
+    /**
+     * Removes all items by a filter.
+     * 
+     * @param filter
+     *            {@link HistoryFilter}
+     * @since v4.0 beta
+     */
+    void removeAll(HistoryFilter<A> filter);
 
     /**
      * Gets size of the history
@@ -100,4 +109,9 @@ public interface History<A> {
      * @since v4.0 beta
      */
     void removeListener(HistoryListener<A> listener);
+
+    /**
+     * Notifies to all {@link HistoryListener}'s that the history changed.
+     */
+    void notifyHistoryChanged();
 }

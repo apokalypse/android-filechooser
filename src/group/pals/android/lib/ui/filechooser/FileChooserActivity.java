@@ -22,11 +22,12 @@ import group.pals.android.lib.ui.filechooser.services.IFileProvider;
 import group.pals.android.lib.ui.filechooser.services.IFileProvider.FilterMode;
 import group.pals.android.lib.ui.filechooser.services.LocalFileProvider;
 import group.pals.android.lib.ui.filechooser.utils.E;
-import group.pals.android.lib.ui.filechooser.utils.History;
-import group.pals.android.lib.ui.filechooser.utils.HistoryListener;
-import group.pals.android.lib.ui.filechooser.utils.HistoryStore;
 import group.pals.android.lib.ui.filechooser.utils.UI;
 import group.pals.android.lib.ui.filechooser.utils.Utils;
+import group.pals.android.lib.ui.filechooser.utils.history.History;
+import group.pals.android.lib.ui.filechooser.utils.history.HistoryFilter;
+import group.pals.android.lib.ui.filechooser.utils.history.HistoryListener;
+import group.pals.android.lib.ui.filechooser.utils.history.HistoryStore;
 import group.pals.android.lib.ui.filechooser.utils.ui.Dlg;
 import group.pals.android.lib.ui.filechooser.utils.ui.LoadingDialog;
 import group.pals.android.lib.ui.filechooser.utils.ui.TaskListener;
@@ -476,13 +477,37 @@ public class FileChooserActivity extends Activity {
      * Confirms user to create new directory.
      */
     private void doCreateNewDir() {
+        final AlertDialog fDlg = new AlertDialog.Builder(this).create();
+
         View view = getLayoutInflater().inflate(R.layout.simple_text_input_view, null);
         final EditText fTxtFile = (EditText) view.findViewById(R.id.simple_text_input_view_text1);
         fTxtFile.setHint(R.string.hint_folder_name);
+        fTxtFile.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 
-        new AlertDialog.Builder(this).setView(view).setTitle(R.string.cmd_new_folder)
-                .setIcon(android.R.drawable.ic_menu_add).setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    UI.hideSoftKeyboard(FileChooserActivity.this, fTxtFile.getWindowToken());
+                    fDlg.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        fDlg.setView(view);
+        fDlg.setTitle(R.string.cmd_new_folder);
+        fDlg.setIcon(android.R.drawable.ic_menu_add);
+        fDlg.setButton(DialogInterface.BUTTON_NEGATIVE, getString(android.R.string.cancel),
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        fDlg.setButton(DialogInterface.BUTTON_POSITIVE, getString(android.R.string.ok),
+                new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -502,7 +527,8 @@ public class FileChooserActivity extends Activity {
                             Dlg.toast(FileChooserActivity.this, getString(R.string.pmsg_cannot_create_folder, name),
                                     Dlg.LENGTH_SHORT);
                     }// onClick()
-                }).show();
+                });
+        fDlg.show();
     }// doCreateNewDir()
 
     /**
@@ -525,17 +551,28 @@ public class FileChooserActivity extends Activity {
                                 .getFile().getName()), true) {
 
                             private Thread mThread = Utils.createDeleteFileThread(fData.getFile(), mFileProvider, true);
+                            private final boolean fIsFile = fData.getFile().isFile();
 
                             private void notifyFileDeleted() {
                                 mFileAdapter.remove(fData);
                                 mFileAdapter.notifyDataSetChanged();
-                                mHistory.remove(fData.getFile());
+
+                                mHistory.removeAll(new HistoryFilter<IFile>() {
+
+                                    final String fPath = fData.getFile().getAbsolutePath();
+
+                                    @Override
+                                    public boolean accept(IFile item) {
+                                        return item.getAbsolutePath().equals(fPath);
+                                    }
+                                });
+                                // TODO remove all duplicate history items
+
                                 Dlg.toast(
                                         FileChooserActivity.this,
                                         getString(R.string.pmsg_file_has_been_deleted,
-                                                fData.getFile().isFile() ? getString(R.string.file)
-                                                        : getString(R.string.folder), fData.getFile().getName()),
-                                        Dlg.LENGTH_SHORT);
+                                                fIsFile ? getString(R.string.file) : getString(R.string.folder), fData
+                                                        .getFile().getName()), Dlg.LENGTH_SHORT);
                             }// notifyFileDeleted()
 
                             @Override
@@ -871,7 +908,8 @@ public class FileChooserActivity extends Activity {
                     }
                 }
 
-                if (shouldBeSelectedIdx >= 0)
+                Log.d(ClassName, String.format("setLocation() - shouldBeSelectedIdx = %,d", shouldBeSelectedIdx));
+                if (shouldBeSelectedIdx >= 0 && shouldBeSelectedIdx < mFileAdapter.getCount())
                     mListviewFiles.setSelection(shouldBeSelectedIdx);
 
                 /*
