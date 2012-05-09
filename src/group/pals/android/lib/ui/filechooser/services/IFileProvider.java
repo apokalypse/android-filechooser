@@ -52,7 +52,7 @@ public interface IFileProvider {
          * Sort by date (directories first)
          */
         SortByDate
-    }// SortType
+    }// _SortType
 
     /**
      * {@link IFile} sorting parameters.<br>
@@ -72,7 +72,7 @@ public interface IFileProvider {
          * Sort descending.
          */
         Descending
-    }// SortOrder
+    }// _SortOrder
 
     /**
      * The filter of {@link IFile}.<br>
@@ -97,7 +97,7 @@ public interface IFileProvider {
          * User can choose files or directories
          */
         FilesAndDirectories
-    }// FilterMode
+    }// _FilterMode
 
     /**
      * Sets {@code true} if you want to display hidden files.
@@ -129,13 +129,13 @@ public interface IFileProvider {
      * Sets filter mode.
      * 
      * @param fm
-     *            {@link FilterMode}
+     *            {@link _FilterMode}
      */
     void setFilterMode(FilterMode fm);
 
     /**
      * 
-     * @return the {@link FilterMode}
+     * @return the {@link _FilterMode}
      */
     FilterMode getFilterMode();
 
@@ -143,13 +143,13 @@ public interface IFileProvider {
      * Sets sort type.
      * 
      * @param st
-     *            {@link SortType}
+     *            {@link _SortType}
      */
     void setSortType(SortType st);
 
     /**
      * 
-     * @return the {@link SortType}
+     * @return the {@link _SortType}
      */
     SortType getSortType();
 
@@ -157,13 +157,13 @@ public interface IFileProvider {
      * Sets sort order.
      * 
      * @param so
-     *            {@link SortOrder}
+     *            {@link _SortOrder}
      */
     void setSortOrder(SortOrder so);
 
     /**
      * 
-     * @return {@link SortOrder}
+     * @return {@link _SortOrder}
      */
     SortOrder getSortOrder();
 
@@ -198,7 +198,7 @@ public interface IFileProvider {
 
     /**
      * Lists files inside {@code dir}, the result should be sorted with
-     * {@link SortType} and {@link SortOrder}
+     * {@link _SortType} and {@link _SortOrder}
      * 
      * @deprecated
      * 
@@ -218,7 +218,7 @@ public interface IFileProvider {
 
     /**
      * Lists files inside {@code dir}, the result should be sorted with
-     * {@link SortType} and {@link SortOrder}
+     * {@link _SortType} and {@link _SortOrder}
      * 
      * @param dir
      *            the root directory which needs to list files

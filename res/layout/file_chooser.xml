@@ -37,15 +37,35 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/filechooser_activity_listview_files"
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/dim_10dp"
         android:layout_marginTop="@dimen/dim_10dp"
         android:layout_weight="1"
-        android:fastScrollEnabled="true" >
-    </ListView>
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/filechooser_activity_view_files_container"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal" >
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/filechooser_activity_view_files_footer_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/dim_10dp"
+            android:layout_weight="0.1"
+            android:enabled="false"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="italic"
+            android:visibility="gone" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"

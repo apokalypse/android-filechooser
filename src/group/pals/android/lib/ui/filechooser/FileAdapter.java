@@ -27,13 +27,16 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 /**
@@ -71,9 +74,9 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
      * @param objects
      *            the data
      * @param filterMode
-     *            see {@link IFileProvider#FilterMode}
+     *            see {@link IFileProvider#_FilterMode}
      * @param multiSelection
-     *            see {@link FileChooserActivity#MultiSelection}
+     *            see {@link FileChooserActivity#_MultiSelection}
      */
     public FileAdapter(Context context, List<DataModel> objects, IFileProvider.FilterMode filterMode,
             boolean multiSelection) {
@@ -117,7 +120,7 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
         }
 
         // update view
-        updateView(bag, data, data.getFile());
+        updateView(parent, bag, data, data.getFile());
 
         return convertView;
     }
@@ -125,6 +128,8 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
     /**
      * Updates the view.
      * 
+     * @param parent
+     *            the parent view
      * @param bag
      *            the "view holder", see {@link Bag}
      * @param fData
@@ -133,7 +138,15 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
      *            {@link IFile}
      * @since v2.0 alpha
      */
-    private void updateView(Bag bag, final DataModel fData, IFile file) {
+    private void updateView(ViewGroup parent, Bag bag, final DataModel fData, IFile file) {
+        // if parent is list view, enable multiple lines
+        boolean useSingleLine = parent instanceof GridView;
+        for (TextView tv : new TextView[] { bag.txtFileName, bag.txtFileInfo }) {
+            tv.setSingleLine(useSingleLine);
+            if (useSingleLine)
+                tv.setEllipsize(TextUtils.TruncateAt.END);
+        }
+
         // image icon
         if (file.isDirectory())
             bag.imageIcon.setImageResource(R.drawable.folder);
