@@ -444,6 +444,9 @@ public class FileChooserActivity extends Activity {
     }// onOptionsItemSelected()
 
     private void doGoHome() {
+        if (mRoot.equalsToPath(getLocation()))
+            return;
+
         /*
          * we can't use mRoot, because if the first item in history is mRoot,
          * then when we push new location (which equals to mRoot) to the
