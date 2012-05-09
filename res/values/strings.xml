@@ -38,5 +38,8 @@
     <string name="pmsg_cannot_delete_file">Can not delete %1$s \&quot;%2$s\&quot;</string>
     <string name="pmsg_deleting_file">Deleting %1$s \&quot;%2$s\&quot;…</string>
     <string name="msg_empty">…empty</string>
+    <string name="cmd_grid_view">Grid view</string>
+    <string name="cmd_list_view">List view</string>
+    <string name="cmd_home">Home</string>
 
 </resources>

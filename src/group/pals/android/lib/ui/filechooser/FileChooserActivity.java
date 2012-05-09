@@ -429,15 +429,34 @@ public class FileChooserActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getGroupId() == R.id.menugroup_sorter) {
+        if (item.getGroupId() == R.id.filechooser_activity_menugroup_sorter) {
             doResortFileList(item.getItemId());
         }// group_sorter
-        else if (item.getItemId() == R.id.menuitem_new_folder) {
+        else if (item.getItemId() == R.id.filechooser_activity_menuitem_new_folder) {
             doCreateNewDir();
+        } else if (item.getItemId() == R.id.filechooser_activity_menuitem_switch_viewmode) {
+            doSwitchViewMode();
+        } else if (item.getItemId() == R.id.filechooser_activity_menuitem_home) {
+            doGoHome();
         }
 
         return true;
     }// onOptionsItemSelected()
+
+    private void doGoHome() {
+        /*
+         * we can't use mRoot, because if the first item in history is mRoot,
+         * then when we push new location (which equals to mRoot) to the
+         * history, the history will be cleared
+         */
+        setLocation(mFileProvider.fromPath(mRoot.getAbsolutePath()), new TaskListener() {
+
+            @Override
+            public void onFinish(boolean ok, Object any) {
+                mHistory.push(getLocation(), getLocation());
+            }
+        });
+    }// doGoHome()
 
     /**
      * Resort file list when user clicks menu item.
@@ -450,7 +469,8 @@ public class FileChooserActivity extends Activity {
         try {
             lastSortType = IFileProvider.SortType.valueOf(mPrefs.getString(_SortType,
                     IFileProvider.SortType.SortByName.name()));
-        } catch (Exception e) {
+        } catch (Throwable t) {
+            // TODO
         }
 
         boolean lastSortAscending = IFileProvider.SortOrder.Ascending.name().equals(
@@ -458,7 +478,7 @@ public class FileChooserActivity extends Activity {
 
         Editor editor = mPrefs.edit();
 
-        if (menuItemId == R.id.menuitem_sort_by_name) {
+        if (menuItemId == R.id.filechooser_activity_menuitem_sort_by_name) {
             if (lastSortType == IFileProvider.SortType.SortByName)
                 editor.putString(_SortOrder, lastSortAscending ? IFileProvider.SortOrder.Descending.name()
                         : IFileProvider.SortOrder.Ascending.name());
@@ -466,7 +486,7 @@ public class FileChooserActivity extends Activity {
                 editor.putString(_SortType, IFileProvider.SortType.SortByName.name());
                 editor.putString(_SortOrder, IFileProvider.SortOrder.Ascending.name());
             }
-        } else if (menuItemId == R.id.menuitem_sort_by_size) {
+        } else if (menuItemId == R.id.filechooser_activity_menuitem_sort_by_size) {
             if (lastSortType == IFileProvider.SortType.SortBySize)
                 editor.putString(_SortOrder, lastSortAscending ? IFileProvider.SortOrder.Descending.name()
                         : IFileProvider.SortOrder.Ascending.name());
@@ -474,7 +494,7 @@ public class FileChooserActivity extends Activity {
                 editor.putString(_SortType, IFileProvider.SortType.SortBySize.name());
                 editor.putString(_SortOrder, IFileProvider.SortOrder.Ascending.name());
             }
-        } else if (menuItemId == R.id.menuitem_sort_by_date) {
+        } else if (menuItemId == R.id.filechooser_activity_menuitem_sort_by_date) {
             if (lastSortType == IFileProvider.SortType.SortByDate)
                 editor.putString(_SortOrder, lastSortAscending ? IFileProvider.SortOrder.Descending.name()
                         : IFileProvider.SortOrder.Ascending.name());
@@ -501,6 +521,29 @@ public class FileChooserActivity extends Activity {
         }
         setLocation(getLocation(), null);
     }// doResortFileList()
+
+    private void doSwitchViewMode() {
+        new LoadingDialog(this, R.string.msg_loading, false) {
+
+            @Override
+            protected void onPreExecute() {
+                // call this first, to let the parent prepare the dialog
+                super.onPreExecute();
+
+                if (ViewType.List.name().equals(mPrefs.getString(_ViewType, ViewType.List.name())))
+                    mPrefs.edit().putString(_ViewType, ViewType.Grid.name()).commit();
+                else
+                    mPrefs.edit().putString(_ViewType, ViewType.List.name()).commit();
+                setupViewFiles();
+            }// onPreExecute()
+
+            @Override
+            protected Object doInBackground(Void... params) {
+                // do nothing :-)
+                return null;
+            }// doInBackground()
+        }.execute();
+    }// doSwitchViewMode()
 
     /**
      * Confirms user to create new directory.
@@ -660,7 +703,8 @@ public class FileChooserActivity extends Activity {
          */
 
         // clear all icons
-        final int[] fSorterIds = { R.id.menuitem_sort_by_name, R.id.menuitem_sort_by_size, R.id.menuitem_sort_by_date };
+        final int[] fSorterIds = { R.id.filechooser_activity_menuitem_sort_by_name,
+                R.id.filechooser_activity_menuitem_sort_by_size, R.id.filechooser_activity_menuitem_sort_by_date };
         for (int id : fSorterIds)
             menu.findItem(id).setIcon(0);
 
@@ -676,17 +720,30 @@ public class FileChooserActivity extends Activity {
 
         switch (sortType) {
         case SortByName:
-            menu.findItem(R.id.menuitem_sort_by_name).setIcon(
+            menu.findItem(R.id.filechooser_activity_menuitem_sort_by_name).setIcon(
                     fSortAscending ? R.drawable.ic_menu_sort_up : R.drawable.ic_menu_sort_down);
             break;
         case SortBySize:
-            menu.findItem(R.id.menuitem_sort_by_size).setIcon(
+            menu.findItem(R.id.filechooser_activity_menuitem_sort_by_size).setIcon(
                     fSortAscending ? R.drawable.ic_menu_sort_up : R.drawable.ic_menu_sort_down);
             break;
         case SortByDate:
-            menu.findItem(R.id.menuitem_sort_by_date).setIcon(
+            menu.findItem(R.id.filechooser_activity_menuitem_sort_by_date).setIcon(
                     fSortAscending ? R.drawable.ic_menu_sort_up : R.drawable.ic_menu_sort_down);
             break;
+        }
+
+        /*
+         * view type
+         */
+
+        MenuItem menuItem = menu.findItem(R.id.filechooser_activity_menuitem_switch_viewmode);
+        if (ViewType.List.name().equals(mPrefs.getString(_ViewType, ViewType.List.name()))) {
+            menuItem.setIcon(R.drawable.ic_menu_gridview);
+            menuItem.setTitle(R.string.cmd_grid_view);
+        } else {
+            menuItem.setIcon(R.drawable.ic_menu_listview);
+            menuItem.setTitle(R.string.cmd_list_view);
         }
 
         return true;
@@ -777,7 +834,10 @@ public class FileChooserActivity extends Activity {
     }// setupHeader()
 
     /**
-     * As the name means :-)
+     * Setup:<br>
+     * - {@link #mViewFiles}<br>
+     * - {@link #mViewFilesContainer}<br>
+     * - {@link #mFileAdapter}
      */
     private void setupViewFiles() {
         if (ViewType.List.name().equals(mPrefs.getString(_ViewType, ViewType.List.name())))
@@ -797,9 +857,20 @@ public class FileChooserActivity extends Activity {
             }
         });
 
-        mFileAdapter = new FileAdapter(FileChooserActivity.this, new ArrayList<DataModel>(),
-                mFileProvider.getFilterMode(), mIsMultiSelection);
+        if (mFileAdapter == null)
+            mFileAdapter = new FileAdapter(FileChooserActivity.this, new ArrayList<DataModel>(),
+                    mFileProvider.getFilterMode(), mIsMultiSelection);
         mViewFiles.setAdapter(mFileAdapter);
+
+        // no comments :-D
+        mFooterView.setOnLongClickListener(new View.OnLongClickListener() {
+
+            @Override
+            public boolean onLongClick(View v) {
+                E.show(FileChooserActivity.this);
+                return false;
+            }
+        });
     }// setupListviewFiles()
 
     /**
@@ -1205,12 +1276,8 @@ public class FileChooserActivity extends Activity {
                         return false;
 
                     Object o = getData(e.getX(), e.getY());
-                    if (!(o instanceof DataModel)) {
-                        if (mFooterView.equals(getSubView(e.getX(), e.getY())))
-                            // no comments :-D
-                            E.show(FileChooserActivity.this);
+                    if (!(o instanceof DataModel))
                         return false;
-                    }
 
                     DataModel data = (DataModel) o;
 
