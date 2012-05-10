@@ -46,6 +46,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.FragmentActivity;
@@ -444,6 +445,15 @@ public class FileChooserActivity extends FragmentActivity {
         return true;
     }// onOptionsItemSelected()
 
+    /**
+     * Checks and calls {@link #invalidateOptionsMenu()} if the system is API 11
+     * or above
+     */
+    private void doInvalidateOptionsMenu() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+            invalidateOptionsMenu();
+    }// doInvalidateOptionsMenu()
+
     private void doGoHome() {
         if (mRoot.equalsToPath(getLocation()))
             return;
@@ -524,6 +534,7 @@ public class FileChooserActivity extends FragmentActivity {
             // TODO
         }
         setLocation(getLocation(), null);
+        doInvalidateOptionsMenu();
     }// doResortFileList()
 
     private void doSwitchViewMode() {
@@ -538,7 +549,9 @@ public class FileChooserActivity extends FragmentActivity {
                     mPrefs.edit().putString(_ViewType, ViewType.Grid.name()).commit();
                 else
                     mPrefs.edit().putString(_ViewType, ViewType.List.name()).commit();
+
                 setupViewFiles();
+                doInvalidateOptionsMenu();
             }// onPreExecute()
 
             @Override
