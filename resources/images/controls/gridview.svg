@@ -16,9 +16,9 @@
    version="1.1"
    inkscape:version="0.48.1 r9760"
    sodipodi:docname="gridview.svg"
-   inkscape:export-filename="/media/truecrypt64/projs/eclipse/android/library/android-filechooser/res/drawable-ldpi/ic_menu_gridview.png"
-   inkscape:export-xdpi="67.5"
-   inkscape:export-ydpi="67.5"
+   inkscape:export-filename="/media/truecrypt64/projs/eclipse/android/library/android-filechooser/res/drawable-xhdpi/ic_menu_gridview.png"
+   inkscape:export-xdpi="180"
+   inkscape:export-ydpi="180"
    style="display:inline">
   <defs
      id="defs4">
@@ -214,7 +214,7 @@
        xlink:href="#linearGradient4185"
        id="radialGradient3848"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.1440168,0,0,1.3164942,-17.067673,-93.865683)"
+       gradientTransform="matrix(0.9211918,0,0,1.3308008,-9.0687484,-106.10458)"
        cx="35.897789"
        cy="860.24426"
        fx="35.897789"
@@ -296,8 +296,8 @@
      inkscape:groupmode="layer"
      inkscape:label="down">
     <path
-       style="font-size:41.29862595px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:28.99999917%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:url(#radialGradient3848);fill-opacity:1;stroke:#000000;stroke-width:2.40022898;stroke-miterlimit:4;stroke-opacity:0.07843137;stroke-dasharray:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans Bold"
-       d="m 9.2001144,1021.5624 0,21.5997 29.5997706,0 0,-21.5997 -29.5997706,0 z m 1.0984296,1.2824 5.578862,0 0,6.4463 -5.578862,0 0,-6.4463 z m 10.926476,0 5.54996,0 0,6.4463 -5.54996,0 0,-6.4463 z m 10.897574,0 5.578862,0 0,6.4463 -5.578862,0 0,-6.4463 z m -21.82405,12.5887 5.578862,0 0,6.4462 -5.578862,0 0,-6.4462 z m 10.926476,0 5.54996,0 0,6.4462 -5.54996,0 0,-6.4462 z m 10.897574,0 5.578862,0 0,6.4462 -5.578862,0 0,-6.4462 z"
+       style="font-size:41.29862595px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:28.99999917%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:url(#radialGradient3848);fill-opacity:1;stroke:#000000;stroke-width:2.16550183;stroke-miterlimit:4;stroke-opacity:0.07843137;stroke-dasharray:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans Bold"
+       d="m 12.08275,1021.445 0,21.8345 23.834499,0 0,-21.8345 -23.834499,0 z m 0.884485,1.2964 4.492243,0 0,6.5163 -4.492243,0 0,-6.5163 z m 8.79828,0 4.46897,0 0,6.5163 -4.46897,0 0,-6.5163 z m 8.775007,0 4.492243,0 0,6.5163 -4.492243,0 0,-6.5163 z m -17.573287,12.7255 4.492243,0 0,6.5162 -4.492243,0 0,-6.5162 z m 8.79828,0 4.46897,0 0,6.5162 -4.46897,0 0,-6.5162 z m 8.775007,0 4.492243,0 0,6.5162 -4.492243,0 0,-6.5162 z"
        id="text4237"
        inkscape:connector-curvature="0" />
     <text

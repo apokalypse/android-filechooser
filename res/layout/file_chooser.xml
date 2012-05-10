@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical" >
 
     <LinearLayout
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
@@ -19,11 +19,11 @@
             android:id="@+id/filechooser_activity_button_location"
             style="@style/button_location"
             android:layout_width="0dp"
-            android:layout_height="fill_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:ellipsize="middle"
-            android:lines="1"
+            android:ellipsize="start"
+            android:singleLine="true"
             android:paddingLeft="@dimen/dim_10dp"
             android:paddingRight="@dimen/dim_10dp"
             android:scrollHorizontally="true"
@@ -38,7 +38,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/dim_10dp"
         android:layout_marginTop="@dimen/dim_10dp"
@@ -47,49 +47,51 @@
 
         <LinearLayout
             android:id="@+id/filechooser_activity_view_files_container"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="horizontal" >
         </LinearLayout>
 
         <TextView
             android:id="@+id/filechooser_activity_view_files_footer_view"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:padding="@dimen/dim_10dp"
             android:layout_weight="0.1"
             android:gravity="center"
+            android:padding="@dimen/dim_10dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textStyle="italic"
             android:visibility="gone" />
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
         <EditText
             android:id="@+id/filechooser_activity_text_view_saveas_filename"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dim_10dp"
             android:hint="@string/hint_save_as_filename"
             android:imeOptions="actionDone"
             android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceLarge" >
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:visibility="gone" >
 
             <requestFocus />
         </EditText>
 
         <Button
             android:id="@+id/filechooser_activity_button_ok"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@android:string/ok" />
+            android:text="@android:string/ok"
+            android:visibility="gone" />
     </LinearLayout>
 
 </LinearLayout>

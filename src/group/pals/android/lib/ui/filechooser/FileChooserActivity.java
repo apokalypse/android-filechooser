@@ -48,6 +48,7 @@ import android.content.SharedPreferences.Editor;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
@@ -77,7 +78,7 @@ import android.widget.ViewFlipper;
  * @author Hai Bison
  * 
  */
-public class FileChooserActivity extends Activity {
+public class FileChooserActivity extends FragmentActivity {
 
     /**
      * The full name of this class. Generally used for debugging.
@@ -249,7 +250,7 @@ public class FileChooserActivity extends Activity {
          * else. The SDK does not mention this.
          */
         // if (getTheme().??? == android.R.style.Theme_Dialog)
-        getWindow().setLayout(LayoutParams.WRAP_CONTENT, LayoutParams.FILL_PARENT);
+        getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
         loadPreferences();
 
@@ -863,7 +864,14 @@ public class FileChooserActivity extends Activity {
         if (mFileAdapter == null)
             mFileAdapter = new FileAdapter(FileChooserActivity.this, new ArrayList<DataModel>(),
                     mFileProvider.getFilterMode(), mIsMultiSelection);
-        mViewFiles.setAdapter(mFileAdapter);
+        /*
+         * API 13+ does not recognize AbsListView.setAdapter(), so we cast it to
+         * explicit class
+         */
+        if (mViewFiles instanceof ListView)
+            ((ListView) mViewFiles).setAdapter(mFileAdapter);
+        else
+            ((GridView) mViewFiles).setAdapter(mFileAdapter);
 
         // no comments :-D
         mFooterView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -884,17 +892,22 @@ public class FileChooserActivity extends Activity {
      */
     private void setupFooter() {
         if (mIsSaveDialog) {
+            mTxtSaveas.setVisibility(View.VISIBLE);
             mTxtSaveas.setText(getIntent().getStringExtra(_DefaultFilename));
             mTxtSaveas.setOnEditorActionListener(mTxtFilenameOnEditorActionListener);
+
+            mBtnOk.setVisibility(View.VISIBLE);
             mBtnOk.setOnClickListener(mBtnOk_SaveDialog_OnClickListener);
-        } else {// this is in open mode
+        }// this is in save mode
+        else {
             mTxtSaveas.setVisibility(View.GONE);
 
-            if (mIsMultiSelection)
+            if (mIsMultiSelection) {
+                mBtnOk.setVisibility(View.VISIBLE);
                 mBtnOk.setOnClickListener(mBtnOk_OpenDialog_OnClickListener);
-            else
+            } else
                 mBtnOk.setVisibility(View.GONE);
-        }// if mIsSaveDialog...
+        }// this is in open mode
     }// setupFooter()
 
     /**
@@ -1026,10 +1039,7 @@ public class FileChooserActivity extends Activity {
                  * navigation buttons
                  */
 
-                if (fPath.parentFile() != null && fPath.parentFile().parentFile() != null)
-                    mBtnLocation.setText("../" + fPath.getName());
-                else
-                    mBtnLocation.setText(fPath.getAbsolutePath());
+                mBtnLocation.setText(fPath.getAbsolutePath());
                 mBtnLocation.setTag(fPath);
 
                 if (fListener != null)

@@ -4,10 +4,11 @@
     android:versionCode="23"
     android:versionName="4.0 beta" >
 
-    <uses-sdk android:minSdkVersion="3" />
+    <uses-sdk
+        android:minSdkVersion="3"
+        android:targetSdkVersion="13" />
 
-    <application
-        android:label="@string/app_name" >
+    <application android:label="@string/app_name" >
         <activity
             android:name=".filechooser.FileChooserActivity"
             android:label="@string/app_name" >
@@ -17,9 +18,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".services.LocalFileProvider">
+
+        <service android:name=".services.LocalFileProvider" >
             <intent-filter>
-                <action android:name="group.pals.android.lib.ui.filechooser.services.LocalFileProvider.60cf767c.6fe6.41ad.90ce.e94657bde773"/>
+                <action android:name="group.pals.android.lib.ui.filechooser.services.LocalFileProvider.60cf767c.6fe6.41ad.90ce.e94657bde773" />
             </intent-filter>
         </service>
     </application>

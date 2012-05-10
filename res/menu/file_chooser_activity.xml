@@ -5,31 +5,38 @@
         <item
             android:id="@+id/filechooser_activity_menuitem_home"
             android:icon="@drawable/ic_menu_home"
+            android:showAsAction="ifRoom"
             android:title="@string/cmd_home">
         </item>
     </group>
     <group android:id="@+id/filechooser_activity_menugroup_view" >
-        <item android:id="@+id/filechooser_activity_menuitem_switch_viewmode">
+        <item
+            android:id="@+id/filechooser_activity_menuitem_switch_viewmode"
+            android:showAsAction="ifRoom">
         </item>
     </group>
     <group android:id="@+id/filechooser_activity_menugroup_editor" >
         <item
             android:id="@+id/filechooser_activity_menuitem_new_folder"
             android:icon="@android:drawable/ic_menu_add"
+            android:showAsAction="ifRoom"
             android:title="@string/cmd_new_folder">
         </item>
     </group>
     <group android:id="@+id/filechooser_activity_menugroup_sorter" >
         <item
             android:id="@+id/filechooser_activity_menuitem_sort_by_name"
+            android:showAsAction="ifRoom|withText"
             android:title="@string/cmd_sort_by_name">
         </item>
         <item
             android:id="@+id/filechooser_activity_menuitem_sort_by_size"
+            android:showAsAction="ifRoom|withText"
             android:title="@string/cmd_sort_by_size">
         </item>
         <item
             android:id="@+id/filechooser_activity_menuitem_sort_by_date"
+            android:showAsAction="ifRoom|withText"
             android:title="@string/cmd_sort_by_date">
         </item>
     </group>
