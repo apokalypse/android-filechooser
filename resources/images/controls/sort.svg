@@ -16,7 +16,7 @@
    version="1.1"
    inkscape:version="0.48.1 r9760"
    sodipodi:docname="sort.svg"
-   inkscape:export-filename="/media/truecrypt64/projs/eclipse/android/library/android-filechooser/res/drawable-xhdpi/ic_menu_sort_down.png"
+   inkscape:export-filename="/media/truecrypt64/projs/eclipse/android/library/android-filechooser/res/drawable-xhdpi/ic_menu_sort_up.png"
    inkscape:export-xdpi="180"
    inkscape:export-ydpi="180"
    style="display:inline">
@@ -29,7 +29,7 @@
          offset="0"
          id="stop4187" />
       <stop
-         style="stop-color:#b2b2b2;stop-opacity:1;"
+         style="stop-color:#8c8c8c;stop-opacity:1;"
          offset="1"
          id="stop4189" />
     </linearGradient>
@@ -40,7 +40,7 @@
          offset="0"
          id="stop4179" />
       <stop
-         style="stop-color:#b2b2b2;stop-opacity:1;"
+         style="stop-color:#8c8c8c;stop-opacity:1;"
          offset="1"
          id="stop4181" />
     </linearGradient>
@@ -104,7 +104,7 @@
        xlink:href="#linearGradient4185"
        id="radialGradient4243"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.2398314,0,0,1.2964885,-64.052978,-2000.0561)"
+       gradientTransform="matrix(1.2398314,0,0,1.2964885,-8.8649218,-211.21309)"
        cx="35.897789"
        cy="860.24426"
        fx="35.897789"
@@ -115,7 +115,7 @@
        xlink:href="#linearGradient4177"
        id="radialGradient4245"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1,0,0,0.72513814,2090.6684,-42.025278)"
+       gradientTransform="matrix(1,0,0,0.72513814,-1.0170157,5.1724354)"
        cx="-1039.7407"
        cy="15.240929"
        fx="-1039.7407"
@@ -130,7 +130,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="8"
-     inkscape:cx="9.073198"
+     inkscape:cx="26.823198"
      inkscape:cy="24.214103"
      inkscape:document-units="px"
      inkscape:current-layer="g4231"
@@ -197,35 +197,35 @@
      inkscape:groupmode="layer"
      inkscape:label="down">
     <text
-       transform="matrix(0,0.98328572,-1.0169984,0,0,0)"
+       transform="matrix(0,-0.98328572,1.0169984,0,0,0)"
        sodipodi:linespacing="125%"
        id="text4233"
-       y="-21.955364"
-       x="1039.1143"
+       y="25.24235"
+       x="-1052.5712"
        style="font-size:28.76813126px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:url(#radialGradient4245);fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:0.07843137;stroke-dasharray:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
        xml:space="preserve"><tspan
          style="fill:url(#radialGradient4245);fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:0.07843137;stroke-dasharray:none"
-         y="-21.955364"
-         x="1039.1143"
+         y="25.24235"
+         x="-1052.5712"
          id="tspan4235"
          sodipodi:role="line">➜</tspan></text>
     <text
-       transform="scale(-0.86975339,-1.1497512)"
+       transform="scale(0.86975339,1.1497512)"
        sodipodi:linespacing="28.999999%"
        id="text4237"
-       y="-893.95044"
-       x="-19.535358"
+       y="894.89258"
+       x="35.652699"
        style="font-size:42.64362335px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:28.99999917%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:url(#radialGradient4243);fill-opacity:1;stroke:#000000;stroke-width:2.4796629;stroke-miterlimit:4;stroke-opacity:0.07843137;stroke-dasharray:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans Bold"
        xml:space="preserve"><tspan
          style="fill:url(#radialGradient4243);fill-opacity:1;stroke:#000000;stroke-width:2.4796629;stroke-miterlimit:4;stroke-opacity:0.07843137;stroke-dasharray:none"
-         y="-893.95044"
-         x="-19.535358"
+         y="894.89258"
+         x="35.652699"
          id="tspan4239"
          sodipodi:role="line">.</tspan><tspan
          style="fill:url(#radialGradient4243);fill-opacity:1;stroke:#000000;stroke-width:2.4796629;stroke-miterlimit:4;stroke-opacity:0.07843137;stroke-dasharray:none"
          id="tspan4241"
-         y="-881.5838"
-         x="-19.535358"
+         y="907.25922"
+         x="35.652699"
          sodipodi:role="line">..</tspan></text>
   </g>
 </svg>

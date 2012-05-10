@@ -16,9 +16,9 @@
    version="1.1"
    inkscape:version="0.48.1 r9760"
    sodipodi:docname="home.svg"
-   inkscape:export-filename="/media/truecrypt64/projs/eclipse/android/library/android-filechooser/res/drawable-ldpi/ic_menu_home.png"
-   inkscape:export-xdpi="67.5"
-   inkscape:export-ydpi="67.5"
+   inkscape:export-filename="/media/truecrypt64/projs/eclipse/android/library/android-filechooser/res/drawable-xhdpi/ic_menu_home.png"
+   inkscape:export-xdpi="180"
+   inkscape:export-ydpi="180"
    style="display:inline">
   <defs
      id="defs4">
@@ -139,7 +139,7 @@
          offset="0"
          id="stop4187-1" />
       <stop
-         style="stop-color:#b2b2b2;stop-opacity:1;"
+         style="stop-color:#8c8c8c;stop-opacity:1;"
          offset="1"
          id="stop4189-1" />
     </linearGradient>
@@ -203,7 +203,7 @@
        xlink:href="#linearGradient4185-5"
        id="radialGradient3243"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.0321511,0,0,1.0793178,-21.690327,685.96867)"
+       gradientTransform="matrix(1.5458477,0,0,1.6164891,-27.442893,-473.22925)"
        cx="35.897789"
        cy="860.24426"
        fx="35.897789"
@@ -238,7 +238,7 @@
          offset="0"
          id="stop4187-1-8" />
       <stop
-         style="stop-color:#b2b2b2;stop-opacity:1;"
+         style="stop-color:#8c8c8c;stop-opacity:1;"
          offset="1"
          id="stop4189-1-7" />
     </linearGradient>
@@ -280,7 +280,7 @@
        xlink:href="#linearGradient4185-5-4"
        id="radialGradient3102"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.3071184,0,0,1.9810513,-22.92265,-649.01912)"
+       gradientTransform="matrix(1.2219621,0,0,1.6372292,-19.865732,-355.20633)"
        cx="35.897789"
        cy="860.24426"
        fx="35.897789"
@@ -295,8 +295,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="8"
-     inkscape:cx="41.823198"
-     inkscape:cy="28.565134"
+     inkscape:cx="15.655918"
+     inkscape:cy="19.158137"
      inkscape:document-units="px"
      inkscape:current-layer="g4231"
      showgrid="false"
@@ -362,22 +362,23 @@
      inkscape:groupmode="layer"
      inkscape:label="down">
     <path
-       style="font-size:65.88833618px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:28.99999917%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:url(#radialGradient3102);fill-opacity:1;stroke:#000000;stroke-width:3.14740849;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0.07843137;stroke-dasharray:none;display:inline;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans Bold"
-       d="m 11.573704,1021.9359 0,20.8526 24.852592,0 0,-20.8526 -24.852592,0 z m 9.246912,9.4759 6.358768,0 0,9.7203 -6.358768,0 0,-9.7203 z"
+       style="font-size:65.88833618px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:28.99999917%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:url(#radialGradient3102);fill-opacity:1;stroke:#000000;stroke-width:2.76650453;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0.07843137;stroke-dasharray:none;display:inline;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans Bold"
+       d="m 12.383252,1025.7455 0,17.2335 23.233496,0 0,-17.2335 -23.233496,0 z m 8.644495,7.8313 5.944508,0 0,8.0332 -5.944508,0 0,-8.0332 z"
        id="text4237-0-1"
        inkscape:connector-curvature="0" />
     <text
-       transform="scale(1.5614551,0.64042829)"
+       transform="scale(0.85523088,1.1692749)"
        sodipodi:linespacing="28.999999%"
        id="text4237-0"
-       y="1606.7937"
-       x="15.370279"
-       style="font-size:35.50052643px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:28.99999917%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:url(#radialGradient3243);fill-opacity:1;stroke:#000000;stroke-width:2.06430244;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0.07843137;stroke-dasharray:none;display:inline;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans Bold"
+       y="905.88586"
+       x="28.062597"
+       style="font-size:53.16896439px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:28.99999917%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:url(#radialGradient3243);fill-opacity:1;stroke:#000000;stroke-width:3.09169579;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0.07843137;stroke-dasharray:none;display:inline;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans Bold"
        xml:space="preserve"><tspan
-         style="fill:url(#radialGradient3243);fill-opacity:1;stroke:#000000;stroke-width:2.06430244;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0.07843137;stroke-dasharray:none"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:url(#radialGradient3243);fill-opacity:1;stroke:#000000;stroke-width:3.09169579;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0.07843137;stroke-dasharray:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans Bold"
          id="tspan4241-5"
-         y="1606.7937"
-         x="15.370279"
-         sodipodi:role="line">^</tspan></text>
+         y="905.88586"
+         x="28.062597"
+         sodipodi:role="line"
+         dx="0">^</tspan></text>
   </g>
 </svg>

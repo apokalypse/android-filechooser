@@ -16,9 +16,9 @@
    version="1.1"
    inkscape:version="0.48.1 r9760"
    sodipodi:docname="listview.svg"
-   inkscape:export-filename="/media/truecrypt64/projs/eclipse/android/library/android-filechooser/res/drawable-ldpi/ic_menu_listview.png"
-   inkscape:export-xdpi="67.5"
-   inkscape:export-ydpi="67.5"
+   inkscape:export-filename="/media/truecrypt64/projs/eclipse/android/library/android-filechooser/res/drawable-xhdpi/ic_menu_listview.png"
+   inkscape:export-xdpi="180"
+   inkscape:export-ydpi="180"
    style="display:inline">
   <defs
      id="defs4">
@@ -29,7 +29,7 @@
          offset="0"
          id="stop4187" />
       <stop
-         style="stop-color:#b2b2b2;stop-opacity:1;"
+         style="stop-color:#8c8c8c;stop-opacity:1;"
          offset="1"
          id="stop4189" />
     </linearGradient>
@@ -139,7 +139,7 @@
          offset="0"
          id="stop4187-1" />
       <stop
-         style="stop-color:#b2b2b2;stop-opacity:1;"
+         style="stop-color:#8c8c8c;stop-opacity:1;"
          offset="1"
          id="stop4189-1" />
     </linearGradient>
@@ -229,7 +229,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="8"
-     inkscape:cx="11.823198"
+     inkscape:cx="19.573198"
      inkscape:cy="29.764214"
      inkscape:document-units="px"
      inkscape:current-layer="g4231"
@@ -306,9 +306,9 @@
        id="text4237-0"
        y="692.53381"
        x="34.908401"
-       style="font-size:70.50744629px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:28.99999917%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:url(#radialGradient3243);fill-opacity:1;stroke:#000000;stroke-width:4.09990263;stroke-miterlimit:4;stroke-opacity:0.07843137;stroke-dasharray:none;display:inline;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans Bold"
+       style="font-size:70.50744628999999009px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:28.99999916999999883%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:url(#radialGradient3243);fill-opacity:1;stroke:#000000;stroke-width:4.10000007000000011;stroke-miterlimit:4;stroke-opacity:0.07843137000000000;stroke-dasharray:none;display:inline;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans Bold;stroke-linejoin:round;stroke-linecap:round"
        xml:space="preserve"><tspan
-         style="fill:url(#radialGradient3243);fill-opacity:1;stroke:#000000;stroke-width:4.09990263;stroke-miterlimit:4;stroke-opacity:0.07843137;stroke-dasharray:none"
+         style="fill:url(#radialGradient3243);fill-opacity:1;stroke:#000000;stroke-width:4.10000007000000011;stroke-miterlimit:4;stroke-opacity:0.07843137000000000;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round"
          id="tspan4241-5"
          y="692.53381"
          x="34.908401"
