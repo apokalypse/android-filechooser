@@ -1,7 +1,7 @@
 android-filechooser
 Copyright 2012 Hai Bison
 
-Version: 4.0 beta
+Version: 4.0 - Tablet
 
 This product includes software developed at
 http://code.google.com/p/android-filechooser/
@@ -21,6 +21,19 @@ limitations under the License.
 ===============================================================
 
 History:
+
++++ Version 4.0 - Tablet +++
+ - Release: May 11, 2012
+
+ - add Home button;
+ - add grid view/ list view mode;
+ - allow creating new directory;
+ - allow deleting a single file/ directory by flinging its name;
+ - use android-support-v13.jar:
+   + show menu items as actions from API 11 and up;
+   + support new Android layout;
+ - change to new icons;
+ - some minor changes;
 
 +++ Version 4.0 beta +++
  - Initialization: May 08, 2012
