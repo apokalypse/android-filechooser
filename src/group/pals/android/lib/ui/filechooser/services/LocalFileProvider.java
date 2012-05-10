@@ -94,29 +94,33 @@ public class LocalFileProvider extends FileProviderService {
 
                     switch (getFilterMode()) {
                     case FilesOnly:
-                        if (getRegexFilenameFilter() != null && pathname.isFile())
-                            return pathname.getName().matches(getRegexFilenameFilter());
+                        if (getRegexFilenameFilter() != null && pathname.isFile()) {
+                            if (pathname.getName().matches(getRegexFilenameFilter())) {
+                                fFiles.add(new LocalFile(pathname));
+                            }
+                        } else
+                            fFiles.add(new LocalFile(pathname));
 
-                        fFiles.add(new LocalFile(pathname));
-                        break;// FilesOnly
+                        return false;// FilesOnly
 
                     case DirectoriesOnly:
                         boolean ok = pathname.isDirectory();
                         if (ok)
                             fFiles.add(new LocalFile(pathname));
 
-                        break;// DirectoriesOnly
+                        return false;// DirectoriesOnly
 
                     default:
-                        if (getRegexFilenameFilter() != null && pathname.isFile())
-                            return pathname.getName().matches(getRegexFilenameFilter());
+                        if (getRegexFilenameFilter() != null && pathname.isFile()) {
+                            if (pathname.getName().matches(getRegexFilenameFilter())) {
+                                fFiles.add(new LocalFile(pathname));
+                            }
+                        } else
+                            fFiles.add(new LocalFile(pathname));
 
-                        fFiles.add(new LocalFile(pathname));
-                        break;// default
-                    }
-
-                    return false;
-                }
+                        return false;// default
+                    }// switch
+                }// accept()
             });// dir.listFiles()
 
             if (files != null) {

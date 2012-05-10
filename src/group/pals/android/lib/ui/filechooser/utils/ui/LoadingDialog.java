@@ -32,7 +32,7 @@ import android.util.Log;
  */
 public abstract class LoadingDialog extends AsyncTask<Void, Void, Object> {
 
-    public static final String ClassName = LoadingDialog.class.getName();
+    public static final String _ClassName = LoadingDialog.class.getName();
 
     private final ProgressDialog mDialog;
     /**
@@ -104,7 +104,7 @@ public abstract class LoadingDialog extends AsyncTask<Void, Void, Object> {
                         mDialog.show();
                     } catch (Throwable t) {
                         // TODO
-                        Log.e(ClassName, "onPreExecute() - show dialog: " + t);
+                        Log.e(_ClassName, "onPreExecute() - show dialog: " + t);
                     }
                 }
             }
@@ -138,7 +138,7 @@ public abstract class LoadingDialog extends AsyncTask<Void, Void, Object> {
             mDialog.dismiss();
         } catch (Throwable t) {
             // TODO
-            Log.e(ClassName, "doFinish() - dismiss dialog: " + t);
+            Log.e(_ClassName, "doFinish() - dismiss dialog: " + t);
         }
     }// doFinish()
 

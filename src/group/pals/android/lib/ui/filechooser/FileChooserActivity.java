@@ -1017,7 +1017,6 @@ public class FileChooserActivity extends Activity {
                 else if (mFileAdapter.isEmpty())
                     mFooterView.setText(R.string.msg_empty);
 
-                Log.d(ClassName, String.format("setLocation() - shouldBeSelectedIdx = %,d", shouldBeSelectedIdx));
                 if (shouldBeSelectedIdx >= 0 && shouldBeSelectedIdx < mFileAdapter.getCount())
                     mViewFiles.setSelection(shouldBeSelectedIdx);
                 else if (!mFileAdapter.isEmpty())
