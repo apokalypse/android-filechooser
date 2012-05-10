@@ -21,6 +21,9 @@ import group.pals.android.lib.ui.filechooser.services.IFileProvider;
 
 import java.util.List;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
+
 /**
  * Utilities.
  */
@@ -104,4 +107,20 @@ public class Utils {
             }// deleteFile()
         };
     }// deleteFile()
+
+    /**
+     * Checks if the app has <b>all</b> {@code permissions} granted
+     * 
+     * @param context
+     *            {@link Context}
+     * @param permissions
+     *            array of permission names
+     * @return {@code true} if the app has all {@code permissions} asked
+     */
+    public static boolean havePermissions(Context context, String... permissions) {
+        for (String p : permissions)
+            if (context.checkCallingOrSelfPermission(p) == PackageManager.PERMISSION_DENIED)
+                return false;
+        return true;
+    }// havePermissions()
 }

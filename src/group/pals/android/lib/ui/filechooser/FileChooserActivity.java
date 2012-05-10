@@ -36,6 +36,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -566,6 +567,11 @@ public class FileChooserActivity extends FragmentActivity {
      * Confirms user to create new directory.
      */
     private void doCreateNewDir() {
+        if (!Utils.havePermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            Dlg.toast(this, R.string.msg_app_doesnot_have_permission_to_create_files, Dlg.LENGTH_SHORT);
+            return;
+        }
+
         final AlertDialog fDlg = new AlertDialog.Builder(this).create();
 
         View view = getLayoutInflater().inflate(R.layout.simple_text_input_view, null);
@@ -627,6 +633,11 @@ public class FileChooserActivity extends FragmentActivity {
      *            {@link IFile}
      */
     private void doDeleteFile(final DataModel fData) {
+        if (!Utils.havePermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            Dlg.toast(this, R.string.msg_app_doesnot_have_permission_to_delete_files, Dlg.LENGTH_SHORT);
+            return;
+        }
+
         Dlg.confirmYesno(
                 this,
                 getString(R.string.pmsg_confirm_delete_file, fData.getFile().isFile() ? getString(R.string.file)
@@ -770,7 +781,7 @@ public class FileChooserActivity extends FragmentActivity {
     protected void onStart() {
         super.onStart();
         if (!mIsMultiSelection && !mIsSaveDialog)
-            Dlg.toast(this, R.string.hint_double_tap_to_select_files, Dlg.LENGTH_SHORT);
+            Dlg.toast(this, R.string.hint_double_tap_to_select_file, Dlg.LENGTH_SHORT);
     }// onStart()
 
     @Override

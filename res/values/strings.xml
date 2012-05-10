@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hint_double_tap_to_select_files">Double tap to select files/ folders</string>
+    <string name="hint_double_tap_to_select_file">Double tap to select file/ folder</string>
     <string name="pmsg_cannot_access_dir">Can not access \&quot;%1$s\&quot;</string>
     <string name="title_choose_files">Choose files…</string>
     <string name="title_choose_directories">Choose folders…</string>
@@ -41,5 +41,7 @@
     <string name="cmd_grid_view">Grid view</string>
     <string name="cmd_list_view">List view</string>
     <string name="cmd_home">Home</string>
+    <string name="msg_app_doesnot_have_permission_to_delete_files">This application does not have permission to delete files/ folders</string>
+    <string name="msg_app_doesnot_have_permission_to_create_files">This application does not have permission to create files/ folders</string>
 
 </resources>
