@@ -154,8 +154,8 @@ public abstract class LoadingDialog extends AsyncTask<Void, Void, Object> {
     /**
      * Sets the delay time before showing the dialog.
      * 
-     * @param mDelayTime
-     *            the mDelayTime to set
+     * @param delayTime
+     *            the delay time to set
      * @return {@link LoadingDialog}
      */
     public LoadingDialog setDelayTime(int delayTime) {

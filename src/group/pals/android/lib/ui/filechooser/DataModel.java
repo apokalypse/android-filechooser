@@ -33,14 +33,15 @@ public class DataModel {
     /**
      * Creates new {@link DataModel} with a {@link IFile}
      * 
-     * @param mFile
+     * @param file
+     *            {@link IFile}
      */
     public DataModel(IFile file) {
         this.mFile = file;
     }
 
     /**
-     * Gets the mFile.
+     * Gets the file which this container holds.
      * 
      * @return {@link IFile}
      */

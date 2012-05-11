@@ -73,7 +73,7 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
      * @param objects
      *            the data
      * @param filterMode
-     *            see {@link IFileProvider#_FilterMode}
+     *            see {@link IFileProvider.FilterMode}
      * @param multiSelection
      *            see {@link FileChooserActivity#_MultiSelection}
      */

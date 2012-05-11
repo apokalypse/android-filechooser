@@ -129,13 +129,13 @@ public interface IFileProvider {
      * Sets filter mode.
      * 
      * @param fm
-     *            {@link _FilterMode}
+     *            {@link FilterMode}
      */
     void setFilterMode(FilterMode fm);
 
     /**
      * 
-     * @return the {@link _FilterMode}
+     * @return the {@link FilterMode}
      */
     FilterMode getFilterMode();
 
@@ -143,13 +143,13 @@ public interface IFileProvider {
      * Sets sort type.
      * 
      * @param st
-     *            {@link _SortType}
+     *            {@link SortType}
      */
     void setSortType(SortType st);
 
     /**
      * 
-     * @return the {@link _SortType}
+     * @return the {@link SortType}
      */
     SortType getSortType();
 
@@ -157,13 +157,13 @@ public interface IFileProvider {
      * Sets sort order.
      * 
      * @param so
-     *            {@link _SortOrder}
+     *            {@link SortOrder}
      */
     void setSortOrder(SortOrder so);
 
     /**
      * 
-     * @return {@link _SortOrder}
+     * @return {@link SortOrder}
      */
     SortOrder getSortOrder();
 
@@ -198,7 +198,7 @@ public interface IFileProvider {
 
     /**
      * Lists files inside {@code dir}, the result should be sorted with
-     * {@link _SortType} and {@link _SortOrder}
+     * {@link SortType} and {@link SortOrder}
      * 
      * @deprecated
      * 
@@ -218,7 +218,7 @@ public interface IFileProvider {
 
     /**
      * Lists files inside {@code dir}, the result should be sorted with
-     * {@link _SortType} and {@link _SortOrder}
+     * {@link SortType} and {@link SortOrder}
      * 
      * @param dir
      *            the root directory which needs to list files
