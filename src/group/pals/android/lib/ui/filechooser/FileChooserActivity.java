@@ -446,15 +446,6 @@ public class FileChooserActivity extends FragmentActivity {
         return true;
     }// onOptionsItemSelected()
 
-    /**
-     * Checks and calls {@link #invalidateOptionsMenu()} if the system is API 11
-     * or above
-     */
-    private void doInvalidateOptionsMenu() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-            invalidateOptionsMenu();
-    }// doInvalidateOptionsMenu()
-
     private void doGoHome() {
         if (mRoot.equalsToPath(getLocation()))
             return;
@@ -535,7 +526,7 @@ public class FileChooserActivity extends FragmentActivity {
             // TODO
         }
         setLocation(getLocation(), null);
-        doInvalidateOptionsMenu();
+        supportInvalidateOptionsMenu();
     }// doResortFileList()
 
     private void doSwitchViewMode() {
@@ -552,7 +543,7 @@ public class FileChooserActivity extends FragmentActivity {
                     mPrefs.edit().putString(_ViewType, ViewType.List.name()).commit();
 
                 setupViewFiles();
-                doInvalidateOptionsMenu();
+                supportInvalidateOptionsMenu();
             }// onPreExecute()
 
             @Override
