@@ -562,7 +562,8 @@ public class FileChooserActivity extends FragmentActivity {
      * Confirms user to create new directory.
      */
     private void doCreateNewDir() {
-        if (!Utils.havePermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        if (mFileProvider instanceof LocalFileProvider
+                && !Utils.havePermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             Dlg.toast(this, R.string.msg_app_doesnot_have_permission_to_create_files, Dlg.LENGTH_SHORT);
             return;
         }
@@ -628,7 +629,8 @@ public class FileChooserActivity extends FragmentActivity {
      *            {@link IFile}
      */
     private void doDeleteFile(final DataModel fData) {
-        if (!Utils.havePermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        if (mFileProvider instanceof LocalFileProvider
+                && !Utils.havePermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             Dlg.toast(this, R.string.msg_app_doesnot_have_permission_to_delete_files, Dlg.LENGTH_SHORT);
             return;
         }
