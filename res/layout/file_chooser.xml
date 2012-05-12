@@ -15,25 +15,32 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <HorizontalScrollView
-            android:id="@+id/filechooser_activity_view_locations_container"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1" >
+            android:layout_weight="1"
+            android:orientation="vertical" >
 
-            <LinearLayout
-                android:id="@+id/filechooser_activity_view_locations"
+            <HorizontalScrollView
+                android:id="@+id/filechooser_activity_view_locations_container"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingLeft="@dimen/dim_10dp"
-                android:paddingRight="@dimen/dim_10dp"
-                android:showDividers="middle" >
+                android:layout_height="0dp"
+                android:layout_weight="1" >
 
-                <include layout="@layout/button_location" />
-            </LinearLayout>
-        </HorizontalScrollView>
+                <LinearLayout
+                    android:id="@+id/filechooser_activity_view_locations"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:showDividers="middle" />
+            </HorizontalScrollView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#cc00ffff" />
+        </LinearLayout>
 
         <ImageButton
             android:id="@+id/filechooser_activity_button_go_forward"

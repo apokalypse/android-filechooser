@@ -1081,8 +1081,7 @@ public class FileChooserActivity extends FragmentActivity {
         mViewLocationsContainer.postDelayed(new Runnable() {
 
             public void run() {
-                // mViewLocationsContainer.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
-                mViewLocationsContainer.smoothScrollTo(mViewLocations.getWidth(), mViewLocations.getTop());
+                mViewLocationsContainer.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
             }
         }, 100);
     }// createLocationButtons()
