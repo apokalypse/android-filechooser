@@ -1,7 +1,7 @@
 android-filechooser
 Copyright 2012 Hai Bison
 
-Version: 4.1 beta
+Version: 4.1
 
 This product includes software developed at
 http://code.google.com/p/android-filechooser/
@@ -21,6 +21,15 @@ limitations under the License.
 ===============================================================
 
 History:
+
++++ Version 4.1 +++
+ - Release: May 12, 2012
+
+ - update UI messages;
+ - if the app does not have permission WRITE_EXTERNAL_STORAGE, notify user
+   when he creates or deletes folder/ file;
+ - make location bar hold buttons of directories, which user can click to
+   go to;
 
 +++ Version 4.1 beta +++
  - Initialization: May 11, 2012
