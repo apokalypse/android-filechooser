@@ -15,20 +15,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <Button
-            android:id="@+id/filechooser_activity_button_location"
-            style="@style/button_location"
+        <HorizontalScrollView
+            android:id="@+id/filechooser_activity_view_locations_container"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:ellipsize="start"
-            android:singleLine="true"
-            android:paddingLeft="@dimen/dim_10dp"
-            android:paddingRight="@dimen/dim_10dp"
-            android:scrollHorizontally="true"
-            android:text="@string/ellipsize"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:layout_weight="1" >
+
+            <LinearLayout
+                android:id="@+id/filechooser_activity_view_locations"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/dim_10dp"
+                android:paddingRight="@dimen/dim_10dp"
+                android:showDividers="middle" >
+
+                <include layout="@layout/button_location" />
+            </LinearLayout>
+        </HorizontalScrollView>
 
         <ImageButton
             android:id="@+id/filechooser_activity_button_go_forward"

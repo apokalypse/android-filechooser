@@ -47,13 +47,14 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Rect;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -68,6 +69,7 @@ import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -229,7 +231,8 @@ public class FileChooserActivity extends FragmentActivity {
     /*
      * controls
      */
-    private Button mBtnLocation;
+    private HorizontalScrollView mViewLocationsContainer;
+    private ViewGroup mViewLocations;
     private ViewGroup mViewFilesContainer;
     private AbsListView mViewFiles;
     private TextView mFooterView;
@@ -265,7 +268,8 @@ public class FileChooserActivity extends FragmentActivity {
 
         mBtnGoBack = (ImageButton) findViewById(R.id.filechooser_activity_button_go_back);
         mBtnGoForward = (ImageButton) findViewById(R.id.filechooser_activity_button_go_forward);
-        mBtnLocation = (Button) findViewById(R.id.filechooser_activity_button_location);
+        mViewLocations = (ViewGroup) findViewById(R.id.filechooser_activity_view_locations);
+        mViewLocationsContainer = (HorizontalScrollView) findViewById(R.id.filechooser_activity_view_locations_container);
         mViewFilesContainer = (ViewGroup) findViewById(R.id.filechooser_activity_view_files_container);
         mFooterView = (TextView) findViewById(R.id.filechooser_activity_view_files_footer_view);
         mTxtSaveas = (EditText) findViewById(R.id.filechooser_activity_text_view_saveas_filename);
@@ -840,11 +844,6 @@ public class FileChooserActivity extends FragmentActivity {
             }
         }// title of activity
 
-        // single click to change path
-        mBtnLocation.setOnClickListener(mBtnLocationOnClickListener);
-        // long click to select current directory
-        mBtnLocation.setOnLongClickListener(mBtnLocationOnLongClickListener);
-
         mBtnGoBack.setEnabled(false);
         mBtnGoBack.setOnClickListener(mBtnGoBackOnClickListener);
 
@@ -963,7 +962,7 @@ public class FileChooserActivity extends FragmentActivity {
      * @return current location.
      */
     private IFile getLocation() {
-        return (IFile) mBtnLocation.getTag();
+        return (IFile) mViewLocations.getTag();
     }// getLocation()
 
     /**
@@ -982,29 +981,16 @@ public class FileChooserActivity extends FragmentActivity {
             List<IFile> files;
             boolean hasMoreFiles[] = { false };
             int shouldBeSelectedIdx = -1;
-            IFile lastPath = null;
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                lastPath = getLocation();
-                if (lastPath != null && fPath != null) {
-                    if (lastPath.parentFile() == null)
-                        lastPath = null;
-                    else if (!lastPath.parentFile().getAbsolutePath().equals(fPath.getAbsolutePath()))
-                        lastPath = null;
-                }
-            }
+            final String fLastPath = getLocation() != null ? getLocation().getAbsolutePath() : null;
 
             @Override
             protected Object doInBackground(Void... params) {
                 try {
                     files = mFileProvider.listAllFiles(fPath, hasMoreFiles);
-                    if (files != null && lastPath != null) {
+                    if (files != null && fLastPath != null) {
                         for (int i = 0; i < files.size(); i++) {
                             IFile f = files.get(i);
-                            if (f.isDirectory() && f.getName().equals(lastPath.getName())
-                                    && f.lastModified() == lastPath.lastModified()) {
+                            if (f.isDirectory() && fLastPath.startsWith(f.getAbsolutePath())) {
                                 shouldBeSelectedIdx = i;
                                 break;
                             }
@@ -1053,15 +1039,53 @@ public class FileChooserActivity extends FragmentActivity {
                 /*
                  * navigation buttons
                  */
-
-                mBtnLocation.setText(fPath.getAbsolutePath());
-                mBtnLocation.setTag(fPath);
+                createLocationButtons(fPath);
 
                 if (fListener != null)
                     fListener.onFinish(true, null);
             }// onPostExecute()
         }.execute();// new LoadingDialog()
     }// setLocation()
+
+    private void createLocationButtons(IFile path) {
+        mViewLocations.setTag(path);
+        mViewLocations.removeAllViews();
+
+        LinearLayout.LayoutParams lpBtnLoc = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        lpBtnLoc.gravity = Gravity.CENTER;
+        LinearLayout.LayoutParams lpDivider = null;
+        LayoutInflater inflater = getLayoutInflater();
+        final int fDim = getResources().getDimensionPixelSize(R.dimen.dim_5dp);
+        while (path != null) {
+            Button btnLoc = (Button) inflater.inflate(R.layout.button_location, null);
+            btnLoc.setText(path.parentFile() != null ? path.getName() : getString(R.string.root));
+            btnLoc.setTag(path);
+            btnLoc.setOnClickListener(mBtnLocationOnClickListener);
+            btnLoc.setOnLongClickListener(mBtnLocationOnLongClickListener);
+            mViewLocations.addView(btnLoc, 0, lpBtnLoc);
+
+            path = path.parentFile();
+            if (path != null) {
+                View divider = inflater.inflate(R.layout.view_locations_divider, null);
+
+                if (lpDivider == null) {
+                    lpDivider = new LinearLayout.LayoutParams(fDim, fDim);
+                    lpDivider.gravity = Gravity.CENTER;
+                    lpDivider.setMargins(fDim, fDim, fDim, fDim);
+                }
+                mViewLocations.addView(divider, 0, lpDivider);
+            }
+        }
+
+        mViewLocationsContainer.postDelayed(new Runnable() {
+
+            public void run() {
+                // mViewLocationsContainer.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
+                mViewLocationsContainer.smoothScrollTo(mViewLocations.getWidth(), mViewLocations.getTop());
+            }
+        }, 100);
+    }// createLocationButtons()
 
     /**
      * Finishes this activity.
@@ -1134,9 +1158,10 @@ public class FileChooserActivity extends FragmentActivity {
 
         @Override
         public void onClick(View v) {
-            if (getLocation().parentFile() != null) {
+            IFile path = (IFile) v.getTag();
+            if (!getLocation().equals(path)) {
                 final IFile fLastPath = getLocation();
-                setLocation(getLocation().parentFile(), new TaskListener() {
+                setLocation(path, new TaskListener() {
 
                     @Override
                     public void onFinish(boolean ok, Object any) {
@@ -1152,11 +1177,10 @@ public class FileChooserActivity extends FragmentActivity {
 
         @Override
         public boolean onLongClick(View v) {
-            if (mIsMultiSelection || mFileProvider.getFilterMode() == IFileProvider.FilterMode.FilesOnly
-                    || mIsSaveDialog)
+            if (mFileProvider.getFilterMode() == IFileProvider.FilterMode.FilesOnly || mIsSaveDialog)
                 return false;
 
-            doFinish(getLocation());
+            doFinish((IFile) v.getTag());
 
             return false;
         }
