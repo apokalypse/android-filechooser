@@ -1,7 +1,7 @@
 android-filechooser
 Copyright 2012 Hai Bison
 
-Version: 4.2 beta
+Version: 4.2
 
 This product includes software developed at
 http://code.google.com/p/android-filechooser/
@@ -21,6 +21,18 @@ limitations under the License.
 ===============================================================
 
 History:
+
++++ Version 4.2 +++
+ - Release: May 15, 2012
+
+ - due to this bug: http://code.google.com/p/android/issues/detail?id=30622,
+   so we prefix all resource names with 'afc_';
+ - add small text view below location bar, to show current location's full name
+   if it is truncated by the view's ellipsize property;
+ - save and restore state after screen orientation changed (except selected items
+   in multi-selection mode);
+ - add menu Reload;
+ - some UI fixes/ updates;
 
 +++ Version 4.2 beta +++
  - Initialization: May 13, 2012
