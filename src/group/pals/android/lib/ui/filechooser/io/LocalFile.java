@@ -77,6 +77,8 @@ public class LocalFile extends File implements IFile {
      * Parcelable
      */
 
+    static final String _Pathname = "pathname";
+
     @Override
     public int describeContents() {
         // TODO Auto-generated method stub
@@ -87,7 +89,7 @@ public class LocalFile extends File implements IFile {
     public void writeToParcel(Parcel dest, int flags) {
         Bundle b = new Bundle();
 
-        b.putSerializable(File.class.getName(), this);
+        b.putSerializable(_Pathname, getAbsolutePath());
 
         dest.writeBundle(b);
     }
@@ -104,6 +106,6 @@ public class LocalFile extends File implements IFile {
     };
 
     private LocalFile(Parcel in) {
-        this((File) in.readBundle().getSerializable(File.class.getName()));
+        this(in.readBundle().getString(_Pathname));
     }
 }
