@@ -16,9 +16,9 @@
 
 package group.pals.android.lib.ui.filechooser.services;
 
-import java.util.List;
-
 import group.pals.android.lib.ui.filechooser.io.IFile;
+
+import java.util.List;
 
 /**
  * Interface for {@link IFile} providers.<br>

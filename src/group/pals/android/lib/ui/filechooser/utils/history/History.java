@@ -16,6 +16,8 @@
 
 package group.pals.android.lib.ui.filechooser.utils.history;
 
+import android.os.Parcelable;
+
 /**
  * A history store of any object.
  * 
@@ -25,7 +27,7 @@ package group.pals.android.lib.ui.filechooser.utils.history;
  *            any type
  * @since v2.0 alpha
  */
-public interface History<A> {
+public interface History<A> extends Parcelable {
 
     /**
      * Pushes new item to the history.

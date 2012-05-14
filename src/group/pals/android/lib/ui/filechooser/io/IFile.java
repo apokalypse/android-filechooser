@@ -16,22 +16,16 @@
 
 package group.pals.android.lib.ui.filechooser.io;
 
-import java.io.Serializable;
-
 import android.os.Parcelable;
 
 /**
  * Interface for "file" used in this library. In case you want to use this
- * library for your own file system, have your "file" implement this interface.<br>
- * <b>Note:</b> Remember to implement either {@link Serializable} of
- * {@link Parcelable} too. If not, the library will not work properly. Because
- * Android requires data to be transferred between activities must implement one
- * of two above interfaces.
+ * library for your own file system, have your "file" implement this interface.
  * 
  * @author Hai Bison
  * @since v3.2
  */
-public interface IFile {
+public interface IFile extends Parcelable {
 
     /**
      * Returns the absolute pathname string of this abstract pathname.

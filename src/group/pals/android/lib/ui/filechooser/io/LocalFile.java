@@ -21,6 +21,10 @@ import group.pals.android.lib.ui.filechooser.utils.history.History;
 import java.io.File;
 import java.util.List;
 
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * This is a wrapper for {@link File}.
  * 
@@ -68,4 +72,38 @@ public class LocalFile extends File implements IFile {
     public boolean equalsToPath(IFile file) {
         return file == null ? false : getAbsolutePath().equals(file.getAbsolutePath());
     }// equalsToPath()
+
+    /*-----------------------------------------------------
+     * Parcelable
+     */
+
+    @Override
+    public int describeContents() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        Bundle b = new Bundle();
+
+        b.putSerializable(File.class.getName(), this);
+
+        dest.writeBundle(b);
+    }
+
+    public static final Parcelable.Creator<LocalFile> CREATOR = new Parcelable.Creator<LocalFile>() {
+
+        public LocalFile createFromParcel(Parcel in) {
+            return new LocalFile(in);
+        }
+
+        public LocalFile[] newArray(int size) {
+            return new LocalFile[size];
+        }
+    };
+
+    private LocalFile(Parcel in) {
+        this((File) in.readBundle().getSerializable(File.class.getName()));
+    }
 }
