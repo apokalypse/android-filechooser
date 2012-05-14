@@ -327,9 +327,11 @@ public class FileChooserActivity extends FragmentActivity {
         else if (item.getItemId() == R.id.afc_filechooser_activity_menuitem_new_folder) {
             doCreateNewDir();
         } else if (item.getItemId() == R.id.afc_filechooser_activity_menuitem_switch_viewmode) {
-            doSwitchViewMode();
+            doSwitchViewType();
         } else if (item.getItemId() == R.id.afc_filechooser_activity_menuitem_home) {
             doGoHome();
+        } else if (item.getItemId() == R.id.afc_filechooser_activity_menuitem_reload) {
+            doReloadCurrentLocation();
         }
 
         return true;
@@ -672,6 +674,10 @@ public class FileChooserActivity extends FragmentActivity {
         }// this is in open mode
     }// setupFooter()
 
+    private void doReloadCurrentLocation() {
+        setLocation(getLocation(), null);
+    }// doReloadCurrentLocation()
+
     private void doGoHome() {
         if (mRoot.equalsToPath(getLocation()))
             return;
@@ -755,7 +761,10 @@ public class FileChooserActivity extends FragmentActivity {
         supportInvalidateOptionsMenu();
     }// doResortFileList()
 
-    private void doSwitchViewMode() {
+    /**
+     * Switch view type between {@link ViewType#List} and {@link ViewType#Grid}
+     */
+    private void doSwitchViewType() {
         new LoadingDialog(this, R.string.afc_msg_loading, false) {
 
             @Override
@@ -778,7 +787,7 @@ public class FileChooserActivity extends FragmentActivity {
                 return null;
             }// doInBackground()
         }.execute();
-    }// doSwitchViewMode()
+    }// doSwitchViewType()
 
     /**
      * Confirms user to create new directory.
@@ -950,7 +959,7 @@ public class FileChooserActivity extends FragmentActivity {
      * @param filename
      * @since v1.91
      */
-    private void checkSaveasFilenameAndFinish(String filename) {
+    private void doCheckSaveasFilenameAndFinish(String filename) {
         if (filename.length() == 0) {
             Dlg.toast(this, R.string.afc_msg_filename_is_empty, Dlg.LENGTH_SHORT);
         } else {
@@ -974,7 +983,7 @@ public class FileChooserActivity extends FragmentActivity {
             } else
                 doFinish(fFile);
         }
-    }// checkSaveasFilenameAndFinish()
+    }// doCheckSaveasFilenameAndFinish()
 
     /**
      * Gets current location.
@@ -1007,7 +1016,7 @@ public class FileChooserActivity extends FragmentActivity {
             protected Object doInBackground(Void... params) {
                 try {
                     files = mFileProvider.listAllFiles(fPath, hasMoreFiles);
-                    if (files != null && fLastPath != null) {
+                    if (files != null && fLastPath != null && fLastPath.length() >= fPath.getAbsolutePath().length()) {
                         for (int i = 0; i < files.size(); i++) {
                             IFile f = files.get(i);
                             if (f.isDirectory() && fLastPath.startsWith(f.getAbsolutePath())) {
@@ -1089,7 +1098,8 @@ public class FileChooserActivity extends FragmentActivity {
             if (count++ == 0) {
                 Rect r = new Rect();
                 btnLoc.getPaint().getTextBounds(path.getName(), 0, path.getName().length(), r);
-                if (r.width() >= getResources().getDimensionPixelSize(R.dimen.afc_button_location_max_width)) {
+                if (r.width() >= getResources().getDimensionPixelSize(R.dimen.afc_button_location_max_width)
+                        - btnLoc.getPaddingLeft() - btnLoc.getPaddingRight()) {
                     mTxtFullDirName.setText(path.getName());
                     mTxtFullDirName.setVisibility(View.VISIBLE);
                 } else
@@ -1266,7 +1276,7 @@ public class FileChooserActivity extends FragmentActivity {
         public void onClick(View v) {
             UI.hideSoftKeyboard(FileChooserActivity.this, mTxtSaveas.getWindowToken());
             String filename = mTxtSaveas.getText().toString().trim();
-            checkSaveasFilenameAndFinish(filename);
+            doCheckSaveasFilenameAndFinish(filename);
         }
     };// mBtnOk_SaveDialog_OnClickListener
 

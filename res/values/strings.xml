@@ -43,5 +43,6 @@
     <string name="afc_cmd_home">Home</string>
     <string name="afc_msg_app_doesnot_have_permission_to_delete_files">This application does not have permission to delete files/ folders</string>
     <string name="afc_msg_app_doesnot_have_permission_to_create_files">This application does not have permission to create files/ folders</string>
+    <string name="afc_cmd_reload">Reload…</string>
 
 </resources>
