@@ -33,7 +33,6 @@ import group.pals.android.lib.ui.filechooser.utils.ui.LoadingDialog;
 import group.pals.android.lib.ui.filechooser.utils.ui.TaskListener;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +49,6 @@ import android.content.SharedPreferences.Editor;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Parcelable;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -302,9 +300,9 @@ public class FileChooserActivity extends FragmentActivity {
 
             @Override
             public void onChanged(History<IFile> history) {
-                int idx = mHistory.indexOf(getLocation());
+                int idx = history.indexOf(getLocation());
                 mBtnGoBack.setEnabled(idx > 0);
-                mBtnGoForward.setEnabled(idx >= 0 && idx < mHistory.size() - 2);
+                mBtnGoForward.setEnabled(idx >= 0 && idx < history.size() - 1);
             }
         });
 
@@ -393,12 +391,7 @@ public class FileChooserActivity extends FragmentActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        IFile currentLoc = getLocation();
-        if (currentLoc instanceof Serializable)
-            outState.putSerializable(_CurrentLocation, (Serializable) currentLoc);
-        else if (currentLoc instanceof Parcelable)
-            outState.putParcelable(_CurrentLocation, (Parcelable) currentLoc);
-
+        outState.putParcelable(_CurrentLocation, getLocation());
         outState.putParcelable(_History, mHistory);
 
         unbindService(mServiceConnection);
@@ -519,7 +512,6 @@ public class FileChooserActivity extends FragmentActivity {
                     setupFooter();
 
                     final Object fPath = fSavedInstanceState != null ? fSavedInstanceState.get(_CurrentLocation) : null;
-
                     setLocation(fPath instanceof IFile ? (IFile) fPath : mRoot, new TaskListener() {
 
                         @Override
