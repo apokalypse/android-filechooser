@@ -211,6 +211,7 @@ public class FileChooserActivity extends FragmentActivity {
      * "constant" variables
      */
 
+    private Class<?> mFileProviderServiceClass;
     /**
      * The file provider service.
      */
@@ -274,6 +275,10 @@ public class FileChooserActivity extends FragmentActivity {
         getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
         loadPreferences();
+
+        mFileProviderServiceClass = (Class<?>) getIntent().getSerializableExtra(_FileProviderClass);
+        if (mFileProviderServiceClass == null)
+            mFileProviderServiceClass = LocalFileProvider.class;
 
         mIsMultiSelection = getIntent().getBooleanExtra(_MultiSelection, false);
 
@@ -395,9 +400,6 @@ public class FileChooserActivity extends FragmentActivity {
     protected void onSaveInstanceState(Bundle outState) {
         outState.putParcelable(_CurrentLocation, getLocation());
         outState.putParcelable(_History, mHistory);
-
-        unbindService(mServiceConnection);
-        mServiceConnection = null;
     }// onSaveInstanceState()
 
     @Override
@@ -406,6 +408,33 @@ public class FileChooserActivity extends FragmentActivity {
         if (!mIsMultiSelection && !mIsSaveDialog)
             Dlg.toast(this, R.string.afc_hint_double_tap_to_select_file, Dlg.LENGTH_SHORT);
     }// onStart()
+
+    @Override
+    protected void onDestroy() {
+        if (mFileProvider != null) {
+            try {
+                unbindService(mServiceConnection);
+            } catch (Throwable t) {
+                /*
+                 * due to this error:
+                 * https://groups.google.com/d/topic/android-developers
+                 * /Gv-80mQnyhc/discussion
+                 */
+                Log.e(_ClassName, "onDestroy() - unbindService() - exception: " + t);
+            }
+
+            try {
+                stopService(new Intent(this, mFileProviderServiceClass));
+            } catch (SecurityException e) {
+                /*
+                 * we have permission to stop our own service, so this exception
+                 * should never be thrown
+                 */
+            }
+        }
+
+        super.onDestroy();
+    }
 
     /**
      * Loads preferences.
@@ -450,9 +479,10 @@ public class FileChooserActivity extends FragmentActivity {
      * @param fSavedInstanceState
      */
     private void bindService(final Bundle fSavedInstanceState) {
-        Class<?> serviceClass = (Class<?>) getIntent().getSerializableExtra(_FileProviderClass);
-        if (serviceClass == null)
-            serviceClass = LocalFileProvider.class;
+        if (startService(new Intent(this, mFileProviderServiceClass)) == null) {
+            doShowCannotConnectToServiceAndFinish();
+            return;
+        }
 
         mServiceConnection = new ServiceConnection() {
 
@@ -469,7 +499,7 @@ public class FileChooserActivity extends FragmentActivity {
             }// onServiceDisconnected()
         };
 
-        bindService(new Intent(this, serviceClass), mServiceConnection, Context.BIND_AUTO_CREATE);
+        bindService(new Intent(this, mFileProviderServiceClass), mServiceConnection, Context.BIND_AUTO_CREATE);
 
         new LoadingDialog(this, R.string.afc_msg_loading, false) {
 
@@ -498,15 +528,7 @@ public class FileChooserActivity extends FragmentActivity {
                 super.onPostExecute(result);
 
                 if (mFileProvider == null) {
-                    Dlg.showError(FileChooserActivity.this, R.string.afc_msg_cannot_connect_to_file_provider_service,
-                            new DialogInterface.OnCancelListener() {
-
-                                @Override
-                                public void onCancel(DialogInterface dialog) {
-                                    setResult(RESULT_CANCELED);
-                                    finish();
-                                }
-                            });
+                    doShowCannotConnectToServiceAndFinish();
                 } else {
                     setupService();
                     setupHeader();
@@ -677,6 +699,18 @@ public class FileChooserActivity extends FragmentActivity {
     private void doReloadCurrentLocation() {
         setLocation(getLocation(), null);
     }// doReloadCurrentLocation()
+
+    private void doShowCannotConnectToServiceAndFinish() {
+        Dlg.showError(FileChooserActivity.this, R.string.afc_msg_cannot_connect_to_file_provider_service,
+                new DialogInterface.OnCancelListener() {
+
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        setResult(RESULT_CANCELED);
+                        finish();
+                    }
+                });
+    }// doShowCannotConnectToServiceAndFinish()
 
     private void doGoHome() {
         if (mRoot.equalsToPath(getLocation()))
