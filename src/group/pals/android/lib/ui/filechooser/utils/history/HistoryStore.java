@@ -34,7 +34,7 @@ import android.os.Parcelable;
  */
 public class HistoryStore<A extends Parcelable> implements History<A> {
 
-    private ArrayList<A> mHistoryList = new ArrayList<A>();
+    private final ArrayList<A> mHistoryList = new ArrayList<A>();
     private final int mMaxSize;
     private final List<HistoryListener<A>> mListeners = new ArrayList<HistoryListener<A>>();
 
@@ -52,10 +52,11 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
     @Override
     public void push(A currentItem, A newItem) {
         int idx = currentItem == null ? -1 : mHistoryList.indexOf(currentItem);
-        if (idx < 0 || idx == size() - 1)
+        if (idx < 0 || idx == mHistoryList.size() - 1)
             mHistoryList.add(newItem);
         else {
-            mHistoryList = (ArrayList<A>) mHistoryList.subList(0, idx + 1);
+            for (int i = idx + 1; i < mHistoryList.size(); i++)
+                mHistoryList.remove(i);
             mHistoryList.add(newItem);
         }
 
@@ -166,6 +167,6 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
         Bundle bundle = in.readBundle();
 
         mMaxSize = bundle.getInt(_MaxSize);
-        mHistoryList = (ArrayList<A>) bundle.getSerializable(_HistoryList);
+        mHistoryList.addAll((ArrayList<A>) bundle.getSerializable(_HistoryList));
     }
 }
