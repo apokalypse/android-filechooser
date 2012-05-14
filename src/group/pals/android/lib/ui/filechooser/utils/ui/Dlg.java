@@ -46,7 +46,7 @@ public class Dlg {
     }// mToast()
 
     public static void showInfo(Context context, CharSequence msg) {
-        new AlertDialog.Builder(context).setIcon(android.R.drawable.ic_dialog_info).setTitle(R.string.title_info)
+        new AlertDialog.Builder(context).setIcon(android.R.drawable.ic_dialog_info).setTitle(R.string.afc_title_info)
                 .setMessage(msg).show();
     }// showInfo()
 
@@ -55,7 +55,7 @@ public class Dlg {
     }// showInfo()
 
     public static void showError(Context context, CharSequence msg, DialogInterface.OnCancelListener listener) {
-        new AlertDialog.Builder(context).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.title_error)
+        new AlertDialog.Builder(context).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.afc_title_error)
                 .setMessage(msg).setOnCancelListener(listener).show();
     }// showError()
 
@@ -64,12 +64,12 @@ public class Dlg {
     }// showError()
 
     public static void showUnknownError(Context context, Throwable t, DialogInterface.OnCancelListener listener) {
-        showError(context, String.format(context.getString(R.string.pmsg_unknown_error), t), listener);
+        showError(context, String.format(context.getString(R.string.afc_pmsg_unknown_error), t), listener);
     }// showUnknownError()
 
     public static void confirmYesno(Context context, CharSequence msg, DialogInterface.OnClickListener onYes) {
         new AlertDialog.Builder(context).setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle(R.string.title_confirmation).setMessage(msg).setPositiveButton(android.R.string.yes, onYes)
+                .setTitle(R.string.afc_title_confirmation).setMessage(msg).setPositiveButton(android.R.string.yes, onYes)
                 .setNegativeButton(android.R.string.no, null).show();
     }// confirmYesno()
 }

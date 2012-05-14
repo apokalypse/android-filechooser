@@ -5,10 +5,10 @@
     android:orientation="vertical" >
 
     <EditText
-        android:id="@+id/simple_text_input_view_text1"
+        android:id="@+id/afc_simple_text_input_view_text1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dim_5dp"
+        android:layout_margin="@dimen/afc_dim_5dp"
         android:imeOptions="actionDone"
         android:singleLine="true"
         android:textAppearance="?android:attr/textAppearanceLarge" />

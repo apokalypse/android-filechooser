@@ -10,8 +10,8 @@
         android:orientation="horizontal" >
 
         <ImageButton
-            android:id="@+id/filechooser_activity_button_go_back"
-            style="@style/button_navi"
+            android:id="@+id/afc_filechooser_activity_button_go_back"
+            style="@style/afc_button_navi"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -22,13 +22,13 @@
             android:orientation="vertical" >
 
             <HorizontalScrollView
-                android:id="@+id/filechooser_activity_view_locations_container"
+                android:id="@+id/afc_filechooser_activity_view_locations_container"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="1" >
 
                 <LinearLayout
-                    android:id="@+id/filechooser_activity_view_locations"
+                    android:id="@+id/afc_filechooser_activity_view_locations"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
@@ -43,8 +43,8 @@
         </LinearLayout>
 
         <ImageButton
-            android:id="@+id/filechooser_activity_button_go_forward"
-            style="@style/button_navi"
+            android:id="@+id/afc_filechooser_activity_button_go_forward"
+            style="@style/afc_button_navi"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
@@ -52,13 +52,13 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/dim_10dp"
-        android:layout_marginTop="@dimen/dim_10dp"
+        android:layout_marginBottom="@dimen/afc_dim_10dp"
+        android:layout_marginTop="@dimen/afc_dim_10dp"
         android:layout_weight="1"
         android:orientation="vertical" >
 
         <LinearLayout
-            android:id="@+id/filechooser_activity_view_files_container"
+            android:id="@+id/afc_filechooser_activity_view_files_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -66,13 +66,13 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/filechooser_activity_view_files_footer_view"
+            android:id="@+id/afc_filechooser_activity_view_files_footer_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="0.1"
             android:gravity="center"
-            android:padding="@dimen/dim_10dp"
+            android:padding="@dimen/afc_dim_10dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textStyle="italic"
             android:visibility="gone" />
@@ -84,11 +84,11 @@
         android:orientation="vertical" >
 
         <EditText
-            android:id="@+id/filechooser_activity_text_view_saveas_filename"
+            android:id="@+id/afc_filechooser_activity_text_view_saveas_filename"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/dim_10dp"
-            android:hint="@string/hint_save_as_filename"
+            android:layout_margin="@dimen/afc_dim_10dp"
+            android:hint="@string/afc_hint_save_as_filename"
             android:imeOptions="actionDone"
             android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceLarge"
@@ -98,7 +98,7 @@
         </EditText>
 
         <Button
-            android:id="@+id/filechooser_activity_button_ok"
+            android:id="@+id/afc_filechooser_activity_button_ok"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

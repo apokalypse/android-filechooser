@@ -245,7 +245,7 @@ public class FileChooserActivity extends FragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.file_chooser);
+        setContentView(R.layout.afc_file_chooser);
         /*
          * Thanks to Matthias.
          * http://stackoverflow.com/questions/1362723/how-can-i-get-a
@@ -266,14 +266,14 @@ public class FileChooserActivity extends FragmentActivity {
             mIsMultiSelection = false;
         }
 
-        mBtnGoBack = (ImageButton) findViewById(R.id.filechooser_activity_button_go_back);
-        mBtnGoForward = (ImageButton) findViewById(R.id.filechooser_activity_button_go_forward);
-        mViewLocations = (ViewGroup) findViewById(R.id.filechooser_activity_view_locations);
-        mViewLocationsContainer = (HorizontalScrollView) findViewById(R.id.filechooser_activity_view_locations_container);
-        mViewFilesContainer = (ViewGroup) findViewById(R.id.filechooser_activity_view_files_container);
-        mFooterView = (TextView) findViewById(R.id.filechooser_activity_view_files_footer_view);
-        mTxtSaveas = (EditText) findViewById(R.id.filechooser_activity_text_view_saveas_filename);
-        mBtnOk = (Button) findViewById(R.id.filechooser_activity_button_ok);
+        mBtnGoBack = (ImageButton) findViewById(R.id.afc_filechooser_activity_button_go_back);
+        mBtnGoForward = (ImageButton) findViewById(R.id.afc_filechooser_activity_button_go_forward);
+        mViewLocations = (ViewGroup) findViewById(R.id.afc_filechooser_activity_view_locations);
+        mViewLocationsContainer = (HorizontalScrollView) findViewById(R.id.afc_filechooser_activity_view_locations_container);
+        mViewFilesContainer = (ViewGroup) findViewById(R.id.afc_filechooser_activity_view_files_container);
+        mFooterView = (TextView) findViewById(R.id.afc_filechooser_activity_view_files_footer_view);
+        mTxtSaveas = (EditText) findViewById(R.id.afc_filechooser_activity_text_view_saveas_filename);
+        mBtnOk = (Button) findViewById(R.id.afc_filechooser_activity_button_ok);
 
         mHistory = new HistoryStore<IFile>(0);
         mHistory.addListener(new HistoryListener<IFile>() {
@@ -304,7 +304,7 @@ public class FileChooserActivity extends FragmentActivity {
 
         bindService(new Intent(this, serviceClass), fServiceConnection, Context.BIND_AUTO_CREATE);
 
-        new LoadingDialog(this, R.string.msg_loading, false) {
+        new LoadingDialog(this, R.string.afc_msg_loading, false) {
 
             private static final int WaitTime = 200;
             private static final int MaxWaitTime = 3000; // 3 seconds
@@ -331,7 +331,7 @@ public class FileChooserActivity extends FragmentActivity {
                 super.onPostExecute(result);
 
                 if (mFileProvider == null) {
-                    Dlg.showError(FileChooserActivity.this, R.string.msg_cannot_connect_to_file_provider_service,
+                    Dlg.showError(FileChooserActivity.this, R.string.afc_msg_cannot_connect_to_file_provider_service,
                             new DialogInterface.OnCancelListener() {
 
                                 @Override
@@ -430,20 +430,20 @@ public class FileChooserActivity extends FragmentActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.file_chooser_activity, menu);
+        inflater.inflate(R.menu.afc_file_chooser_activity, menu);
         return true;
     }// onCreateOptionsMenu()
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getGroupId() == R.id.filechooser_activity_menugroup_sorter) {
+        if (item.getGroupId() == R.id.afc_filechooser_activity_menugroup_sorter) {
             doResortFileList(item.getItemId());
         }// group_sorter
-        else if (item.getItemId() == R.id.filechooser_activity_menuitem_new_folder) {
+        else if (item.getItemId() == R.id.afc_filechooser_activity_menuitem_new_folder) {
             doCreateNewDir();
-        } else if (item.getItemId() == R.id.filechooser_activity_menuitem_switch_viewmode) {
+        } else if (item.getItemId() == R.id.afc_filechooser_activity_menuitem_switch_viewmode) {
             doSwitchViewMode();
-        } else if (item.getItemId() == R.id.filechooser_activity_menuitem_home) {
+        } else if (item.getItemId() == R.id.afc_filechooser_activity_menuitem_home) {
             doGoHome();
         }
 
@@ -488,7 +488,7 @@ public class FileChooserActivity extends FragmentActivity {
 
         Editor editor = mPrefs.edit();
 
-        if (menuItemId == R.id.filechooser_activity_menuitem_sort_by_name) {
+        if (menuItemId == R.id.afc_filechooser_activity_menuitem_sort_by_name) {
             if (lastSortType == IFileProvider.SortType.SortByName)
                 editor.putString(_SortOrder, lastSortAscending ? IFileProvider.SortOrder.Descending.name()
                         : IFileProvider.SortOrder.Ascending.name());
@@ -496,7 +496,7 @@ public class FileChooserActivity extends FragmentActivity {
                 editor.putString(_SortType, IFileProvider.SortType.SortByName.name());
                 editor.putString(_SortOrder, IFileProvider.SortOrder.Ascending.name());
             }
-        } else if (menuItemId == R.id.filechooser_activity_menuitem_sort_by_size) {
+        } else if (menuItemId == R.id.afc_filechooser_activity_menuitem_sort_by_size) {
             if (lastSortType == IFileProvider.SortType.SortBySize)
                 editor.putString(_SortOrder, lastSortAscending ? IFileProvider.SortOrder.Descending.name()
                         : IFileProvider.SortOrder.Ascending.name());
@@ -504,7 +504,7 @@ public class FileChooserActivity extends FragmentActivity {
                 editor.putString(_SortType, IFileProvider.SortType.SortBySize.name());
                 editor.putString(_SortOrder, IFileProvider.SortOrder.Ascending.name());
             }
-        } else if (menuItemId == R.id.filechooser_activity_menuitem_sort_by_date) {
+        } else if (menuItemId == R.id.afc_filechooser_activity_menuitem_sort_by_date) {
             if (lastSortType == IFileProvider.SortType.SortByDate)
                 editor.putString(_SortOrder, lastSortAscending ? IFileProvider.SortOrder.Descending.name()
                         : IFileProvider.SortOrder.Ascending.name());
@@ -534,7 +534,7 @@ public class FileChooserActivity extends FragmentActivity {
     }// doResortFileList()
 
     private void doSwitchViewMode() {
-        new LoadingDialog(this, R.string.msg_loading, false) {
+        new LoadingDialog(this, R.string.afc_msg_loading, false) {
 
             @Override
             protected void onPreExecute() {
@@ -564,15 +564,15 @@ public class FileChooserActivity extends FragmentActivity {
     private void doCreateNewDir() {
         if (mFileProvider instanceof LocalFileProvider
                 && !Utils.havePermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            Dlg.toast(this, R.string.msg_app_doesnot_have_permission_to_create_files, Dlg.LENGTH_SHORT);
+            Dlg.toast(this, R.string.afc_msg_app_doesnot_have_permission_to_create_files, Dlg.LENGTH_SHORT);
             return;
         }
 
         final AlertDialog fDlg = new AlertDialog.Builder(this).create();
 
-        View view = getLayoutInflater().inflate(R.layout.simple_text_input_view, null);
-        final EditText fTxtFile = (EditText) view.findViewById(R.id.simple_text_input_view_text1);
-        fTxtFile.setHint(R.string.hint_folder_name);
+        View view = getLayoutInflater().inflate(R.layout.afc_simple_text_input_view, null);
+        final EditText fTxtFile = (EditText) view.findViewById(R.id.afc_simple_text_input_view_text1);
+        fTxtFile.setHint(R.string.afc_hint_folder_name);
         fTxtFile.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 
             @Override
@@ -587,7 +587,7 @@ public class FileChooserActivity extends FragmentActivity {
         });
 
         fDlg.setView(view);
-        fDlg.setTitle(R.string.cmd_new_folder);
+        fDlg.setTitle(R.string.afc_cmd_new_folder);
         fDlg.setIcon(android.R.drawable.ic_menu_add);
         fDlg.setButton(DialogInterface.BUTTON_NEGATIVE, getString(android.R.string.cancel),
                 new DialogInterface.OnClickListener() {
@@ -604,7 +604,7 @@ public class FileChooserActivity extends FragmentActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         String name = fTxtFile.getText().toString().trim();
                         if (!Utils.isFilenameValid(name)) {
-                            Dlg.toast(FileChooserActivity.this, getString(R.string.pmsg_filename_is_invalid, name),
+                            Dlg.toast(FileChooserActivity.this, getString(R.string.afc_pmsg_filename_is_invalid, name),
                                     Dlg.LENGTH_SHORT);
                             return;
                         }
@@ -612,10 +612,10 @@ public class FileChooserActivity extends FragmentActivity {
                         IFile dir = mFileProvider.fromPath(String
                                 .format("%s/%s", getLocation().getAbsolutePath(), name));
                         if (dir.mkdir()) {
-                            Dlg.toast(FileChooserActivity.this, getString(R.string.msg_done), Dlg.LENGTH_SHORT);
+                            Dlg.toast(FileChooserActivity.this, getString(R.string.afc_msg_done), Dlg.LENGTH_SHORT);
                             setLocation(getLocation(), null);
                         } else
-                            Dlg.toast(FileChooserActivity.this, getString(R.string.pmsg_cannot_create_folder, name),
+                            Dlg.toast(FileChooserActivity.this, getString(R.string.afc_pmsg_cannot_create_folder, name),
                                     Dlg.LENGTH_SHORT);
                     }// onClick()
                 });
@@ -631,20 +631,20 @@ public class FileChooserActivity extends FragmentActivity {
     private void doDeleteFile(final DataModel fData) {
         if (mFileProvider instanceof LocalFileProvider
                 && !Utils.havePermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            Dlg.toast(this, R.string.msg_app_doesnot_have_permission_to_delete_files, Dlg.LENGTH_SHORT);
+            Dlg.toast(this, R.string.afc_msg_app_doesnot_have_permission_to_delete_files, Dlg.LENGTH_SHORT);
             return;
         }
 
         Dlg.confirmYesno(
                 this,
-                getString(R.string.pmsg_confirm_delete_file, fData.getFile().isFile() ? getString(R.string.file)
-                        : getString(R.string.folder), fData.getFile().getName()),
+                getString(R.string.afc_pmsg_confirm_delete_file, fData.getFile().isFile() ? getString(R.string.afc_file)
+                        : getString(R.string.afc_folder), fData.getFile().getName()),
                 new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        new LoadingDialog(FileChooserActivity.this, getString(R.string.pmsg_deleting_file, fData
-                                .getFile().isFile() ? getString(R.string.file) : getString(R.string.folder), fData
+                        new LoadingDialog(FileChooserActivity.this, getString(R.string.afc_pmsg_deleting_file, fData
+                                .getFile().isFile() ? getString(R.string.afc_file) : getString(R.string.afc_folder), fData
                                 .getFile().getName()), true) {
 
                             private Thread mThread = Utils.createDeleteFileThread(fData.getFile(), mFileProvider, true);
@@ -667,8 +667,8 @@ public class FileChooserActivity extends FragmentActivity {
 
                                 Dlg.toast(
                                         FileChooserActivity.this,
-                                        getString(R.string.pmsg_file_has_been_deleted,
-                                                fIsFile ? getString(R.string.file) : getString(R.string.folder), fData
+                                        getString(R.string.afc_pmsg_file_has_been_deleted,
+                                                fIsFile ? getString(R.string.afc_file) : getString(R.string.afc_folder), fData
                                                         .getFile().getName()), Dlg.LENGTH_SHORT);
                             }// notifyFileDeleted()
 
@@ -695,7 +695,7 @@ public class FileChooserActivity extends FragmentActivity {
                                 mThread.interrupt();
 
                                 if (fData.getFile().exists())
-                                    Dlg.toast(FileChooserActivity.this, R.string.msg_cancelled, Dlg.LENGTH_SHORT);
+                                    Dlg.toast(FileChooserActivity.this, R.string.afc_msg_cancelled, Dlg.LENGTH_SHORT);
                                 else
                                     notifyFileDeleted();
 
@@ -709,9 +709,9 @@ public class FileChooserActivity extends FragmentActivity {
                                 if (fData.getFile().exists())
                                     Dlg.toast(
                                             FileChooserActivity.this,
-                                            getString(R.string.pmsg_cannot_delete_file,
-                                                    fData.getFile().isFile() ? getString(R.string.file)
-                                                            : getString(R.string.folder), fData.getFile().getName()),
+                                            getString(R.string.afc_pmsg_cannot_delete_file,
+                                                    fData.getFile().isFile() ? getString(R.string.afc_file)
+                                                            : getString(R.string.afc_folder), fData.getFile().getName()),
                                             Dlg.LENGTH_SHORT);
                                 else
                                     notifyFileDeleted();
@@ -728,8 +728,8 @@ public class FileChooserActivity extends FragmentActivity {
          */
 
         // clear all icons
-        final int[] fSorterIds = { R.id.filechooser_activity_menuitem_sort_by_name,
-                R.id.filechooser_activity_menuitem_sort_by_size, R.id.filechooser_activity_menuitem_sort_by_date };
+        final int[] fSorterIds = { R.id.afc_filechooser_activity_menuitem_sort_by_name,
+                R.id.afc_filechooser_activity_menuitem_sort_by_size, R.id.afc_filechooser_activity_menuitem_sort_by_date };
         for (int id : fSorterIds)
             menu.findItem(id).setIcon(0);
 
@@ -745,16 +745,16 @@ public class FileChooserActivity extends FragmentActivity {
 
         switch (sortType) {
         case SortByName:
-            menu.findItem(R.id.filechooser_activity_menuitem_sort_by_name).setIcon(
-                    fSortAscending ? R.drawable.ic_menu_sort_up : R.drawable.ic_menu_sort_down);
+            menu.findItem(R.id.afc_filechooser_activity_menuitem_sort_by_name).setIcon(
+                    fSortAscending ? R.drawable.afc_ic_menu_sort_up : R.drawable.afc_ic_menu_sort_down);
             break;
         case SortBySize:
-            menu.findItem(R.id.filechooser_activity_menuitem_sort_by_size).setIcon(
-                    fSortAscending ? R.drawable.ic_menu_sort_up : R.drawable.ic_menu_sort_down);
+            menu.findItem(R.id.afc_filechooser_activity_menuitem_sort_by_size).setIcon(
+                    fSortAscending ? R.drawable.afc_ic_menu_sort_up : R.drawable.afc_ic_menu_sort_down);
             break;
         case SortByDate:
-            menu.findItem(R.id.filechooser_activity_menuitem_sort_by_date).setIcon(
-                    fSortAscending ? R.drawable.ic_menu_sort_up : R.drawable.ic_menu_sort_down);
+            menu.findItem(R.id.afc_filechooser_activity_menuitem_sort_by_date).setIcon(
+                    fSortAscending ? R.drawable.afc_ic_menu_sort_up : R.drawable.afc_ic_menu_sort_down);
             break;
         }
 
@@ -762,13 +762,13 @@ public class FileChooserActivity extends FragmentActivity {
          * view type
          */
 
-        MenuItem menuItem = menu.findItem(R.id.filechooser_activity_menuitem_switch_viewmode);
+        MenuItem menuItem = menu.findItem(R.id.afc_filechooser_activity_menuitem_switch_viewmode);
         if (ViewType.List.name().equals(mPrefs.getString(_ViewType, ViewType.List.name()))) {
-            menuItem.setIcon(R.drawable.ic_menu_gridview);
-            menuItem.setTitle(R.string.cmd_grid_view);
+            menuItem.setIcon(R.drawable.afc_ic_menu_gridview);
+            menuItem.setTitle(R.string.afc_cmd_grid_view);
         } else {
-            menuItem.setIcon(R.drawable.ic_menu_listview);
-            menuItem.setTitle(R.string.cmd_list_view);
+            menuItem.setIcon(R.drawable.afc_ic_menu_listview);
+            menuItem.setTitle(R.string.afc_cmd_list_view);
         }
 
         return true;
@@ -778,7 +778,7 @@ public class FileChooserActivity extends FragmentActivity {
     protected void onStart() {
         super.onStart();
         if (!mIsMultiSelection && !mIsSaveDialog)
-            Dlg.toast(this, R.string.hint_double_tap_to_select_file, Dlg.LENGTH_SHORT);
+            Dlg.toast(this, R.string.afc_hint_double_tap_to_select_file, Dlg.LENGTH_SHORT);
     }// onStart()
 
     @Override
@@ -831,17 +831,17 @@ public class FileChooserActivity extends FragmentActivity {
      */
     private void setupHeader() {
         if (mIsSaveDialog) {
-            setTitle(R.string.title_save_as);
+            setTitle(R.string.afc_title_save_as);
         } else {
             switch (mFileProvider.getFilterMode()) {
             case FilesOnly:
-                setTitle(R.string.title_choose_files);
+                setTitle(R.string.afc_title_choose_files);
                 break;
             case FilesAndDirectories:
-                setTitle(R.string.title_choose_files_and_directories);
+                setTitle(R.string.afc_title_choose_files_and_directories);
                 break;
             case DirectoriesOnly:
-                setTitle(R.string.title_choose_directories);
+                setTitle(R.string.afc_title_choose_directories);
                 break;
             }
         }// title of activity
@@ -861,9 +861,9 @@ public class FileChooserActivity extends FragmentActivity {
      */
     private void setupViewFiles() {
         if (ViewType.List.name().equals(mPrefs.getString(_ViewType, ViewType.List.name())))
-            mViewFiles = (AbsListView) getLayoutInflater().inflate(R.layout.listview_files, null);
+            mViewFiles = (AbsListView) getLayoutInflater().inflate(R.layout.afc_listview_files, null);
         else
-            mViewFiles = (AbsListView) getLayoutInflater().inflate(R.layout.gridview_files, null);
+            mViewFiles = (AbsListView) getLayoutInflater().inflate(R.layout.afc_gridview_files, null);
 
         mViewFilesContainer.removeAllViews();
         mViewFilesContainer.addView(mViewFiles, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
@@ -934,15 +934,15 @@ public class FileChooserActivity extends FragmentActivity {
      */
     private void checkSaveasFilenameAndFinish(String filename) {
         if (filename.length() == 0) {
-            Dlg.toast(this, R.string.msg_filename_is_empty, Dlg.LENGTH_SHORT);
+            Dlg.toast(this, R.string.afc_msg_filename_is_empty, Dlg.LENGTH_SHORT);
         } else {
             final IFile fFile = mFileProvider.fromPath(getLocation().getAbsolutePath() + File.separator + filename);
 
             if (!Utils.isFilenameValid(filename)) {
-                Dlg.toast(this, getString(R.string.pmsg_filename_is_invalid, filename), Dlg.LENGTH_SHORT);
+                Dlg.toast(this, getString(R.string.afc_pmsg_filename_is_invalid, filename), Dlg.LENGTH_SHORT);
             } else if (fFile.isFile()) {
                 new AlertDialog.Builder(FileChooserActivity.this)
-                        .setMessage(getString(R.string.pmsg_confirm_replace_file, fFile.getName()))
+                        .setMessage(getString(R.string.afc_pmsg_confirm_replace_file, fFile.getName()))
                         .setNegativeButton(android.R.string.cancel, null)
                         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 
@@ -952,7 +952,7 @@ public class FileChooserActivity extends FragmentActivity {
                             }
                         }).show();
             } else if (fFile.isDirectory()) {
-                Dlg.toast(this, getString(R.string.pmsg_filename_is_directory, fFile.getName()), Dlg.LENGTH_SHORT);
+                Dlg.toast(this, getString(R.string.afc_pmsg_filename_is_directory, fFile.getName()), Dlg.LENGTH_SHORT);
             } else
                 doFinish(fFile);
         }
@@ -977,7 +977,7 @@ public class FileChooserActivity extends FragmentActivity {
      */
     private void setLocation(final IFile fPath, final TaskListener fListener) {
         // TODO: let the user to be able to cancel the task
-        new LoadingDialog(this, R.string.msg_loading, false) {
+        new LoadingDialog(this, R.string.afc_msg_loading, false) {
 
             // IFile[] files = new IFile[0];
             List<IFile> files;
@@ -1010,7 +1010,7 @@ public class FileChooserActivity extends FragmentActivity {
                 super.onPostExecute(result);
 
                 if (files == null) {
-                    Dlg.toast(FileChooserActivity.this, getString(R.string.pmsg_cannot_access_dir, fPath.getName()),
+                    Dlg.toast(FileChooserActivity.this, getString(R.string.afc_pmsg_cannot_access_dir, fPath.getName()),
                             Dlg.LENGTH_SHORT);
                     if (fListener != null)
                         fListener.onFinish(false, null);
@@ -1029,9 +1029,9 @@ public class FileChooserActivity extends FragmentActivity {
                 mFooterView.setVisibility(hasMoreFiles[0] || mFileAdapter.isEmpty() ? View.VISIBLE : View.GONE);
                 if (hasMoreFiles[0])
                     mFooterView
-                            .setText(getString(R.string.pmsg_max_file_count_allowed, mFileProvider.getMaxFileCount()));
+                            .setText(getString(R.string.afc_pmsg_max_file_count_allowed, mFileProvider.getMaxFileCount()));
                 else if (mFileAdapter.isEmpty())
-                    mFooterView.setText(R.string.msg_empty);
+                    mFooterView.setText(R.string.afc_msg_empty);
 
                 if (shouldBeSelectedIdx >= 0 && shouldBeSelectedIdx < mFileAdapter.getCount())
                     mViewFiles.setSelection(shouldBeSelectedIdx);
@@ -1058,10 +1058,10 @@ public class FileChooserActivity extends FragmentActivity {
         lpBtnLoc.gravity = Gravity.CENTER;
         LinearLayout.LayoutParams lpDivider = null;
         LayoutInflater inflater = getLayoutInflater();
-        final int fDim = getResources().getDimensionPixelSize(R.dimen.dim_5dp);
+        final int fDim = getResources().getDimensionPixelSize(R.dimen.afc_dim_5dp);
         while (path != null) {
-            Button btnLoc = (Button) inflater.inflate(R.layout.button_location, null);
-            btnLoc.setText(path.parentFile() != null ? path.getName() : getString(R.string.root));
+            Button btnLoc = (Button) inflater.inflate(R.layout.afc_button_location, null);
+            btnLoc.setText(path.parentFile() != null ? path.getName() : getString(R.string.afc_root));
             btnLoc.setTag(path);
             btnLoc.setOnClickListener(mBtnLocationOnClickListener);
             btnLoc.setOnLongClickListener(mBtnLocationOnLongClickListener);
@@ -1069,7 +1069,7 @@ public class FileChooserActivity extends FragmentActivity {
 
             path = path.parentFile();
             if (path != null) {
-                View divider = inflater.inflate(R.layout.view_locations_divider, null);
+                View divider = inflater.inflate(R.layout.afc_view_locations_divider, null);
 
                 if (lpDivider == null) {
                     lpDivider = new LinearLayout.LayoutParams(fDim, fDim);
@@ -1267,9 +1267,9 @@ public class FileChooserActivity extends FragmentActivity {
 
                 private void prepareAnimations(boolean isLeftToRight) {
                     mInAnimation = AnimationUtils.loadAnimation(FileChooserActivity.this,
-                            isLeftToRight ? R.anim.push_left_in : R.anim.push_right_in);
+                            isLeftToRight ? R.anim.afc_push_left_in : R.anim.afc_push_right_in);
                     mOutAnimation = AnimationUtils.loadAnimation(FileChooserActivity.this,
-                            isLeftToRight ? R.anim.push_left_out : R.anim.push_right_out);
+                            isLeftToRight ? R.anim.afc_push_left_out : R.anim.afc_push_right_out);
                 }
 
                 private Object getData(float x, float y) {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="button_navi">
+    <style name="afc_button_navi">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">#ffffff</item>
@@ -9,12 +9,12 @@
         <item name="android:shadowDx">1</item>
         <item name="android:shadowDy">1</item>
         <item name="android:shadowRadius">2</item>
-        <item name="android:background">@drawable/selector_button_navi</item>
+        <item name="android:background">@drawable/afc_selector_button_navi</item>
         <item name="android:layout_margin">5dp</item>
         <item name="android:layout_gravity">center</item>
     </style>
 
-    <style name="button_location">
+    <style name="afc_button_location">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">#ffffff</item>
@@ -22,7 +22,7 @@
         <item name="android:shadowDx">1</item>
         <item name="android:shadowDy">1</item>
         <item name="android:shadowRadius">2</item>
-        <item name="android:background">@drawable/selector_button_location_dark</item>
+        <item name="android:background">@drawable/afc_selector_button_location_dark</item>
         <item name="android:layout_margin">5dp</item>
         <item name="android:layout_gravity">center</item>
     </style>

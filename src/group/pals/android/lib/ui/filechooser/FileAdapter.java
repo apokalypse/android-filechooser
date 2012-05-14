@@ -52,15 +52,16 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
      * "http://developer.android.com/reference/java/text/SimpleDateFormat.html"
      * >API docs</a>.
      */
-    public static final String DefFileTimeShortFormat = "yyyy.MM.dd hh:mm a";
+    public static final String _DefFileTimeShortFormat = "yyyy.MM.dd hh:mm a";
+
     /**
      * You can set your own short format for file time by this variable. If the
-     * value is in wrong format, {@link #DefFileTimeShortFormat} will be used.<br>
+     * value is in wrong format, {@link #_DefFileTimeShortFormat} will be used.<br>
      * See <a href=
      * "http://developer.android.com/reference/java/text/SimpleDateFormat.html"
      * >API docs</a>.
      */
-    public static String fileTimeShortFormat = DefFileTimeShortFormat;
+    public static String fileTimeShortFormat = _DefFileTimeShortFormat;
 
     private final boolean mIsMultiSelection;
     private final IFileProvider.FilterMode mSelectionMode;
@@ -79,7 +80,7 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
      */
     public FileAdapter(Context context, List<DataModel> objects, IFileProvider.FilterMode filterMode,
             boolean multiSelection) {
-        super(context, R.layout.file_item, objects);
+        super(context, R.layout.afc_file_item, objects);
         this.mSelectionMode = filterMode;
         this.mIsMultiSelection = multiSelection;
     }
@@ -105,13 +106,13 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
 
         if (convertView == null) {
             LayoutInflater layoutInflater = ((Activity) getContext()).getLayoutInflater();
-            convertView = layoutInflater.inflate(R.layout.file_item, null);
+            convertView = layoutInflater.inflate(R.layout.afc_file_item, null);
 
             bag = new Bag();
-            bag.txtFileName = (TextView) convertView.findViewById(R.id.text_view_filename);
-            bag.txtFileInfo = (TextView) convertView.findViewById(R.id.text_view_file_info);
-            bag.checkboxSelection = (CheckBox) convertView.findViewById(R.id.checkbox_selection);
-            bag.imageIcon = (ImageView) convertView.findViewById(R.id.image_view_icon);
+            bag.txtFileName = (TextView) convertView.findViewById(R.id.afc_text_view_filename);
+            bag.txtFileInfo = (TextView) convertView.findViewById(R.id.afc_text_view_file_info);
+            bag.checkboxSelection = (CheckBox) convertView.findViewById(R.id.afc_checkbox_selection);
+            bag.imageIcon = (ImageView) convertView.findViewById(R.id.afc_image_view_icon);
 
             convertView.setTag(bag);
         } else {
@@ -148,9 +149,9 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
 
         // image icon
         if (file.isDirectory())
-            bag.imageIcon.setImageResource(R.drawable.folder);
+            bag.imageIcon.setImageResource(R.drawable.afc_folder);
         else
-            bag.imageIcon.setImageResource(R.drawable.file);
+            bag.imageIcon.setImageResource(R.drawable.afc_file);
 
         // filename
         bag.txtFileName.setText(file.getName());
@@ -161,7 +162,7 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
             time = new SimpleDateFormat(fileTimeShortFormat).format(file.lastModified());
         } catch (Exception e) {
             try {
-                time = new SimpleDateFormat(DefFileTimeShortFormat).format(file.lastModified());
+                time = new SimpleDateFormat(_DefFileTimeShortFormat).format(file.lastModified());
             } catch (Exception ex) {
                 time = new Date(file.lastModified()).toLocaleString();
             }

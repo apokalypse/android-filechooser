@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Button xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/button_location"
+    style="@style/afc_button_location"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:layout_gravity="center_vertical"
     android:ellipsize="end"
     android:maxWidth="200sp"
     android:minWidth="80sp"
-    android:padding="@dimen/dim_5dp"
+    android:padding="@dimen/afc_dim_5dp"
     android:singleLine="true"
-    android:text="@string/ellipsize"
+    android:text="@string/afc_ellipsize"
     android:textAppearance="?android:attr/textAppearanceMedium" >
 
 </Button>
