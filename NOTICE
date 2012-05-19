@@ -1,7 +1,7 @@
 android-filechooser
 Copyright 2012 Hai Bison
 
-Version: 4.2
+Version: 4.3 beta
 
 This product includes software developed at
 http://code.google.com/p/android-filechooser/
@@ -21,6 +21,9 @@ limitations under the License.
 ===============================================================
 
 History:
+
++++ Version 4.3 beta +++
+ - Initialization: May 19, 2012
 
 +++ Version 4.2 +++
  - Release: May 15, 2012
