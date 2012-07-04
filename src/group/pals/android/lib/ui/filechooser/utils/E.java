@@ -36,8 +36,8 @@ public class E {
     public static void show(Context context) {
         String msg = null;
         try {
-            msg = String.format("Hi pal, you've found Easter egg  :-)\n\n" + "%s v%s\n" + "...by hai bison\n\n"
-                    + "http://sites.google.com/site/haitimeid/\n\n" + "Hope you enjoy this library!",
+            msg = String.format("Hi pal, you've found Easter egg  :-)\n\n" + "%s v%s\n" + "...by Hai Bison Apps\n\n"
+                    + "http://www.haibison.com\n\n" + "Hope you enjoy this library!",
                     "android-filechooser", "4.3 beta");
         } catch (Exception e) {
             msg = "Oops... You've found a broken Easter egg, try again later  :-(";
