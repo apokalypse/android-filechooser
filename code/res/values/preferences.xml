@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="afc_pkey_display_view_type">display.view_type</string>
+    <string name="afc_pkey_display_sort_type">display.sort_type</string>
+    <string name="afc_pkey_display_sort_ascending">display.sort_ascending</string>
+
+    <integer name="afc_pkey_display_view_type_def">0</integer>
+    <integer name="afc_pkey_display_sort_type_def">0</integer>
+
+    <bool name="afc_pkey_display_sort_ascending_def">true</bool>
+
+</resources>

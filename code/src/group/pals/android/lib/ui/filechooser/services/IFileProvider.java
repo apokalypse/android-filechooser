@@ -67,11 +67,21 @@ public interface IFileProvider {
         /**
          * Sort ascending.
          */
-        Ascending,
+        Ascending(true),
         /**
          * Sort descending.
          */
-        Descending
+        Descending(false);
+
+        final boolean mAsc;
+
+        SortOrder(boolean asc) {
+            mAsc = asc;
+        }
+
+        public boolean isAsc() {
+            return mAsc;
+        }
     }// _SortOrder
 
     /**

@@ -15,9 +15,6 @@
     <string name="afc_msg_loading">Loading…</string>
     <string name="afc_pmsg_max_file_count_allowed">…has more files, max allowed: %1$,d</string>
     <string name="afc_app_name">android-filechooser</string>
-    <string name="afc_cmd_sort_by_name">Sort by name</string>
-    <string name="afc_cmd_sort_by_size">Sort by size</string>
-    <string name="afc_cmd_sort_by_date">Sort by date</string>
     <string name="afc_msg_cannot_connect_to_file_provider_service">Can not connect to file provider service</string>
     <string name="afc_pmsg_unknown_error">Unknown error: %1$s</string>
     <string name="afc_title_error">Error</string>
@@ -44,5 +41,10 @@
     <string name="afc_msg_app_doesnot_have_permission_to_delete_files">This application does not have permission to delete files/ folders</string>
     <string name="afc_msg_app_doesnot_have_permission_to_create_files">This application does not have permission to create files/ folders</string>
     <string name="afc_cmd_reload">Reload…</string>
+    <string name="afc_cmd_sort">Sort…</string>
+    <string name="afc_title_name">Name</string>
+    <string name="afc_title_size">Size</string>
+    <string name="afc_title_date">Date</string>
+    <string name="afc_title_sort_by">Sort by…</string>
 
 </resources>

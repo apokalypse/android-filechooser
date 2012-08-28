@@ -17,9 +17,12 @@
 package group.pals.android.lib.ui.filechooser;
 
 import group.pals.android.lib.ui.filechooser.io.IFile;
+import group.pals.android.lib.ui.filechooser.prefs.DisplayPrefs;
 import group.pals.android.lib.ui.filechooser.services.FileProviderService;
 import group.pals.android.lib.ui.filechooser.services.IFileProvider;
 import group.pals.android.lib.ui.filechooser.services.IFileProvider.FilterMode;
+import group.pals.android.lib.ui.filechooser.services.IFileProvider.SortOrder;
+import group.pals.android.lib.ui.filechooser.services.IFileProvider.SortType;
 import group.pals.android.lib.ui.filechooser.services.LocalFileProvider;
 import group.pals.android.lib.ui.filechooser.utils.ActivityCompat;
 import group.pals.android.lib.ui.filechooser.utils.E;
@@ -45,8 +48,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
@@ -177,22 +178,6 @@ public class FileChooserActivity extends Activity {
     // ---------------------------------------------------------
 
     /**
-     * Key to hold {@link IFileProvider.SortType}, default =
-     * {@link IFileProvider.SortType#SortByName}
-     */
-    public static final String _SortType = IFileProvider.SortType.class.getName();
-
-    // ---------------------------------------------------------
-
-    /**
-     * Key to hold {@link IFileProvider.SortOrder}, default =
-     * {@link IFileProvider.SortOrder#Ascending}
-     */
-    public static final String _SortOrder = IFileProvider.SortOrder.class.getName();
-
-    // ---------------------------------------------------------
-
-    /**
      * Key to hold property save-dialog, default = {@code false}
      */
     public static final String _SaveDialog = _ClassName + ".save_dialog";
@@ -204,15 +189,6 @@ public class FileChooserActivity extends Activity {
      * Key to hold results (can be one or multiple files)
      */
     public static final String _Results = _ClassName + ".results";
-
-    /**
-     * Key to hold view type. Can be one of:<br>
-     * - {@link ViewType#List}<br>
-     * - {@link ViewType#Grid}<br>
-     * <br>
-     * Default = {@link ViewType#List}
-     */
-    public static final String _ViewType = ViewType.class.getName();
 
     /**
      * This key holds current location (an {@link IFile}), to restore it after
@@ -238,15 +214,6 @@ public class FileChooserActivity extends Activity {
      * The service connection.
      */
     private ServiceConnection mServiceConnection;
-
-    /**
-     * Used to store preferences. Currently it stores:
-     * {@link IFileProvider.SortType}, {@link IFileProvider.SortOrder},
-     * {@link ViewType}
-     * 
-     * @since v2.0 alpha
-     */
-    private SharedPreferences mPrefs;
 
     private IFile mRoot;
     private boolean mIsMultiSelection;
@@ -305,7 +272,6 @@ public class FileChooserActivity extends Activity {
         // if (getTheme().??? == android.R.style.Theme_Dialog)
         getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
-        loadPreferences();
         initGestureDetector();
 
         mFileProviderServiceClass = (Class<?>) getIntent().getSerializableExtra(_FileProviderClass);
@@ -359,7 +325,7 @@ public class FileChooserActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getGroupId() == R.id.afc_filechooser_activity_menugroup_sorter) {
-            doResortFileList(item.getItemId());
+            doResortViewFiles();
         }// group_sorter
         else if (item.getItemId() == R.id.afc_filechooser_activity_menuitem_new_folder) {
             doCreateNewDir();
@@ -380,35 +346,21 @@ public class FileChooserActivity extends Activity {
          * sorting
          */
 
-        // clear all icons
-        final int[] _sorterIds = { R.id.afc_filechooser_activity_menuitem_sort_by_name,
-                R.id.afc_filechooser_activity_menuitem_sort_by_size,
-                R.id.afc_filechooser_activity_menuitem_sort_by_date };
-        for (int id : _sorterIds)
-            menu.findItem(id).setIcon(0);
+        final boolean _sortAscending = DisplayPrefs.isSortAscending(this);
+        MenuItem miSort = menu.findItem(R.id.afc_filechooser_activity_menuitem_sort);
 
-        IFileProvider.SortType sortType = IFileProvider.SortType.SortByName;
-        try {
-            sortType = IFileProvider.SortType.valueOf(mPrefs.getString(_SortType,
-                    IFileProvider.SortType.SortByName.name()));
-        } catch (Exception e) {
-        }
-
-        final boolean _sortAscending = IFileProvider.SortOrder.Ascending.name().equals(
-                mPrefs.getString(_SortOrder, IFileProvider.SortOrder.Ascending.name()));
-
-        switch (sortType) {
+        switch (DisplayPrefs.getSortType(this)) {
         case SortByName:
-            menu.findItem(R.id.afc_filechooser_activity_menuitem_sort_by_name).setIcon(
-                    _sortAscending ? R.drawable.afc_ic_menu_sort_up : R.drawable.afc_ic_menu_sort_down);
+            miSort.setIcon(_sortAscending ? R.drawable.afc_ic_menu_sort_by_name_asc
+                    : R.drawable.afc_ic_menu_sort_by_name_desc);
             break;
         case SortBySize:
-            menu.findItem(R.id.afc_filechooser_activity_menuitem_sort_by_size).setIcon(
-                    _sortAscending ? R.drawable.afc_ic_menu_sort_up : R.drawable.afc_ic_menu_sort_down);
+            miSort.setIcon(_sortAscending ? R.drawable.afc_ic_menu_sort_by_size_asc
+                    : R.drawable.afc_ic_menu_sort_by_size_desc);
             break;
         case SortByDate:
-            menu.findItem(R.id.afc_filechooser_activity_menuitem_sort_by_date).setIcon(
-                    _sortAscending ? R.drawable.afc_ic_menu_sort_up : R.drawable.afc_ic_menu_sort_down);
+            miSort.setIcon(_sortAscending ? R.drawable.afc_ic_menu_sort_by_date_asc
+                    : R.drawable.afc_ic_menu_sort_by_date_desc);
             break;
         }
 
@@ -417,12 +369,15 @@ public class FileChooserActivity extends Activity {
          */
 
         MenuItem menuItem = menu.findItem(R.id.afc_filechooser_activity_menuitem_switch_viewmode);
-        if (ViewType.List.name().equals(mPrefs.getString(_ViewType, ViewType.List.name()))) {
-            menuItem.setIcon(R.drawable.afc_ic_menu_gridview);
-            menuItem.setTitle(R.string.afc_cmd_grid_view);
-        } else {
+        switch (DisplayPrefs.getViewType(this)) {
+        case Grid:
             menuItem.setIcon(R.drawable.afc_ic_menu_listview);
             menuItem.setTitle(R.string.afc_cmd_list_view);
+            break;
+        case List:
+            menuItem.setIcon(R.drawable.afc_ic_menu_gridview);
+            menuItem.setTitle(R.string.afc_cmd_grid_view);
+            break;
         }
 
         return true;
@@ -467,41 +422,6 @@ public class FileChooserActivity extends Activity {
 
         super.onDestroy();
     }
-
-    /**
-     * Loads preferences.
-     */
-    private void loadPreferences() {
-        mPrefs = getSharedPreferences(FileChooserActivity.class.getName(), 0);
-
-        Editor editor = mPrefs.edit();
-
-        /*
-         * sort
-         */
-
-        if (getIntent().hasExtra(_SortType))
-            editor.putString(_SortType, ((IFileProvider.SortType) getIntent().getSerializableExtra(_SortType)).name());
-        else if (!mPrefs.contains(_SortType))
-            editor.putString(_SortType, IFileProvider.SortType.SortByName.name());
-
-        if (getIntent().hasExtra(_SortOrder))
-            editor.putString(_SortOrder,
-                    ((IFileProvider.SortOrder) getIntent().getSerializableExtra(_SortOrder)).name());
-        else if (!mPrefs.contains(_SortOrder))
-            editor.putString(_SortOrder, IFileProvider.SortOrder.Ascending.name());
-
-        /*
-         * view
-         */
-
-        if (getIntent().hasExtra(_ViewType))
-            editor.putString(_ViewType, ((ViewType) getIntent().getSerializableExtra(_ViewType)).name());
-        else if (!mPrefs.contains(_ViewType))
-            editor.putString(_ViewType, ViewType.List.name());
-
-        editor.commit();
-    }// loadPreferences()
 
     /**
      * Connects to file provider service, then loads root directory. If can not,
@@ -604,16 +524,8 @@ public class FileChooserActivity extends Activity {
         if (filterMode == null)
             filterMode = IFileProvider.FilterMode.FilesOnly;
 
-        IFileProvider.SortType sortType = IFileProvider.SortType.SortByName;
-        try {
-            sortType = IFileProvider.SortType.valueOf(mPrefs.getString(_SortType,
-                    IFileProvider.SortType.SortByName.name()));
-        } catch (Exception e) {
-            // ignore it
-        }
-
-        boolean sortAscending = IFileProvider.SortOrder.Ascending.name().equals(
-                mPrefs.getString(_SortOrder, IFileProvider.SortOrder.Ascending.name()));
+        IFileProvider.SortType sortType = DisplayPrefs.getSortType(this);
+        boolean sortAscending = DisplayPrefs.isSortAscending(this);
 
         mFileProvider.setDisplayHiddenFiles(getIntent().getBooleanExtra(_DisplayHiddenFiles, false));
         mFileProvider.setFilterMode(mIsSaveDialog ? IFileProvider.FilterMode.FilesOnly : filterMode);
@@ -662,10 +574,14 @@ public class FileChooserActivity extends Activity {
      * - {@link #mFileAdapter}
      */
     private void setupViewFiles() {
-        if (ViewType.List.name().equals(mPrefs.getString(_ViewType, ViewType.List.name())))
-            mViewFiles = (AbsListView) getLayoutInflater().inflate(R.layout.afc_listview_files, null);
-        else
+        switch (DisplayPrefs.getViewType(this)) {
+        case Grid:
             mViewFiles = (AbsListView) getLayoutInflater().inflate(R.layout.afc_gridview_files, null);
+            break;
+        case List:
+            mViewFiles = (AbsListView) getLayoutInflater().inflate(R.layout.afc_listview_files, null);
+            break;
+        }
 
         mViewFilesContainer.removeAllViews();
         mViewFilesContainer.addView(mViewFiles, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -770,71 +686,159 @@ public class FileChooserActivity extends Activity {
         });
     }// doGoHome()
 
+    // /**
+    // * Resort file list when user clicks menu item.
+    // *
+    // * @param menuItemId
+    // * the ID of menu item
+    // */
+    // private void doResortFileList(int menuItemId) {
+    // IFileProvider.SortType lastSortType = IFileProvider.SortType.SortByName;
+    // try {
+    // lastSortType = IFileProvider.SortType.valueOf(mPrefs.getString(_SortType,
+    // IFileProvider.SortType.SortByName.name()));
+    // } catch (Throwable t) {
+    // // TODO
+    // }
+    //
+    // boolean lastSortAscending =
+    // IFileProvider.SortOrder.Ascending.name().equals(
+    // mPrefs.getString(_SortOrder, IFileProvider.SortOrder.Ascending.name()));
+    //
+    // Editor editor = mPrefs.edit();
+    //
+    // if (menuItemId == R.id.afc_filechooser_activity_menuitem_sort_by_name) {
+    // if (lastSortType == IFileProvider.SortType.SortByName)
+    // editor.putString(_SortOrder, lastSortAscending ?
+    // IFileProvider.SortOrder.Descending.name()
+    // : IFileProvider.SortOrder.Ascending.name());
+    // else {
+    // editor.putString(_SortType, IFileProvider.SortType.SortByName.name());
+    // editor.putString(_SortOrder, IFileProvider.SortOrder.Ascending.name());
+    // }
+    // } else if (menuItemId ==
+    // R.id.afc_filechooser_activity_menuitem_sort_by_size) {
+    // if (lastSortType == IFileProvider.SortType.SortBySize)
+    // editor.putString(_SortOrder, lastSortAscending ?
+    // IFileProvider.SortOrder.Descending.name()
+    // : IFileProvider.SortOrder.Ascending.name());
+    // else {
+    // editor.putString(_SortType, IFileProvider.SortType.SortBySize.name());
+    // editor.putString(_SortOrder, IFileProvider.SortOrder.Ascending.name());
+    // }
+    // } else if (menuItemId ==
+    // R.id.afc_filechooser_activity_menuitem_sort_by_date) {
+    // if (lastSortType == IFileProvider.SortType.SortByDate)
+    // editor.putString(_SortOrder, lastSortAscending ?
+    // IFileProvider.SortOrder.Descending.name()
+    // : IFileProvider.SortOrder.Ascending.name());
+    // else {
+    // editor.putString(_SortType, IFileProvider.SortType.SortByDate.name());
+    // editor.putString(_SortOrder, IFileProvider.SortOrder.Ascending.name());
+    // }
+    // }
+    //
+    // editor.commit();
+    //
+    // /*
+    // * Re-sort the listview by re-loading current location; NOTE: re-sort
+    // * the adapter does not repaint the listview, even if we call
+    // * notifyDataSetChanged(), invalidateViews()...
+    // */
+    // try {
+    // mFileProvider.setSortType(IFileProvider.SortType.valueOf(mPrefs.getString(_SortType,
+    // IFileProvider.SortType.SortByName.name())));
+    // mFileProvider.setSortOrder(IFileProvider.SortOrder.valueOf(mPrefs.getString(_SortOrder,
+    // IFileProvider.SortOrder.Ascending.name())));
+    // } catch (Exception e) {
+    // // TODO
+    // }
+    // setLocation(getLocation(), null);
+    // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+    // ActivityCompat.invalidateOptionsMenu(this);
+    // }// doResortFileList()
+
     /**
-     * Resort file list when user clicks menu item.
-     * 
-     * @param menuItemId
-     *            the ID of menu item
+     * Show a dialog for sorting options and resort file list after user
+     * selected an option.
      */
-    private void doResortFileList(int menuItemId) {
-        IFileProvider.SortType lastSortType = IFileProvider.SortType.SortByName;
-        try {
-            lastSortType = IFileProvider.SortType.valueOf(mPrefs.getString(_SortType,
-                    IFileProvider.SortType.SortByName.name()));
-        } catch (Throwable t) {
-            // TODO
-        }
+    private void doResortViewFiles() {
+        final AlertDialog _dialog = Dlg.newDlg(this);
 
-        boolean lastSortAscending = IFileProvider.SortOrder.Ascending.name().equals(
-                mPrefs.getString(_SortOrder, IFileProvider.SortOrder.Ascending.name()));
+        final int[] _btnSortIds = { R.id.afc_settings_sort_view_button_sort_by_name_asc,
+                R.id.afc_settings_sort_view_button_sort_by_name_desc,
+                R.id.afc_settings_sort_view_button_sort_by_size_asc,
+                R.id.afc_settings_sort_view_button_sort_by_size_desc,
+                R.id.afc_settings_sort_view_button_sort_by_date_asc,
+                R.id.afc_settings_sort_view_button_sort_by_date_desc };
 
-        Editor editor = mPrefs.edit();
+        View.OnClickListener listener = new View.OnClickListener() {
 
-        if (menuItemId == R.id.afc_filechooser_activity_menuitem_sort_by_name) {
-            if (lastSortType == IFileProvider.SortType.SortByName)
-                editor.putString(_SortOrder, lastSortAscending ? IFileProvider.SortOrder.Descending.name()
-                        : IFileProvider.SortOrder.Ascending.name());
-            else {
-                editor.putString(_SortType, IFileProvider.SortType.SortByName.name());
-                editor.putString(_SortOrder, IFileProvider.SortOrder.Ascending.name());
-            }
-        } else if (menuItemId == R.id.afc_filechooser_activity_menuitem_sort_by_size) {
-            if (lastSortType == IFileProvider.SortType.SortBySize)
-                editor.putString(_SortOrder, lastSortAscending ? IFileProvider.SortOrder.Descending.name()
-                        : IFileProvider.SortOrder.Ascending.name());
-            else {
-                editor.putString(_SortType, IFileProvider.SortType.SortBySize.name());
-                editor.putString(_SortOrder, IFileProvider.SortOrder.Ascending.name());
-            }
-        } else if (menuItemId == R.id.afc_filechooser_activity_menuitem_sort_by_date) {
-            if (lastSortType == IFileProvider.SortType.SortByDate)
-                editor.putString(_SortOrder, lastSortAscending ? IFileProvider.SortOrder.Descending.name()
-                        : IFileProvider.SortOrder.Ascending.name());
-            else {
-                editor.putString(_SortType, IFileProvider.SortType.SortByDate.name());
-                editor.putString(_SortOrder, IFileProvider.SortOrder.Ascending.name());
-            }
-        }
+            @Override
+            public void onClick(View v) {
+                _dialog.dismiss();
 
-        editor.commit();
+                Context c = FileChooserActivity.this;
+
+                if (v.getId() == R.id.afc_settings_sort_view_button_sort_by_name_asc) {
+                    DisplayPrefs.setSortType(c, SortType.SortByName);
+                    DisplayPrefs.setSortAscending(c, true);
+                } else if (v.getId() == R.id.afc_settings_sort_view_button_sort_by_name_desc) {
+                    DisplayPrefs.setSortType(c, SortType.SortByName);
+                    DisplayPrefs.setSortAscending(c, false);
+                } else if (v.getId() == R.id.afc_settings_sort_view_button_sort_by_size_asc) {
+                    DisplayPrefs.setSortType(c, SortType.SortBySize);
+                    DisplayPrefs.setSortAscending(c, true);
+                } else if (v.getId() == R.id.afc_settings_sort_view_button_sort_by_size_desc) {
+                    DisplayPrefs.setSortType(c, SortType.SortBySize);
+                    DisplayPrefs.setSortAscending(c, false);
+                } else if (v.getId() == R.id.afc_settings_sort_view_button_sort_by_date_asc) {
+                    DisplayPrefs.setSortType(c, SortType.SortByDate);
+                    DisplayPrefs.setSortAscending(c, true);
+                } else if (v.getId() == R.id.afc_settings_sort_view_button_sort_by_date_desc) {
+                    DisplayPrefs.setSortType(c, SortType.SortByDate);
+                    DisplayPrefs.setSortAscending(c, false);
+                }
+
+                resortViewFiles();
+            }// onClick()
+        };// listener
+
+        View view = getLayoutInflater().inflate(R.layout.afc_settings_sort_view, null);
+        for (int id : _btnSortIds)
+            view.findViewById(id).setOnClickListener(listener);
+
+        _dialog.setTitle(R.string.afc_title_sort_by);
+        _dialog.setView(view);
+
+        _dialog.show();
+        int width = _dialog.getWindow().getAttributes().width;
+        if (width <= 0)
+            width = Integer.MAX_VALUE;
+        _dialog.getWindow().setLayout(
+                Math.min(getResources().getDimensionPixelSize(R.dimen.afc_dim_settings_sort_max_width), width),
+                android.view.WindowManager.LayoutParams.WRAP_CONTENT);
+    }// doResortViewFiles()
+
+    /**
+     * Resort view files.
+     */
+    private void resortViewFiles() {
+        if (mFileProvider.getSortType().equals(DisplayPrefs.getSortType(this))
+                && mFileProvider.getSortOrder().isAsc() == (DisplayPrefs.isSortAscending(this)))
+            return;
 
         /*
          * Re-sort the listview by re-loading current location; NOTE: re-sort
          * the adapter does not repaint the listview, even if we call
          * notifyDataSetChanged(), invalidateViews()...
          */
-        try {
-            mFileProvider.setSortType(IFileProvider.SortType.valueOf(mPrefs.getString(_SortType,
-                    IFileProvider.SortType.SortByName.name())));
-            mFileProvider.setSortOrder(IFileProvider.SortOrder.valueOf(mPrefs.getString(_SortOrder,
-                    IFileProvider.SortOrder.Ascending.name())));
-        } catch (Exception e) {
-            // TODO
-        }
-        setLocation(getLocation(), null);
+        mFileProvider.setSortType(DisplayPrefs.getSortType(this));
+        mFileProvider.setSortOrder(DisplayPrefs.isSortAscending(this) ? SortOrder.Ascending : SortOrder.Descending);
+        doReloadCurrentLocation();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
             ActivityCompat.invalidateOptionsMenu(this);
-    }// doResortFileList()
+    }// resortViewFiles()
 
     /**
      * Switch view type between {@link ViewType#List} and {@link ViewType#Grid}
@@ -847,10 +851,14 @@ public class FileChooserActivity extends Activity {
                 // call this first, to let the parent prepare the dialog
                 super.onPreExecute();
 
-                if (ViewType.List.name().equals(mPrefs.getString(_ViewType, ViewType.List.name())))
-                    mPrefs.edit().putString(_ViewType, ViewType.Grid.name()).commit();
-                else
-                    mPrefs.edit().putString(_ViewType, ViewType.List.name()).commit();
+                switch (DisplayPrefs.getViewType(FileChooserActivity.this)) {
+                case Grid:
+                    DisplayPrefs.setViewType(FileChooserActivity.this, ViewType.List);
+                    break;
+                case List:
+                    DisplayPrefs.setViewType(FileChooserActivity.this, ViewType.Grid);
+                    break;
+                }
 
                 setupViewFiles();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
