@@ -20,7 +20,7 @@ import android.content.Context;
 import android.os.IBinder;
 import android.view.inputmethod.InputMethodManager;
 
-public class UI {
+public class Ui {
 
     public static void hideSoftKeyboard(Context context, IBinder iBinder) {
         /*

@@ -46,7 +46,7 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
      *            {@code 11} will be used
      */
     public HistoryStore(int maxSize) {
-        this.mMaxSize = maxSize > 0 ? maxSize : 11;
+        this.mMaxSize = maxSize > 0 ? maxSize : 100;
     }
 
     @Override
@@ -133,9 +133,6 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
      * Parcelable
      */
 
-    static final String _HistoryList = "history_list";
-    static final String _MaxSize = "max_size";
-
     @Override
     public int describeContents() {
         // TODO Auto-generated method stub
@@ -144,12 +141,8 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        Bundle b = new Bundle();
-
-        b.putInt(_MaxSize, mMaxSize);
-        b.putSerializable(_HistoryList, mHistoryList);
-
-        dest.writeBundle(b);
+        dest.writeInt(mMaxSize);
+        dest.writeSerializable(mHistoryList);
     }
 
     public static final Parcelable.Creator<HistoryStore> CREATOR = new Parcelable.Creator<HistoryStore>() {
@@ -164,9 +157,7 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
     };
 
     private HistoryStore(Parcel in) {
-        Bundle bundle = in.readBundle();
-
-        mMaxSize = bundle.getInt(_MaxSize);
-        mHistoryList.addAll((ArrayList<A>) bundle.getSerializable(_HistoryList));
+        mMaxSize = in.readInt();
+        mHistoryList.addAll((ArrayList<A>) in.readSerializable());
     }
 }

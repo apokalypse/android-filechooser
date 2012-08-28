@@ -164,7 +164,7 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
             try {
                 time = new SimpleDateFormat(_DefFileTimeShortFormat).format(file.lastModified());
             } catch (Exception ex) {
-                time = new Date(file.lastModified()).toLocaleString();
+                time = new Date(file.lastModified()).toString();
             }
         }
         if (file.isDirectory())

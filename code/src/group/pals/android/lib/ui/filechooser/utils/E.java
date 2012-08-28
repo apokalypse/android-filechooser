@@ -16,6 +16,7 @@
 
 package group.pals.android.lib.ui.filechooser.utils;
 
+import group.pals.android.lib.ui.filechooser.utils.ui.Dlg;
 import android.app.AlertDialog;
 import android.content.Context;
 
@@ -42,6 +43,9 @@ public class E {
             msg = "Oops… You've found a broken Easter egg, try again later  :-(";
         }
 
-        new AlertDialog.Builder(context).setTitle("…").setMessage(msg).show();
-    }
+        AlertDialog dlg = Dlg.newDlg(context);
+        dlg.setTitle("…");
+        dlg.setMessage(msg);
+        dlg.show();
+    }// show()
 }

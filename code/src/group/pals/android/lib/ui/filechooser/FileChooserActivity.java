@@ -23,7 +23,7 @@ import group.pals.android.lib.ui.filechooser.services.IFileProvider.FilterMode;
 import group.pals.android.lib.ui.filechooser.services.LocalFileProvider;
 import group.pals.android.lib.ui.filechooser.utils.ActivityCompat;
 import group.pals.android.lib.ui.filechooser.utils.E;
-import group.pals.android.lib.ui.filechooser.utils.UI;
+import group.pals.android.lib.ui.filechooser.utils.Ui;
 import group.pals.android.lib.ui.filechooser.utils.Utils;
 import group.pals.android.lib.ui.filechooser.utils.history.History;
 import group.pals.android.lib.ui.filechooser.utils.history.HistoryFilter;
@@ -876,7 +876,7 @@ public class FileChooserActivity extends Activity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    UI.hideSoftKeyboard(FileChooserActivity.this, _textFile.getWindowToken());
+                    Ui.hideSoftKeyboard(FileChooserActivity.this, _textFile.getWindowToken());
                     _dlg.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
                     return true;
                 }
@@ -1321,7 +1321,7 @@ public class FileChooserActivity extends Activity {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                UI.hideSoftKeyboard(FileChooserActivity.this, mTxtSaveas.getWindowToken());
+                Ui.hideSoftKeyboard(FileChooserActivity.this, mTxtSaveas.getWindowToken());
                 mBtnOk.performClick();
                 return true;
             }
@@ -1333,7 +1333,7 @@ public class FileChooserActivity extends Activity {
 
         @Override
         public void onClick(View v) {
-            UI.hideSoftKeyboard(FileChooserActivity.this, mTxtSaveas.getWindowToken());
+            Ui.hideSoftKeyboard(FileChooserActivity.this, mTxtSaveas.getWindowToken());
             String filename = mTxtSaveas.getText().toString().trim();
             doCheckSaveasFilenameAndFinish(filename);
         }
