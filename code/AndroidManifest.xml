@@ -5,21 +5,9 @@
     android:versionName="4.3 beta" >
 
     <uses-sdk
-        android:minSdkVersion="3"
-        android:targetSdkVersion="13" />
+        android:minSdkVersion="4"
+        android:targetSdkVersion="16" />
 
-    <application android:label="@string/afc_app_name" >
-        <activity
-            android:name=".filechooser.FileChooserActivity"
-            android:label="@string/afc_app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <service android:name=".services.LocalFileProvider" />
-    </application>
+    <application android:label="@string/afc_app_name" />
 
 </manifest>
