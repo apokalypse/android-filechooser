@@ -61,15 +61,16 @@ public abstract class LoadingDialog extends AsyncTask<Void, Void, Object> {
         mDialog.setMessage(msg);
         mDialog.setIndeterminate(true);
         mDialog.setCancelable(cancelable);
-        if (cancelable)
-            mDialog.setButton(DialogInterface.BUTTON_NEGATIVE, context.getString(android.R.string.cancel),
-                    new DialogInterface.OnClickListener() {
+        if (cancelable) {
+            mDialog.setCanceledOnTouchOutside(true);
+            mDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
 
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            cancel(false);
-                        }
-                    });
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    cancel(true);
+                }
+            });
+        }
     }// LoadingDialog
 
     /**

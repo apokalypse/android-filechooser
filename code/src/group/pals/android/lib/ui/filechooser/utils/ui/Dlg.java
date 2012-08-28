@@ -55,8 +55,12 @@ public class Dlg {
     }// showInfo()
 
     public static void showError(Context context, CharSequence msg, DialogInterface.OnCancelListener listener) {
-        new AlertDialog.Builder(context).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.afc_title_error)
-                .setMessage(msg).setOnCancelListener(listener).show();
+        AlertDialog dlg = newDlg(context);
+        dlg.setIcon(android.R.drawable.ic_dialog_alert);
+        dlg.setTitle(R.string.afc_title_error);
+        dlg.setMessage(msg);
+        dlg.setOnCancelListener(listener);
+        dlg.show();
     }// showError()
 
     public static void showError(Context context, int msgId, DialogInterface.OnCancelListener listener) {
@@ -69,7 +73,49 @@ public class Dlg {
 
     public static void confirmYesno(Context context, CharSequence msg, DialogInterface.OnClickListener onYes) {
         new AlertDialog.Builder(context).setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle(R.string.afc_title_confirmation).setMessage(msg).setPositiveButton(android.R.string.yes, onYes)
-                .setNegativeButton(android.R.string.no, null).show();
+                .setTitle(R.string.afc_title_confirmation).setMessage(msg)
+                .setPositiveButton(android.R.string.yes, onYes).setNegativeButton(android.R.string.no, null).show();
     }// confirmYesno()
+
+    /**
+     * Creates new {@link AlertDialog}.<br>
+     * 
+     * <li>Set {@link DialogInterface#BUTTON_NEGATIVE} to Cancel button, and
+     * cancels the dialog when user touches it.</li>
+     * 
+     * <li>Set canceled on touch outside to {@code true}.</li>
+     * 
+     * @param context
+     *            {@link Context}
+     * @return {@link AlertDialog}
+     * @since v4.3 beta
+     */
+    public static AlertDialog newDlg(Context context) {
+        AlertDialog res = newDlgBuilder(context).create();
+        res.setCanceledOnTouchOutside(true);
+        return res;
+    }// newDlg()
+
+    /**
+     * Creates new {@link AlertDialog.Builder}. Set
+     * {@link DialogInterface#BUTTON_NEGATIVE} to Cancel button, and cancels the
+     * dialog when user touches it.
+     * 
+     * @param context
+     *            {@link Context}
+     * @return {@link AlertDialog}
+     * @since v4.3 beta
+     */
+    public static AlertDialog.Builder newDlgBuilder(Context context) {
+        AlertDialog.Builder res = new AlertDialog.Builder(context);
+        res.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        return res;
+    }// newDlgBuilder()
 }
