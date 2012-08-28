@@ -17,9 +17,9 @@
    version="1.1"
    inkscape:version="0.48.1 r9760"
    sodipodi:docname="file.svg"
-   inkscape:export-filename="/media/truecrypt64/projs/eclipse/android/library/android-filechooser/res/drawable-xhdpi/file.png"
-   inkscape:export-xdpi="180"
-   inkscape:export-ydpi="180">
+   inkscape:export-filename="/media/truecrypt64/projs/android/library/android-filechooser/code/res/drawable-ldpi/afc_file.png"
+   inkscape:export-xdpi="45"
+   inkscape:export-ydpi="45">
   <defs
      id="defs4">
     <linearGradient
@@ -210,14 +210,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="5.6"
-     inkscape:cx="51.172611"
-     inkscape:cy="25.195564"
+     inkscape:zoom="5.0580232"
+     inkscape:cx="27.533806"
+     inkscape:cy="27.71801"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="false"
      inkscape:window-width="1440"
-     inkscape:window-height="823"
+     inkscape:window-height="846"
      inkscape:window-x="-3"
      inkscape:window-y="-3"
      inkscape:window-maximized="1" />

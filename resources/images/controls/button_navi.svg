@@ -11,13 +11,13 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="48"
-   height="48"
+   width="36"
+   height="36"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.1 r9760"
    sodipodi:docname="button_navi.svg"
-   inkscape:export-filename="/media/truecrypt64/projs/eclipse/android/library/android-filechooser/res/drawable-xhdpi/button_navi_disabled.png"
+   inkscape:export-filename="/media/truecrypt64/projs/android/library/android-filechooser/code/res/drawable-xhdpi/afc_button_navi_pressed.png"
    inkscape:export-xdpi="180"
    inkscape:export-ydpi="180">
   <defs
@@ -305,9 +305,9 @@
          id="feSpecularLighting4213"
          in="fbSourceGraphic"
          result="result1"
-         lighting-color="rgb(255,255,255)"
+         lighting-color="#ffffff"
          surfaceScale="2"
-         specularConstant="2.2"
+         specularConstant="2.20000005"
          specularExponent="55">
         <fePointLight
            id="fePointLight4215"
@@ -328,11 +328,12 @@
          result="result4"
          operator="arithmetic"
          k2="2"
-         k3="1" />
+         k3="1"
+         k1="0"
+         k4="0" />
       <feComposite
          id="feComposite4221"
          in2="result4"
-         in="result9"
          operator="in"
          result="result91" />
       <feBlend
@@ -432,14 +433,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.959798"
-     inkscape:cx="-42.606064"
-     inkscape:cy="7.6147438"
+     inkscape:zoom="4.1263532"
+     inkscape:cx="59.882763"
+     inkscape:cy="21.240159"
      inkscape:document-units="px"
      inkscape:current-layer="layer3"
      showgrid="false"
      inkscape:window-width="1440"
-     inkscape:window-height="823"
+     inkscape:window-height="846"
      inkscape:window-x="-3"
      inkscape:window-y="-3"
      inkscape:window-maximized="1" />
@@ -459,7 +460,8 @@
      inkscape:groupmode="layer"
      id="layer4"
      inkscape:label="testbackground"
-     style="display:none">
+     style="display:none"
+     transform="translate(0,-12)">
     <rect
        style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
        id="rect4295"
@@ -472,31 +474,34 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="enabled"
-     style="display:none">
+     style="display:inline"
+     transform="translate(0,-12)">
     <path
        style="fill:#8b4513;fill-opacity:1;fill-rule:nonzero;stroke:none;filter:url(#filter4201)"
        d="M 38.46875,-5.3125 38.4375,-5.15625 1.71875,-1.1875 1.84375,-1.125 -5.75,35.03125 -5.625,34.9375 26.4375,53.3125 26.34375,53.1875 53.75,28.375 53.59375,28.40625 38.46875,-5.3125 z m -18.40625,15 13.6875,6.03125 0.0625,-0.0625 -1.53125,14.96875 -14.65625,3.1875 0,0.0625 -7.53125,-13 -0.0625,0.03125 L 20.0625,9.6875 z"
        id="path3907"
        inkscape:connector-curvature="0"
-       transform="matrix(0.29261027,0,0,0.29261027,16.977354,16.977354)" />
+       transform="matrix(0.29261027,0,0,0.29261027,10.977354,22.977354)" />
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer7"
      inkscape:label="disabled"
-     style="display:inline">
+     style="display:none"
+     transform="translate(0,-12)">
     <path
        style="fill:#505050;fill-opacity:1;fill-rule:nonzero;stroke:none;display:inline;filter:url(#filter4201-3)"
        d="M 38.46875,-5.3125 38.4375,-5.15625 1.71875,-1.1875 1.84375,-1.125 -5.75,35.03125 -5.625,34.9375 26.4375,53.3125 26.34375,53.1875 53.75,28.375 53.59375,28.40625 38.46875,-5.3125 z m -18.40625,15 13.6875,6.03125 0.0625,-0.0625 -1.53125,14.96875 -14.65625,3.1875 0,0.0625 -7.53125,-13 -0.0625,0.03125 L 20.0625,9.6875 z"
        id="path3907-8"
        inkscape:connector-curvature="0"
-       transform="matrix(0.29261027,0,0,0.29261027,16.977354,16.977354)" />
+       transform="matrix(0.29261027,0,0,0.29261027,10.977354,22.977354)" />
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer3"
      inkscape:label="pressed"
-     style="display:none">
+     style="display:inline"
+     transform="translate(0,-12)">
     <path
        sodipodi:type="arc"
        style="fill:none;stroke:url(#radialGradient4288);stroke-width:14.55098534;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
@@ -509,7 +514,7 @@
        sodipodi:start="2.0666903"
        sodipodi:end="8.2923296"
        sodipodi:open="true"
-       transform="matrix(1.3057535,0,0,1.3057535,-8.6455038,-10.317292)" />
+       transform="matrix(1.1373019,0,0,1.108147,-10.433999,0.87612299)" />
     <rect
        style="fill:none;stroke:none"
        id="rect4290"

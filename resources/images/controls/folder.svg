@@ -17,9 +17,9 @@
    version="1.1"
    inkscape:version="0.48.1 r9760"
    sodipodi:docname="folder.svg"
-   inkscape:export-filename="/media/truecrypt64/projs/eclipse/android/library/android-filechooser/res/drawable-xhdpi/folder.png"
-   inkscape:export-xdpi="180"
-   inkscape:export-ydpi="180">
+   inkscape:export-filename="/media/truecrypt64/projs/android/library/android-filechooser/code/res/drawable-ldpi/afc_folder.png"
+   inkscape:export-xdpi="45"
+   inkscape:export-ydpi="45">
   <defs
      id="defs4">
     <linearGradient
@@ -404,14 +404,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.959798"
-     inkscape:cx="10.815478"
-     inkscape:cy="4.5369027"
+     inkscape:zoom="2.5290116"
+     inkscape:cx="129.14084"
+     inkscape:cy="-10.260744"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="false"
      inkscape:window-width="1440"
-     inkscape:window-height="823"
+     inkscape:window-height="846"
      inkscape:window-x="-3"
      inkscape:window-y="-3"
      inkscape:window-maximized="1" />
@@ -430,7 +430,8 @@
   <g
      inkscape:groupmode="layer"
      id="layer2"
-     inkscape:label="Layer">
+     inkscape:label="Layer"
+     style="display:inline">
     <rect
        ry="1.7282925"
        y="3.0482121"
@@ -441,7 +442,7 @@
        style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#0a0000;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0.74879228;stroke-dasharray:none;filter:url(#filter4584)"
        transform="matrix(0.82874354,0,0,0.82874354,4.3268018,3.8935086)" />
     <rect
-       style="fill:url(#radialGradient4606);fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0.20000000000000001;stroke-dasharray:none;"
+       style="fill:url(#radialGradient4606);fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0.2;stroke-dasharray:none"
        id="rect3148"
        width="36.36549"
        height="42.426407"
@@ -450,7 +451,7 @@
        ry="1.7282925" />
     <path
        sodipodi:type="star"
-       style="opacity:0.6;fill:#333333;fill-opacity:0.44921318999999998;fill-rule:nonzero;stroke:#000000;stroke-width:2.41364479000000021;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter5764)"
+       style="opacity:0.6;fill:#333333;fill-opacity:0.44921319;fill-rule:nonzero;stroke:#000000;stroke-width:2.41364479;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter5764)"
        id="path5378"
        sodipodi:sides="5"
        sodipodi:cx="-94.954338"
@@ -482,7 +483,7 @@
        sodipodi:cx="-94.954338"
        sodipodi:sides="5"
        id="path5826"
-       style="opacity:0.6;fill:#333333;fill-opacity:0.44921318999999998;fill-rule:nonzero;stroke:#000000;stroke-width:2.41364479000000021;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter5764)"
+       style="opacity:0.6;fill:#333333;fill-opacity:0.44921319;fill-rule:nonzero;stroke:#000000;stroke-width:2.41364479;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter5764)"
        sodipodi:type="star" />
     <path
        style="opacity:0.8;fill:url(#radialGradient6440);fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0.74879228;stroke-dasharray:none;filter:url(#filter6433)"
@@ -491,10 +492,4 @@
        inkscape:connector-curvature="0"
        transform="matrix(0.59014815,0,0,0.65449485,5.4962886,5.4170003)" />
   </g>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(0,-1004.3622)"
-     style="display:inline" />
 </svg>
