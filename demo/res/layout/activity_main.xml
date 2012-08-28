@@ -1,0 +1,61 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <CheckBox
+            android:id="@+id/activity_main_checkBox_use_dialog_theme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Dialog theme" />
+
+        <CheckBox
+            android:id="@+id/activity_main_checkBox_multi_selection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Multi-selection" />
+
+        <Button
+            android:id="@+id/activity_main_button_choose_files"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Choose file(s)…" />
+
+        <Button
+            android:id="@+id/activity_main_button_choose_dirs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Choose dir(s)…" />
+
+        <Button
+            android:id="@+id/activity_main_button_choose_files_and_dirs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Choose file(s) and dir(s)…" />
+
+        <Button
+            android:id="@+id/activity_main_button_save_as"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Save as…" />
+
+        <Button
+            android:id="@+id/activity_main_button_create_hugedir"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:text="Create huge-dir on SD card…" />
+    </LinearLayout>
+
+</ScrollView>
