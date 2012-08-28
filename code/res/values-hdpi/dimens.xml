@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="afc_button_navi_size">60dp</dimen>
+    <dimen name="afc_button_ok_min_width">72dp</dimen>
+    <dimen name="afc_button_ok_standalone_min_width">150dp</dimen>
 </resources>

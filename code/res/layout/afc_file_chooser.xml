@@ -86,16 +86,18 @@
             android:visibility="gone" />
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:layout_height="wrap_content" >
 
         <EditText
             android:id="@+id/afc_filechooser_activity_textview_saveas_filename"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/afc_dim_10dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/afc_dim_5dp"
+            android:layout_toLeftOf="@+id/afc_filechooser_activity_button_ok"
             android:hint="@string/afc_hint_save_as_filename"
             android:imeOptions="actionDone"
             android:singleLine="true"
@@ -107,11 +109,13 @@
 
         <Button
             android:id="@+id/afc_filechooser_activity_button_ok"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:minWidth="@dimen/afc_button_ok_min_width"
             android:text="@android:string/ok"
             android:visibility="gone" />
-    </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>

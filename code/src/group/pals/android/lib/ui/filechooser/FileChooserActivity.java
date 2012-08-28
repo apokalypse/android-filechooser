@@ -74,6 +74,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -720,6 +721,14 @@ public class FileChooserActivity extends Activity {
             mTxtSaveas.setVisibility(View.GONE);
 
             if (mIsMultiSelection) {
+                mBtnOk.setMinimumWidth(getResources().getDimensionPixelSize(R.dimen.afc_button_ok_standalone_min_width));
+
+                RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mBtnOk.getLayoutParams();
+                lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 0);
+                lp.addRule(RelativeLayout.CENTER_VERTICAL, 0);
+                lp.addRule(RelativeLayout.CENTER_IN_PARENT, 1);
+                mBtnOk.setLayoutParams(lp);
+
                 mBtnOk.setVisibility(View.VISIBLE);
                 mBtnOk.setOnClickListener(mBtnOk_OpenDialog_OnClickListener);
             } else
@@ -1027,16 +1036,15 @@ public class FileChooserActivity extends Activity {
             if (!Utils.isFilenameValid(filename)) {
                 Dlg.toast(this, getString(R.string.afc_pmsg_filename_is_invalid, filename), Dlg.LENGTH_SHORT);
             } else if (_file.isFile()) {
-                new AlertDialog.Builder(FileChooserActivity.this)
-                        .setMessage(getString(R.string.afc_pmsg_confirm_replace_file, _file.getName()))
-                        .setNegativeButton(android.R.string.cancel, null)
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                Dlg.confirmYesno(FileChooserActivity.this,
+                        getString(R.string.afc_pmsg_confirm_replace_file, _file.getName()),
+                        new DialogInterface.OnClickListener() {
 
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 doFinish(_file);
                             }
-                        }).show();
+                        });
             } else if (_file.isDirectory()) {
                 Dlg.toast(this, getString(R.string.afc_pmsg_filename_is_directory, _file.getName()), Dlg.LENGTH_SHORT);
             } else
@@ -1436,10 +1444,14 @@ public class FileChooserActivity extends Activity {
                 if (data.getFile().isDirectory() && mFileProvider.getFilterMode() == IFileProvider.FilterMode.FilesOnly)
                     return false;
 
-                // if fFilterMode == DirectoriesOnly, files won't be
+                // if mFilterMode == DirectoriesOnly, files won't be
                 // shown
 
-                doFinish(data.getFile());
+                if (mIsSaveDialog) {
+                    mTxtSaveas.setText(data.getFile().getName());
+                    doCheckSaveasFilenameAndFinish(data.getFile().getName());
+                } else
+                    doFinish(data.getFile());
 
                 return false;
             }// onDoubleTap()
