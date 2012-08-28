@@ -46,8 +46,11 @@ public class Dlg {
     }// mToast()
 
     public static void showInfo(Context context, CharSequence msg) {
-        new AlertDialog.Builder(context).setIcon(android.R.drawable.ic_dialog_info).setTitle(R.string.afc_title_info)
-                .setMessage(msg).show();
+        AlertDialog dlg = newDlg(context);
+        dlg.setIcon(android.R.drawable.ic_dialog_info);
+        dlg.setTitle(R.string.afc_title_info);
+        dlg.setMessage(msg);
+        dlg.show();
     }// showInfo()
 
     public static void showInfo(Context context, int msgId) {
@@ -72,9 +75,12 @@ public class Dlg {
     }// showUnknownError()
 
     public static void confirmYesno(Context context, CharSequence msg, DialogInterface.OnClickListener onYes) {
-        new AlertDialog.Builder(context).setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle(R.string.afc_title_confirmation).setMessage(msg)
-                .setPositiveButton(android.R.string.yes, onYes).setNegativeButton(android.R.string.no, null).show();
+        AlertDialog dlg = newDlg(context);
+        dlg.setIcon(android.R.drawable.ic_dialog_alert);
+        dlg.setTitle(R.string.afc_title_confirmation);
+        dlg.setMessage(msg);
+        dlg.setButton(DialogInterface.BUTTON_POSITIVE, context.getString(android.R.string.yes), onYes);
+        dlg.show();
     }// confirmYesno()
 
     /**

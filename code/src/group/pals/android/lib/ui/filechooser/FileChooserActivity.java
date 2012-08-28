@@ -71,7 +71,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.HorizontalScrollView;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -272,8 +272,8 @@ public class FileChooserActivity extends Activity {
     private TextView mFooterView;
     private Button mBtnOk;
     private EditText mTxtSaveas;
-    private ImageButton mBtnGoBack;
-    private ImageButton mBtnGoForward;
+    private ImageView mViewGoBack;
+    private ImageView mViewGoForward;
 
     /** Called when the activity is first created. */
     @Override
@@ -318,8 +318,8 @@ public class FileChooserActivity extends Activity {
             mIsMultiSelection = false;
         }
 
-        mBtnGoBack = (ImageButton) findViewById(R.id.afc_filechooser_activity_button_go_back);
-        mBtnGoForward = (ImageButton) findViewById(R.id.afc_filechooser_activity_button_go_forward);
+        mViewGoBack = (ImageView) findViewById(R.id.afc_filechooser_activity_button_go_back);
+        mViewGoForward = (ImageView) findViewById(R.id.afc_filechooser_activity_button_go_forward);
         mViewLocations = (ViewGroup) findViewById(R.id.afc_filechooser_activity_view_locations);
         mViewLocationsContainer = (HorizontalScrollView) findViewById(R.id.afc_filechooser_activity_view_locations_container);
         mTxtFullDirName = (TextView) findViewById(R.id.afc_filechooser_activity_textview_full_dir_name);
@@ -337,8 +337,8 @@ public class FileChooserActivity extends Activity {
             @Override
             public void onChanged(History<IFile> history) {
                 int idx = history.indexOf(getLocation());
-                mBtnGoBack.setEnabled(idx > 0);
-                mBtnGoForward.setEnabled(idx >= 0 && idx < history.size() - 1);
+                mViewGoBack.setEnabled(idx > 0);
+                mViewGoForward.setEnabled(idx >= 0 && idx < history.size() - 1);
             }
         });
 
@@ -647,11 +647,11 @@ public class FileChooserActivity extends Activity {
             }
         }// title of activity
 
-        mBtnGoBack.setEnabled(false);
-        mBtnGoBack.setOnClickListener(mBtnGoBackOnClickListener);
+        mViewGoBack.setEnabled(false);
+        mViewGoBack.setOnClickListener(mBtnGoBackOnClickListener);
 
-        mBtnGoForward.setEnabled(false);
-        mBtnGoForward.setOnClickListener(mBtnGoForwardOnClickListener);
+        mViewGoForward.setEnabled(false);
+        mViewGoForward.setOnClickListener(mBtnGoForwardOnClickListener);
     }// setupHeader()
 
     /**
@@ -1242,13 +1242,13 @@ public class FileChooserActivity extends Activity {
                     @Override
                     public void onFinish(boolean ok, Object any) {
                         if (ok) {
-                            mBtnGoBack.setEnabled(mHistory.prevOf(getLocation()) != null);
-                            mBtnGoForward.setEnabled(true);
+                            mViewGoBack.setEnabled(mHistory.prevOf(getLocation()) != null);
+                            mViewGoForward.setEnabled(true);
                         }
                     }
                 });
             } else {
-                mBtnGoBack.setEnabled(false);
+                mViewGoBack.setEnabled(false);
             }
         }
     };// mBtnGoBackOnClickListener
@@ -1305,13 +1305,13 @@ public class FileChooserActivity extends Activity {
                     @Override
                     public void onFinish(boolean ok, Object any) {
                         if (ok) {
-                            mBtnGoBack.setEnabled(true);
-                            mBtnGoForward.setEnabled(mHistory.nextOf(getLocation()) != null);
+                            mViewGoBack.setEnabled(true);
+                            mViewGoForward.setEnabled(mHistory.nextOf(getLocation()) != null);
                         }
                     }
                 });
             } else {
-                mBtnGoForward.setEnabled(false);
+                mViewGoForward.setEnabled(false);
             }
         }
     };// mBtnGoForwardOnClickListener

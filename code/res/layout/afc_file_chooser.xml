@@ -9,11 +9,9 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
-        <ImageButton
+        <ImageView
             android:id="@+id/afc_filechooser_activity_button_go_back"
-            style="@style/afc_button_navi"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            style="@style/afc_button_navi" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -54,16 +52,14 @@
                 android:visibility="gone" />
         </LinearLayout>
 
-        <ImageButton
+        <ImageView
             android:id="@+id/afc_filechooser_activity_button_go_forward"
-            style="@style/afc_button_navi"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            style="@style/afc_button_navi" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginBottom="@dimen/afc_dim_10dp"
         android:layout_marginTop="@dimen/afc_dim_10dp"
         android:layout_weight="1"
