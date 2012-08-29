@@ -46,5 +46,11 @@
     <string name="afc_title_size">Size</string>
     <string name="afc_title_date">Date</string>
     <string name="afc_title_sort_by">Sort by…</string>
+    <string name="afc_title_advanced_selection">Select…</string>
+    <string name="afc_cmd_advanced_selection_all">All</string>
+    <string name="afc_cmd_advanced_selection_none">None</string>
+    <string name="afc_cmd_advanced_selection_invert">Invert selection</string>
+    <string name="afc_cmd_select_all_files">Select all files</string>
+    <string name="afc_cmd_select_all_folders">Select all folders</string>
 
 </resources>

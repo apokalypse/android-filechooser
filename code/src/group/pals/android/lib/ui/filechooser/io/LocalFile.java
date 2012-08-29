@@ -21,7 +21,6 @@ import group.pals.android.lib.ui.filechooser.utils.history.History;
 import java.io.File;
 import java.util.List;
 
-import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 

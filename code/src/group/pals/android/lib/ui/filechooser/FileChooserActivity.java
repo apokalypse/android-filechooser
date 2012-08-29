@@ -620,7 +620,7 @@ public class FileChooserActivity extends Activity {
         });
 
         if (mFileAdapter == null)
-            mFileAdapter = new FileAdapter(FileChooserActivity.this, new ArrayList<DataModel>(),
+            mFileAdapter = new FileAdapter(FileChooserActivity.this, new ArrayList<IFileDataModel>(),
                     mFileProvider.getFilterMode(), mIsMultiSelection);
         /*
          * API 13+ does not recognize AbsListView.setAdapter(), so we cast it to
@@ -959,7 +959,7 @@ public class FileChooserActivity extends Activity {
      * @param file
      *            {@link IFile}
      */
-    private void doDeleteFile(final DataModel data) {
+    private void doDeleteFile(final IFileDataModel data) {
         if (mFileProvider instanceof LocalFileProvider
                 && !Utils.havePermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             Dlg.toast(this, R.string.afc_msg_app_doesnot_have_permission_to_delete_files, Dlg.LENGTH_SHORT);
@@ -1147,7 +1147,7 @@ public class FileChooserActivity extends Activity {
 
                 mFileAdapter.clear();
                 for (IFile f : files)
-                    mFileAdapter.add(new DataModel(f));
+                    mFileAdapter.add(new IFileDataModel(f));
                 mFileAdapter.notifyDataSetChanged();
 
                 // update footers
@@ -1387,8 +1387,8 @@ public class FileChooserActivity extends Activity {
             for (int i = 0; i < mViewFiles.getAdapter().getCount(); i++) {
                 // NOTE: header and footer don't have data
                 Object obj = mViewFiles.getAdapter().getItem(i);
-                if (obj instanceof DataModel) {
-                    DataModel dm = (DataModel) obj;
+                if (obj instanceof IFileDataModel) {
+                    IFileDataModel dm = (IFileDataModel) obj;
                     if (dm.isSelected())
                         list.add(dm.getFile());
                 }
@@ -1440,10 +1440,10 @@ public class FileChooserActivity extends Activity {
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {
                 Object o = getData(e.getX(), e.getY());
-                if (!(o instanceof DataModel))
+                if (!(o instanceof IFileDataModel))
                     return true;
 
-                DataModel data = (DataModel) o;
+                IFileDataModel data = (IFileDataModel) o;
                 if (data.getFile().isDirectory()) {
                     final IFile _lastPath = getLocation();
                     setLocation(data.getFile(), new TaskListener() {
@@ -1468,10 +1468,10 @@ public class FileChooserActivity extends Activity {
                     return false;
 
                 Object o = getData(e.getX(), e.getY());
-                if (!(o instanceof DataModel))
+                if (!(o instanceof IFileDataModel))
                     return false;
 
-                DataModel data = (DataModel) o;
+                IFileDataModel data = (IFileDataModel) o;
 
                 if (data.getFile().isDirectory() && mFileProvider.getFilterMode() == IFileProvider.FilterMode.FilesOnly)
                     return false;
@@ -1496,7 +1496,7 @@ public class FileChooserActivity extends Activity {
                 if (Math.abs(e1.getY() - e2.getY()) < _max_y_distance
                         && Math.abs(e1.getX() - e2.getX()) > _min_x_distance && Math.abs(velocityX) > _min_x_velocity) {
                     Object o = getData(e1.getX(), e1.getY());
-                    if (o instanceof DataModel) {
+                    if (o instanceof IFileDataModel) {
                         View v = getSubView(e1.getX(), e1.getY());
                         if (v != null && v instanceof ViewFlipper) {
                             prepareAnimations(velocityX <= 0);
@@ -1504,7 +1504,7 @@ public class FileChooserActivity extends Activity {
                             ((ViewFlipper) v).setOutAnimation(mOutAnimation);
                             ((ViewFlipper) v).showNext();
                         }
-                        doDeleteFile((DataModel) o);
+                        doDeleteFile((IFileDataModel) o);
                     }
                 }
 

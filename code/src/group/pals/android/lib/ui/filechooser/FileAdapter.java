@@ -17,9 +17,12 @@
 package group.pals.android.lib.ui.filechooser;
 
 import group.pals.android.lib.ui.filechooser.io.IFile;
+import group.pals.android.lib.ui.filechooser.io.IFileFilter;
 import group.pals.android.lib.ui.filechooser.services.IFileProvider;
 import group.pals.android.lib.ui.filechooser.services.IFileProvider.FilterMode;
 import group.pals.android.lib.ui.filechooser.utils.Converter;
+import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
+import group.pals.android.lib.ui.filechooser.utils.ui.LoadingDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -44,7 +47,7 @@ import android.widget.TextView;
  * @author Hai Bison
  * 
  */
-public class FileAdapter extends ArrayAdapter<DataModel> {
+public class FileAdapter extends ArrayAdapter<IFileDataModel> {
 
     /**
      * Default short format for file time. Value = {@code "yyyy.MM.dd hh:mm a"}<br>
@@ -63,8 +66,10 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
      */
     public static String fileTimeShortFormat = _DefFileTimeShortFormat;
 
+    private final Integer[] mAdvancedSelectionOptions;
+
     private final boolean mIsMultiSelection;
-    private final IFileProvider.FilterMode mSelectionMode;
+    private final IFileProvider.FilterMode mFilterMode;
 
     /**
      * Creates new {@link FileAdapter}
@@ -78,12 +83,26 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
      * @param multiSelection
      *            see {@link FileChooserActivity#_MultiSelection}
      */
-    public FileAdapter(Context context, List<DataModel> objects, IFileProvider.FilterMode filterMode,
+    public FileAdapter(Context context, List<IFileDataModel> objects, IFileProvider.FilterMode filterMode,
             boolean multiSelection) {
         super(context, R.layout.afc_file_item, objects);
-        this.mSelectionMode = filterMode;
-        this.mIsMultiSelection = multiSelection;
-    }
+
+        mFilterMode = filterMode;
+        mIsMultiSelection = multiSelection;
+
+        switch (mFilterMode) {
+        case DirectoriesOnly:
+        case FilesOnly:
+            mAdvancedSelectionOptions = new Integer[] { R.string.afc_cmd_advanced_selection_all,
+                    R.string.afc_cmd_advanced_selection_none, R.string.afc_cmd_advanced_selection_invert };
+            break;// DirectoriesOnly and FilesOnly
+        default:
+            mAdvancedSelectionOptions = new Integer[] { R.string.afc_cmd_advanced_selection_all,
+                    R.string.afc_cmd_advanced_selection_none, R.string.afc_cmd_advanced_selection_invert,
+                    R.string.afc_cmd_select_all_files, R.string.afc_cmd_select_all_folders };
+            break;// FilesAndDirectories
+        }
+    }// FileAdapter
 
     /**
      * The "view holder"
@@ -101,7 +120,7 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        DataModel data = getItem(position);
+        IFileDataModel data = getItem(position);
         Bag bag;
 
         if (convertView == null) {
@@ -133,12 +152,12 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
      * @param bag
      *            the "view holder", see {@link Bag}
      * @param fData
-     *            {@link DataModel}
+     *            {@link IFileDataModel}
      * @param file
      *            {@link IFile}
      * @since v2.0 alpha
      */
-    private void updateView(ViewGroup parent, Bag bag, final DataModel fData, IFile file) {
+    private void updateView(ViewGroup parent, Bag bag, final IFileDataModel fData, IFile file) {
         // if parent is list view, enable multiple lines
         boolean useSingleLine = parent instanceof GridView;
         for (TextView tv : new TextView[] { bag.txtFileName, bag.txtFileInfo }) {
@@ -175,7 +194,7 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
 
         // checkbox
         if (mIsMultiSelection) {
-            if (mSelectionMode == FilterMode.FilesOnly && file.isDirectory()) {
+            if (mFilterMode == FilterMode.FilesOnly && file.isDirectory()) {
                 bag.checkboxSelection.setVisibility(View.GONE);
             } else {
                 bag.checkboxSelection.setVisibility(View.VISIBLE);
@@ -187,9 +206,117 @@ public class FileAdapter extends ArrayAdapter<DataModel> {
                         fData.setSelected(isChecked);
                     }
                 });
+
+                bag.checkboxSelection.setOnLongClickListener(mCheckboxSelectionOnLongClickListener);
+
                 bag.checkboxSelection.setChecked(fData.isSelected());
             }
         } else
             bag.checkboxSelection.setVisibility(View.GONE);
     }// updateView
+
+    // ==================
+    // INTERNAL UTILITIES
+
+    /**
+     * Selects all items.
+     * 
+     * @param notifyDataSetChanged
+     *            {@code true} if you want to notify that data set changed
+     * @param filter
+     *            {@link IFileFilter}
+     */
+    public void selectAll(boolean notifyDataSetChanged, IFileFilter filter) {
+        for (int i = 0; i < getCount(); i++) {
+            IFileDataModel item = getItem(i);
+            item.setSelected(filter == null ? true : filter.accept(item.getFile()));
+        }
+        if (notifyDataSetChanged)
+            notifyDataSetChanged();
+    }// selectAll()
+
+    /**
+     * Selects no items.
+     * 
+     * @param notifyDataSetChanged
+     *            {@code true} if you want to notify that data set changed
+     */
+    public void selectNone(boolean notifyDataSetChanged) {
+        for (int i = 0; i < getCount(); i++)
+            getItem(i).setSelected(false);
+        if (notifyDataSetChanged)
+            notifyDataSetChanged();
+    }// selectNone()
+
+    /**
+     * Inverts selection.
+     * 
+     * @param notifyDataSetChanged
+     *            {@code true} if you want to notify that data set changed
+     */
+    public void invertSelection(boolean notifyDataSetChanged) {
+        for (int i = 0; i < getCount(); i++) {
+            IFileDataModel item = getItem(i);
+            item.setSelected(!item.isSelected());
+        }
+        if (notifyDataSetChanged)
+            notifyDataSetChanged();
+    }// invertSelection()
+
+    // =========
+    // LISTENERS
+
+    private final View.OnLongClickListener mCheckboxSelectionOnLongClickListener = new View.OnLongClickListener() {
+
+        @Override
+        public boolean onLongClick(final View view) {
+            // NOTE: expanded groups are all false
+            ContextMenuUtils.showContextMenu(view.getContext(), 0, R.string.afc_title_advanced_selection,
+                    mAdvancedSelectionOptions, new ContextMenuUtils.OnMenuItemClickListener() {
+
+                        @Override
+                        public void onClick(final int resId) {
+                            new LoadingDialog(view.getContext(), R.string.afc_msg_loading, false) {
+
+                                @Override
+                                protected Object doInBackground(Void... arg0) {
+                                    if (resId == R.string.afc_cmd_advanced_selection_all) {
+                                        selectAll(false, null);
+                                    } else if (resId == R.string.afc_cmd_advanced_selection_none) {
+                                        selectNone(false);
+                                    } else if (resId == R.string.afc_cmd_advanced_selection_invert) {
+                                        invertSelection(false);
+                                    } else if (resId == R.string.afc_cmd_select_all_files) {
+                                        selectAll(false, new IFileFilter() {
+
+                                            @Override
+                                            public boolean accept(IFile pathname) {
+                                                return pathname.isFile();
+                                            }
+                                        });
+                                    } else if (resId == R.string.afc_cmd_select_all_folders) {
+                                        selectAll(false, new IFileFilter() {
+
+                                            @Override
+                                            public boolean accept(IFile pathname) {
+                                                return pathname.isDirectory();
+                                            }
+                                        });
+                                    }
+
+                                    return null;
+                                }// doInBackground()
+
+                                @Override
+                                protected void onPostExecute(Object result) {
+                                    super.onPostExecute(result);
+                                    notifyDataSetChanged();
+                                }// onPostExecute()
+                            }.execute();// LoadingDialog
+                        }// onClick()
+                    });
+
+            return true;
+        }// onLongClick()
+    };// mCheckboxSelectionOnLongClickListener
 }

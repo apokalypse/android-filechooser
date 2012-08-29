@@ -25,18 +25,18 @@ import group.pals.android.lib.ui.filechooser.io.IFile;
  * @author Hai Bison
  * 
  */
-public class DataModel {
+public class IFileDataModel {
 
     private IFile mFile;
     private boolean mSelected;
 
     /**
-     * Creates new {@link DataModel} with a {@link IFile}
+     * Creates new {@link IFileDataModel} with a {@link IFile}
      * 
      * @param file
      *            {@link IFile}
      */
-    public DataModel(IFile file) {
+    public IFileDataModel(IFile file) {
         this.mFile = file;
     }
 
