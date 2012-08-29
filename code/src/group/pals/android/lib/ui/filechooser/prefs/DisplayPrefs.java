@@ -30,6 +30,13 @@ import android.content.Context;
  */
 public class DisplayPrefs extends Prefs {
 
+    /**
+     * Gets view type.
+     * 
+     * @param c
+     *            {@link Context}
+     * @return {@link ViewType}
+     */
     public static ViewType getViewType(Context c) {
         return ViewType.List.ordinal() == p(c).getInt(c.getString(R.string.afc_pkey_display_view_type),
                 c.getResources().getInteger(R.integer.afc_pkey_display_view_type_def)) ? ViewType.List : ViewType.Grid;
@@ -52,6 +59,13 @@ public class DisplayPrefs extends Prefs {
             p(c).edit().putInt(c.getString(R.string.afc_pkey_display_view_type), v.ordinal()).commit();
     }
 
+    /**
+     * Gets sort type.
+     * 
+     * @param c
+     *            {@link Context}
+     * @return {@link SortType}
+     */
     public static SortType getSortType(Context c) {
         for (SortType s : SortType.values())
             if (s.ordinal() == p(c).getInt(c.getString(R.string.afc_pkey_display_sort_type),
@@ -77,6 +91,13 @@ public class DisplayPrefs extends Prefs {
             p(c).edit().putInt(c.getString(R.string.afc_pkey_display_sort_type), v.ordinal()).commit();
     }
 
+    /**
+     * Gets sort ascending.
+     * 
+     * @param c
+     *            {@link Context}
+     * @return {@code true} if sort is ascending, {@code false} otherwise.
+     */
     public static boolean isSortAscending(Context c) {
         return p(c).getBoolean(c.getString(R.string.afc_pkey_display_sort_ascending),
                 c.getResources().getBoolean(R.bool.afc_pkey_display_sort_ascending_def));

@@ -11,12 +11,17 @@
 
         <ImageView
             android:id="@+id/afc_filechooser_activity_button_go_back"
-            style="@style/afc_button_navi" />
+            style="@style/afc_button_navi_left" />
+
+        <ImageView
+            android:id="@+id/afc_filechooser_activity_button_go_forward"
+            style="@style/afc_button_navi_right" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginRight="@dimen/afc_dim_5dp"
             android:layout_weight="1"
             android:orientation="vertical" >
 
@@ -51,10 +56,6 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:visibility="gone" />
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/afc_filechooser_activity_button_go_forward"
-            style="@style/afc_button_navi" />
     </LinearLayout>
 
     <LinearLayout

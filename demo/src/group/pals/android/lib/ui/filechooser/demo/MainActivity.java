@@ -129,8 +129,10 @@ public class MainActivity extends Activity {
             // multi-selection
             intent.putExtra(FileChooserActivity._MultiSelection, mChkMultiSelection.isChecked());
             // theme
-            if (mChkDialogTheme.isChecked())
+            if (mChkDialogTheme.isChecked()) {
+                intent.putExtra(FileChooserActivity._UseThemeDialog, true);
                 intent.putExtra(FileChooserActivity._Theme, _DialogTheme);
+            }
 
             // filter-mode
             if (v.getId() == R.id.activity_main_button_choose_files)

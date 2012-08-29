@@ -16,7 +16,7 @@
             android:layout_margin="@dimen/afc_dim_5dp" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginRight="@dimen/afc_dim_5dp"
@@ -27,7 +27,6 @@
                 android:id="@+id/afc_text_view_filename"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="filename"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <TextView
@@ -35,15 +34,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:gravity="right"
-                android:text="fileinfo" />
+                android:gravity="right" />
         </LinearLayout>
 
         <CheckBox
             android:id="@+id/afc_checkbox_selection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical" />
+            android:layout_gravity="center_horizontal|top" />
     </LinearLayout>
 
 </ViewFlipper>

@@ -47,6 +47,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.content.ServiceConnection;
 import android.graphics.Rect;
 import android.os.Build;
@@ -128,6 +130,16 @@ public class FileChooserActivity extends Activity {
      * @since v4.3 beta
      */
     public static final String _Theme = _ClassName + ".theme";
+
+    /**
+     * If you use a theme dialog, set value of this key to {@code true}. This is
+     *  to let the activity determine best dimension for different screen sizes.<br>
+     * <br>
+     * Default value is {@code false}.
+     *
+     * @since v4.3 beta
+     */
+    public static final String _UseThemeDialog = _ClassName + ".use_theme_dialog";
 
     /**
      * Key to hold the root path.<br>
@@ -261,16 +273,8 @@ public class FileChooserActivity extends Activity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.afc_file_chooser);
-        /*
-         * Thanks to Matthias.
-         * http://stackoverflow.com/questions/1362723/how-can-i-get-a
-         * -dialog-style-activity-window-to-fill-the-screen
-         * 
-         * But I can't check if you set the theme in xml to dialog or another
-         * else. The SDK does not mention this.
-         */
-        // if (getTheme().??? == android.R.style.Theme_Dialog)
-        getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+
+        setupWindow();
 
         initGestureDetector();
 
@@ -384,6 +388,12 @@ public class FileChooserActivity extends Activity {
     }// onPrepareOptionsMenu()
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setupWindow();
+    }// onConfigurationChanged()
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putParcelable(_CurrentLocation, getLocation());
         outState.putParcelable(_History, mHistory);
@@ -422,6 +432,20 @@ public class FileChooserActivity extends Activity {
 
         super.onDestroy();
     }
+
+    /**
+     * Setup window size based on screen resolution.
+     */
+    private void setupWindow() {
+        if (getIntent().getBooleanExtra(_UseThemeDialog, false)) {
+            try {
+                getWindow().setLayout(getResources().getDimensionPixelSize(R.dimen.afc_theme_dialog_width),
+                        getResources().getDimensionPixelSize(R.dimen.afc_theme_dialog_height));
+            } catch (Resources.NotFoundException e) {
+                getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+            }
+        }
+    }// setupWindow()
 
     /**
      * Connects to file provider service, then loads root directory. If can not,
