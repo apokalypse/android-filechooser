@@ -47,7 +47,7 @@ import android.widget.TextView;
  * @author Hai Bison
  * 
  */
-public class FileAdapter extends ArrayAdapter<IFileDataModel> {
+public class IFileAdapter extends ArrayAdapter<IFileDataModel> {
 
     /**
      * Default short format for file time. Value = {@code "yyyy.MM.dd hh:mm a"}<br>
@@ -72,7 +72,7 @@ public class FileAdapter extends ArrayAdapter<IFileDataModel> {
     private final IFileProvider.FilterMode mFilterMode;
 
     /**
-     * Creates new {@link FileAdapter}
+     * Creates new {@link IFileAdapter}
      * 
      * @param context
      *            {@link Context}
@@ -83,7 +83,7 @@ public class FileAdapter extends ArrayAdapter<IFileDataModel> {
      * @param multiSelection
      *            see {@link FileChooserActivity#_MultiSelection}
      */
-    public FileAdapter(Context context, List<IFileDataModel> objects, IFileProvider.FilterMode filterMode,
+    public IFileAdapter(Context context, List<IFileDataModel> objects, IFileProvider.FilterMode filterMode,
             boolean multiSelection) {
         super(context, R.layout.afc_file_item, objects);
 
@@ -102,7 +102,7 @@ public class FileAdapter extends ArrayAdapter<IFileDataModel> {
                     R.string.afc_cmd_select_all_files, R.string.afc_cmd_select_all_folders };
             break;// FilesAndDirectories
         }
-    }// FileAdapter
+    }// IFileAdapter
 
     /**
      * The "view holder"

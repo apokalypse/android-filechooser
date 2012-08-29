@@ -239,7 +239,7 @@ public class FileChooserActivity extends Activity {
     /**
      * The adapter of list view.
      */
-    private FileAdapter mFileAdapter;
+    private IFileAdapter mFileAdapter;
 
     /*
      * controls
@@ -620,7 +620,7 @@ public class FileChooserActivity extends Activity {
         });
 
         if (mFileAdapter == null)
-            mFileAdapter = new FileAdapter(FileChooserActivity.this, new ArrayList<IFileDataModel>(),
+            mFileAdapter = new IFileAdapter(FileChooserActivity.this, new ArrayList<IFileDataModel>(),
                     mFileProvider.getFilterMode(), mIsMultiSelection);
         /*
          * API 13+ does not recognize AbsListView.setAdapter(), so we cast it to
