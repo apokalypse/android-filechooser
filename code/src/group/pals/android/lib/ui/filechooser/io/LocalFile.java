@@ -72,6 +72,11 @@ public class LocalFile extends File implements IFile {
         return file == null ? false : getAbsolutePath().equals(file.getAbsolutePath());
     }// equalsToPath()
 
+    @Override
+    public IFile clone() {
+        return new LocalFile(getAbsolutePath());
+    }
+
     /*-----------------------------------------------------
      * Parcelable
      */

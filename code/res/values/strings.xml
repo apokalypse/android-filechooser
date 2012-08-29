@@ -21,6 +21,8 @@
     <string name="afc_title_info">Info</string>
     <string name="afc_title_alert">Alert</string>
     <string name="afc_cmd_new_folder">New folder…</string>
+    <string name="afc_cmd_remove_from_list">Remove from list</string>
+    <string name="afc_pmsg_xxx_items">%1$,d items</string>
     <string name="afc_hint_folder_name">folder name</string>
     <string name="afc_msg_done">Done</string>
     <string name="afc_pmsg_cannot_create_folder">Can not create folder \"%1$s\"</string>
@@ -52,5 +54,7 @@
     <string name="afc_cmd_advanced_selection_invert">Invert selection</string>
     <string name="afc_cmd_select_all_files">Select all files</string>
     <string name="afc_cmd_select_all_folders">Select all folders</string>
+    <string name="afc_title_history">History</string>
+    <string name="afc_cmd_clear">Clear</string>
 
 </resources>

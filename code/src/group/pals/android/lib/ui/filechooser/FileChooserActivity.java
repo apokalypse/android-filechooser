@@ -17,6 +17,7 @@
 package group.pals.android.lib.ui.filechooser;
 
 import group.pals.android.lib.ui.filechooser.io.IFile;
+import group.pals.android.lib.ui.filechooser.io.LocalFile;
 import group.pals.android.lib.ui.filechooser.prefs.DisplayPrefs;
 import group.pals.android.lib.ui.filechooser.services.FileProviderService;
 import group.pals.android.lib.ui.filechooser.services.IFileProvider;
@@ -35,6 +36,7 @@ import group.pals.android.lib.ui.filechooser.utils.history.HistoryStore;
 import group.pals.android.lib.ui.filechooser.utils.ui.Dlg;
 import group.pals.android.lib.ui.filechooser.utils.ui.LoadingDialog;
 import group.pals.android.lib.ui.filechooser.utils.ui.TaskListener;
+import group.pals.android.lib.ui.filechooser.utils.ui.ViewFilesContextMenuUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -47,9 +49,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.content.ServiceConnection;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
@@ -517,7 +519,7 @@ public class FileChooserActivity extends Activity {
                         @Override
                         public void onFinish(boolean ok, Object any) {
                             if (_path == null)
-                                mHistory.push(getLocation(), getLocation());
+                                mHistory.push(mRoot);
                             else
                                 mHistory.notifyHistoryChanged();
                         }
@@ -589,6 +591,9 @@ public class FileChooserActivity extends Activity {
 
         mViewGoForward.setEnabled(false);
         mViewGoForward.setOnClickListener(mBtnGoForwardOnClickListener);
+
+        for (ImageView v : new ImageView[] { mViewGoBack, mViewGoForward })
+            v.setOnLongClickListener(mBtnGoBackForwardOnLongClickListener);
     }// setupHeader()
 
     /**
@@ -693,94 +698,9 @@ public class FileChooserActivity extends Activity {
     }// doShowCannotConnectToServiceAndFinish()
 
     private void doGoHome() {
-        if (mRoot.equalsToPath(getLocation()))
-            return;
-
-        /*
-         * we can't use mRoot, because if the first item in history is mRoot,
-         * then when we push new location (which equals to mRoot) to the
-         * history, the history will be cleared
-         */
-        setLocation(mFileProvider.fromPath(mRoot.getAbsolutePath()), new TaskListener() {
-
-            @Override
-            public void onFinish(boolean ok, Object any) {
-                mHistory.push(getLocation(), getLocation());
-            }
-        });
+        // TODO explain why?
+        goTo(mRoot.clone());
     }// doGoHome()
-
-    // /**
-    // * Resort file list when user clicks menu item.
-    // *
-    // * @param menuItemId
-    // * the ID of menu item
-    // */
-    // private void doResortFileList(int menuItemId) {
-    // IFileProvider.SortType lastSortType = IFileProvider.SortType.SortByName;
-    // try {
-    // lastSortType = IFileProvider.SortType.valueOf(mPrefs.getString(_SortType,
-    // IFileProvider.SortType.SortByName.name()));
-    // } catch (Throwable t) {
-    // // TODO
-    // }
-    //
-    // boolean lastSortAscending =
-    // IFileProvider.SortOrder.Ascending.name().equals(
-    // mPrefs.getString(_SortOrder, IFileProvider.SortOrder.Ascending.name()));
-    //
-    // Editor editor = mPrefs.edit();
-    //
-    // if (menuItemId == R.id.afc_filechooser_activity_menuitem_sort_by_name) {
-    // if (lastSortType == IFileProvider.SortType.SortByName)
-    // editor.putString(_SortOrder, lastSortAscending ?
-    // IFileProvider.SortOrder.Descending.name()
-    // : IFileProvider.SortOrder.Ascending.name());
-    // else {
-    // editor.putString(_SortType, IFileProvider.SortType.SortByName.name());
-    // editor.putString(_SortOrder, IFileProvider.SortOrder.Ascending.name());
-    // }
-    // } else if (menuItemId ==
-    // R.id.afc_filechooser_activity_menuitem_sort_by_size) {
-    // if (lastSortType == IFileProvider.SortType.SortBySize)
-    // editor.putString(_SortOrder, lastSortAscending ?
-    // IFileProvider.SortOrder.Descending.name()
-    // : IFileProvider.SortOrder.Ascending.name());
-    // else {
-    // editor.putString(_SortType, IFileProvider.SortType.SortBySize.name());
-    // editor.putString(_SortOrder, IFileProvider.SortOrder.Ascending.name());
-    // }
-    // } else if (menuItemId ==
-    // R.id.afc_filechooser_activity_menuitem_sort_by_date) {
-    // if (lastSortType == IFileProvider.SortType.SortByDate)
-    // editor.putString(_SortOrder, lastSortAscending ?
-    // IFileProvider.SortOrder.Descending.name()
-    // : IFileProvider.SortOrder.Ascending.name());
-    // else {
-    // editor.putString(_SortType, IFileProvider.SortType.SortByDate.name());
-    // editor.putString(_SortOrder, IFileProvider.SortOrder.Ascending.name());
-    // }
-    // }
-    //
-    // editor.commit();
-    //
-    // /*
-    // * Re-sort the listview by re-loading current location; NOTE: re-sort
-    // * the adapter does not repaint the listview, even if we call
-    // * notifyDataSetChanged(), invalidateViews()...
-    // */
-    // try {
-    // mFileProvider.setSortType(IFileProvider.SortType.valueOf(mPrefs.getString(_SortType,
-    // IFileProvider.SortType.SortByName.name())));
-    // mFileProvider.setSortOrder(IFileProvider.SortOrder.valueOf(mPrefs.getString(_SortOrder,
-    // IFileProvider.SortOrder.Ascending.name())));
-    // } catch (Exception e) {
-    // // TODO
-    // }
-    // setLocation(getLocation(), null);
-    // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-    // ActivityCompat.invalidateOptionsMenu(this);
-    // }// doResortFileList()
 
     /**
      * Show a dialog for sorting options and resort file list after user
@@ -1175,6 +1095,33 @@ public class FileChooserActivity extends Activity {
         }.execute();// new LoadingDialog()
     }// setLocation()
 
+    /**
+     * Goes to a specified location.
+     * 
+     * @param dir
+     *            a directory, of course.
+     * @return {@code true} if {@code dir} <b><i>can</i></b> be browsed to.
+     * @since v4.3 beta
+     */
+    private boolean goTo(final IFile dir) {
+        if (!(dir instanceof LocalFile) || dir.equalsToPath(getLocation()))
+            return false;
+
+        setLocation(dir, new TaskListener() {
+
+            IFile mLastPath = getLocation();
+
+            @Override
+            public void onFinish(boolean ok, Object any) {
+                if (ok) {
+                    mHistory.truncateAfter(mLastPath);
+                    mHistory.push(dir);
+                }
+            }
+        });
+        return true;
+    }// goTo()
+
     private void createLocationButtons(IFile path) {
         mViewLocations.setTag(path);
         mViewLocations.removeAllViews();
@@ -1297,18 +1244,8 @@ public class FileChooserActivity extends Activity {
 
         @Override
         public void onClick(View v) {
-            IFile path = (IFile) v.getTag();
-            if (!getLocation().equals(path)) {
-                final IFile _lastPath = getLocation();
-                setLocation(path, new TaskListener() {
-
-                    @Override
-                    public void onFinish(boolean ok, Object any) {
-                        if (ok)
-                            mHistory.push(_lastPath, getLocation());
-                    }
-                });// setLocation()
-            }
+            if (v.getTag() instanceof IFile)
+                goTo((IFile) v.getTag());
         }
     };// mBtnLocationOnClickListener
 
@@ -1355,6 +1292,32 @@ public class FileChooserActivity extends Activity {
             }
         }
     };// mBtnGoForwardOnClickListener
+
+    private final View.OnLongClickListener mBtnGoBackForwardOnLongClickListener = new View.OnLongClickListener() {
+
+        @Override
+        public boolean onLongClick(View v) {
+            ViewFilesContextMenuUtils.doShowHistoryContents(FileChooserActivity.this, mFileProvider, mHistory,
+                    getLocation(), new TaskListener() {
+
+                        @Override
+                        public void onFinish(boolean ok, Object any) {
+                            if (any instanceof IFile) {
+                                setLocation((IFile) any, new TaskListener() {
+
+                                    @Override
+                                    public void onFinish(boolean ok, Object any) {
+                                        if (ok)
+                                            mHistory.notifyHistoryChanged();
+                                    }
+                                });
+                            } else if (mHistory.isEmpty())
+                                mHistory.push(getLocation());
+                        }
+                    });
+            return false;
+        }
+    };// mBtnGoBackForwardOnLongClickListener
 
     private final TextView.OnEditorActionListener mTxtFilenameOnEditorActionListener = new TextView.OnEditorActionListener() {
 
@@ -1445,15 +1408,7 @@ public class FileChooserActivity extends Activity {
 
                 IFileDataModel data = (IFileDataModel) o;
                 if (data.getFile().isDirectory()) {
-                    final IFile _lastPath = getLocation();
-                    setLocation(data.getFile(), new TaskListener() {
-
-                        @Override
-                        public void onFinish(boolean ok, Object any) {
-                            if (ok)
-                                mHistory.push(_lastPath, getLocation());
-                        }
-                    });
+                    goTo(data.getFile());
                 } else {
                     if (mIsSaveDialog)
                         mTxtSaveas.setText(data.getFile().getName());

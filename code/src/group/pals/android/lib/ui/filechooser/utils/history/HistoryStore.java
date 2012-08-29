@@ -50,6 +50,30 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
     }
 
     @Override
+    public void push(A newItem) {
+        if (newItem == null)
+            return;
+
+        if (!mHistoryList.isEmpty() && mHistoryList.indexOf(newItem) == mHistoryList.size() - 1)
+            return;
+
+        mHistoryList.add(newItem);
+        notifyHistoryChanged();
+    }// push()
+
+    @Override
+    public void truncateAfter(A item) {
+        if (item == null)
+            return;
+
+        int idx = mHistoryList.indexOf(item);
+        if (idx >= 0 && idx < mHistoryList.size() - 1) {
+            mHistoryList.subList(idx + 1, mHistoryList.size()).clear();
+            notifyHistoryChanged();
+        }
+    }// truncateAfter()
+
+    @Override
     public void push(A currentItem, A newItem) {
         int idx = currentItem == null ? -1 : mHistoryList.indexOf(currentItem);
         if (idx < 0 || idx == mHistoryList.size() - 1)
@@ -117,6 +141,22 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
         if (idx >= 0 && idx < mHistoryList.size() - 1)
             return mHistoryList.get(idx + 1);
         return null;
+    }
+
+    @Override
+    public ArrayList<A> items() {
+        return (ArrayList<A>) mHistoryList.clone();
+    }// items()
+
+    @Override
+    public boolean isEmpty() {
+        return mHistoryList.isEmpty();
+    }
+
+    @Override
+    public void clear() {
+        mHistoryList.clear();
+        notifyHistoryChanged();
     }
 
     @Override

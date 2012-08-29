@@ -155,4 +155,12 @@ public interface IFile extends Parcelable {
      * @since v4.0 beta
      */
     boolean equalsToPath(IFile file);
+
+    /**
+     * Clones an instance of this file.
+     * 
+     * @return {@link IFile}
+     * @since v4.3 beta
+     */
+    IFile clone();
 }

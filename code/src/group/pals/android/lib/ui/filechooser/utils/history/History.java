@@ -16,6 +16,8 @@
 
 package group.pals.android.lib.ui.filechooser.utils.history;
 
+import java.util.ArrayList;
+
 import android.os.Parcelable;
 
 /**
@@ -30,6 +32,24 @@ import android.os.Parcelable;
 public interface History<A> extends Parcelable {
 
     /**
+     * Pushes {@code newItem} to the history. If the top item is same as this
+     * one, then does nothing.
+     * 
+     * @param newItem
+     *            the new item
+     */
+    void push(A newItem);
+
+    /**
+     * Finds {@code item} and if it exists, removes all items after it.
+     * 
+     * @param item
+     *            {@link A}
+     * @since v4.3 beta
+     */
+    void truncateAfter(A item);
+
+    /**
      * Pushes new item to the history.
      * 
      * @param currentItem
@@ -39,6 +59,7 @@ public interface History<A> extends Parcelable {
      * @param newItem
      *            the new item
      */
+    @Deprecated
     void push(A currentItem, A newItem);
 
     /**
@@ -92,6 +113,29 @@ public interface History<A> extends Parcelable {
      * @return the next item, can be {@code null}
      */
     A nextOf(A a);
+
+    /**
+     * Retrieves all items in this history, in an <i>independent</i> list.
+     * 
+     * @return list of {@link A}.
+     * @since v4.3 beta
+     */
+    ArrayList<A> items();
+
+    /**
+     * Checks if the history is empty or not.
+     * 
+     * @return {@code true} if this history is empty, {@code false} otherwise.
+     * @since v4.3 beta
+     */
+    boolean isEmpty();
+
+    /**
+     * Clears this history.
+     * 
+     * @since v4.3 beta.
+     */
+    void clear();
 
     /**
      * Adds a {@link HistoryListener}

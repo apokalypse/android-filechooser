@@ -25,16 +25,17 @@ import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.LoadingDialog;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.GridView;
@@ -47,7 +48,7 @@ import android.widget.TextView;
  * @author Hai Bison
  * 
  */
-public class IFileAdapter extends ArrayAdapter<IFileDataModel> {
+public class IFileAdapter extends BaseAdapter {
 
     /**
      * Default short format for file time. Value = {@code "yyyy.MM.dd hh:mm a"}<br>
@@ -67,9 +68,11 @@ public class IFileAdapter extends ArrayAdapter<IFileDataModel> {
     public static String fileTimeShortFormat = _DefFileTimeShortFormat;
 
     private final Integer[] mAdvancedSelectionOptions;
-
-    private final boolean mIsMultiSelection;
     private final IFileProvider.FilterMode mFilterMode;
+
+    private List<IFileDataModel> mData;
+    private LayoutInflater mInflater;
+    private boolean mMultiSelection;
 
     /**
      * Creates new {@link IFileAdapter}
@@ -85,10 +88,10 @@ public class IFileAdapter extends ArrayAdapter<IFileDataModel> {
      */
     public IFileAdapter(Context context, List<IFileDataModel> objects, IFileProvider.FilterMode filterMode,
             boolean multiSelection) {
-        super(context, R.layout.afc_file_item, objects);
-
+        mData = objects;
+        mInflater = LayoutInflater.from(context);
         mFilterMode = filterMode;
-        mIsMultiSelection = multiSelection;
+        mMultiSelection = multiSelection;
 
         switch (mFilterMode) {
         case DirectoriesOnly:
@@ -103,6 +106,114 @@ public class IFileAdapter extends ArrayAdapter<IFileDataModel> {
             break;// FilesAndDirectories
         }
     }// IFileAdapter
+
+    @Override
+    public int getCount() {
+        return mData != null ? mData.size() : 0;
+    }
+
+    @Override
+    public IFileDataModel getItem(int position) {
+        return mData != null ? mData.get(position) : null;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    public boolean isMultiSelection() {
+        return mMultiSelection;
+    }
+
+    /**
+     * Sets multi-selection mode.<br>
+     * <b>Note:</b><br>
+     * 
+     * <li>If {@code v == true}, this method will also update adapter.</li>
+     * 
+     * <li>If {@code v == false}, this method will iterate all items, set their
+     * selection to {@code false}. So you should consider using a
+     * {@link LoadingDialog} in UI. Since this recommendation, this method will
+     * not update adapter, you must do it yourself.</li>
+     * 
+     * @param v
+     *            {@code true} if multi-selection is enabled
+     */
+    public void setMultiSelection(boolean v) {
+        if (mMultiSelection != v) {
+            mMultiSelection = v;
+            if (mMultiSelection) {
+                notifyDataSetChanged();
+            } else {
+                if (getCount() > 0) {
+                    for (int i = 0; i < mData.size(); i++)
+                        mData.get(i).setSelected(false);
+                }
+            }
+        }
+    }// setMultiSelection()
+
+    /**
+     * Gets selected items.
+     * 
+     * @return list of selected items, can be empty but never be {@code null}
+     */
+    public ArrayList<IFileDataModel> getSelectedItems() {
+        ArrayList<IFileDataModel> res = new ArrayList<IFileDataModel>();
+
+        for (int i = 0; i < getCount(); i++)
+            if (getItem(i).isSelected())
+                res.add(getItem(i));
+
+        return res;
+    }// getSelectedItems()
+
+    /**
+     * Adds an {@code item}. <b>Note:</b> this does not notify the adapter that
+     * data set has been changed.
+     * 
+     * @param item
+     *            {@link IFileDataModel}
+     */
+    public void add(IFileDataModel item) {
+        if (mData != null)
+            mData.add(item);
+    }
+
+    /**
+     * Removes {@code item}. <b>Note:</b> this does not notify the adapter that
+     * data set has been changed.
+     * 
+     * @param item
+     *            {@link IFileDataModel}
+     */
+    public void remove(IFileDataModel item) {
+        if (mData != null) {
+            mData.remove(item);
+        }
+    }// remove()
+
+    /**
+     * Removes all {@code items}. <b>Note:</b> this does not notify the adapter
+     * that data set has been changed.
+     * 
+     * @param items
+     *            the items you want to remove.
+     */
+    public void removeAll(Collection<IFileDataModel> items) {
+        if (mData != null)
+            mData.removeAll(items);
+    }// removeAll()
+
+    /**
+     * Clears all items. <b>Note:</b> this does not notify the adapter that data
+     * set has been changed.
+     */
+    public void clear() {
+        if (mData != null)
+            mData.clear();
+    }// clear()
 
     /**
      * The "view holder"
@@ -124,8 +235,7 @@ public class IFileAdapter extends ArrayAdapter<IFileDataModel> {
         Bag bag;
 
         if (convertView == null) {
-            LayoutInflater layoutInflater = ((Activity) getContext()).getLayoutInflater();
-            convertView = layoutInflater.inflate(R.layout.afc_file_item, null);
+            convertView = mInflater.inflate(R.layout.afc_file_item, null);
 
             bag = new Bag();
             bag.txtFileName = (TextView) convertView.findViewById(R.id.afc_text_view_filename);
@@ -193,7 +303,7 @@ public class IFileAdapter extends ArrayAdapter<IFileDataModel> {
         }
 
         // checkbox
-        if (mIsMultiSelection) {
+        if (mMultiSelection) {
             if (mFilterMode == FilterMode.FilesOnly && file.isDirectory()) {
                 bag.checkboxSelection.setVisibility(View.GONE);
             } else {

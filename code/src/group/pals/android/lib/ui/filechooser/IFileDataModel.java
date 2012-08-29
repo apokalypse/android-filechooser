@@ -64,6 +64,7 @@ public class IFileDataModel {
      * @param mSelected
      */
     public void setSelected(boolean selected) {
-        this.mSelected = selected;
+        if (mSelected != selected)
+            mSelected = selected;
     }
 }
