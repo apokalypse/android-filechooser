@@ -133,10 +133,10 @@ public class FileChooserActivity extends Activity {
 
     /**
      * If you use a theme dialog, set value of this key to {@code true}. This is
-     *  to let the activity determine best dimension for different screen sizes.<br>
+     * to let the activity determine best dimension for different screen sizes.<br>
      * <br>
      * Default value is {@code false}.
-     *
+     * 
      * @since v4.3 beta
      */
     public static final String _UseThemeDialog = _ClassName + ".use_theme_dialog";
