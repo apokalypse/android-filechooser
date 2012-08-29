@@ -17,6 +17,7 @@
 package group.pals.android.lib.ui.filechooser.services;
 
 import group.pals.android.lib.ui.filechooser.io.IFile;
+import group.pals.android.lib.ui.filechooser.io.IFileFilter;
 import group.pals.android.lib.ui.filechooser.io.LocalFile;
 import group.pals.android.lib.ui.filechooser.utils.FileComparator;
 
@@ -62,70 +63,47 @@ public class LocalFileProvider extends FileProviderService {
     }// defaultPath()
 
     @Override
-    public IFile[] listFiles(IFile dir, final boolean[] fHasMoreFiles) throws Exception {
-        List<IFile> files = listAllFiles(dir, fHasMoreFiles);
+    public IFile[] listFiles(IFile dir, final boolean[] hasMoreFiles) throws Exception {
+        if (!dir.canRead())
+            return null;
+
+        List<IFile> files = listAllFiles(dir, hasMoreFiles);
         if (files == null)
             return null;
-        return files.toArray(new IFile[] {});
+        return files.toArray(new IFile[files.size()]);
     }// listFiles()
 
     @Override
-    public List<IFile> listAllFiles(IFile dir, final boolean[] fHasMoreFiles) throws Exception {
-        if (!(dir instanceof File))
+    public List<IFile> listAllFiles(IFile dir, final boolean[] hasMoreFiles) throws Exception {
+        if (!(dir instanceof File) || !dir.canRead())
             return null;
 
-        if (fHasMoreFiles != null && fHasMoreFiles.length > 0)
-            fHasMoreFiles[0] = false;
+        if (hasMoreFiles != null && hasMoreFiles.length > 0)
+            hasMoreFiles[0] = false;
 
-        final List<IFile> fFiles = new ArrayList<IFile>();
+        final List<IFile> _files = new ArrayList<IFile>();
 
         try {
             File[] files = ((File) dir).listFiles(new FileFilter() {
 
                 @Override
                 public boolean accept(File pathname) {
-                    if (!isDisplayHiddenFiles() && pathname.getName().startsWith("."))
+                    LocalFile file = new LocalFile(pathname);
+                    if (!LocalFileProvider.this.accept(file))
                         return false;
-                    if (fFiles.size() >= getMaxFileCount()) {
-                        if (fHasMoreFiles != null && fHasMoreFiles.length > 0)
-                            fHasMoreFiles[0] = true;
+                    if (_files.size() >= getMaxFileCount()) {
+                        if (hasMoreFiles != null && hasMoreFiles.length > 0)
+                            hasMoreFiles[0] = true;
                         return false;
                     }
-
-                    switch (getFilterMode()) {
-                    case FilesOnly:
-                        if (getRegexFilenameFilter() != null && pathname.isFile()) {
-                            if (pathname.getName().matches(getRegexFilenameFilter())) {
-                                fFiles.add(new LocalFile(pathname));
-                            }
-                        } else
-                            fFiles.add(new LocalFile(pathname));
-
-                        return false;// FilesOnly
-
-                    case DirectoriesOnly:
-                        boolean ok = pathname.isDirectory();
-                        if (ok)
-                            fFiles.add(new LocalFile(pathname));
-
-                        return false;// DirectoriesOnly
-
-                    default:
-                        if (getRegexFilenameFilter() != null && pathname.isFile()) {
-                            if (pathname.getName().matches(getRegexFilenameFilter())) {
-                                fFiles.add(new LocalFile(pathname));
-                            }
-                        } else
-                            fFiles.add(new LocalFile(pathname));
-
-                        return false;// default
-                    }// switch
+                    _files.add(file);
+                    return false;
                 }// accept()
             });// dir.listFiles()
 
             if (files != null) {
-                Collections.sort(fFiles, new FileComparator(getSortType(), getSortOrder()));
-                return fFiles;
+                Collections.sort(_files, new FileComparator(getSortType(), getSortOrder()));
+                return _files;
             }
 
             return null;
@@ -136,26 +114,72 @@ public class LocalFileProvider extends FileProviderService {
 
     @Override
     public List<IFile> listAllFiles(IFile dir) throws Exception {
-        if (!(dir instanceof File))
+        if (!(dir instanceof File) || !dir.canRead())
             return null;
 
         try {
-            final List<IFile> fFiles = new ArrayList<IFile>();
+            final List<IFile> _files = new ArrayList<IFile>();
 
             File[] files = ((File) dir).listFiles(new FileFilter() {
 
                 @Override
                 public boolean accept(File pathname) {
-                    fFiles.add(new LocalFile(pathname));
+                    _files.add(new LocalFile(pathname));
                     return false;
                 }
             });
 
             if (files != null)
-                return fFiles;
+                return _files;
             return null;
         } catch (Throwable t) {
             return null;
         }
     }// listAllFiles()
+
+    @Override
+    public List<IFile> listAllFiles(IFile dir, final IFileFilter filter) {
+        if (!(dir instanceof File))
+            return null;
+
+        final List<IFile> _res = new ArrayList<IFile>();
+        try {
+            File[] files = ((File) dir).listFiles(new FileFilter() {
+
+                @Override
+                public boolean accept(File pathname) {
+                    LocalFile file = new LocalFile(pathname);
+                    if (filter == null || filter.accept(file))
+                        _res.add(file);
+                    return false;
+                }
+            });
+            if (files != null)
+                return _res;
+            return null;
+        } catch (Throwable t) {
+            return null;
+        }
+    }// listAllFiles()
+
+    @Override
+    public boolean accept(IFile pathname) {
+        if (!isDisplayHiddenFiles() && pathname.getName().startsWith("."))
+            return false;
+
+        switch (getFilterMode()) {
+        case FilesOnly:
+            if (getRegexFilenameFilter() != null && pathname.isFile())
+                return pathname.getName().matches(getRegexFilenameFilter());
+            return true;
+
+        case DirectoriesOnly:
+            return pathname.isDirectory();
+
+        default:
+            if (getRegexFilenameFilter() != null && pathname.isFile())
+                return pathname.getName().matches(getRegexFilenameFilter());
+            return true;
+        }// switch
+    }// accept()
 }

@@ -17,6 +17,7 @@
 package group.pals.android.lib.ui.filechooser;
 
 import group.pals.android.lib.ui.filechooser.io.IFile;
+import group.pals.android.lib.ui.filechooser.io.IFileFilter;
 import group.pals.android.lib.ui.filechooser.io.LocalFile;
 import group.pals.android.lib.ui.filechooser.prefs.DisplayPrefs;
 import group.pals.android.lib.ui.filechooser.services.FileProviderService;
@@ -27,6 +28,7 @@ import group.pals.android.lib.ui.filechooser.services.IFileProvider.SortType;
 import group.pals.android.lib.ui.filechooser.services.LocalFileProvider;
 import group.pals.android.lib.ui.filechooser.utils.ActivityCompat;
 import group.pals.android.lib.ui.filechooser.utils.E;
+import group.pals.android.lib.ui.filechooser.utils.FileComparator;
 import group.pals.android.lib.ui.filechooser.utils.Ui;
 import group.pals.android.lib.ui.filechooser.utils.Utils;
 import group.pals.android.lib.ui.filechooser.utils.history.History;
@@ -40,6 +42,7 @@ import group.pals.android.lib.ui.filechooser.utils.ui.ViewFilesContextMenuUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import android.Manifest;
@@ -934,7 +937,7 @@ public class FileChooserActivity extends Activity {
                             protected Object doInBackground(Void... arg0) {
                                 while (mThread.isAlive()) {
                                     try {
-                                        Thread.sleep(500);
+                                        mThread.join(DisplayPrefs._DelayTimeWaitingThreads);
                                     } catch (InterruptedException e) {
                                         mThread.interrupt();
                                     }
@@ -1022,34 +1025,63 @@ public class FileChooserActivity extends Activity {
      *            {@link TaskListener}
      */
     private void setLocation(final IFile path, final TaskListener listener) {
-        // TODO: let the user to be able to cancel the task
-        new LoadingDialog(this, R.string.afc_msg_loading, false) {
+        new LoadingDialog(this, R.string.afc_msg_loading, true) {
 
             // IFile[] files = new IFile[0];
             List<IFile> files;
-            boolean hasMoreFiles[] = { false };
+            boolean hasMoreFiles = false;
             int shouldBeSelectedIdx = -1;
-            final String _lastPath = getLocation() != null ? getLocation().getAbsolutePath() : null;
+            /**
+             * Used to focus last directory on list view.
+             */
+            String mLastPath = getLocation() != null ? getLocation().getAbsolutePath() : null;
 
             @Override
             protected Object doInBackground(Void... params) {
                 try {
-                    files = mFileProvider.listAllFiles(path, hasMoreFiles);
-                    if (files != null && _lastPath != null && _lastPath.length() >= path.getAbsolutePath().length()) {
-                        for (int i = 0; i < files.size(); i++) {
-                            IFile f = files.get(i);
-                            if (f.isDirectory() && _lastPath.startsWith(f.getAbsolutePath())) {
-                                shouldBeSelectedIdx = i;
-                                break;
+                    if (path.isDirectory() && path.canRead()) {
+                        files = new ArrayList<IFile>();
+                        mFileProvider.listAllFiles(path, new IFileFilter() {
+
+                            @Override
+                            public boolean accept(IFile pathname) {
+                                if (mFileProvider.accept(pathname)) {
+                                    if (files.size() < mFileProvider.getMaxFileCount())
+                                        files.add(pathname);
+                                    else
+                                        hasMoreFiles = true;
+                                }
+                                return false;
+                            }// accept()
+                        });
+                    } else
+                        files = null;
+
+                    if (files != null) {
+                        Collections.sort(files,
+                                new FileComparator(mFileProvider.getSortType(), mFileProvider.getSortOrder()));
+                        if (mLastPath != null && mLastPath.length() >= path.getAbsolutePath().length()) {
+                            for (int i = 0; i < files.size(); i++) {
+                                IFile f = files.get(i);
+                                if (f.isDirectory() && mLastPath.startsWith(f.getAbsolutePath())) {
+                                    shouldBeSelectedIdx = i;
+                                    break;
+                                }
                             }
                         }
-                    }
+                    }// if files != null
                 } catch (Throwable t) {
                     setLastException(t);
                     cancel(false);
                 }
                 return null;
             }// doInBackground()
+
+            @Override
+            protected void onCancelled() {
+                super.onCancelled();
+                Dlg.toast(FileChooserActivity.this, R.string.afc_msg_cancelled, Dlg.LENGTH_SHORT);
+            }// onCancelled()
 
             @Override
             protected void onPostExecute(Object result) {
@@ -1072,8 +1104,8 @@ public class FileChooserActivity extends Activity {
 
                 // update footers
 
-                mFooterView.setVisibility(hasMoreFiles[0] || mFileAdapter.isEmpty() ? View.VISIBLE : View.GONE);
-                if (hasMoreFiles[0])
+                mFooterView.setVisibility(hasMoreFiles || mFileAdapter.isEmpty() ? View.VISIBLE : View.GONE);
+                if (hasMoreFiles)
                     mFooterView.setText(getString(R.string.afc_pmsg_max_file_count_allowed,
                             mFileProvider.getMaxFileCount()));
                 else if (mFileAdapter.isEmpty())

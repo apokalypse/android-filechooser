@@ -31,6 +31,12 @@ import android.content.Context;
 public class DisplayPrefs extends Prefs {
 
     /**
+     * Delay time for waiting for other threads inside a thread... This is in
+     * milliseconds.
+     */
+    public static final int _DelayTimeWaitingThreads = 10;
+
+    /**
      * Gets view type.
      * 
      * @param c

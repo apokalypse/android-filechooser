@@ -163,4 +163,12 @@ public interface IFile extends Parcelable {
      * @since v4.3 beta
      */
     IFile clone();
+
+    /**
+     * Indicates whether the current context is allowed to read from this file.
+     * 
+     * @return {@code true} if this file can be read, {@code false} otherwise.
+     * @since v4.3 beta
+     */
+    boolean canRead();
 }

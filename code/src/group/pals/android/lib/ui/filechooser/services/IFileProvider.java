@@ -17,6 +17,7 @@
 package group.pals.android.lib.ui.filechooser.services;
 
 import group.pals.android.lib.ui.filechooser.io.IFile;
+import group.pals.android.lib.ui.filechooser.io.IFileFilter;
 
 import java.util.List;
 
@@ -256,4 +257,31 @@ public interface IFileProvider {
      * @since v4.0 beta
      */
     List<IFile> listAllFiles(IFile dir) throws Exception;
+
+    /**
+     * Gets a list of the files in the directory represented by {@code dir}.
+     * This list is then filtered through a {@link IFileFilter} and matching
+     * files are returned as a list of files. Returns {@code null} if
+     * {@code dir} is not a directory. If {@code filter} is {@code null} then
+     * all files match.
+     * 
+     * @param dir
+     *            an {@link IFile}
+     * @param filter
+     *            the filter to match names against, may be {@code null}.
+     * @return a list of files or {@code null}.
+     * @since v4.3 beta
+     */
+    List<IFile> listAllFiles(IFile dir, IFileFilter filter);
+
+    /**
+     * Filters {@code pathname} based on this file provider configurations.
+     * 
+     * @param pathname
+     *            {@link IFile}
+     * @return {@code true} if {@code pathname} passed all filter
+     *         configurations, {@code false} otherwise
+     * @since v4.3 beta
+     */
+    boolean accept(IFile pathname);
 }
