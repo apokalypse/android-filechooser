@@ -1225,6 +1225,12 @@ public class FileChooserActivity extends Activity {
      *            list of {@link IFile}
      */
     private void doFinish(ArrayList<IFile> files) {
+        if (files == null || files.isEmpty()) {
+            setResult(RESULT_CANCELED);
+            finish();
+            return;
+        }
+
         Intent intent = new Intent();
 
         // set results
@@ -1236,7 +1242,7 @@ public class FileChooserActivity extends Activity {
 
         setResult(RESULT_OK, intent);
         finish();
-    }
+    }// doFinish()
 
     /**********************************************************
      * BUTTON LISTENERS

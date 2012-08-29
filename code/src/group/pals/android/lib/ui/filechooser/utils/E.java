@@ -19,6 +19,7 @@ package group.pals.android.lib.ui.filechooser.utils;
 import group.pals.android.lib.ui.filechooser.utils.ui.Dlg;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 
 /**
  * Something funny :-)
@@ -44,6 +45,7 @@ public class E {
         }
 
         AlertDialog dlg = Dlg.newDlg(context);
+        dlg.setButton(DialogInterface.BUTTON_NEGATIVE, null, (DialogInterface.OnClickListener) null);
         dlg.setTitle("…");
         dlg.setMessage(msg);
         dlg.show();
