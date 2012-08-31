@@ -182,7 +182,9 @@ public class MainActivity extends Activity {
                         break;// _MsgProgress
 
                     case _MsgDone:
-                        Toast.makeText(MainActivity.this, "Done", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this,
+                                String.format("Huge-dir has been created at \"%s\"", _dir.getAbsolutePath()),
+                                Toast.LENGTH_LONG).show();
                         break;// _MsgDone
                     }
                 }
