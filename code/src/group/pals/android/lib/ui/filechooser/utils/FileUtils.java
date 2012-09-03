@@ -38,9 +38,12 @@ public class FileUtils {
     public static int getResIcon(IFile file) {
         if (file == null || !file.exists())
             return android.R.drawable.ic_delete;
-        if (file.isFile())
+
+        if (file.isFile()) {
+            if (file.getName().matches(MimeTypes._RegexFileTypeAudios))
+                return R.drawable.afc_file_audio;
             return R.drawable.afc_file;
-        else if (file.isDirectory())
+        } else if (file.isDirectory())
             return R.drawable.afc_folder;
         return android.R.drawable.ic_delete;
     }// getResIcon()

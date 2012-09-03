@@ -21,6 +21,7 @@ import group.pals.android.lib.ui.filechooser.io.IFileFilter;
 import group.pals.android.lib.ui.filechooser.services.IFileProvider;
 import group.pals.android.lib.ui.filechooser.services.IFileProvider.FilterMode;
 import group.pals.android.lib.ui.filechooser.utils.Converter;
+import group.pals.android.lib.ui.filechooser.utils.FileUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.LoadingDialog;
 
@@ -277,10 +278,7 @@ public class IFileAdapter extends BaseAdapter {
         }
 
         // image icon
-        if (file.isDirectory())
-            bag.imageIcon.setImageResource(R.drawable.afc_folder);
-        else
-            bag.imageIcon.setImageResource(R.drawable.afc_file);
+        bag.imageIcon.setImageResource(FileUtils.getResIcon(file));
 
         // filename
         bag.txtFileName.setText(file.getName());
