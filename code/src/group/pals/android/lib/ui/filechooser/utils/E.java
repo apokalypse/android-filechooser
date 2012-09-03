@@ -39,7 +39,7 @@ public class E {
         String msg = null;
         try {
             msg = String.format("Hi pal, you've found Easter egg  :-)\n\n" + "%s v%s\n" + "…by Hai Bison\n\n"
-                    + "http://www.haibison.com\n\n" + "Hope you enjoy this library!", "android-filechooser", "4.4");
+                    + "http://www.haibison.com\n\n" + "Hope you enjoy this library!", "android-filechooser", "4.5 beta");
         } catch (Exception e) {
             msg = "Oops… You've found a broken Easter egg, try again later  :-(";
         }
