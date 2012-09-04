@@ -119,6 +119,9 @@ public class MainActivity extends Activity {
     private static final int _DialogTheme = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH ? android.R.style.Theme_DeviceDefault_Dialog
             : (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ? android.R.style.Theme_Holo_Dialog
                     : android.R.style.Theme_Dialog);
+    private static final int _DarkTheme = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH ? android.R.style.Theme_DeviceDefault
+            : (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ? android.R.style.Theme_Holo
+                    : android.R.style.Theme);
 
     private final View.OnClickListener mBtnFileChooserHandlers = new View.OnClickListener() {
 
@@ -126,13 +129,23 @@ public class MainActivity extends Activity {
         public void onClick(View v) {
             Intent intent = new Intent(MainActivity.this, FileChooserActivity.class);
 
-            // multi-selection
-            intent.putExtra(FileChooserActivity._MultiSelection, mChkMultiSelection.isChecked());
             // theme
             if (mChkDialogTheme.isChecked()) {
                 intent.putExtra(FileChooserActivity._UseThemeDialog, true);
                 intent.putExtra(FileChooserActivity._Theme, _DialogTheme);
+            } else
+                intent.putExtra(FileChooserActivity._Theme, _DarkTheme);
+
+            // save as...
+            if (v.getId() == R.id.activity_main_button_save_as) {
+                intent.putExtra(FileChooserActivity._SaveDialog, true);
+                intent.putExtra(FileChooserActivity._DefaultFilename, "hi there  :-)");
+                startActivityForResult(intent, _ReqSaveAs);
+                return;
             }
+
+            // multi-selection
+            intent.putExtra(FileChooserActivity._MultiSelection, mChkMultiSelection.isChecked());
 
             // filter-mode
             if (v.getId() == R.id.activity_main_button_choose_files)
@@ -141,12 +154,6 @@ public class MainActivity extends Activity {
                 intent.putExtra(FileChooserActivity._FilterMode, IFileProvider.FilterMode.DirectoriesOnly);
             else if (v.getId() == R.id.activity_main_button_choose_files_and_dirs)
                 intent.putExtra(FileChooserActivity._FilterMode, IFileProvider.FilterMode.FilesAndDirectories);
-            else if (v.getId() == R.id.activity_main_button_save_as) {
-                intent.putExtra(FileChooserActivity._SaveDialog, true);
-                intent.putExtra(FileChooserActivity._DefaultFilename, "filename  :-)");
-                startActivityForResult(intent, _ReqSaveAs);
-                return;
-            }
 
             startActivityForResult(intent, _ReqChooseFile);
         }// onClick()
