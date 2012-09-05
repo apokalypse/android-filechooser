@@ -99,7 +99,7 @@ public abstract class LoadingDialog extends AsyncTask<Void, Void, Object> {
                 if (!mFinished) {
                     try {
                         /*
-                         * sometime the activity has been mFinished before we
+                         * sometime the activity has been finished before we
                          * show this dialog, it will raise error
                          */
                         mDialog.show();
@@ -114,7 +114,7 @@ public abstract class LoadingDialog extends AsyncTask<Void, Void, Object> {
 
     /**
      * If you override this method, you must call
-     * {@code super.onPostExecute(result)} at very first of the method.
+     * {@code super.onPostExecute(result)} at the entry point of the method.
      */
     protected void onPostExecute(Object result) {
         doFinish();
@@ -122,7 +122,7 @@ public abstract class LoadingDialog extends AsyncTask<Void, Void, Object> {
 
     /**
      * If you override this method, you must call {@code super.onCancelled()} at
-     * very first of the method.
+     * the entry point of the method.
      */
     protected void onCancelled() {
         doFinish();
@@ -133,7 +133,7 @@ public abstract class LoadingDialog extends AsyncTask<Void, Void, Object> {
         mFinished = true;
         try {
             /*
-             * sometime the activity has been mFinished before we dismiss this
+             * sometime the activity has been finished before we dismiss this
              * dialog, it will raise error
              */
             mDialog.dismiss();
@@ -146,7 +146,7 @@ public abstract class LoadingDialog extends AsyncTask<Void, Void, Object> {
     /**
      * Gets the delay time before showing the dialog.
      * 
-     * @return the mDelayTime
+     * @return the delay time
      */
     public int getDelayTime() {
         return mDelayTime;
@@ -160,7 +160,7 @@ public abstract class LoadingDialog extends AsyncTask<Void, Void, Object> {
      * @return {@link LoadingDialog}
      */
     public LoadingDialog setDelayTime(int delayTime) {
-        this.mDelayTime = delayTime >= 0 ? delayTime : 0;
+        mDelayTime = delayTime >= 0 ? delayTime : 0;
         return this;
     }
 

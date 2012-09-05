@@ -45,8 +45,7 @@ import android.widget.ListView;
 public class ViewFilesContextMenuUtils {
 
     /**
-     * Shows history contents to the user. He can remove item(s) or clear all of
-     * them.
+     * Shows history contents to the user. He can clear all items.
      * 
      * @param context
      *            {@link Context}
@@ -57,7 +56,7 @@ public class ViewFilesContextMenuUtils {
      * @param currentLocation
      *            current location, will not be shown.
      * @param listener
-     *            will be notified after the user closed the dialog, of when the
+     *            will be notified after the user closed the dialog, or when the
      *            user selects an item.
      */
     public static void doShowHistoryContents(final Context context, final IFileProvider fileProvider,

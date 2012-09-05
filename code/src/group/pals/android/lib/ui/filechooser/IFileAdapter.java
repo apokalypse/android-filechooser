@@ -131,12 +131,12 @@ public class IFileAdapter extends BaseAdapter {
      * Sets multi-selection mode.<br>
      * <b>Note:</b><br>
      * 
-     * <li>If {@code v == true}, this method will also update adapter.</li>
+     * <li>If {@code v = true}, this method will also update adapter.</li>
      * 
-     * <li>If {@code v == false}, this method will iterate all items, set their
+     * <li>If {@code v = false}, this method will iterate all items, set their
      * selection to {@code false}. So you should consider using a
-     * {@link LoadingDialog} in UI. Since this recommendation, this method will
-     * not update adapter, you must do it yourself.</li>
+     * {@link LoadingDialog}. This will not update adapter, you must do it
+     * yourself.</li>
      * 
      * @param v
      *            {@code true} if multi-selection is enabled
@@ -262,13 +262,13 @@ public class IFileAdapter extends BaseAdapter {
      *            the parent view
      * @param bag
      *            the "view holder", see {@link Bag}
-     * @param fData
+     * @param data
      *            {@link IFileDataModel}
      * @param file
      *            {@link IFile}
      * @since v2.0 alpha
      */
-    private void updateView(ViewGroup parent, Bag bag, final IFileDataModel fData, IFile file) {
+    private void updateView(ViewGroup parent, Bag bag, final IFileDataModel data, IFile file) {
         // if parent is list view, enable multiple lines
         boolean useSingleLine = parent instanceof GridView;
         for (TextView tv : new TextView[] { bag.txtFileName, bag.txtFileInfo }) {
@@ -311,20 +311,20 @@ public class IFileAdapter extends BaseAdapter {
 
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        fData.setSelected(isChecked);
+                        data.setSelected(isChecked);
                     }
                 });
 
                 bag.checkboxSelection.setOnLongClickListener(mCheckboxSelectionOnLongClickListener);
 
-                bag.checkboxSelection.setChecked(fData.isSelected());
+                bag.checkboxSelection.setChecked(data.isSelected());
             }
         } else
             bag.checkboxSelection.setVisibility(View.GONE);
     }// updateView
 
-    // ==================
-    // INTERNAL UTILITIES
+    // =========
+    // UTILITIES
 
     /**
      * Selects all items.
@@ -378,7 +378,6 @@ public class IFileAdapter extends BaseAdapter {
 
         @Override
         public boolean onLongClick(final View view) {
-            // NOTE: expanded groups are all false
             ContextMenuUtils.showContextMenu(view.getContext(), 0, R.string.afc_title_advanced_selection,
                     mAdvancedSelectionOptions, new ContextMenuUtils.OnMenuItemClickListener() {
 

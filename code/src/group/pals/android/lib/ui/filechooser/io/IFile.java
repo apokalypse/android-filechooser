@@ -151,7 +151,7 @@ public interface IFile extends Parcelable {
      * 
      * @param file
      *            {@link IFile}
-     * @return {@code true} if this has same path name to {@code file}
+     * @return {@code true} if this has same path name as {@code file}
      * @since v4.0 beta
      */
     boolean equalsToPath(IFile file);

@@ -25,7 +25,7 @@ package group.pals.android.lib.ui.filechooser.utils.history;
 public interface HistoryFilter<A> {
 
     /**
-     * Filter item.
+     * Filters item.
      * 
      * @param item
      *            {@link A}

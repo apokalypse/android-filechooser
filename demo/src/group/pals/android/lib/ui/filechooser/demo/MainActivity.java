@@ -210,7 +210,7 @@ public class MainActivity extends Activity {
 
             mThread = new Thread() {
 
-                private static final int _Count = (int) 1e3;
+                private static final int _Count = (int) 2e3;
 
                 @Override
                 public void run() {

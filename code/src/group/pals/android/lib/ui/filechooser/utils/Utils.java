@@ -46,22 +46,22 @@ public class Utils {
     /**
      * Deletes a file or directory.
      * 
-     * @param fFile
+     * @param file
      *            {@link IFile}
-     * @param fFileProvider
+     * @param fileProvider
      *            {@link IFileProvider}
-     * @param fRecursive
+     * @param recursive
      *            if {@code true} and {@code file} is a directory, browses the
      *            directory and deletes all of its sub files
      * @return the thread which is deleting files
      */
-    public static Thread createDeleteFileThread(final IFile fFile, final IFileProvider fFileProvider,
-            final boolean fRecursive) {
+    public static Thread createDeleteFileThread(final IFile file, final IFileProvider fileProvider,
+            final boolean recursive) {
         return new Thread() {
 
             @Override
             public void run() {
-                deleteFile(fFile);
+                deleteFile(file);
             }// run()
 
             private void deleteFile(IFile file) {
@@ -74,13 +74,13 @@ public class Utils {
                 } else if (!file.isDirectory())
                     return;
 
-                if (!fRecursive) {
+                if (!recursive) {
                     file.delete();
                     return;
                 }
 
                 try {
-                    List<IFile> files = fFileProvider.listAllFiles(file);
+                    List<IFile> files = fileProvider.listAllFiles(file);
                     if (files == null) {
                         file.delete();
                         return;
@@ -93,7 +93,7 @@ public class Utils {
                         if (f.isFile())
                             f.delete();
                         else if (f.isDirectory()) {
-                            if (fRecursive)
+                            if (recursive)
                                 deleteFile(f);
                             else
                                 f.delete();

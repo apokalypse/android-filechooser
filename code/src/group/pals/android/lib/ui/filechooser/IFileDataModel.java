@@ -19,8 +19,7 @@ package group.pals.android.lib.ui.filechooser;
 import group.pals.android.lib.ui.filechooser.io.IFile;
 
 /**
- * This class is used to hold data ({@link IFile}) in
- * {@link android.widget.ArrayAdapter}
+ * This class is used to hold data ({@link IFile}) in {@link IFileAdapter}
  * 
  * @author Hai Bison
  * 
