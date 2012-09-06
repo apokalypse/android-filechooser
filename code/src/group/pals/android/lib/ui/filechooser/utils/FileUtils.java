@@ -46,6 +46,8 @@ public class FileUtils {
                 return R.drawable.afc_file_video;
             if (file.getName().matches(MimeTypes._RegexFileTypeImages))
                 return R.drawable.afc_file_image;
+            if (file.getName().matches(MimeTypes._RegexFileTypeCompressed))
+                return R.drawable.afc_file_compressed;
             return R.drawable.afc_file;
         } else if (file.isDirectory())
             return R.drawable.afc_folder;
