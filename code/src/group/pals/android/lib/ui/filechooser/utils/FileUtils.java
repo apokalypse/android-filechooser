@@ -42,6 +42,10 @@ public class FileUtils {
         if (file.isFile()) {
             if (file.getName().matches(MimeTypes._RegexFileTypeAudios))
                 return R.drawable.afc_file_audio;
+            if (file.getName().matches(MimeTypes._RegexFileTypeVideos))
+                return R.drawable.afc_file_video;
+            if (file.getName().matches(MimeTypes._RegexFileTypeImages))
+                return R.drawable.afc_file_image;
             return R.drawable.afc_file;
         } else if (file.isDirectory())
             return R.drawable.afc_folder;

@@ -17,10 +17,9 @@
    version="1.1"
    inkscape:version="0.48.1 r9760"
    sodipodi:docname="file.svg"
-   inkscape:export-filename="/media/truecrypt64/projs/android/library/android-filechooser/code/res/drawable-ldpi/afc_file.png"
+   inkscape:export-filename="/media/truecrypt64/projs/android/library/android-filechooser/code/res/drawable-ldpi/afc_file_image.png"
    inkscape:export-xdpi="45"
-   inkscape:export-ydpi="45"
-   style="display:inline">
+   inkscape:export-ydpi="45">
   <defs
      id="defs4">
     <linearGradient
@@ -154,8 +153,8 @@
        id="linearGradient5303"
        x1="12"
        y1="58.535717"
-       x2="41.928574"
-       y2="24.250002"
+       x2="41.928573"
+       y2="24.250001"
        gradientUnits="userSpaceOnUse"
        gradientTransform="translate(-0.1071438,-0.25000065)" />
     <linearGradient
@@ -165,8 +164,8 @@
        gradientUnits="userSpaceOnUse"
        x1="12"
        y1="58.535717"
-       x2="41.928574"
-       y2="24.250002"
+       x2="41.928573"
+       y2="24.250001"
        gradientTransform="translate(90.357143,-12.5)" />
     <radialGradient
        inkscape:collect="always"
@@ -196,8 +195,7 @@
        x="-0.11536043"
        width="1.2307209"
        y="-0.10152248"
-       height="1.203045"
-       color-interpolation-filters="sRGB">
+       height="1.203045">
       <feGaussianBlur
          inkscape:collect="always"
          stdDeviation="1.4805362"
@@ -211,9 +209,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.6353857"
-     inkscape:cx="96.087009"
-     inkscape:cy="6.043604"
+     inkscape:zoom="4.0471186"
+     inkscape:cx="-25.473951"
+     inkscape:cy="67.808813"
      inkscape:document-units="px"
      inkscape:current-layer="layer3"
      showgrid="false"
@@ -221,7 +219,11 @@
      inkscape:window-height="846"
      inkscape:window-x="-3"
      inkscape:window-y="-3"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid3041" />
+  </sodipodi:namedview>
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -237,7 +239,8 @@
   <g
      inkscape:groupmode="layer"
      id="layer2"
-     inkscape:label="file">
+     inkscape:label="file"
+     style="display:inline">
     <path
        style="opacity:0.6;fill:#c8c8c8;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0.74879228;stroke-dasharray:none"
        d="m 8.75,3.53125 0,40.53125 30.90625,0 0,-28.84375 -11.71875,-11.6875 -19.1875,0 z"
@@ -254,20 +257,61 @@
        transform="matrix(1.0024221,0,0,1.092466,-1.4082946,-6.198881)" />
   </g>
   <g
+     style="display:inline"
+     inkscape:label="image"
+     id="g3038"
+     inkscape:groupmode="layer">
+    <path
+       inkscape:connector-curvature="0"
+       style="fill:#0064ff;fill-opacity:0.78431373;fill-rule:nonzero;stroke:none"
+       d="m 13.1875,15.25 0,17.5 21.625,0 0,-17.5 -21.625,0 z m 1.03125,0.84375 19.5625,0 0,13.625 L 30,25 l -5,3 -7,-6 -3.78125,4.71875 0,-10.625 z"
+       id="path3838" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#0064ff;fill-opacity:0.78431373;fill-rule:nonzero;stroke:none"
+       id="path3848"
+       sodipodi:cx="25.5"
+       sodipodi:cy="20.5"
+       sodipodi:rx="1.5"
+       sodipodi:ry="1.5"
+       d="m 26.79863,19.749293 a 1.5,1.5 0 1 1 -0.0061,-0.0105"
+       sodipodi:start="5.7590422"
+       sodipodi:end="12.034127"
+       sodipodi:open="true"
+       transform="matrix(1.8088005,0,0,1.8088005,-17.676909,-17.059224)" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="video"
+     style="display:none">
+    <path
+       style="fill:#0064ff;fill-opacity:0.78431373;fill-rule:nonzero;stroke:none"
+       d="m 23.687473,14.004205 c -1.603617,0.04674 -3.202382,0.484994 -4.687907,1.343525 -4.781041,2.763115 -6.420373,8.87412 -3.656567,13.653965 2.763807,4.779846 8.876393,6.418753 13.657434,3.655639 4.781042,-2.763115 6.420374,-8.87412 3.656567,-13.653966 l -0.03125,-0.06249 c -1.915655,-3.25193 -5.410318,-5.039513 -8.938275,-4.936674 z m 0.03125,0.999833 c 3.175162,-0.09255 6.307858,1.510021 8.031947,4.436757 l 0.03125,0.06249 c 2.487426,4.30186 1.021403,9.792391 -3.281534,12.279195 -4.302937,2.486804 -9.794889,1.021159 -12.282315,-3.280701 -2.487425,-4.30186 -1.021402,-9.792391 3.281535,-12.279195 1.336972,-0.772679 2.77586,-1.176476 4.219115,-1.218546 z"
+       id="path3040"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:#0064ff;fill-opacity:0.78431373;fill-rule:nonzero;stroke:none"
+       d="m 21,17.997468 9,6 -9,6 0,-12 z"
+       id="path3048"
+       inkscape:connector-curvature="0" />
+  </g>
+  <g
      inkscape:groupmode="layer"
      id="layer3"
      inkscape:label="audio"
      style="display:none">
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#0064ff;fill-opacity:0.78431373;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans"
-       x="11.236328"
-       y="38.482422"
+       style="font-size:28px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#0064ff;fill-opacity:0.78431373;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans"
+       x="11.456055"
+       y="32.777344"
        id="text3326"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan3328"
-         x="11.236328"
-         y="38.482422">♪</tspan></text>
+         x="11.456055"
+         y="32.777344"
+         style="font-size:28px;font-style:normal;font-weight:normal;-inkscape-font-specification:DejaVu Sans">♫</tspan></text>
   </g>
 </svg>
