@@ -54,6 +54,6 @@ public class MimeTypes {
     /**
      * @see http://en.wikipedia.org/wiki/List_of_file_formats
      */
-    public static final String _RegexFileTypeCompressed = "(?si).+\\.(zip|7z|lz?|rar|tar|gz|gzip|bzip|xz|cab|sfx|"
+    public static final String _RegexFileTypeCompressed = "(?si).+\\.(zip|7z|lz?|[jrt]ar|gz|gzip|bzip|xz|cab|sfx|"
             + "z|iso|bz?|rz|s7z|apk|dmg)";
 }
