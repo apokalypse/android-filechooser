@@ -48,6 +48,8 @@ public class FileUtils {
                 return R.drawable.afc_file_image;
             if (file.getName().matches(MimeTypes._RegexFileTypeCompressed))
                 return R.drawable.afc_file_compressed;
+            if (file.getName().matches(MimeTypes._RegexFileTypePlainTexts))
+                return R.drawable.afc_file_plain_text;
             return R.drawable.afc_file;
         } else if (file.isDirectory())
             return R.drawable.afc_folder;

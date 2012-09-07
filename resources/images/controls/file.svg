@@ -17,9 +17,9 @@
    version="1.1"
    inkscape:version="0.48.1 r9760"
    sodipodi:docname="file.svg"
-   inkscape:export-filename="/media/truecrypt64/projs/android/library/android-filechooser/code/res/drawable-ldpi/afc_file_compressed.png"
-   inkscape:export-xdpi="45"
-   inkscape:export-ydpi="45"
+   inkscape:export-filename="/media/truecrypt64/projs/android/library/android-filechooser/code/res/drawable-xhdpi/afc_file_plain_text.png"
+   inkscape:export-xdpi="135"
+   inkscape:export-ydpi="135"
    style="display:inline">
   <defs
      id="defs4">
@@ -377,11 +377,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.91385802"
-     inkscape:cx="-12.733335"
-     inkscape:cy="49.514871"
+     inkscape:zoom="6.6033072"
+     inkscape:cx="27.745247"
+     inkscape:cy="8.362874"
      inkscape:document-units="px"
-     inkscape:current-layer="layer5"
+     inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1440"
      inkscape:window-height="846"
@@ -408,7 +408,7 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="file"
-     style="display:none">
+     style="display:inline">
     <path
        style="opacity:0.6;fill:#c8c8c8;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0.74879228;stroke-dasharray:none"
        d="m 8.75,3.53125 0,40.53125 30.90625,0 0,-28.84375 -11.71875,-11.6875 -19.1875,0 z"
@@ -486,7 +486,7 @@
      inkscape:groupmode="layer"
      id="layer5"
      inkscape:label="compressed"
-     style="display:inline">
+     style="display:none">
     <g
        id="g4867"
        transform="matrix(0.94736841,0,0,0.95652173,-67.699663,-27.26095)">
@@ -528,5 +528,42 @@
        inkscape:transform-center-x="0.076975617"
        inkscape:transform-center-y="0.17148528"
        transform="matrix(0.23962518,0,0,0.23962518,46.83042,22.977057)" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer1"
+     inkscape:label="plain text"
+     style="display:inline">
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:23.99999946%;letter-spacing:0px;word-spacing:0px;fill:#0064ff;fill-opacity:0.78431373;stroke:none;font-family:Advent Pro;-inkscape-font-specification:Advent Pro Bold"
+       x="14"
+       y="15.119896"
+       id="text3843"
+       sodipodi:linespacing="23.999999%"><tspan
+         sodipodi:role="line"
+         id="tspan3845"
+         x="14"
+         y="15.119896" /><tspan
+         sodipodi:role="line"
+         x="14"
+         y="19.878517"
+         id="tspan3847">‒</tspan><tspan
+         sodipodi:role="line"
+         x="14"
+         y="24.678516"
+         id="tspan3851">‒</tspan><tspan
+         sodipodi:role="line"
+         x="14"
+         y="29.478516"
+         id="tspan3849">—</tspan><tspan
+         sodipodi:role="line"
+         x="14"
+         y="34.278515"
+         id="tspan3853">—</tspan><tspan
+         sodipodi:role="line"
+         x="14"
+         y="39.078514"
+         id="tspan3855">—</tspan></text>
   </g>
 </svg>
