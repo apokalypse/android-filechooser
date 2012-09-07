@@ -1,7 +1,7 @@
 android-filechooser
 Copyright 2012 Hai Bison
 
-Version: 4.5 beta
+Version: 4.5
 
 This product includes software developed at
 http://code.google.com/p/android-filechooser/
@@ -34,6 +34,12 @@ In short, you can use this library in your commercial apps with or without our
 knowledge. Hope you enjoy it  :-)
 
 And here is history:
+
++++ Version 4.5 +++
+ - Release: September 07, 2012
+
+ - New icons for menu Home, Reload and for file types audio, image, video,
+plain text and compressed;
 
 +++ Version 4.5 beta +++
  - Initialize: August 31, 2012
