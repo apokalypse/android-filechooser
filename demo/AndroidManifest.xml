@@ -16,7 +16,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             android:label="AFC 4.6b - Demo" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,12 +26,10 @@
         </activity>
         <activity
             android:name="group.pals.android.lib.ui.filechooser.FileChooserActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@android:style/Theme.Dialog" >
-        </activity>
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:theme="@android:style/Theme.Dialog" />
 
-        <service android:name="group.pals.android.lib.ui.filechooser.services.LocalFileProvider" >
-        </service>
+        <service android:name="group.pals.android.lib.ui.filechooser.services.LocalFileProvider" />
     </application>
 
 </manifest>

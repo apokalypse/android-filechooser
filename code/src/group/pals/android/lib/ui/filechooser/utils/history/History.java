@@ -50,19 +50,6 @@ public interface History<A> extends Parcelable {
     void truncateAfter(A item);
 
     /**
-     * Pushes new item to the history.
-     * 
-     * @param currentItem
-     *            usage: assume we have history of: 1-2-3-4, if current item is
-     *            3, and we push 5 to the history, then 4 will be truncated, and
-     *            new history will be 1-2-3-5
-     * @param newItem
-     *            the new item
-     */
-    @Deprecated
-    void push(A currentItem, A newItem);
-
-    /**
      * Removes an item.
      * 
      * @param item

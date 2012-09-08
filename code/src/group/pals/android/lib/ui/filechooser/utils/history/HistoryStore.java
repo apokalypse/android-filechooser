@@ -74,23 +74,6 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
     }// truncateAfter()
 
     @Override
-    public void push(A currentItem, A newItem) {
-        int idx = currentItem == null ? -1 : mHistoryList.indexOf(currentItem);
-        if (idx < 0 || idx == mHistoryList.size() - 1)
-            mHistoryList.add(newItem);
-        else {
-            for (int i = idx + 1; i < mHistoryList.size(); i++)
-                mHistoryList.remove(i);
-            mHistoryList.add(newItem);
-        }
-
-        if (mHistoryList.size() > mMaxSize)
-            mHistoryList.remove(0);
-
-        notifyHistoryChanged();
-    }// push()
-
-    @Override
     public void remove(A item) {
         if (mHistoryList.remove(item))
             notifyHistoryChanged();
