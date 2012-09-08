@@ -19,6 +19,9 @@ package group.pals.android.lib.ui.filechooser.utils;
 import group.pals.android.lib.ui.filechooser.R;
 import group.pals.android.lib.ui.filechooser.io.IFile;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Utilities for files.
  * 
@@ -27,6 +30,20 @@ import group.pals.android.lib.ui.filechooser.io.IFile;
  * 
  */
 public class FileUtils {
+
+    /**
+     * Map of the regexes for file types corresponding to resource IDs for
+     * icons.
+     */
+    private static final Map<String, Integer> _MapFileIcons = new HashMap<String, Integer>();
+
+    static {
+        _MapFileIcons.put(MimeTypes._RegexFileTypeAudios, R.drawable.afc_file_audio);
+        _MapFileIcons.put(MimeTypes._RegexFileTypeVideos, R.drawable.afc_file_video);
+        _MapFileIcons.put(MimeTypes._RegexFileTypeImages, R.drawable.afc_file_image);
+        _MapFileIcons.put(MimeTypes._RegexFileTypeCompressed, R.drawable.afc_file_compressed);
+        _MapFileIcons.put(MimeTypes._RegexFileTypePlainTexts, R.drawable.afc_file_plain_text);
+    }
 
     /**
      * Gets resource icon ID of an {@link IFile}.
@@ -40,19 +57,15 @@ public class FileUtils {
             return android.R.drawable.ic_delete;
 
         if (file.isFile()) {
-            if (file.getName().matches(MimeTypes._RegexFileTypeAudios))
-                return R.drawable.afc_file_audio;
-            if (file.getName().matches(MimeTypes._RegexFileTypeVideos))
-                return R.drawable.afc_file_video;
-            if (file.getName().matches(MimeTypes._RegexFileTypeImages))
-                return R.drawable.afc_file_image;
-            if (file.getName().matches(MimeTypes._RegexFileTypeCompressed))
-                return R.drawable.afc_file_compressed;
-            if (file.getName().matches(MimeTypes._RegexFileTypePlainTexts))
-                return R.drawable.afc_file_plain_text;
+            String filename = file.getName();
+            for (String r : _MapFileIcons.keySet())
+                if (filename.matches(r))
+                    return _MapFileIcons.get(r);
+
             return R.drawable.afc_file;
         } else if (file.isDirectory())
             return R.drawable.afc_folder;
+
         return android.R.drawable.ic_delete;
     }// getResIcon()
 }
