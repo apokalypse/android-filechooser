@@ -707,6 +707,13 @@ public class FileChooserActivity extends Activity {
         goTo(mRoot.clone());
     }// doGoHome()
 
+    private static final int[] _BtnSortIds = { R.id.afc_settings_sort_view_button_sort_by_name_asc,
+            R.id.afc_settings_sort_view_button_sort_by_name_desc,
+            R.id.afc_settings_sort_view_button_sort_by_size_asc,
+            R.id.afc_settings_sort_view_button_sort_by_size_desc,
+            R.id.afc_settings_sort_view_button_sort_by_date_asc,
+            R.id.afc_settings_sort_view_button_sort_by_date_desc };
+
     /**
      * Show a dialog for sorting options and resort file list after user
      * selected an option.
@@ -714,12 +721,21 @@ public class FileChooserActivity extends Activity {
     private void doResortViewFiles() {
         final AlertDialog _dialog = Dlg.newDlg(this);
 
-        final int[] _btnSortIds = { R.id.afc_settings_sort_view_button_sort_by_name_asc,
-                R.id.afc_settings_sort_view_button_sort_by_name_desc,
-                R.id.afc_settings_sort_view_button_sort_by_size_asc,
-                R.id.afc_settings_sort_view_button_sort_by_size_desc,
-                R.id.afc_settings_sort_view_button_sort_by_date_asc,
-                R.id.afc_settings_sort_view_button_sort_by_date_desc };
+        // get the index of button of current sort type
+        int btnCurrentSortTypeIdx = 0;
+        switch (DisplayPrefs.getSortType(this)) {
+        case SortByName:
+            btnCurrentSortTypeIdx = 0;
+            break;
+        case SortBySize:
+            btnCurrentSortTypeIdx = 2;
+            break;
+        case SortByDate:
+            btnCurrentSortTypeIdx = 4;
+            break;
+        }
+        if (!DisplayPrefs.isSortAscending(this))
+            btnCurrentSortTypeIdx++;
 
         View.OnClickListener listener = new View.OnClickListener() {
 
@@ -754,8 +770,11 @@ public class FileChooserActivity extends Activity {
         };// listener
 
         View view = getLayoutInflater().inflate(R.layout.afc_settings_sort_view, null);
-        for (int id : _btnSortIds)
-            view.findViewById(id).setOnClickListener(listener);
+        for (int i = 0; i < _BtnSortIds.length; i++) {
+            view.findViewById(_BtnSortIds[i]).setOnClickListener(listener);
+            if (i == btnCurrentSortTypeIdx)
+                view.findViewById(_BtnSortIds[i]).setEnabled(false);
+        }
 
         _dialog.setTitle(R.string.afc_title_sort_by);
         _dialog.setView(view);
