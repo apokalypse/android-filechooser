@@ -164,19 +164,39 @@ public class MainActivity extends Activity {
         private static final int _MsgDone = 0;
         private static final int _MsgProgress = 1;
 
+        private File mDir;
         private Handler mHandler;
         private Thread mThread;
         private ProgressDialog mProgressDlg;
 
         @Override
         public void onClick(View v) {
-            final File _dir = createOrRetrieveExternalTempDir(MainActivity.this);
+            mDir = createOrRetrieveExternalTempDir(MainActivity.this);
 
-            if (_dir == null || !_dir.isDirectory()) {
+            if (mDir == null || !mDir.isDirectory()) {
                 Toast.makeText(MainActivity.this, "Can't access external SD card", Toast.LENGTH_SHORT).show();
                 return;
             }
 
+            initProgressDialog();
+            initHandler();
+            createAndStartThread();
+        }// onClick()
+
+        private void initProgressDialog() {
+            mProgressDlg = ProgressDialog.show(MainActivity.this, null, "Processing…", true, true,
+                    new DialogInterface.OnCancelListener() {
+
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            if (mThread != null)
+                                mThread.interrupt();
+                        }
+                    });// ProgressDialog
+            mProgressDlg.setCanceledOnTouchOutside(true);
+        }// initProgressDialog()
+
+        private void initHandler() {
             mHandler = new Handler() {
 
                 @Override
@@ -190,24 +210,15 @@ public class MainActivity extends Activity {
 
                     case _MsgDone:
                         Toast.makeText(MainActivity.this,
-                                String.format("Huge-dir has been created at \"%s\"", _dir.getAbsolutePath()),
+                                String.format("Huge-dir has been created at \"%s\"", mDir.getAbsolutePath()),
                                 Toast.LENGTH_LONG).show();
                         break;// _MsgDone
                     }
                 }
             };// mHandler
+        }// initHandler()
 
-            mProgressDlg = ProgressDialog.show(MainActivity.this, null, "Processing…", true, true,
-                    new DialogInterface.OnCancelListener() {
-
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            if (mThread != null)
-                                mThread.interrupt();
-                        }
-                    });// ProgressDialog
-            mProgressDlg.setCanceledOnTouchOutside(true);
-
+        private void createAndStartThread() {
             mThread = new Thread() {
 
                 private static final int _Count = (int) 2e3;
@@ -216,7 +227,7 @@ public class MainActivity extends Activity {
                 public void run() {
                     int step = 5;
 
-                    final String _dirPath = _dir.getAbsolutePath();
+                    final String _dirPath = mDir.getAbsolutePath();
 
                     for (int i = 0; i < _Count; i++) {
                         if (isInterrupted())
@@ -247,7 +258,7 @@ public class MainActivity extends Activity {
             };// mThread
 
             mThread.start();
-        }// onClick()
+        }// createAndStartThread()
 
         /**
          * Generates an external temporary directory name {@code "huge-dir"}. It
