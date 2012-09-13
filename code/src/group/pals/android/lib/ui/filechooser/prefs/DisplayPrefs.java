@@ -37,6 +37,12 @@ public class DisplayPrefs extends Prefs {
     public static final int _DelayTimeWaitingThreads = 10;
 
     /**
+     * Default history capacity. Because we need to check duplicates before
+     * showing history list, this value should be small.
+     */
+    public static final int _DefHistoryCapacity = 51;
+
+    /**
      * Gets view type.
      * 
      * @param c

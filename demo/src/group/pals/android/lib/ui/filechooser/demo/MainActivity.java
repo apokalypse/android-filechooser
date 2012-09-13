@@ -229,10 +229,7 @@ public class MainActivity extends Activity {
 
                     final String _dirPath = mDir.getAbsolutePath();
 
-                    for (int i = 0; i < _Count; i++) {
-                        if (isInterrupted())
-                            break;
-
+                    for (int i = 0; i < _Count && !isInterrupted(); i++) {
                         try {
                             File file = new File(String.format("%s/%,09d", _dirPath, i));
                             if (!file.exists())

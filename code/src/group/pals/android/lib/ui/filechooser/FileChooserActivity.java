@@ -218,9 +218,14 @@ public class FileChooserActivity extends Activity {
      */
     static final String _History = _ClassName + ".history";
 
-    /*
-     * "constant" variables
+    /**
+     * This key holds current full history (a {@link History}&lt; {@link IFile}
+     * &gt;), to restore it after screen orientation changed.
      */
+    static final String _FullHistory = History.class.getName() + "_full";
+
+    // ====================
+    // "CONSTANT" VARIABLES
 
     private Class<?> mFileProviderServiceClass;
     /**
@@ -240,6 +245,12 @@ public class FileChooserActivity extends Activity {
      * The history.
      */
     private History<IFile> mHistory;
+
+    /**
+     * The full history, to store and show the users whatever they have been
+     * gone to.
+     */
+    private History<IFile> mFullHistory;
 
     /**
      * The adapter of list view.
@@ -306,10 +317,11 @@ public class FileChooserActivity extends Activity {
         mTxtSaveas = (EditText) findViewById(R.id.afc_filechooser_activity_textview_saveas_filename);
         mBtnOk = (Button) findViewById(R.id.afc_filechooser_activity_button_ok);
 
+        // history
         if (savedInstanceState != null && savedInstanceState.get(_History) instanceof HistoryStore<?>)
             mHistory = savedInstanceState.getParcelable(_History);
         else
-            mHistory = new HistoryStore<IFile>(0);
+            mHistory = new HistoryStore<IFile>(DisplayPrefs._DefHistoryCapacity);
         mHistory.addListener(new HistoryListener<IFile>() {
 
             @Override
@@ -319,6 +331,25 @@ public class FileChooserActivity extends Activity {
                 mViewGoForward.setEnabled(idx >= 0 && idx < history.size() - 1);
             }
         });
+
+        // full history
+        if (savedInstanceState != null && savedInstanceState.get(_FullHistory) instanceof HistoryStore<?>)
+            mFullHistory = savedInstanceState.getParcelable(_FullHistory);
+        else
+            mFullHistory = new HistoryStore<IFile>(DisplayPrefs._DefHistoryCapacity) {
+
+                @Override
+                public void push(IFile newItem) {
+                    int i = indexOf(newItem);
+                    if (i >= 0) {
+                        if (i == size() - 1)
+                            return;
+                        else
+                            remove(newItem);
+                    }
+                    super.push(newItem);
+                }// push()
+            };
 
         // make sure RESULT_CANCELED is default
         setResult(RESULT_CANCELED);
@@ -404,6 +435,7 @@ public class FileChooserActivity extends Activity {
     protected void onSaveInstanceState(Bundle outState) {
         outState.putParcelable(_CurrentLocation, getLocation());
         outState.putParcelable(_History, mHistory);
+        outState.putParcelable(_FullHistory, mFullHistory);
     }// onSaveInstanceState()
 
     @Override
@@ -523,9 +555,10 @@ public class FileChooserActivity extends Activity {
 
                         @Override
                         public void onFinish(boolean ok, Object any) {
-                            if (_path == null)
+                            if (_path == null) {
                                 mHistory.push(mRoot);
-                            else
+                                mFullHistory.push(mRoot);
+                            } else
                                 mHistory.notifyHistoryChanged();
                         }
                     });
@@ -708,10 +741,8 @@ public class FileChooserActivity extends Activity {
     }// doGoHome()
 
     private static final int[] _BtnSortIds = { R.id.afc_settings_sort_view_button_sort_by_name_asc,
-            R.id.afc_settings_sort_view_button_sort_by_name_desc,
-            R.id.afc_settings_sort_view_button_sort_by_size_asc,
-            R.id.afc_settings_sort_view_button_sort_by_size_desc,
-            R.id.afc_settings_sort_view_button_sort_by_date_asc,
+            R.id.afc_settings_sort_view_button_sort_by_name_desc, R.id.afc_settings_sort_view_button_sort_by_size_asc,
+            R.id.afc_settings_sort_view_button_sort_by_size_desc, R.id.afc_settings_sort_view_button_sort_by_date_asc,
             R.id.afc_settings_sort_view_button_sort_by_date_desc };
 
     /**
@@ -929,15 +960,7 @@ public class FileChooserActivity extends Activity {
                                 mFileAdapter.remove(data);
                                 mFileAdapter.notifyDataSetChanged();
 
-                                mHistory.removeAll(new HistoryFilter<IFile>() {
-
-                                    final String _path = data.getFile().getAbsolutePath();
-
-                                    @Override
-                                    public boolean accept(IFile item) {
-                                        return item.getAbsolutePath().equals(_path);
-                                    }
-                                });
+                                refreshHistories();
                                 // TODO remove all duplicate history items
 
                                 Dlg.toast(
@@ -1169,6 +1192,7 @@ public class FileChooserActivity extends Activity {
                 if (ok) {
                     mHistory.truncateAfter(mLastPath);
                     mHistory.push(dir);
+                    mFullHistory.push(dir);
                 }
             }
         });
@@ -1227,6 +1251,23 @@ public class FileChooserActivity extends Activity {
     }// createLocationButtons()
 
     /**
+     * Refreshes all the histories. This removes invalid items (which are not
+     * existed anymore).
+     */
+    private void refreshHistories() {
+        HistoryFilter<IFile> historyFilter = new HistoryFilter<IFile>() {
+
+            @Override
+            public boolean accept(IFile item) {
+                return !item.isDirectory();
+            }
+        };
+
+        mHistory.removeAll(historyFilter);
+        mFullHistory.removeAll(historyFilter);
+    }// refreshHistories()
+
+    /**
      * Finishes this activity.
      * 
      * @param files
@@ -1283,13 +1324,15 @@ public class FileChooserActivity extends Activity {
                 mHistory.remove(preLoc);
 
             if (preLoc != null) {
-                setLocation(preLoc, new TaskListener() {
+                final IFile _preLoc = preLoc;
+                setLocation(_preLoc, new TaskListener() {
 
                     @Override
                     public void onFinish(boolean ok, Object any) {
                         if (ok) {
                             mViewGoBack.setEnabled(mHistory.prevOf(getLocation()) != null);
                             mViewGoForward.setEnabled(true);
+                            mFullHistory.push(_preLoc);
                         }
                     }
                 });
@@ -1336,13 +1379,15 @@ public class FileChooserActivity extends Activity {
                 mHistory.remove(nextLoc);
 
             if (nextLoc != null) {
-                setLocation(nextLoc, new TaskListener() {
+                final IFile _nextLoc = nextLoc;
+                setLocation(_nextLoc, new TaskListener() {
 
                     @Override
                     public void onFinish(boolean ok, Object any) {
                         if (ok) {
                             mViewGoBack.setEnabled(true);
                             mViewGoForward.setEnabled(mHistory.nextOf(getLocation()) != null);
+                            mFullHistory.push(_nextLoc);
                         }
                     }
                 });
@@ -1356,11 +1401,19 @@ public class FileChooserActivity extends Activity {
 
         @Override
         public boolean onLongClick(View v) {
-            ViewFilesContextMenuUtils.doShowHistoryContents(FileChooserActivity.this, mFileProvider, mHistory,
+            ViewFilesContextMenuUtils.doShowHistoryContents(FileChooserActivity.this, mFileProvider, mFullHistory,
                     getLocation(), new TaskListener() {
 
                         @Override
                         public void onFinish(boolean ok, Object any) {
+                            mHistory.removeAll(new HistoryFilter<IFile>() {
+
+                                @Override
+                                public boolean accept(IFile item) {
+                                    return mFullHistory.indexOf(item) < 0;
+                                }
+                            });
+
                             if (any instanceof IFile) {
                                 setLocation((IFile) any, new TaskListener() {
 
@@ -1370,12 +1423,14 @@ public class FileChooserActivity extends Activity {
                                             mHistory.notifyHistoryChanged();
                                     }
                                 });
-                            } else if (mHistory.isEmpty())
+                            } else if (mHistory.isEmpty()) {
                                 mHistory.push(getLocation());
-                        }
+                                mFullHistory.push(getLocation());
+                            }
+                        }// onFinish()
                     });
             return false;
-        }
+        }// onLongClick()
     };// mBtnGoBackForwardOnLongClickListener
 
     private final TextView.OnEditorActionListener mTxtFilenameOnEditorActionListener = new TextView.OnEditorActionListener() {
