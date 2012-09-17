@@ -49,7 +49,8 @@ public class MimeTypes {
     /**
      * @see http://en.wikipedia.org/wiki/Video_file_formats
      */
-    public static final String _RegexFileTypeVideos = "(?si).+\\.(mp[4]+|flv|wmv|webm|m4v|3gp|mkv|mov|mpe?g|rmv?|ogv)";
+    public static final String _RegexFileTypeVideos = "(?si).+\\.(mp[4]+|flv|wmv|webm|m4v|3gp|mkv|mov|mpe?g|rmv?|ogv|"
+            + "avi)";
 
     /**
      * @see http://en.wikipedia.org/wiki/List_of_file_formats

@@ -51,11 +51,11 @@ public class MainActivity extends Activity {
 
     private CheckBox mChkDialogTheme;
     private CheckBox mChkMultiSelection;
-    private Button mBtnChooseFiles;
-    private Button mBtnChooseDirs;
-    private Button mBtnChooseFilesAndDirs;
-    private Button mBtnSaveAs;
     private Button mBtnCreateHugeDir;
+
+    private static final int[] _FileChooserButtonIds = { R.id.activity_main_button_choose_files,
+            R.id.activity_main_button_choose_dirs, R.id.activity_main_button_choose_files_and_dirs,
+            R.id.activity_main_button_save_as };
 
     private static final int _ReqChooseFile = 0;
     private static final int _ReqSaveAs = 1;
@@ -67,16 +67,12 @@ public class MainActivity extends Activity {
 
         mChkDialogTheme = (CheckBox) findViewById(R.id.activity_main_checkBox_use_dialog_theme);
         mChkMultiSelection = (CheckBox) findViewById(R.id.activity_main_checkBox_multi_selection);
-        mBtnChooseFiles = (Button) findViewById(R.id.activity_main_button_choose_files);
-        mBtnChooseDirs = (Button) findViewById(R.id.activity_main_button_choose_dirs);
-        mBtnChooseFilesAndDirs = (Button) findViewById(R.id.activity_main_button_choose_files_and_dirs);
-        mBtnSaveAs = (Button) findViewById(R.id.activity_main_button_save_as);
         mBtnCreateHugeDir = (Button) findViewById(R.id.activity_main_button_create_hugedir);
 
         // init listeners
 
-        for (Button b : new Button[] { mBtnChooseFiles, mBtnChooseDirs, mBtnChooseFilesAndDirs, mBtnSaveAs })
-            b.setOnClickListener(mBtnFileChooserHandlers);
+        for (int id : _FileChooserButtonIds)
+            findViewById(id).setOnClickListener(mBtnFileChooserHandlers);
 
         mBtnCreateHugeDir.setOnClickListener(mBtnCreateHugeDirOnClickListener);
     }// onCreate()

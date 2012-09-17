@@ -26,7 +26,7 @@
     <string name="afc_cmd_home">Home</string>
     <string name="afc_cmd_list_view">List view</string>
     <string name="afc_cmd_new_folder">New folder…</string>
-    <string name="afc_cmd_reload">Reload…</string>
+    <string name="afc_cmd_reload">Reload</string>
     <string name="afc_cmd_remove_from_list">Remove from list</string>
     <string name="afc_cmd_select_all_files">Select all files</string>
     <string name="afc_cmd_select_all_folders">Select all folders</string>
