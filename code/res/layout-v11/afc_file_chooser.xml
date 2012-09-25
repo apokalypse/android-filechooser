@@ -15,6 +15,11 @@
    limitations under the License.
 -->
 
+<!--
+   Due to issue #8, we separate layouts for different API levels.
+   Special thanks to Steel.Tycoon.
+-->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"

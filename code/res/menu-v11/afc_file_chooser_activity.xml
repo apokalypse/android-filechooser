@@ -15,6 +15,11 @@
    limitations under the License.
 -->
 
+<!--
+   Due to issue #8, we separate layouts for different API levels.
+   Special thanks to Steel.Tycoon.
+-->
+
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <group android:id="@+id/afc_filechooser_activity_menugroup_navigator" >
