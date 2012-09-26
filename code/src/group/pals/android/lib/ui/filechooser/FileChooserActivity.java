@@ -291,6 +291,10 @@ public class FileChooserActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.afc_file_chooser);
 
+        // issue #8
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+            FileChooserActivityCompat.onCreateModern(this);
+
         setupWindow();
 
         initGestureDetector();
@@ -360,6 +364,11 @@ public class FileChooserActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.afc_file_chooser_activity, menu);
+
+        // issue #8
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+            FileChooserActivityCompat.onCreateOptionsMenuModern(menu);
+
         return true;
     }// onCreateOptionsMenu()
 
