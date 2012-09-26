@@ -18,7 +18,6 @@ package group.pals.android.lib.ui.filechooser;
 
 import group.pals.android.lib.ui.filechooser.io.IFile;
 import group.pals.android.lib.ui.filechooser.io.IFileFilter;
-import group.pals.android.lib.ui.filechooser.io.LocalFile;
 import group.pals.android.lib.ui.filechooser.prefs.DisplayPrefs;
 import group.pals.android.lib.ui.filechooser.services.FileProviderService;
 import group.pals.android.lib.ui.filechooser.services.IFileProvider;
@@ -1180,7 +1179,7 @@ public class FileChooserActivity extends Activity {
      * @since v4.3 beta
      */
     private boolean goTo(final IFile dir) {
-        if (!(dir instanceof LocalFile) || dir.equalsToPath(getLocation()))
+        if (dir.equalsToPath(getLocation()))
             return false;
 
         setLocation(dir, new TaskListener() {
