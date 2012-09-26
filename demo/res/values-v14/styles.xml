@@ -1,5 +1,11 @@
 <resources>
 
-    <style name="AppTheme" parent="android:Theme.DeviceDefault" />
+    <style name="AppTheme" parent="@android:style/Theme.DeviceDefault" />
+
+    <style name="AppTheme.Dialog" parent="@android:style/Theme.DeviceDefault.Dialog" />
+
+    <style name="AppTheme.Light" parent="@android:style/Theme.DeviceDefault.Light" />
+
+    <style name="AppTheme.Light.Dialog" parent="@android:style/Theme.DeviceDefault.Light.Dialog" />
 
 </resources>

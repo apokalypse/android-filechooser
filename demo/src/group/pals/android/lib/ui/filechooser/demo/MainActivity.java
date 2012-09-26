@@ -30,7 +30,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -112,13 +111,6 @@ public class MainActivity extends Activity {
     // =========
     // LISTENERS
 
-    private static final int _DialogTheme = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH ? android.R.style.Theme_DeviceDefault_Dialog
-            : (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ? android.R.style.Theme_Holo_Dialog
-                    : android.R.style.Theme_Dialog);
-    private static final int _DarkTheme = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH ? android.R.style.Theme_DeviceDefault
-            : (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ? android.R.style.Theme_Holo
-                    : android.R.style.Theme);
-
     private final View.OnClickListener mBtnFileChooserHandlers = new View.OnClickListener() {
 
         @Override
@@ -128,9 +120,9 @@ public class MainActivity extends Activity {
             // theme
             if (mChkDialogTheme.isChecked()) {
                 intent.putExtra(FileChooserActivity._UseThemeDialog, true);
-                intent.putExtra(FileChooserActivity._Theme, _DialogTheme);
+                intent.putExtra(FileChooserActivity._Theme, R.style.AppTheme_Dialog);
             } else
-                intent.putExtra(FileChooserActivity._Theme, _DarkTheme);
+                intent.putExtra(FileChooserActivity._Theme, R.style.AppTheme);
 
             // save as...
             if (v.getId() == R.id.activity_main_button_save_as) {

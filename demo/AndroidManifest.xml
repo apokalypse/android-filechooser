@@ -27,7 +27,7 @@
         <activity
             android:name="group.pals.android.lib.ui.filechooser.FileChooserActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-            android:theme="@android:style/Theme.Dialog" />
+            android:theme="@style/AppTheme.Dialog" />
 
         <service android:name="group.pals.android.lib.ui.filechooser.services.LocalFileProvider" />
     </application>
