@@ -19,11 +19,11 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:stretchColumns="0" >
+    android:stretchColumns="0,1,2" >
 
     <TableRow
         android:layout_marginLeft="@dimen/afc_dim_10dp"
-        android:layout_marginRight="@dimen/afc_dim_5dp" >
+        android:layout_marginRight="@dimen/afc_dim_10dp" >
 
         <TextView
             android:layout_height="wrap_content"
@@ -43,13 +43,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginRight="@dimen/afc_dim_15dp"
             android:drawableRight="@drawable/afc_ic_menu_sort_by_name_desc" />
     </TableRow>
 
     <TableRow
         android:layout_marginLeft="@dimen/afc_dim_10dp"
-        android:layout_marginRight="@dimen/afc_dim_5dp" >
+        android:layout_marginRight="@dimen/afc_dim_10dp" >
 
         <TextView
             android:layout_width="wrap_content"
@@ -70,13 +69,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginRight="@dimen/afc_dim_15dp"
             android:drawableRight="@drawable/afc_ic_menu_sort_by_size_desc" />
     </TableRow>
 
     <TableRow
         android:layout_marginLeft="@dimen/afc_dim_10dp"
-        android:layout_marginRight="@dimen/afc_dim_5dp" >
+        android:layout_marginRight="@dimen/afc_dim_10dp" >
 
         <TextView
             android:layout_width="wrap_content"
@@ -97,7 +95,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginRight="@dimen/afc_dim_15dp"
             android:drawableRight="@drawable/afc_ic_menu_sort_by_date_desc" />
     </TableRow>
 
