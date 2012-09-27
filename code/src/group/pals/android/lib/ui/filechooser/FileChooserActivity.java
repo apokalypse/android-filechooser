@@ -707,13 +707,14 @@ public class FileChooserActivity extends Activity {
 
             mBtnOk.setVisibility(View.VISIBLE);
             mBtnOk.setOnClickListener(mBtnOk_SaveDialog_OnClickListener);
+            mBtnOk.setBackgroundResource(R.drawable.afc_selector_button_ok_saveas);
         }// this is in save mode
         else {
             mTxtSaveas.setVisibility(View.GONE);
 
             if (mIsMultiSelection) {
-                int padding = getResources().getDimensionPixelSize(R.dimen.afc_dim_padding_short_text_button);
-                mBtnOk.setPadding(padding, mBtnOk.getPaddingTop(), padding, mBtnOk.getPaddingBottom());
+                mBtnOk.setMinWidth(getResources().getDimensionPixelSize(R.dimen.afc_dim_single_button_min_width));
+                mBtnOk.setText(android.R.string.ok);
 
                 RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mBtnOk.getLayoutParams();
                 lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 0);
@@ -1230,7 +1231,7 @@ public class FileChooserActivity extends Activity {
             if (count++ == 0) {
                 Rect r = new Rect();
                 btnLoc.getPaint().getTextBounds(path.getName(), 0, path.getName().length(), r);
-                if (r.width() >= getResources().getDimensionPixelSize(R.dimen.afc_button_location_max_width)
+                if (r.width() >= getResources().getDimensionPixelSize(R.dimen.afc_dim_button_location_max_width)
                         - btnLoc.getPaddingLeft() - btnLoc.getPaddingRight()) {
                     mTxtFullDirName.setText(path.getName());
                     mTxtFullDirName.setVisibility(View.VISIBLE);

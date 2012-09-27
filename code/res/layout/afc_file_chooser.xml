@@ -129,9 +129,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:paddingLeft="@dimen/afc_dim_padding_short_text_button_min"
-            android:paddingRight="@dimen/afc_dim_padding_short_text_button_min"
-            android:text="@android:string/ok"
             android:visibility="gone" />
     </RelativeLayout>
 
