@@ -68,4 +68,18 @@ public class FileUtils {
 
         return android.R.drawable.ic_delete;
     }// getResIcon()
+
+    /**
+     * Checks whether the filename given is valid or not.<br>
+     * See <a href="http://en.wikipedia.org/wiki/Filename">wiki</a> for more
+     * information.
+     * 
+     * @param name
+     *            name of the file
+     * @return {@code true} if the {@code name} is valid, and vice versa (if it
+     *         contains invalid characters or it is {@code null}/ empty)
+     */
+    public static boolean isFilenameValid(String name) {
+        return name != null && name.trim().matches("[^\\\\/?%*:|\"<>]+");
+    }
 }

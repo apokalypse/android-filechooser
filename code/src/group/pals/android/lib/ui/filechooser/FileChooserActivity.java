@@ -28,6 +28,7 @@ import group.pals.android.lib.ui.filechooser.services.LocalFileProvider;
 import group.pals.android.lib.ui.filechooser.utils.ActivityCompat;
 import group.pals.android.lib.ui.filechooser.utils.E;
 import group.pals.android.lib.ui.filechooser.utils.FileComparator;
+import group.pals.android.lib.ui.filechooser.utils.FileUtils;
 import group.pals.android.lib.ui.filechooser.utils.Ui;
 import group.pals.android.lib.ui.filechooser.utils.Utils;
 import group.pals.android.lib.ui.filechooser.utils.history.History;
@@ -58,6 +59,8 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -919,7 +922,7 @@ public class FileChooserActivity extends Activity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String name = _textFile.getText().toString().trim();
-                        if (!Utils.isFilenameValid(name)) {
+                        if (!FileUtils.isFilenameValid(name)) {
                             Dlg.toast(FileChooserActivity.this, getString(R.string.afc_pmsg_filename_is_invalid, name),
                                     Dlg.LENGTH_SHORT);
                             return;
@@ -936,6 +939,27 @@ public class FileChooserActivity extends Activity {
                     }// onClick()
                 });
         _dlg.show();
+
+        final Button _btnOk = _dlg.getButton(DialogInterface.BUTTON_POSITIVE);
+        _btnOk.setEnabled(false);
+
+        _textFile.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                _btnOk.setEnabled(FileUtils.isFilenameValid(s.toString().trim()));
+            }
+        });
     }// doCreateNewDir()
 
     /**
@@ -1042,7 +1066,7 @@ public class FileChooserActivity extends Activity {
         } else {
             final IFile _file = mFileProvider.fromPath(getLocation().getAbsolutePath() + File.separator + filename);
 
-            if (!Utils.isFilenameValid(filename)) {
+            if (!FileUtils.isFilenameValid(filename)) {
                 Dlg.toast(this, getString(R.string.afc_pmsg_filename_is_invalid, filename), Dlg.LENGTH_SHORT);
             } else if (_file.isFile()) {
                 Dlg.confirmYesno(FileChooserActivity.this,
