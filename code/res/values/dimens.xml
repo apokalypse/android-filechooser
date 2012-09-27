@@ -22,6 +22,8 @@
     <dimen name="afc_dim_5dp">5dp</dimen>
     <dimen name="afc_button_location_max_width">256sp</dimen>
     <dimen name="afc_dim_context_menu_item_padding_left">18sp</dimen>
+    <dimen name="afc_dim_padding_short_text_button">48sp</dimen>
+    <dimen name="afc_dim_padding_short_text_button_min">24sp</dimen>
     <dimen name="afc_dim_settings_sort_max_width">300dp</dimen>
 
 </resources>

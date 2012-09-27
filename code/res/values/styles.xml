@@ -31,6 +31,7 @@
         <item name="android:layout_marginLeft">@dimen/afc_dim_5dp</item>
         <item name="android:layout_marginTop">@dimen/afc_dim_5dp</item>
         <item name="android:layout_gravity">center</item>
+        <item name="android:minHeight">@dimen/afc_button_navigators_min_height</item>
     </style>
 
     <style name="afc_button_navi_right">
@@ -48,6 +49,7 @@
         <item name="android:layout_marginRight">@dimen/afc_dim_5dp</item>
         <item name="android:layout_marginTop">@dimen/afc_dim_5dp</item>
         <item name="android:layout_gravity">center</item>
+        <item name="android:minHeight">@dimen/afc_button_navigators_min_height</item>
     </style>
 
     <style name="afc_button_location">

@@ -712,7 +712,8 @@ public class FileChooserActivity extends Activity {
             mTxtSaveas.setVisibility(View.GONE);
 
             if (mIsMultiSelection) {
-                mBtnOk.setMinimumWidth(getResources().getDimensionPixelSize(R.dimen.afc_button_ok_standalone_min_width));
+                int padding = getResources().getDimensionPixelSize(R.dimen.afc_dim_padding_short_text_button);
+                mBtnOk.setPadding(padding, mBtnOk.getPaddingTop(), padding, mBtnOk.getPaddingBottom());
 
                 RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mBtnOk.getLayoutParams();
                 lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 0);

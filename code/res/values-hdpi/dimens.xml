@@ -16,6 +16,7 @@
 -->
 
 <resources>
-    <dimen name="afc_button_ok_min_width">72dp</dimen>
-    <dimen name="afc_button_ok_standalone_min_width">150dp</dimen>
+
+    <dimen name="afc_button_navigators_min_height">48px</dimen>
+
 </resources>
