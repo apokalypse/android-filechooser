@@ -294,10 +294,6 @@ public class FileChooserActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.afc_file_chooser);
 
-        // issue #8
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-            FileChooserActivityCompat.onCreateModern(this);
-
         setupWindow();
 
         initGestureDetector();
@@ -367,11 +363,6 @@ public class FileChooserActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.afc_file_chooser_activity, menu);
-
-        // issue #8
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-            FileChooserActivityCompat.onCreateOptionsMenuModern(menu);
-
         return true;
     }// onCreateOptionsMenu()
 
@@ -824,12 +815,6 @@ public class FileChooserActivity extends Activity {
         _dialog.setView(view);
 
         _dialog.show();
-        int width = _dialog.getWindow().getAttributes().width;
-        if (width <= 0)
-            width = Integer.MAX_VALUE;
-        _dialog.getWindow().setLayout(
-                Math.min(getResources().getDimensionPixelSize(R.dimen.afc_dim_settings_sort_max_width), width),
-                android.view.WindowManager.LayoutParams.WRAP_CONTENT);
     }// doResortViewFiles()
 
     /**

@@ -17,6 +17,6 @@
 
 <resources>
 
-    <dimen name="afc_button_navigators_min_height">24px</dimen>
+    <dimen name="afc_dim_button_navigators_min_height">24px</dimen>
 
 </resources>
