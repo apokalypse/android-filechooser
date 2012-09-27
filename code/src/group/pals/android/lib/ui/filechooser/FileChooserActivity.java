@@ -1245,7 +1245,7 @@ public class FileChooserActivity extends Activity {
         final int _dim = getResources().getDimensionPixelSize(R.dimen.afc_dim_5dp);
         int count = 0;
         while (path != null) {
-            Button btnLoc = (Button) inflater.inflate(R.layout.afc_button_location, null);
+            TextView btnLoc = (TextView) inflater.inflate(R.layout.afc_button_location, null);
             btnLoc.setText(path.parentFile() != null ? path.getName() : getString(R.string.afc_root));
             btnLoc.setTag(path);
             btnLoc.setOnClickListener(mBtnLocationOnClickListener);
