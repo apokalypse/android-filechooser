@@ -130,6 +130,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/afc_dim_5dp"
+            android:layout_marginRight="@dimen/afc_dim_5dp"
             android:visibility="gone" />
     </RelativeLayout>
 
