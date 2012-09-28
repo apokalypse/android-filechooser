@@ -1033,9 +1033,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="4.1263532"
-     inkscape:cx="38.983995"
-     inkscape:cy="-29.582021"
+     inkscape:zoom="3.7269983"
+     inkscape:cx="54.668383"
+     inkscape:cy="-23.474617"
      inkscape:document-units="px"
      inkscape:current-layer="g4998"
      showgrid="false"
@@ -1077,15 +1077,15 @@
      style="display:none">
     <text
        xml:space="preserve"
-       style="font-size:36px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#33b5e5;fill-opacity:1;stroke:#ffffff;stroke-width:0.5;stroke-miterlimit:4;stroke-opacity:0.39215686;stroke-dasharray:none;font-family:Advent Pro;-inkscape-font-specification:Advent Pro"
-       x="-2.7128906"
-       y="1053.4403"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#33b5e5;fill-opacity:1;stroke:#ffffff;stroke-width:0.5;stroke-miterlimit:4;stroke-opacity:0.39215686;stroke-dasharray:none;font-family:Advent Pro;-inkscape-font-specification:Advent Pro"
+       x="2.1914062"
+       y="1049.0809"
        id="text3004"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan3006"
-         x="-2.7128906"
-         y="1053.4403">✓</tspan></text>
+         x="2.1914062"
+         y="1049.0809">✓</tspan></text>
   </g>
   <g
      style="display:inline"
@@ -1096,12 +1096,12 @@
     <text
        sodipodi:linespacing="125%"
        id="text5000"
-       y="1053.4403"
-       x="-2.7128906"
-       style="font-size:36px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#33b5e5;fill-opacity:1;stroke:#ffffff;stroke-width:0.5;stroke-miterlimit:4;stroke-opacity:0.39215686;stroke-dasharray:none;filter:url(#filter5288);font-family:Advent Pro;-inkscape-font-specification:Advent Pro"
+       y="1049.0809"
+       x="2.1914062"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#33b5e5;fill-opacity:1;stroke:#ffffff;stroke-width:0.5;stroke-miterlimit:4;stroke-opacity:0.39215686;stroke-dasharray:none;filter:url(#filter5288);font-family:Advent Pro;-inkscape-font-specification:Advent Pro"
        xml:space="preserve"><tspan
-         y="1053.4403"
-         x="-2.7128906"
+         y="1049.0809"
+         x="2.1914062"
          id="tspan5002"
          sodipodi:role="line">✓</tspan></text>
   </g>
