@@ -54,7 +54,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
@@ -72,7 +71,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
@@ -294,8 +292,6 @@ public class FileChooserActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.afc_file_chooser);
 
-        setupWindow();
-
         initGestureDetector();
 
         mFileProviderServiceClass = (Class<?>) getIntent().getSerializableExtra(_FileProviderClass);
@@ -430,7 +426,6 @@ public class FileChooserActivity extends Activity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        setupWindow();
     }// onConfigurationChanged()
 
     @Override
@@ -473,20 +468,6 @@ public class FileChooserActivity extends Activity {
 
         super.onDestroy();
     }
-
-    /**
-     * Setup window size based on screen resolution.
-     */
-    private void setupWindow() {
-        if (getIntent().getBooleanExtra(_UseThemeDialog, false)) {
-            try {
-                getWindow().setLayout(getResources().getDimensionPixelSize(R.dimen.afc_theme_dialog_width),
-                        getResources().getDimensionPixelSize(R.dimen.afc_theme_dialog_height));
-            } catch (Resources.NotFoundException e) {
-                getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-            }
-        }
-    }// setupWindow()
 
     /**
      * Connects to file provider service, then loads root directory. If can not,
