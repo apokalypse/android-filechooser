@@ -29,6 +29,7 @@
             android:layout_marginRight="@dimen/afc_dim_10dp" >
 
             <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginRight="@dimen/afc_dim_30dp"
