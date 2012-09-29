@@ -38,6 +38,13 @@ And here is history:
 +++ Version 4.6 beta +++
  - Initialize: September 08, 2012
 
+ * Milestones:
+   - Updates UI;
+   - Removes deprecated method History.push(A, A);
+   - Keeps and shows full history to the user (wherever they have been gone to);
+   - Removes button Cancel in dialogs. Users can tap Back button or touch outside
+     of the dialogs to cancel them.
+
 +++ Version 4.5 +++
  - Release: September 07, 2012
 
