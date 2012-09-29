@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -282,6 +283,11 @@ public class IFileAdapter extends BaseAdapter {
 
         // filename
         bag.txtFileName.setText(file.getName());
+        // check if this file has been marked as to be deleted or not
+        if (data.isTobeDeleted())
+            bag.txtFileName.setPaintFlags(bag.txtFileName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        else
+            bag.txtFileName.setPaintFlags(bag.txtFileName.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
 
         // file info
         String time = null;

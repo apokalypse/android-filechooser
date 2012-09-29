@@ -71,8 +71,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AbsListView;
 import android.widget.Button;
@@ -84,7 +82,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.ViewFlipper;
 
 /**
  * Main activity for this library.
@@ -439,7 +436,7 @@ public class FileChooserActivity extends Activity {
     protected void onStart() {
         super.onStart();
         if (!mIsMultiSelection && !mIsSaveDialog)
-            Dlg.toast(this, R.string.afc_hint_double_tap_to_select_file, Dlg.LENGTH_SHORT);
+            Dlg.toast(this, R.string.afc_hint_double_tap_to_select_file, Dlg._LengthShort);
     }// onStart()
 
     @Override
@@ -866,7 +863,7 @@ public class FileChooserActivity extends Activity {
     private void doCreateNewDir() {
         if (mFileProvider instanceof LocalFileProvider
                 && !Utils.havePermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            Dlg.toast(this, R.string.afc_msg_app_doesnot_have_permission_to_create_files, Dlg.LENGTH_SHORT);
+            Dlg.toast(this, R.string.afc_msg_app_doesnot_have_permission_to_create_files, Dlg._LengthShort);
             return;
         }
 
@@ -899,18 +896,18 @@ public class FileChooserActivity extends Activity {
                         String name = _textFile.getText().toString().trim();
                         if (!FileUtils.isFilenameValid(name)) {
                             Dlg.toast(FileChooserActivity.this, getString(R.string.afc_pmsg_filename_is_invalid, name),
-                                    Dlg.LENGTH_SHORT);
+                                    Dlg._LengthShort);
                             return;
                         }
 
                         IFile dir = mFileProvider.fromPath(String
                                 .format("%s/%s", getLocation().getAbsolutePath(), name));
                         if (dir.mkdir()) {
-                            Dlg.toast(FileChooserActivity.this, getString(R.string.afc_msg_done), Dlg.LENGTH_SHORT);
+                            Dlg.toast(FileChooserActivity.this, getString(R.string.afc_msg_done), Dlg._LengthShort);
                             setLocation(getLocation(), null);
                         } else
                             Dlg.toast(FileChooserActivity.this,
-                                    getString(R.string.afc_pmsg_cannot_create_folder, name), Dlg.LENGTH_SHORT);
+                                    getString(R.string.afc_pmsg_cannot_create_folder, name), Dlg._LengthShort);
                     }// onClick()
                 });
         _dlg.show();
@@ -938,6 +935,17 @@ public class FileChooserActivity extends Activity {
     }// doCreateNewDir()
 
     /**
+     * Updates UI that {@code data} will not be deleted.
+     * 
+     * @param data
+     *            {@link IFileDataModel}
+     */
+    private void notifyDataModelNotDeleted(IFileDataModel data) {
+        data.setTobeDeleted(false);
+        mFileAdapter.notifyDataSetChanged();
+    }// notifyDataModelNotDeleted(()
+
+    /**
      * Deletes a file.
      * 
      * @param file
@@ -946,7 +954,8 @@ public class FileChooserActivity extends Activity {
     private void doDeleteFile(final IFileDataModel data) {
         if (mFileProvider instanceof LocalFileProvider
                 && !Utils.havePermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            Dlg.toast(this, R.string.afc_msg_app_doesnot_have_permission_to_delete_files, Dlg.LENGTH_SHORT);
+            notifyDataModelNotDeleted(data);
+            Dlg.toast(this, R.string.afc_msg_app_doesnot_have_permission_to_delete_files, Dlg._LengthShort);
             return;
         }
 
@@ -977,7 +986,7 @@ public class FileChooserActivity extends Activity {
                                         getString(
                                                 R.string.afc_pmsg_file_has_been_deleted,
                                                 _isFile ? getString(R.string.afc_file) : getString(R.string.afc_folder),
-                                                data.getFile().getName()), Dlg.LENGTH_SHORT);
+                                                data.getFile().getName()), Dlg._LengthShort);
                             }// notifyFileDeleted()
 
                             @Override
@@ -1002,9 +1011,10 @@ public class FileChooserActivity extends Activity {
                             protected void onCancelled() {
                                 mThread.interrupt();
 
-                                if (data.getFile().exists())
-                                    Dlg.toast(FileChooserActivity.this, R.string.afc_msg_cancelled, Dlg.LENGTH_SHORT);
-                                else
+                                if (data.getFile().exists()) {
+                                    notifyDataModelNotDeleted(data);
+                                    Dlg.toast(FileChooserActivity.this, R.string.afc_msg_cancelled, Dlg._LengthShort);
+                                } else
                                     notifyFileDeleted();
 
                                 super.onCancelled();
@@ -1014,18 +1024,25 @@ public class FileChooserActivity extends Activity {
                             protected void onPostExecute(Object result) {
                                 super.onPostExecute(result);
 
-                                if (data.getFile().exists())
+                                if (data.getFile().exists()) {
+                                    notifyDataModelNotDeleted(data);
                                     Dlg.toast(
                                             FileChooserActivity.this,
                                             getString(R.string.afc_pmsg_cannot_delete_file,
                                                     data.getFile().isFile() ? getString(R.string.afc_file)
                                                             : getString(R.string.afc_folder), data.getFile().getName()),
-                                            Dlg.LENGTH_SHORT);
-                                else
+                                            Dlg._LengthShort);
+                                } else
                                     notifyFileDeleted();
                             }// onPostExecute()
                         }.execute();// LoadingDialog
                     }// onClick()
+                }, new DialogInterface.OnCancelListener() {
+
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        notifyDataModelNotDeleted(data);
+                    }// onCancel()
                 });
     }// doDeleteFile()
 
@@ -1037,12 +1054,12 @@ public class FileChooserActivity extends Activity {
      */
     private void doCheckSaveasFilenameAndFinish(String filename) {
         if (filename.length() == 0) {
-            Dlg.toast(this, R.string.afc_msg_filename_is_empty, Dlg.LENGTH_SHORT);
+            Dlg.toast(this, R.string.afc_msg_filename_is_empty, Dlg._LengthShort);
         } else {
             final IFile _file = mFileProvider.fromPath(getLocation().getAbsolutePath() + File.separator + filename);
 
             if (!FileUtils.isFilenameValid(filename)) {
-                Dlg.toast(this, getString(R.string.afc_pmsg_filename_is_invalid, filename), Dlg.LENGTH_SHORT);
+                Dlg.toast(this, getString(R.string.afc_pmsg_filename_is_invalid, filename), Dlg._LengthShort);
             } else if (_file.isFile()) {
                 Dlg.confirmYesno(FileChooserActivity.this,
                         getString(R.string.afc_pmsg_confirm_replace_file, _file.getName()),
@@ -1054,7 +1071,7 @@ public class FileChooserActivity extends Activity {
                             }
                         });
             } else if (_file.isDirectory()) {
-                Dlg.toast(this, getString(R.string.afc_pmsg_filename_is_directory, _file.getName()), Dlg.LENGTH_SHORT);
+                Dlg.toast(this, getString(R.string.afc_pmsg_filename_is_directory, _file.getName()), Dlg._LengthShort);
             } else
                 doFinish(_file);
         }
@@ -1133,7 +1150,7 @@ public class FileChooserActivity extends Activity {
             @Override
             protected void onCancelled() {
                 super.onCancelled();
-                Dlg.toast(FileChooserActivity.this, R.string.afc_msg_cancelled, Dlg.LENGTH_SHORT);
+                Dlg.toast(FileChooserActivity.this, R.string.afc_msg_cancelled, Dlg._LengthShort);
             }// onCancelled()
 
             @Override
@@ -1142,7 +1159,7 @@ public class FileChooserActivity extends Activity {
 
                 if (files == null) {
                     Dlg.toast(FileChooserActivity.this, getString(R.string.afc_pmsg_cannot_access_dir, path.getName()),
-                            Dlg.LENGTH_SHORT);
+                            Dlg._LengthShort);
                     if (listener != null)
                         listener.onFinish(false, null);
                     return;
@@ -1488,16 +1505,6 @@ public class FileChooserActivity extends Activity {
     private void initGestureDetector() {
         mListviewFilesGestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
 
-            private Animation mInAnimation;
-            private Animation mOutAnimation;
-
-            private void prepareAnimations(boolean isLeftToRight) {
-                mInAnimation = AnimationUtils.loadAnimation(FileChooserActivity.this,
-                        isLeftToRight ? R.anim.afc_push_left_in : R.anim.afc_push_right_in);
-                mOutAnimation = AnimationUtils.loadAnimation(FileChooserActivity.this,
-                        isLeftToRight ? R.anim.afc_push_left_out : R.anim.afc_push_right_out);
-            }
-
             private Object getData(float x, float y) {
                 int i = getSubViewId(x, y);
                 if (i >= 0)
@@ -1575,19 +1582,15 @@ public class FileChooserActivity extends Activity {
                         && Math.abs(e1.getX() - e2.getX()) > _min_x_distance && Math.abs(velocityX) > _min_x_velocity) {
                     Object o = getData(e1.getX(), e1.getY());
                     if (o instanceof IFileDataModel) {
-                        View v = getSubView(e1.getX(), e1.getY());
-                        if (v != null && v instanceof ViewFlipper) {
-                            prepareAnimations(velocityX <= 0);
-                            ((ViewFlipper) v).setInAnimation(mInAnimation);
-                            ((ViewFlipper) v).setOutAnimation(mOutAnimation);
-                            ((ViewFlipper) v).showNext();
-                        }
+                        ((IFileDataModel) o).setTobeDeleted(true);
+                        mFileAdapter.notifyDataSetChanged();
+
                         doDeleteFile((IFileDataModel) o);
                     }
                 }
 
                 return false;
-            }
+            }// onFling()
         });// mListviewFilesGestureDetector
     }// initGestureDetector()
 }

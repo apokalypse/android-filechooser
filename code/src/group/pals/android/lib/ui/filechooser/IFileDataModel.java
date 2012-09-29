@@ -28,6 +28,7 @@ public class IFileDataModel {
 
     private IFile mFile;
     private boolean mSelected;
+    private boolean mTobeDeleted;
 
     /**
      * Creates new {@link IFileDataModel} with a {@link IFile}
@@ -65,5 +66,25 @@ public class IFileDataModel {
     public void setSelected(boolean selected) {
         if (mSelected != selected)
             mSelected = selected;
+    }
+
+    /**
+     * Checks if this item is marked as to be deleted.
+     * 
+     * @return {@code true} if this item is marked as to be deleted.
+     */
+    public boolean isTobeDeleted() {
+        return mTobeDeleted;
+    }
+
+    /**
+     * Marks this item as to be deleted.
+     * 
+     * @param tobeDeleted
+     *            {@code true} or {@code false}
+     */
+    public void setTobeDeleted(boolean tobeDeleted) {
+        if (mTobeDeleted != tobeDeleted)
+            mTobeDeleted = tobeDeleted;
     }
 }
