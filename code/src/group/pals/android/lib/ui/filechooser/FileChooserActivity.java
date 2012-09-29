@@ -675,7 +675,13 @@ public class FileChooserActivity extends Activity {
      * - button Ok;
      */
     private void setupFooter() {
+        // by default, view group footer and all its child views are hidden
+
+        ViewGroup viewGroupFooter = (ViewGroup) findViewById(R.id.afc_filechooser_activity_viewgroup_footer);
+
         if (mIsSaveDialog) {
+            viewGroupFooter.setVisibility(View.VISIBLE);
+
             mTxtSaveas.setVisibility(View.VISIBLE);
             mTxtSaveas.setText(getIntent().getStringExtra(_DefaultFilename));
             mTxtSaveas.setOnEditorActionListener(mTxtFilenameOnEditorActionListener);
@@ -685,9 +691,9 @@ public class FileChooserActivity extends Activity {
             mBtnOk.setBackgroundResource(R.drawable.afc_selector_button_ok_saveas);
         }// this is in save mode
         else {
-            mTxtSaveas.setVisibility(View.GONE);
-
             if (mIsMultiSelection) {
+                viewGroupFooter.setVisibility(View.VISIBLE);
+
                 mBtnOk.setMinWidth(getResources().getDimensionPixelSize(R.dimen.afc_dim_single_button_min_width));
                 mBtnOk.setText(android.R.string.ok);
 
@@ -699,8 +705,7 @@ public class FileChooserActivity extends Activity {
 
                 mBtnOk.setVisibility(View.VISIBLE);
                 mBtnOk.setOnClickListener(mBtnOk_OpenDialog_OnClickListener);
-            } else
-                mBtnOk.setVisibility(View.GONE);
+            }
         }// this is in open mode
     }// setupFooter()
 

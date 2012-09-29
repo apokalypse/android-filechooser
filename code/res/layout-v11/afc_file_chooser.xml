@@ -111,7 +111,8 @@
         style="?android:attr/buttonBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" >
+        android:layout_alignParentBottom="true"
+        android:visibility="gone" >
 
         <EditText
             android:id="@+id/afc_filechooser_activity_textview_saveas_filename"
