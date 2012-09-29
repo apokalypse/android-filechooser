@@ -787,9 +787,13 @@ public class FileChooserActivity extends Activity {
 
         View view = getLayoutInflater().inflate(R.layout.afc_settings_sort_view, null);
         for (int i = 0; i < _BtnSortIds.length; i++) {
-            view.findViewById(_BtnSortIds[i]).setOnClickListener(listener);
-            if (i == btnCurrentSortTypeIdx)
-                view.findViewById(_BtnSortIds[i]).setEnabled(false);
+            Button btn = (Button) view.findViewById(_BtnSortIds[i]);
+            btn.setOnClickListener(listener);
+            if (i == btnCurrentSortTypeIdx) {
+                btn.setEnabled(false);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+                    btn.setText(R.string.afc_ellipsize);
+            }
         }
 
         _dialog.setTitle(R.string.afc_title_sort_by);
