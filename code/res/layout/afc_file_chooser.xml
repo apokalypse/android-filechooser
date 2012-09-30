@@ -19,34 +19,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <LinearLayout
-        android:id="@+id/afc_filechooser_activity_viewgroup_button_locations"
+    <RelativeLayout
+        android:id="@+id/afc_filechooser_activity_viewgroup_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:orientation="horizontal" >
+        android:layout_alignParentTop="true" >
 
         <ImageView
             android:id="@+id/afc_filechooser_activity_button_go_back"
-            style="@style/afc_button_navi_left" />
+            style="@style/afc_button_navi_left"
+            android:layout_alignParentLeft="true" />
 
         <ImageView
             android:id="@+id/afc_filechooser_activity_button_go_forward"
-            style="@style/afc_button_navi_right" />
+            style="@style/afc_button_navi_right"
+            android:layout_toRightOf="@id/afc_filechooser_activity_button_go_back" />
 
-        <LinearLayout
-            android:layout_width="0dp"
+        <RelativeLayout
+            android:id="@+id/afc_filechooser_activity_viewgroup_button_locations"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_alignParentRight="true"
             android:layout_marginRight="@dimen/afc_dim_5dp"
-            android:layout_weight="1"
-            android:orientation="vertical" >
+            android:layout_marginTop="@dimen/afc_dim_5dp"
+            android:layout_toRightOf="@id/afc_filechooser_activity_button_go_forward" >
 
             <HorizontalScrollView
                 android:id="@+id/afc_filechooser_activity_view_locations_container"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="1" >
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true" >
 
                 <LinearLayout
                     android:id="@+id/afc_filechooser_activity_view_locations"
@@ -58,29 +60,32 @@
             </HorizontalScrollView>
 
             <View
+                android:id="@+id/afc_filechooser_activity_header_view_divider"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#cc00ffff" />
+                android:layout_height="@dimen/afc_dim_viewgroup_button_locations_bottom_divider_height"
+                android:layout_below="@id/afc_filechooser_activity_view_locations_container"
+                android:background="@color/afc_border_line_dark" />
 
             <TextView
                 android:id="@+id/afc_filechooser_activity_textview_full_dir_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_below="@id/afc_filechooser_activity_header_view_divider"
+                android:layout_centerHorizontal="true"
                 android:ellipsize="start"
                 android:gravity="center"
                 android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:visibility="gone" />
-        </LinearLayout>
-    </LinearLayout>
+        </RelativeLayout>
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/afc_filechooser_activity_viewgroup_files"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/afc_filechooser_activity_viewgroup_footer"
-        android:layout_below="@id/afc_filechooser_activity_viewgroup_button_locations"
+        android:layout_below="@id/afc_filechooser_activity_viewgroup_header"
         android:layout_marginBottom="@dimen/afc_dim_10dp"
         android:layout_marginTop="@dimen/afc_dim_10dp"
         android:orientation="vertical" >

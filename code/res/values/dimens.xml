@@ -25,5 +25,6 @@
     <dimen name="afc_dim_button_location_min_width">80sp</dimen>
     <dimen name="afc_dim_context_menu_item_padding_left">18sp</dimen>
     <dimen name="afc_dim_single_button_min_width">192sp</dimen>
+    <dimen name="afc_dim_viewgroup_button_locations_bottom_divider_height">1dp</dimen>
 
 </resources>
