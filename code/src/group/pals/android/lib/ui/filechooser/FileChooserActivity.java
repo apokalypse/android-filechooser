@@ -360,24 +360,6 @@ public class FileChooserActivity extends Activity {
     }// onCreateOptionsMenu()
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getGroupId() == R.id.afc_filechooser_activity_menugroup_sorter) {
-            doResortViewFiles();
-        }// group_sorter
-        else if (item.getItemId() == R.id.afc_filechooser_activity_menuitem_new_folder) {
-            doCreateNewDir();
-        } else if (item.getItemId() == R.id.afc_filechooser_activity_menuitem_switch_viewmode) {
-            doSwitchViewType();
-        } else if (item.getItemId() == R.id.afc_filechooser_activity_menuitem_home) {
-            doGoHome();
-        } else if (item.getItemId() == R.id.afc_filechooser_activity_menuitem_reload) {
-            doReloadCurrentLocation();
-        }
-
-        return true;
-    }// onOptionsItemSelected()
-
-    @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         /*
          * sorting
@@ -419,6 +401,24 @@ public class FileChooserActivity extends Activity {
 
         return true;
     }// onPrepareOptionsMenu()
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getGroupId() == R.id.afc_filechooser_activity_menugroup_sorter) {
+            doResortViewFiles();
+        }// group_sorter
+        else if (item.getItemId() == R.id.afc_filechooser_activity_menuitem_new_folder) {
+            doCreateNewDir();
+        } else if (item.getItemId() == R.id.afc_filechooser_activity_menuitem_switch_viewmode) {
+            doSwitchViewType();
+        } else if (item.getItemId() == R.id.afc_filechooser_activity_menuitem_home) {
+            doGoHome();
+        } else if (item.getItemId() == R.id.afc_filechooser_activity_menuitem_reload) {
+            doReloadCurrentLocation();
+        }
+
+        return true;
+    }// onOptionsItemSelected()
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -653,7 +653,7 @@ public class FileChooserActivity extends Activity {
                 return false;
             }
         });
-    }// setupListviewFiles()
+    }// setupViewFiles()
 
     /**
      * Creates {@link IFileAdapter} and assign it to list view/ grid view of
@@ -857,6 +857,8 @@ public class FileChooserActivity extends Activity {
                 setupViewFiles();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
                     ActivityCompat.invalidateOptionsMenu(FileChooserActivity.this);
+
+                doReloadCurrentLocation();
             }// onPreExecute()
 
             @Override
