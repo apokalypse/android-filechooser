@@ -642,8 +642,7 @@ public class FileChooserActivity extends Activity {
             }
         });
 
-        if (mFileAdapter == null)
-            createIFileAdapter();
+        createIFileAdapter();
 
         // no comments :-D
         mFooterView.setOnLongClickListener(new View.OnLongClickListener() {
