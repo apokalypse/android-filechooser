@@ -43,7 +43,8 @@ And here is history:
    - Removes deprecated method History.push(A, A);
    - Keeps and shows full history to the user (wherever they have been gone to);
    - Removes button Cancel in dialogs. Users can tap Back button or touch outside
-     of the dialogs to cancel them.
+     of the dialogs to cancel them;
+   - Moves [/]io.LocalFile to [/]io.localfile.LocalFile.
 
 +++ Version 4.5 +++
  - Release: September 07, 2012
