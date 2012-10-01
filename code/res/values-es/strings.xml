@@ -76,5 +76,6 @@
     <string name="afc_title_save_as">Guardar como…</string>
     <string name="afc_title_size">Tamaño</string>
     <string name="afc_title_sort_by">Ordenar por…</string>
+    <string name="afc_yesterday">Ayer</string>
 
 </resources>

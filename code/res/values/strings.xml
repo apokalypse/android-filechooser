@@ -72,5 +72,6 @@
     <string name="afc_title_save_as">Save as…</string>
     <string name="afc_title_size">Size</string>
     <string name="afc_title_sort_by">Sort by…</string>
+    <string name="afc_yesterday">Yesterday</string>
 
 </resources>

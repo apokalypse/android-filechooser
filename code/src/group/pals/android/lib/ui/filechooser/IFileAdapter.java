@@ -21,14 +21,13 @@ import group.pals.android.lib.ui.filechooser.io.IFileFilter;
 import group.pals.android.lib.ui.filechooser.services.IFileProvider;
 import group.pals.android.lib.ui.filechooser.services.IFileProvider.FilterMode;
 import group.pals.android.lib.ui.filechooser.utils.Converter;
+import group.pals.android.lib.ui.filechooser.utils.DateUtils;
 import group.pals.android.lib.ui.filechooser.utils.FileUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.LoadingDialog;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 import android.content.Context;
@@ -57,25 +56,9 @@ public class IFileAdapter extends BaseAdapter {
      */
     public static final String _ClassName = IFileAdapter.class.getName();
 
-    /**
-     * Default short format for file time. Value = {@code "yyyy.MM.dd hh:mm a"}<br>
-     * See <a href=
-     * "http://developer.android.com/reference/java/text/SimpleDateFormat.html"
-     * >API docs</a>.
-     */
-    public static final String _DefFileTimeShortFormat = "yyyy.MM.dd hh:mm a";
-
-    /**
-     * You can set your own short format for file time by this variable. If the
-     * value is in wrong format, {@link #_DefFileTimeShortFormat} will be used.<br>
-     * See <a href=
-     * "http://developer.android.com/reference/java/text/SimpleDateFormat.html"
-     * >API docs</a>.
-     */
-    public static String fileTimeShortFormat = _DefFileTimeShortFormat;
-
     private final Integer[] mAdvancedSelectionOptions;
     private final IFileProvider.FilterMode mFilterMode;
+    private final Context mContext;
 
     private List<IFileDataModel> mData;
     private LayoutInflater mInflater;
@@ -95,8 +78,9 @@ public class IFileAdapter extends BaseAdapter {
      */
     public IFileAdapter(Context context, List<IFileDataModel> objects, IFileProvider.FilterMode filterMode,
             boolean multiSelection) {
+        mContext = context.getApplicationContext();
         mData = objects;
-        mInflater = LayoutInflater.from(context);
+        mInflater = LayoutInflater.from(mContext);
         mFilterMode = filterMode;
         mMultiSelection = multiSelection;
 
@@ -298,21 +282,11 @@ public class IFileAdapter extends BaseAdapter {
             bag.mTxtFileName.setPaintFlags(bag.mTxtFileName.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
 
         // file info
-        String time = null;
-        try {
-            time = new SimpleDateFormat(fileTimeShortFormat).format(file.lastModified());
-        } catch (Exception e) {
-            try {
-                time = new SimpleDateFormat(_DefFileTimeShortFormat).format(file.lastModified());
-            } catch (Exception ex) {
-                time = new Date(file.lastModified()).toString();
-            }
-        }
+        String time = DateUtils.formatDate(mContext, file.lastModified());
         if (file.isDirectory())
             bag.mTxtFileInfo.setText(time);
-        else {
+        else
             bag.mTxtFileInfo.setText(String.format("%s, %s", Converter.sizeToStr(file.length()), time));
-        }
 
         // checkbox
         if (mMultiSelection) {

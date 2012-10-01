@@ -70,5 +70,6 @@
     <string name="afc_title_save_as">Lưu…</string>
     <string name="afc_title_size">Kích thước</string>
     <string name="afc_title_sort_by">Sắp xếp theo…</string>
+    <string name="afc_yesterday">Hôm qua</string>
 
 </resources>
