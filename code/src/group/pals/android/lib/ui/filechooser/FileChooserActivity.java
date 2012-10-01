@@ -188,6 +188,13 @@ public class FileChooserActivity extends Activity {
      * Key to hold display-hidden-files, default = {@code false}
      */
     public static final String _DisplayHiddenFiles = _ClassName + ".display_hidden_files";
+    /**
+     * Sets to {@code true} if you want to use thumbnail generator for images
+     * and videos. Default is {@code true}.
+     * 
+     * @since v4.6 beta.
+     */
+    public static final String _UseThumbnailGenerator = _ClassName + ".use_thumbnail_generator";
 
     // ---------------------------------------------------------
 
@@ -237,6 +244,7 @@ public class FileChooserActivity extends Activity {
     private IFile mRoot;
     private boolean mIsMultiSelection;
     private boolean mIsSaveDialog;
+    private boolean mUseThumbnailGenerator;
 
     /**
      * The history.
@@ -301,6 +309,8 @@ public class FileChooserActivity extends Activity {
         if (mIsSaveDialog) {
             mIsMultiSelection = false;
         }
+
+        mUseThumbnailGenerator = getIntent().getBooleanExtra(_UseThumbnailGenerator, true);
 
         mViewGoBack = (ImageView) findViewById(R.id.afc_filechooser_activity_button_go_back);
         mViewGoForward = (ImageView) findViewById(R.id.afc_filechooser_activity_button_go_forward);
@@ -644,7 +654,7 @@ public class FileChooserActivity extends Activity {
 
         if (mFileAdapter == null) {
             mFileAdapter = new IFileAdapter(FileChooserActivity.this, new ArrayList<IFileDataModel>(),
-                    mFileProvider.getFilterMode(), mIsMultiSelection);
+                    mFileProvider.getFilterMode(), mIsMultiSelection, mUseThumbnailGenerator);
             mFileAdapter.initListView(mViewFiles);
         }
         /*

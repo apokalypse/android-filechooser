@@ -38,6 +38,7 @@ import android.graphics.Paint;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,6 +58,11 @@ import android.widget.TextView;
  * 
  */
 public class IFileAdapter extends BaseAdapter {
+
+    /**
+     * Used for logging...
+     */
+    public static final String _ClassName = IFileAdapter.class.getName();
 
     /**
      * Default short format for file time. Value = {@code "yyyy.MM.dd hh:mm a"}<br>
@@ -81,6 +87,7 @@ public class IFileAdapter extends BaseAdapter {
     private List<IFileDataModel> mData;
     private LayoutInflater mInflater;
     private boolean mMultiSelection;
+    private boolean mUseThumbnailGenerator;
     private AbsListView.OnScrollListener mOnScrollListener;
     private boolean mScrolling;
     private final int mThumbnailSize;
@@ -99,11 +106,12 @@ public class IFileAdapter extends BaseAdapter {
      *            see {@link FileChooserActivity#_MultiSelection}
      */
     public IFileAdapter(Context context, List<IFileDataModel> objects, IFileProvider.FilterMode filterMode,
-            boolean multiSelection) {
+            boolean multiSelection, boolean useThumbnailGenerator) {
         mData = objects;
         mInflater = LayoutInflater.from(context);
         mFilterMode = filterMode;
         mMultiSelection = multiSelection;
+        mUseThumbnailGenerator = useThumbnailGenerator;
 
         switch (mFilterMode) {
         case DirectoriesOnly:
@@ -277,7 +285,7 @@ public class IFileAdapter extends BaseAdapter {
 
         ViewGroup mImageViewContainer;
         ImageView mImageIcon;
-        boolean mThumbnailLoaded;
+        boolean mThumbnailIsProceessed;
         TextView mTxtFileName;
         TextView mTxtFileInfo;
         CheckBox mCheckboxSelection;
@@ -333,8 +341,16 @@ public class IFileAdapter extends BaseAdapter {
 
         // image icon
         bag.mImageIcon.setImageResource(FileUtils.getResIcon(file));
-        if (file.getName().matches(MimeTypes._RegexFileTypeImages)) {
-            bag.mThumbnailLoaded = false;
+        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) bag.mImageViewContainer.getLayoutParams();
+        lp.width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        lp.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        bag.mImageViewContainer.setLayoutParams(lp);
+
+        if (mUseThumbnailGenerator
+                && file.isFile()
+                && (file.getName().matches(MimeTypes._RegexFileTypeImages) || file.getName().matches(
+                        MimeTypes._RegexFileTypeVideos))) {
+            bag.mThumbnailIsProceessed = false;
             if (!mScrolling)
                 updateThumbnail(file, bag);
         }
@@ -387,14 +403,22 @@ public class IFileAdapter extends BaseAdapter {
             bag.mCheckboxSelection.setVisibility(View.GONE);
     }// updateView
 
+    /**
+     * Updates thumbnail for {@code file}.
+     * 
+     * @param file
+     *            {@link IFile}
+     * @param bag
+     *            {@link Bag}
+     */
     private void updateThumbnail(IFile file, Bag bag) {
-        if (bag.mThumbnailLoaded)
+        if (bag.mThumbnailIsProceessed)
             return;
 
         ThumbnailGenerator generator = new ThumbnailGenerator(file, bag.mImageViewContainer, bag.mImageIcon,
                 mThumbnailSize);
         mThumbnailGeneratorManager.addGenerator(generator);
-        bag.mThumbnailLoaded = true;
+        bag.mThumbnailIsProceessed = true;
     }// updateThumbnail()
 
     // =========
@@ -504,6 +528,12 @@ public class IFileAdapter extends BaseAdapter {
     // ===================
     // THUMBNAIL UTILITIES
 
+    /**
+     * A thread - which try to generate thumbnail for an {@lin IFile}.
+     * 
+     * @author Hai Bison
+     * 
+     */
     private static class ThumbnailGenerator extends Thread {
 
         private static final int _MsgUpdateImageView = 0;
@@ -514,6 +544,8 @@ public class IFileAdapter extends BaseAdapter {
         private final ImageView mImageView;
         private final int mSize;
         private Bitmap mBitmap;
+
+        private ThumbnailGeneratorListener mListener;
 
         private final Handler mHandler = new Handler() {
 
@@ -540,6 +572,18 @@ public class IFileAdapter extends BaseAdapter {
             }// handleMessage()
         };// mHandler
 
+        /**
+         * Creates new instance of {@link ThumbnailGenerator}.
+         * 
+         * @param file
+         *            {@link IFile}
+         * @param imageViewContainer
+         *            {@link ViewGroup}
+         * @param imageView
+         *            {@link ImageView}
+         * @param size
+         *            preferred dimension of the thumbnail to be generated.
+         */
         public ThumbnailGenerator(IFile file, ViewGroup imageViewContainer, ImageView imageView, int size) {
             mFile = file;
             mImageViewContainer = imageViewContainer;
@@ -547,9 +591,20 @@ public class IFileAdapter extends BaseAdapter {
             mSize = size;
         }// ThumbnailGenerator()
 
+        /**
+         * Sets a {@link ThumbnailGeneratorListener}.
+         * 
+         * @param listener
+         *            {@link ThumbnailGeneratorListener}.
+         */
+        public void setListener(ThumbnailGeneratorListener listener) {
+            mListener = listener;
+        }
+
         @Override
         public void run() {
             mBitmap = mFile.genThumbnail(mSize, mSize);
+            Log.d(_ClassName, String.format("Thumbnail for \"%s\" = %s", mFile.getName(), mBitmap));
             if (mBitmap != null) {
                 if (isInterrupted()) {
                     mBitmap.recycle();
@@ -558,22 +613,69 @@ public class IFileAdapter extends BaseAdapter {
                     mHandler.sendEmptyMessage(_MsgUpdateImageView);
                 }
             }
+
+            if (mListener != null)
+                mListener.onFinished(this);
         }// run()
     }// ThumbnailGenerator
 
+    /**
+     * Listener for {@link ThumbnailGenerator}.
+     * 
+     * @author Hai Bison
+     * 
+     */
+    private static interface ThumbnailGeneratorListener {
+
+        /**
+         * Will be called after the progress is done.
+         * 
+         * @param generator
+         *            the generator, see {@link ThumbnailGenerator}.
+         */
+        void onFinished(ThumbnailGenerator generator);
+    }// ThumbnailGeneratorListener
+
+    /**
+     * Manager for group of {@link ThumbnailGenerator}'s.
+     * 
+     * @author Hai Bison
+     * 
+     */
     private static class ThumbnailGeneratorManager {
 
         private final List<Thread> mGenerators;
 
+        /**
+         * Creates new instance of {@link ThumbnailGeneratorManager}.
+         */
         public ThumbnailGeneratorManager() {
             mGenerators = new ArrayList<Thread>();
         }// ThumbnailGeneratorManager()
 
+        private final ThumbnailGeneratorListener mThumbnailGeneratorListener = new ThumbnailGeneratorListener() {
+
+            @Override
+            public void onFinished(ThumbnailGenerator generator) {
+                mGenerators.remove(generator);
+            }// onFinished()
+        };// mThumbnailGeneratorListener
+
+        /**
+         * Adds new {@code generator} to this group and start it.
+         * 
+         * @param generator
+         *            {@link ThumbnailGenerator}.
+         */
         public void addGenerator(ThumbnailGenerator generator) {
+            generator.setListener(mThumbnailGeneratorListener);
             mGenerators.add(generator);
             generator.start();
         }// addGenerator()
 
+        /**
+         * Cancels all generators.
+         */
         public void cancelAll() {
             for (Thread generator : mGenerators)
                 generator.interrupt();
