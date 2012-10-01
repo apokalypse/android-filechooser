@@ -22,7 +22,6 @@ import group.pals.android.lib.ui.filechooser.services.IFileProvider;
 import group.pals.android.lib.ui.filechooser.services.IFileProvider.FilterMode;
 import group.pals.android.lib.ui.filechooser.utils.Converter;
 import group.pals.android.lib.ui.filechooser.utils.FileUtils;
-import group.pals.android.lib.ui.filechooser.utils.MimeTypes;
 import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.LoadingDialog;
 
@@ -33,22 +32,16 @@ import java.util.Date;
 import java.util.List;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Paint;
-import android.os.Handler;
-import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
@@ -87,11 +80,6 @@ public class IFileAdapter extends BaseAdapter {
     private List<IFileDataModel> mData;
     private LayoutInflater mInflater;
     private boolean mMultiSelection;
-    private boolean mUseThumbnailGenerator;
-    private AbsListView.OnScrollListener mOnScrollListener;
-    private boolean mScrolling;
-    private final int mThumbnailSize;
-    private final ThumbnailGeneratorManager mThumbnailGeneratorManager = new ThumbnailGeneratorManager();
 
     /**
      * Creates new {@link IFileAdapter}
@@ -106,12 +94,11 @@ public class IFileAdapter extends BaseAdapter {
      *            see {@link FileChooserActivity#_MultiSelection}
      */
     public IFileAdapter(Context context, List<IFileDataModel> objects, IFileProvider.FilterMode filterMode,
-            boolean multiSelection, boolean useThumbnailGenerator) {
+            boolean multiSelection) {
         mData = objects;
         mInflater = LayoutInflater.from(context);
         mFilterMode = filterMode;
         mMultiSelection = multiSelection;
-        mUseThumbnailGenerator = useThumbnailGenerator;
 
         switch (mFilterMode) {
         case DirectoriesOnly:
@@ -125,47 +112,7 @@ public class IFileAdapter extends BaseAdapter {
                     R.string.afc_cmd_select_all_files, R.string.afc_cmd_select_all_folders };
             break;// FilesAndDirectories
         }
-
-        mThumbnailSize = context.getResources().getDimensionPixelSize(R.dimen.afc_thumbnail_size);
-        initOnScrollListener();
     }// IFileAdapter
-
-    private void initOnScrollListener() {
-        mOnScrollListener = new AbsListView.OnScrollListener() {
-
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                switch (scrollState) {
-                case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
-                    mScrolling = false;
-
-                    int first = view.getFirstVisiblePosition();
-                    int count = view.getChildCount();
-                    for (int i = 0; i < count; i++) {
-                        View childView = view.getChildAt(i);
-                        if (childView.getTag() instanceof Bag)
-                            updateThumbnail(getItem(first + i).getFile(), (Bag) childView.getTag());
-                    }// for
-
-                    break;// SCROLL_STATE_IDLE
-                default:
-                    mScrolling = true;
-                    mThumbnailGeneratorManager.cancelAll();
-
-                    break;// default
-                }
-            }// onScrollStateChanged()
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                // TODO Auto-generated method stub
-            }// onScroll()
-        };
-    }// initOnScrollListener()
-
-    public void initListView(AbsListView listView) {
-        listView.setOnScrollListener(mOnScrollListener);
-    }// initListView()
 
     @Override
     public int getCount() {
@@ -267,8 +214,9 @@ public class IFileAdapter extends BaseAdapter {
     }// removeAll()
 
     /**
-     * Clears all items. <b>Note:</b> this does not notify the adapter that data
-     * set has been changed.
+     * Clears all items.<br>
+     * <b>Note:</b><br>
+     * <li>This does not notify the adapter that data set has been changed.</li>
      */
     public void clear() {
         if (mData != null)
@@ -283,9 +231,7 @@ public class IFileAdapter extends BaseAdapter {
      */
     private static final class Bag {
 
-        ViewGroup mImageViewContainer;
         ImageView mImageIcon;
-        boolean mThumbnailIsProceessed;
         TextView mTxtFileName;
         TextView mTxtFileInfo;
         CheckBox mCheckboxSelection;
@@ -300,7 +246,6 @@ public class IFileAdapter extends BaseAdapter {
             convertView = mInflater.inflate(R.layout.afc_file_item, null);
 
             bag = new Bag();
-            bag.mImageViewContainer = (ViewGroup) convertView.findViewById(R.id.afc_file_item_imageview_container);
             bag.mImageIcon = (ImageView) convertView.findViewById(R.id.afc_file_item_imageview_icon);
             bag.mTxtFileName = (TextView) convertView.findViewById(R.id.afc_file_item_textview_filename);
             bag.mTxtFileInfo = (TextView) convertView.findViewById(R.id.afc_file_item_textview_file_info);
@@ -312,7 +257,7 @@ public class IFileAdapter extends BaseAdapter {
         }
 
         // update view
-        updateView(parent, bag, data, data.getFile());
+        updateView(parent, convertView, bag, data, data.getFile());
 
         return convertView;
     }
@@ -322,6 +267,8 @@ public class IFileAdapter extends BaseAdapter {
      * 
      * @param parent
      *            the parent view
+     * @param childView
+     *            the child view.
      * @param bag
      *            the "view holder", see {@link Bag}
      * @param data
@@ -330,7 +277,7 @@ public class IFileAdapter extends BaseAdapter {
      *            {@link IFile}
      * @since v2.0 alpha
      */
-    private void updateView(ViewGroup parent, Bag bag, final IFileDataModel data, IFile file) {
+    private void updateView(ViewGroup parent, View childView, Bag bag, final IFileDataModel data, IFile file) {
         // if parent is list view, enable multiple lines
         boolean useSingleLine = parent instanceof GridView;
         for (TextView tv : new TextView[] { bag.mTxtFileName, bag.mTxtFileInfo }) {
@@ -339,21 +286,8 @@ public class IFileAdapter extends BaseAdapter {
                 tv.setEllipsize(TextUtils.TruncateAt.END);
         }
 
-        // image icon
+        // file icon
         bag.mImageIcon.setImageResource(FileUtils.getResIcon(file));
-        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) bag.mImageViewContainer.getLayoutParams();
-        lp.width = LinearLayout.LayoutParams.WRAP_CONTENT;
-        lp.height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        bag.mImageViewContainer.setLayoutParams(lp);
-
-        if (mUseThumbnailGenerator
-                && file.isFile()
-                && (file.getName().matches(MimeTypes._RegexFileTypeImages) || file.getName().matches(
-                        MimeTypes._RegexFileTypeVideos))) {
-            bag.mThumbnailIsProceessed = false;
-            if (!mScrolling)
-                updateThumbnail(file, bag);
-        }
 
         // filename
         bag.mTxtFileName.setText(file.getName());
@@ -402,24 +336,6 @@ public class IFileAdapter extends BaseAdapter {
         } else
             bag.mCheckboxSelection.setVisibility(View.GONE);
     }// updateView
-
-    /**
-     * Updates thumbnail for {@code file}.
-     * 
-     * @param file
-     *            {@link IFile}
-     * @param bag
-     *            {@link Bag}
-     */
-    private void updateThumbnail(IFile file, Bag bag) {
-        if (bag.mThumbnailIsProceessed)
-            return;
-
-        ThumbnailGenerator generator = new ThumbnailGenerator(file, bag.mImageViewContainer, bag.mImageIcon,
-                mThumbnailSize);
-        mThumbnailGeneratorManager.addGenerator(generator);
-        bag.mThumbnailIsProceessed = true;
-    }// updateThumbnail()
 
     // =========
     // UTILITIES
@@ -524,162 +440,4 @@ public class IFileAdapter extends BaseAdapter {
             return true;
         }// onLongClick()
     };// mCheckboxSelectionOnLongClickListener
-
-    // ===================
-    // THUMBNAIL UTILITIES
-
-    /**
-     * A thread - which try to generate thumbnail for an {@lin IFile}.
-     * 
-     * @author Hai Bison
-     * 
-     */
-    private static class ThumbnailGenerator extends Thread {
-
-        private static final int _MsgUpdateImageView = 0;
-        private static final int _MsgUpdateImageViewContainer = 1;
-
-        private final IFile mFile;
-        private final ViewGroup mImageViewContainer;
-        private final ImageView mImageView;
-        private final int mSize;
-        private Bitmap mBitmap;
-
-        private ThumbnailGeneratorListener mListener;
-
-        private final Handler mHandler = new Handler() {
-
-            @Override
-            public void handleMessage(Message msg) {
-                LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mImageViewContainer.getLayoutParams();
-
-                switch (msg.what) {
-                case _MsgUpdateImageView:
-                    mImageView.setImageBitmap(mBitmap);
-
-                    lp.width = mSize;
-                    lp.height = mSize;
-
-                    break;// _MsgUpdateImageView
-                case _MsgUpdateImageViewContainer:
-                    lp.width = LinearLayout.LayoutParams.WRAP_CONTENT;
-                    lp.height = LinearLayout.LayoutParams.WRAP_CONTENT;
-
-                    break;// _MsgUpdateImageViewContainer
-                }
-
-                mImageViewContainer.setLayoutParams(lp);
-            }// handleMessage()
-        };// mHandler
-
-        /**
-         * Creates new instance of {@link ThumbnailGenerator}.
-         * 
-         * @param file
-         *            {@link IFile}
-         * @param imageViewContainer
-         *            {@link ViewGroup}
-         * @param imageView
-         *            {@link ImageView}
-         * @param size
-         *            preferred dimension of the thumbnail to be generated.
-         */
-        public ThumbnailGenerator(IFile file, ViewGroup imageViewContainer, ImageView imageView, int size) {
-            mFile = file;
-            mImageViewContainer = imageViewContainer;
-            mImageView = imageView;
-            mSize = size;
-        }// ThumbnailGenerator()
-
-        /**
-         * Sets a {@link ThumbnailGeneratorListener}.
-         * 
-         * @param listener
-         *            {@link ThumbnailGeneratorListener}.
-         */
-        public void setListener(ThumbnailGeneratorListener listener) {
-            mListener = listener;
-        }
-
-        @Override
-        public void run() {
-            mBitmap = mFile.genThumbnail(mSize, mSize);
-            Log.d(_ClassName, String.format("Thumbnail for \"%s\" = %s", mFile.getName(), mBitmap));
-            if (mBitmap != null) {
-                if (isInterrupted()) {
-                    mBitmap.recycle();
-                    mHandler.sendEmptyMessage(_MsgUpdateImageViewContainer);
-                } else {
-                    mHandler.sendEmptyMessage(_MsgUpdateImageView);
-                }
-            }
-
-            if (mListener != null)
-                mListener.onFinished(this);
-        }// run()
-    }// ThumbnailGenerator
-
-    /**
-     * Listener for {@link ThumbnailGenerator}.
-     * 
-     * @author Hai Bison
-     * 
-     */
-    private static interface ThumbnailGeneratorListener {
-
-        /**
-         * Will be called after the progress is done.
-         * 
-         * @param generator
-         *            the generator, see {@link ThumbnailGenerator}.
-         */
-        void onFinished(ThumbnailGenerator generator);
-    }// ThumbnailGeneratorListener
-
-    /**
-     * Manager for group of {@link ThumbnailGenerator}'s.
-     * 
-     * @author Hai Bison
-     * 
-     */
-    private static class ThumbnailGeneratorManager {
-
-        private final List<Thread> mGenerators;
-
-        /**
-         * Creates new instance of {@link ThumbnailGeneratorManager}.
-         */
-        public ThumbnailGeneratorManager() {
-            mGenerators = new ArrayList<Thread>();
-        }// ThumbnailGeneratorManager()
-
-        private final ThumbnailGeneratorListener mThumbnailGeneratorListener = new ThumbnailGeneratorListener() {
-
-            @Override
-            public void onFinished(ThumbnailGenerator generator) {
-                mGenerators.remove(generator);
-            }// onFinished()
-        };// mThumbnailGeneratorListener
-
-        /**
-         * Adds new {@code generator} to this group and start it.
-         * 
-         * @param generator
-         *            {@link ThumbnailGenerator}.
-         */
-        public void addGenerator(ThumbnailGenerator generator) {
-            generator.setListener(mThumbnailGeneratorListener);
-            mGenerators.add(generator);
-            generator.start();
-        }// addGenerator()
-
-        /**
-         * Cancels all generators.
-         */
-        public void cancelAll() {
-            for (Thread generator : mGenerators)
-                generator.interrupt();
-            mGenerators.clear();
-        }// cancelAll()
-    }// ThumbnailGeneratorManager
 }

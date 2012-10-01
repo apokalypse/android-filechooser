@@ -165,7 +165,10 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(mMaxSize);
-        dest.writeSerializable(mHistoryList);
+
+        dest.writeInt(size());
+        for (int i = 0; i < size(); i++)
+            dest.writeParcelable(mHistoryList.get(i), flags);
     }
 
     public static final Parcelable.Creator<HistoryStore> CREATOR = new Parcelable.Creator<HistoryStore>() {
@@ -181,6 +184,9 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
 
     private HistoryStore(Parcel in) {
         mMaxSize = in.readInt();
-        mHistoryList.addAll((ArrayList<A>) in.readSerializable());
+
+        int count = in.readInt();
+        for (int i = 0; i < count; i++)
+            mHistoryList.add((A) in.readParcelable(null));
     }
 }

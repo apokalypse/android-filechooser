@@ -16,7 +16,6 @@
 
 package group.pals.android.lib.ui.filechooser.io;
 
-import android.graphics.Bitmap;
 import android.os.Parcelable;
 
 /**
@@ -172,18 +171,4 @@ public interface IFile extends Parcelable {
      * @since v4.3 beta
      */
     boolean canRead();
-
-    /**
-     * Generates thumbnail for this file.<br>
-     * <br>
-     * Normally, this method will be called for files (not directories).
-     * 
-     * @param width
-     *            the width of thumbnail.
-     * @param height
-     *            the height of thumbnail.
-     * @return the thumbnail of this file, or {@code null} if not available.
-     * @since v4.6 beta
-     */
-    Bitmap genThumbnail(int width, int height);
 }

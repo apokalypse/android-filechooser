@@ -188,13 +188,6 @@ public class FileChooserActivity extends Activity {
      * Key to hold display-hidden-files, default = {@code false}
      */
     public static final String _DisplayHiddenFiles = _ClassName + ".display_hidden_files";
-    /**
-     * Sets to {@code true} if you want to use thumbnail generator for images
-     * and videos. Default is {@code true}.
-     * 
-     * @since v4.6 beta.
-     */
-    public static final String _UseThumbnailGenerator = _ClassName + ".use_thumbnail_generator";
 
     // ---------------------------------------------------------
 
@@ -244,7 +237,6 @@ public class FileChooserActivity extends Activity {
     private IFile mRoot;
     private boolean mIsMultiSelection;
     private boolean mIsSaveDialog;
-    private boolean mUseThumbnailGenerator;
 
     /**
      * The history.
@@ -309,8 +301,6 @@ public class FileChooserActivity extends Activity {
         if (mIsSaveDialog) {
             mIsMultiSelection = false;
         }
-
-        mUseThumbnailGenerator = getIntent().getBooleanExtra(_UseThumbnailGenerator, true);
 
         mViewGoBack = (ImageView) findViewById(R.id.afc_filechooser_activity_button_go_back);
         mViewGoForward = (ImageView) findViewById(R.id.afc_filechooser_activity_button_go_forward);
@@ -652,19 +642,8 @@ public class FileChooserActivity extends Activity {
             }
         });
 
-        if (mFileAdapter == null) {
-            mFileAdapter = new IFileAdapter(FileChooserActivity.this, new ArrayList<IFileDataModel>(),
-                    mFileProvider.getFilterMode(), mIsMultiSelection, mUseThumbnailGenerator);
-            mFileAdapter.initListView(mViewFiles);
-        }
-        /*
-         * API 13+ does not recognize AbsListView.setAdapter(), so we cast it to
-         * explicit class
-         */
-        if (mViewFiles instanceof ListView)
-            ((ListView) mViewFiles).setAdapter(mFileAdapter);
-        else
-            ((GridView) mViewFiles).setAdapter(mFileAdapter);
+        if (mFileAdapter == null)
+            createIFileAdapter();
 
         // no comments :-D
         mFooterView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -676,6 +655,26 @@ public class FileChooserActivity extends Activity {
             }
         });
     }// setupListviewFiles()
+
+    /**
+     * Creates {@link IFileAdapter} and assign it to list view/ grid view of
+     * files.
+     */
+    private void createIFileAdapter() {
+        if (mFileAdapter != null)
+            mFileAdapter.clear();
+
+        mFileAdapter = new IFileAdapter(FileChooserActivity.this, new ArrayList<IFileDataModel>(),
+                mFileProvider.getFilterMode(), mIsMultiSelection);
+        /*
+         * API 13+ does not recognize AbsListView.setAdapter(), so we cast it to
+         * explicit class
+         */
+        if (mViewFiles instanceof ListView)
+            ((ListView) mViewFiles).setAdapter(mFileAdapter);
+        else
+            ((GridView) mViewFiles).setAdapter(mFileAdapter);
+    }// createIFileAdapter()
 
     /**
      * Setup:<br>
@@ -1179,7 +1178,7 @@ public class FileChooserActivity extends Activity {
 
                 // update list view
 
-                mFileAdapter.clear();
+                createIFileAdapter();
                 for (IFile f : files)
                     mFileAdapter.add(new IFileDataModel(f));
                 mFileAdapter.notifyDataSetChanged();
@@ -1521,13 +1520,6 @@ public class FileChooserActivity extends Activity {
                 int i = getSubViewId(x, y);
                 if (i >= 0)
                     return mViewFiles.getItemAtPosition(mViewFiles.getFirstVisiblePosition() + i);
-                return null;
-            }// getSubView()
-
-            private View getSubView(float x, float y) {
-                int i = getSubViewId(x, y);
-                if (i >= 0)
-                    return mViewFiles.getChildAt(i);
                 return null;
             }// getSubView()
 

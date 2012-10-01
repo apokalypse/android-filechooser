@@ -17,18 +17,13 @@
 package group.pals.android.lib.ui.filechooser.io.localfile;
 
 import group.pals.android.lib.ui.filechooser.io.IFile;
-import group.pals.android.lib.ui.filechooser.utils.MimeTypes;
 import group.pals.android.lib.ui.filechooser.utils.history.History;
 
 import java.io.File;
 import java.util.List;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.provider.MediaStore;
 
 /**
  * This is a wrapper for {@link File}.
@@ -82,48 +77,6 @@ public class LocalFile extends File implements IFile {
     public IFile clone() {
         return new LocalFile(getAbsolutePath());
     }
-
-    /**
-     * <b>Note:</b> If this file can be generated a thumbnail, its dimension
-     * will be not precise as input {@code width}/ {@code height}. You must take
-     * care of the UI.
-     */
-    @Override
-    public Bitmap genThumbnail(int width, int height) {
-        if (isDirectory() || width <= 0 || height <= 0)
-            return null;
-
-        if (getName().matches(MimeTypes._RegexFileTypeImages)) {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-
-            // first, get the size
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(getAbsolutePath(), options);
-
-            if (options.outHeight < 0 || options.outWidth < 0)
-                return null;
-
-            if (options.outWidth == 0 || options.outHeight == 0)
-                return Bitmap.createBitmap(0, 0, Bitmap.Config.ALPHA_8);
-
-            // calculate the scale
-            boolean isWider = options.outWidth >= options.outHeight;
-            int scale = isWider ? options.outWidth / width : options.outHeight / height;
-            // round the scale to power of 2
-            scale = (int) Math.round(Math.pow(2, Math.log(scale) / Math.log(2)));
-
-            options.inJustDecodeBounds = false;
-            options.inSampleSize = scale;
-            return BitmapFactory.decodeFile(getAbsolutePath(), options);
-        }// thumbnail for image files
-        else if (getName().matches(MimeTypes._RegexFileTypeVideos)) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO)
-                return null;
-            return ThumbnailUtilsCompat.createVideoThumbnail(getAbsolutePath(), MediaStore.Images.Thumbnails.MINI_KIND);
-        }// thumbnail for video files
-
-        return null;
-    }// genThumbnail()
 
     /*-----------------------------------------------------
      * Parcelable
