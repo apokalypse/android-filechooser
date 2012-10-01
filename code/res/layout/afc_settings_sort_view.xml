@@ -25,14 +25,14 @@
         android:layout_gravity="center" >
 
         <TableRow
-            android:layout_marginLeft="@dimen/afc_dim_10dp"
-            android:layout_marginRight="@dimen/afc_dim_10dp" >
+            android:layout_marginLeft="@dimen/afc_10dp"
+            android:layout_marginRight="@dimen/afc_10dp" >
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginRight="@dimen/afc_dim_30dp"
+                android:layout_marginRight="@dimen/afc_30dp"
                 android:text="@string/afc_title_name"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -52,14 +52,14 @@
         </TableRow>
 
         <TableRow
-            android:layout_marginLeft="@dimen/afc_dim_10dp"
-            android:layout_marginRight="@dimen/afc_dim_10dp" >
+            android:layout_marginLeft="@dimen/afc_10dp"
+            android:layout_marginRight="@dimen/afc_10dp" >
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginRight="@dimen/afc_dim_30dp"
+                android:layout_marginRight="@dimen/afc_30dp"
                 android:text="@string/afc_title_size"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -79,14 +79,14 @@
         </TableRow>
 
         <TableRow
-            android:layout_marginLeft="@dimen/afc_dim_10dp"
-            android:layout_marginRight="@dimen/afc_dim_10dp" >
+            android:layout_marginLeft="@dimen/afc_10dp"
+            android:layout_marginRight="@dimen/afc_10dp" >
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginRight="@dimen/afc_dim_30dp"
+                android:layout_marginRight="@dimen/afc_30dp"
                 android:text="@string/afc_title_date"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 

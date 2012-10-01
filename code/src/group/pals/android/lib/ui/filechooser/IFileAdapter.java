@@ -22,6 +22,7 @@ import group.pals.android.lib.ui.filechooser.services.IFileProvider;
 import group.pals.android.lib.ui.filechooser.services.IFileProvider.FilterMode;
 import group.pals.android.lib.ui.filechooser.utils.Converter;
 import group.pals.android.lib.ui.filechooser.utils.FileUtils;
+import group.pals.android.lib.ui.filechooser.utils.MimeTypes;
 import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.LoadingDialog;
 
@@ -32,16 +33,21 @@ import java.util.Date;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Paint;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
@@ -75,6 +81,10 @@ public class IFileAdapter extends BaseAdapter {
     private List<IFileDataModel> mData;
     private LayoutInflater mInflater;
     private boolean mMultiSelection;
+    private AbsListView.OnScrollListener mOnScrollListener;
+    private boolean mScrolling;
+    private final int mThumbnailSize;
+    private final ThumbnailGeneratorManager mThumbnailGeneratorManager = new ThumbnailGeneratorManager();
 
     /**
      * Creates new {@link IFileAdapter}
@@ -107,7 +117,47 @@ public class IFileAdapter extends BaseAdapter {
                     R.string.afc_cmd_select_all_files, R.string.afc_cmd_select_all_folders };
             break;// FilesAndDirectories
         }
+
+        mThumbnailSize = context.getResources().getDimensionPixelSize(R.dimen.afc_thumbnail_size);
+        initOnScrollListener();
     }// IFileAdapter
+
+    private void initOnScrollListener() {
+        mOnScrollListener = new AbsListView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                switch (scrollState) {
+                case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
+                    mScrolling = false;
+
+                    int first = view.getFirstVisiblePosition();
+                    int count = view.getChildCount();
+                    for (int i = 0; i < count; i++) {
+                        View childView = view.getChildAt(i);
+                        if (childView.getTag() instanceof Bag)
+                            updateThumbnail(getItem(first + i).getFile(), (Bag) childView.getTag());
+                    }// for
+
+                    break;// SCROLL_STATE_IDLE
+                default:
+                    mScrolling = true;
+                    mThumbnailGeneratorManager.cancelAll();
+
+                    break;// default
+                }
+            }// onScrollStateChanged()
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                // TODO Auto-generated method stub
+            }// onScroll()
+        };
+    }// initOnScrollListener()
+
+    public void initListView(AbsListView listView) {
+        listView.setOnScrollListener(mOnScrollListener);
+    }// initListView()
 
     @Override
     public int getCount() {
@@ -225,10 +275,12 @@ public class IFileAdapter extends BaseAdapter {
      */
     private static final class Bag {
 
-        TextView txtFileName;
-        TextView txtFileInfo;
-        CheckBox checkboxSelection;
-        ImageView imageIcon;
+        ViewGroup mImageViewContainer;
+        ImageView mImageIcon;
+        boolean mThumbnailLoaded;
+        TextView mTxtFileName;
+        TextView mTxtFileInfo;
+        CheckBox mCheckboxSelection;
     }
 
     @Override
@@ -240,10 +292,11 @@ public class IFileAdapter extends BaseAdapter {
             convertView = mInflater.inflate(R.layout.afc_file_item, null);
 
             bag = new Bag();
-            bag.txtFileName = (TextView) convertView.findViewById(R.id.afc_text_view_filename);
-            bag.txtFileInfo = (TextView) convertView.findViewById(R.id.afc_text_view_file_info);
-            bag.checkboxSelection = (CheckBox) convertView.findViewById(R.id.afc_checkbox_selection);
-            bag.imageIcon = (ImageView) convertView.findViewById(R.id.afc_image_view_icon);
+            bag.mImageViewContainer = (ViewGroup) convertView.findViewById(R.id.afc_file_item_imageview_container);
+            bag.mImageIcon = (ImageView) convertView.findViewById(R.id.afc_file_item_imageview_icon);
+            bag.mTxtFileName = (TextView) convertView.findViewById(R.id.afc_file_item_textview_filename);
+            bag.mTxtFileInfo = (TextView) convertView.findViewById(R.id.afc_file_item_textview_file_info);
+            bag.mCheckboxSelection = (CheckBox) convertView.findViewById(R.id.afc_file_item_checkbox_selection);
 
             convertView.setTag(bag);
         } else {
@@ -272,22 +325,27 @@ public class IFileAdapter extends BaseAdapter {
     private void updateView(ViewGroup parent, Bag bag, final IFileDataModel data, IFile file) {
         // if parent is list view, enable multiple lines
         boolean useSingleLine = parent instanceof GridView;
-        for (TextView tv : new TextView[] { bag.txtFileName, bag.txtFileInfo }) {
+        for (TextView tv : new TextView[] { bag.mTxtFileName, bag.mTxtFileInfo }) {
             tv.setSingleLine(useSingleLine);
             if (useSingleLine)
                 tv.setEllipsize(TextUtils.TruncateAt.END);
         }
 
         // image icon
-        bag.imageIcon.setImageResource(FileUtils.getResIcon(file));
+        bag.mImageIcon.setImageResource(FileUtils.getResIcon(file));
+        if (file.getName().matches(MimeTypes._RegexFileTypeImages)) {
+            bag.mThumbnailLoaded = false;
+            if (!mScrolling)
+                updateThumbnail(file, bag);
+        }
 
         // filename
-        bag.txtFileName.setText(file.getName());
+        bag.mTxtFileName.setText(file.getName());
         // check if this file has been marked as to be deleted or not
         if (data.isTobeDeleted())
-            bag.txtFileName.setPaintFlags(bag.txtFileName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            bag.mTxtFileName.setPaintFlags(bag.mTxtFileName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         else
-            bag.txtFileName.setPaintFlags(bag.txtFileName.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+            bag.mTxtFileName.setPaintFlags(bag.mTxtFileName.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
 
         // file info
         String time = null;
@@ -301,19 +359,19 @@ public class IFileAdapter extends BaseAdapter {
             }
         }
         if (file.isDirectory())
-            bag.txtFileInfo.setText(time);
+            bag.mTxtFileInfo.setText(time);
         else {
-            bag.txtFileInfo.setText(String.format("%s, %s", Converter.sizeToStr(file.length()), time));
+            bag.mTxtFileInfo.setText(String.format("%s, %s", Converter.sizeToStr(file.length()), time));
         }
 
         // checkbox
         if (mMultiSelection) {
             if (mFilterMode == FilterMode.FilesOnly && file.isDirectory()) {
-                bag.checkboxSelection.setVisibility(View.GONE);
+                bag.mCheckboxSelection.setVisibility(View.GONE);
             } else {
-                bag.checkboxSelection.setVisibility(View.VISIBLE);
-                bag.checkboxSelection.setFocusable(false);
-                bag.checkboxSelection.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                bag.mCheckboxSelection.setVisibility(View.VISIBLE);
+                bag.mCheckboxSelection.setFocusable(false);
+                bag.mCheckboxSelection.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -321,13 +379,23 @@ public class IFileAdapter extends BaseAdapter {
                     }
                 });
 
-                bag.checkboxSelection.setOnLongClickListener(mCheckboxSelectionOnLongClickListener);
+                bag.mCheckboxSelection.setOnLongClickListener(mCheckboxSelectionOnLongClickListener);
 
-                bag.checkboxSelection.setChecked(data.isSelected());
+                bag.mCheckboxSelection.setChecked(data.isSelected());
             }
         } else
-            bag.checkboxSelection.setVisibility(View.GONE);
+            bag.mCheckboxSelection.setVisibility(View.GONE);
     }// updateView
+
+    private void updateThumbnail(IFile file, Bag bag) {
+        if (bag.mThumbnailLoaded)
+            return;
+
+        ThumbnailGenerator generator = new ThumbnailGenerator(file, bag.mImageViewContainer, bag.mImageIcon,
+                mThumbnailSize);
+        mThumbnailGeneratorManager.addGenerator(generator);
+        bag.mThumbnailLoaded = true;
+    }// updateThumbnail()
 
     // =========
     // UTILITIES
@@ -432,4 +500,84 @@ public class IFileAdapter extends BaseAdapter {
             return true;
         }// onLongClick()
     };// mCheckboxSelectionOnLongClickListener
+
+    // ===================
+    // THUMBNAIL UTILITIES
+
+    private static class ThumbnailGenerator extends Thread {
+
+        private static final int _MsgUpdateImageView = 0;
+        private static final int _MsgUpdateImageViewContainer = 1;
+
+        private final IFile mFile;
+        private final ViewGroup mImageViewContainer;
+        private final ImageView mImageView;
+        private final int mSize;
+        private Bitmap mBitmap;
+
+        private final Handler mHandler = new Handler() {
+
+            @Override
+            public void handleMessage(Message msg) {
+                LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mImageViewContainer.getLayoutParams();
+
+                switch (msg.what) {
+                case _MsgUpdateImageView:
+                    mImageView.setImageBitmap(mBitmap);
+
+                    lp.width = mSize;
+                    lp.height = mSize;
+
+                    break;// _MsgUpdateImageView
+                case _MsgUpdateImageViewContainer:
+                    lp.width = LinearLayout.LayoutParams.WRAP_CONTENT;
+                    lp.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+
+                    break;// _MsgUpdateImageViewContainer
+                }
+
+                mImageViewContainer.setLayoutParams(lp);
+            }// handleMessage()
+        };// mHandler
+
+        public ThumbnailGenerator(IFile file, ViewGroup imageViewContainer, ImageView imageView, int size) {
+            mFile = file;
+            mImageViewContainer = imageViewContainer;
+            mImageView = imageView;
+            mSize = size;
+        }// ThumbnailGenerator()
+
+        @Override
+        public void run() {
+            mBitmap = mFile.genThumbnail(mSize, mSize);
+            if (mBitmap != null) {
+                if (isInterrupted()) {
+                    mBitmap.recycle();
+                    mHandler.sendEmptyMessage(_MsgUpdateImageViewContainer);
+                } else {
+                    mHandler.sendEmptyMessage(_MsgUpdateImageView);
+                }
+            }
+        }// run()
+    }// ThumbnailGenerator
+
+    private static class ThumbnailGeneratorManager {
+
+        private final List<Thread> mGenerators;
+
+        public ThumbnailGeneratorManager() {
+            mGenerators = new ArrayList<Thread>();
+        }// ThumbnailGeneratorManager()
+
+        public void addGenerator(ThumbnailGenerator generator) {
+            mGenerators.add(generator);
+            generator.start();
+        }// addGenerator()
+
+        public void cancelAll() {
+            for (Thread generator : mGenerators)
+                generator.interrupt();
+            mGenerators.clear();
+        }// cancelAll()
+    }// ThumbnailGeneratorManager
 }

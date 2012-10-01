@@ -50,9 +50,9 @@ public class MenuItemAdapter extends BaseAdapter {
         mContext = context;
         mItems = itemIds;
 
-        mPadding = mContext.getResources().getDimensionPixelSize(R.dimen.afc_dim_5dp);
+        mPadding = mContext.getResources().getDimensionPixelSize(R.dimen.afc_5dp);
         mItemPaddingLeft = mContext.getResources()
-                .getDimensionPixelSize(R.dimen.afc_dim_context_menu_item_padding_left);
+                .getDimensionPixelSize(R.dimen.afc_context_menu_item_padding_left);
     }// MenuItemAdapter()
 
     @Override

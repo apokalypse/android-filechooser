@@ -642,9 +642,11 @@ public class FileChooserActivity extends Activity {
             }
         });
 
-        if (mFileAdapter == null)
+        if (mFileAdapter == null) {
             mFileAdapter = new IFileAdapter(FileChooserActivity.this, new ArrayList<IFileDataModel>(),
                     mFileProvider.getFilterMode(), mIsMultiSelection);
+            mFileAdapter.initListView(mViewFiles);
+        }
         /*
          * API 13+ does not recognize AbsListView.setAdapter(), so we cast it to
          * explicit class
@@ -691,7 +693,7 @@ public class FileChooserActivity extends Activity {
             if (mIsMultiSelection) {
                 viewGroupFooter.setVisibility(View.VISIBLE);
 
-                mBtnOk.setMinWidth(getResources().getDimensionPixelSize(R.dimen.afc_dim_single_button_min_width));
+                mBtnOk.setMinWidth(getResources().getDimensionPixelSize(R.dimen.afc_single_button_min_width));
                 mBtnOk.setText(android.R.string.ok);
 
                 RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mBtnOk.getLayoutParams();
@@ -1234,7 +1236,7 @@ public class FileChooserActivity extends Activity {
         lpBtnLoc.gravity = Gravity.CENTER;
         LinearLayout.LayoutParams lpDivider = null;
         LayoutInflater inflater = getLayoutInflater();
-        final int _dim = getResources().getDimensionPixelSize(R.dimen.afc_dim_5dp);
+        final int _dim = getResources().getDimensionPixelSize(R.dimen.afc_5dp);
         int count = 0;
         while (path != null) {
             TextView btnLoc = (TextView) inflater.inflate(R.layout.afc_button_location, null);
@@ -1247,7 +1249,7 @@ public class FileChooserActivity extends Activity {
             if (count++ == 0) {
                 Rect r = new Rect();
                 btnLoc.getPaint().getTextBounds(path.getName(), 0, path.getName().length(), r);
-                if (r.width() >= getResources().getDimensionPixelSize(R.dimen.afc_dim_button_location_max_width)
+                if (r.width() >= getResources().getDimensionPixelSize(R.dimen.afc_button_location_max_width)
                         - btnLoc.getPaddingLeft() - btnLoc.getPaddingRight()) {
                     mTxtFullDirName.setText(path.getName());
                     mTxtFullDirName.setVisibility(View.VISIBLE);

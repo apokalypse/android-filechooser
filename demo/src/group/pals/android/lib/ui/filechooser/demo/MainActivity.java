@@ -17,7 +17,7 @@
 package group.pals.android.lib.ui.filechooser.demo;
 
 import group.pals.android.lib.ui.filechooser.FileChooserActivity;
-import group.pals.android.lib.ui.filechooser.io.LocalFile;
+import group.pals.android.lib.ui.filechooser.io.localfile.LocalFile;
 import group.pals.android.lib.ui.filechooser.services.IFileProvider;
 import group.pals.android.lib.ui.filechooser.utils.ui.Dlg;
 

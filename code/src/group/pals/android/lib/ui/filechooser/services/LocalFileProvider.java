@@ -18,7 +18,7 @@ package group.pals.android.lib.ui.filechooser.services;
 
 import group.pals.android.lib.ui.filechooser.io.IFile;
 import group.pals.android.lib.ui.filechooser.io.IFileFilter;
-import group.pals.android.lib.ui.filechooser.io.LocalFile;
+import group.pals.android.lib.ui.filechooser.io.localfile.LocalFile;
 import group.pals.android.lib.ui.filechooser.utils.FileComparator;
 
 import java.io.File;

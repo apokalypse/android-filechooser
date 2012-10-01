@@ -40,8 +40,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="@dimen/afc_dim_5dp"
-            android:layout_marginTop="@dimen/afc_dim_5dp"
+            android:layout_marginRight="@dimen/afc_5dp"
+            android:layout_marginTop="@dimen/afc_5dp"
             android:layout_toRightOf="@id/afc_filechooser_activity_button_go_forward" >
 
             <HorizontalScrollView
@@ -62,7 +62,7 @@
             <View
                 android:id="@+id/afc_filechooser_activity_header_view_divider"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/afc_dim_viewgroup_button_locations_bottom_divider_height"
+                android:layout_height="@dimen/afc_viewgroup_button_locations_bottom_divider_height"
                 android:layout_below="@id/afc_filechooser_activity_view_locations_container"
                 android:background="@color/afc_border_line_dark" />
 
@@ -86,8 +86,8 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/afc_filechooser_activity_viewgroup_footer"
         android:layout_below="@id/afc_filechooser_activity_viewgroup_header"
-        android:layout_marginBottom="@dimen/afc_dim_10dp"
-        android:layout_marginTop="@dimen/afc_dim_10dp"
+        android:layout_marginBottom="@dimen/afc_10dp"
+        android:layout_marginTop="@dimen/afc_10dp"
         android:orientation="vertical" >
 
         <LinearLayout
@@ -105,7 +105,7 @@
             android:layout_gravity="center"
             android:layout_weight="0.1"
             android:gravity="center"
-            android:padding="@dimen/afc_dim_10dp"
+            android:padding="@dimen/afc_10dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textStyle="italic"
             android:visibility="gone" />
@@ -125,7 +125,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_margin="@dimen/afc_dim_5dp"
+            android:layout_margin="@dimen/afc_5dp"
             android:layout_toLeftOf="@+id/afc_filechooser_activity_button_ok"
             android:hint="@string/afc_hint_save_as_filename"
             android:imeOptions="actionDone"
@@ -143,8 +143,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/afc_dim_5dp"
-            android:layout_marginRight="@dimen/afc_dim_5dp"
+            android:layout_marginLeft="@dimen/afc_5dp"
+            android:layout_marginRight="@dimen/afc_5dp"
             android:visibility="gone" />
     </RelativeLayout>
 
