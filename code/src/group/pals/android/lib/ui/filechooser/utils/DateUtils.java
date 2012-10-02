@@ -20,7 +20,6 @@ import group.pals.android.lib.ui.filechooser.R;
 import group.pals.android.lib.ui.filechooser.prefs.DisplayPrefs;
 
 import java.util.Calendar;
-import java.util.Date;
 
 import android.content.Context;
 
@@ -56,8 +55,10 @@ public class DateUtils {
     /**
      * Formats date.
      * 
+     * @param context
+     *            {@link Context}.
      * @param millis
-     *            time in milliseconds
+     *            time in milliseconds.
      * @return the formatted string
      */
     public static String formatDate(Context context, long millis) {
@@ -69,9 +70,11 @@ public class DateUtils {
     /**
      * Formats date.
      * 
+     * @param context
+     *            {@link Context}.
      * @param date
-     *            {@link Date}
-     * @return the formatted string
+     *            {@link Calendar}.
+     * @return the formatted string, for local human reading.
      */
     public static String formatDate(Context context, Calendar date) {
         final Calendar _yesterday = Calendar.getInstance();
