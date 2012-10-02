@@ -131,4 +131,71 @@ public class DisplayPrefs extends Prefs {
         else
             p(c).edit().putBoolean(c.getString(R.string.afc_pkey_display_sort_ascending), v).commit();
     }
+
+    /**
+     * Checks setting of showing time for old days in this year. Default is
+     * {@code false}.
+     * 
+     * @param c
+     *            {@link Context}.
+     * @return {@code true} or {@code false}.
+     * @since v4.7 beta
+     */
+    public static boolean isShowTimeForOldDaysThisYear(Context c) {
+        return p(c).getBoolean(c.getString(R.string.afc_pkey_display_show_time_for_old_days_this_year),
+                c.getResources().getBoolean(R.bool.afc_pkey_display_show_time_for_old_days_this_year_def));
+    }
+
+    /**
+     * Enables or disables showing time of old days in this year.
+     * 
+     * @param c
+     *            {@link Context}.
+     * @param v
+     *            your preferred flag. If {@code null}, default will be used (
+     *            {@code false}).
+     * @since v4.7 beta
+     */
+    public static void setShowTimeForOldDaysThisYear(Context c, Boolean v) {
+        if (v == null)
+            p(c).edit()
+                    .putBoolean(c.getString(R.string.afc_pkey_display_show_time_for_old_days_this_year),
+                            c.getResources().getBoolean(R.bool.afc_pkey_display_show_time_for_old_days_this_year_def))
+                    .commit();
+        else
+            p(c).edit().putBoolean(c.getString(R.string.afc_pkey_display_show_time_for_old_days_this_year), v).commit();
+    }
+
+    /**
+     * Checks setting of showing time for old days in last year and older.
+     * Default is {@code false}.
+     * 
+     * @param c
+     *            {@link Context}.
+     * @return {@code true} or {@code false}.
+     * @since v4.7 beta
+     */
+    public static boolean isShowTimeForOldDays(Context c) {
+        return p(c).getBoolean(c.getString(R.string.afc_pkey_display_show_time_for_old_days),
+                c.getResources().getBoolean(R.bool.afc_pkey_display_show_time_for_old_days_def));
+    }
+
+    /**
+     * Enables or disables showing time of old days in last year and older.
+     * 
+     * @param c
+     *            {@link Context}.
+     * @param v
+     *            your preferred flag. If {@code null}, default will be used (
+     *            {@code false}).
+     * @since v4.7 beta
+     */
+    public static void setShowTimeForOldDays(Context c, Boolean v) {
+        if (v == null)
+            p(c).edit()
+                    .putBoolean(c.getString(R.string.afc_pkey_display_show_time_for_old_days),
+                            c.getResources().getBoolean(R.bool.afc_pkey_display_show_time_for_old_days_def)).commit();
+        else
+            p(c).edit().putBoolean(c.getString(R.string.afc_pkey_display_show_time_for_old_days), v).commit();
+    }
 }

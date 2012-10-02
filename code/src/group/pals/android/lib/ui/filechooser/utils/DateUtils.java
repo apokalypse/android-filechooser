@@ -17,8 +17,8 @@
 package group.pals.android.lib.ui.filechooser.utils;
 
 import group.pals.android.lib.ui.filechooser.R;
+import group.pals.android.lib.ui.filechooser.prefs.DisplayPrefs;
 
-import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -34,24 +34,6 @@ import android.content.Context;
 public class DateUtils {
 
     /**
-     * Default format for file time. Value =
-     * {@link DateFormat#getDateInstance()}<br>
-     * See <a href=
-     * "http://developer.android.com/reference/java/text/SimpleDateFormat.html"
-     * >API docs</a>.
-     */
-    public static final DateFormat _DefFileTimeShortFormat = DateFormat.getDateInstance();
-
-    /**
-     * You can set your own short format for file time by this variable. Default
-     * is equal to {@link #_DefFileTimeShortFormat}<br>
-     * See <a href=
-     * "http://developer.android.com/reference/java/text/SimpleDateFormat.html"
-     * >API docs</a>.
-     */
-    public static DateFormat fileTimeShortFormat = _DefFileTimeShortFormat;
-
-    /**
      * Used with format methods of {@link android.text.format.DateUtils}. For
      * example: "10:01 AM".
      */
@@ -64,6 +46,12 @@ public class DateUtils {
      */
     public static final int _FormatMonthAndDay = android.text.format.DateUtils.FORMAT_ABBREV_MONTH
             | android.text.format.DateUtils.FORMAT_SHOW_DATE | android.text.format.DateUtils.FORMAT_NO_YEAR;
+
+    /**
+     * Used with format methods of {@link android.text.format.DateUtils}. For
+     * example: "2012".
+     */
+    public static final int _FormatYear = android.text.format.DateUtils.FORMAT_SHOW_YEAR;
 
     /**
      * Formats date.
@@ -100,11 +88,19 @@ public class DateUtils {
                     android.text.format.DateUtils.formatDateTime(context, date.getTimeInMillis(), _FormatShortTime));
         }// yesterday
         else if (date.get(Calendar.YEAR) == _yesterday.get(Calendar.YEAR)) {
-            res = android.text.format.DateUtils.formatDateTime(context, date.getTimeInMillis(), _FormatShortTime
-                    | _FormatMonthAndDay);
+            if (DisplayPrefs.isShowTimeForOldDaysThisYear(context))
+                res = android.text.format.DateUtils.formatDateTime(context, date.getTimeInMillis(), _FormatShortTime
+                        | _FormatMonthAndDay);
+            else
+                res = android.text.format.DateUtils.formatDateTime(context, date.getTimeInMillis(), _FormatMonthAndDay);
         }// this year
         else {
-            res = fileTimeShortFormat.format(date.getTime());
+            if (DisplayPrefs.isShowTimeForOldDays(context))
+                res = android.text.format.DateUtils.formatDateTime(context, date.getTimeInMillis(), _FormatShortTime
+                        | _FormatMonthAndDay | _FormatYear);
+            else
+                res = android.text.format.DateUtils.formatDateTime(context, date.getTimeInMillis(), _FormatMonthAndDay
+                        | _FormatYear);
         }// older
 
         return res;
