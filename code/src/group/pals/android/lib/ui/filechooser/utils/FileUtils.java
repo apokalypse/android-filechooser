@@ -148,5 +148,5 @@ public class FileUtils {
                 }
             }// deleteFile()
         };
-    }// deleteFile()
+    }// createDeleteFileThread()
 }
