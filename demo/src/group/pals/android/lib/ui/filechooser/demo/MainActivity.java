@@ -118,10 +118,9 @@ public class MainActivity extends Activity {
             Intent intent = new Intent(MainActivity.this, FileChooserActivity.class);
 
             // theme
-            if (mChkDialogTheme.isChecked()) {
-                intent.putExtra(FileChooserActivity._UseThemeDialog, true);
+            if (mChkDialogTheme.isChecked())
                 intent.putExtra(FileChooserActivity._Theme, R.style.AppTheme_Dialog);
-            } else
+            else
                 intent.putExtra(FileChooserActivity._Theme, R.style.AppTheme);
 
             // save as...

@@ -134,16 +134,6 @@ public class FileChooserActivity extends Activity {
     public static final String _Theme = _ClassName + ".theme";
 
     /**
-     * If you use a theme dialog, set value of this key to {@code true}. This is
-     * to let the activity determine best dimension for different screen sizes.<br>
-     * <br>
-     * Default value is {@code false}.
-     * 
-     * @since v4.3 beta
-     */
-    public static final String _UseThemeDialog = _ClassName + ".use_theme_dialog";
-
-    /**
      * Key to hold the root path.<br>
      * <br>
      * If {@link LocalFileProvider} is used, then default is sdcard, if sdcard
