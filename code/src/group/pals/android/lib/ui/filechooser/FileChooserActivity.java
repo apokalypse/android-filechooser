@@ -864,7 +864,7 @@ public class FileChooserActivity extends Activity {
      */
     private void doCreateNewDir() {
         if (mFileProvider instanceof LocalFileProvider
-                && !Utils.havePermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                && !Utils.hasPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             Dlg.toast(this, R.string.afc_msg_app_doesnot_have_permission_to_create_files, Dlg._LengthShort);
             return;
         }
@@ -955,7 +955,7 @@ public class FileChooserActivity extends Activity {
      */
     private void doDeleteFile(final IFileDataModel data) {
         if (mFileProvider instanceof LocalFileProvider
-                && !Utils.havePermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                && !Utils.hasPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             notifyDataModelNotDeleted(data);
             Dlg.toast(this, R.string.afc_msg_app_doesnot_have_permission_to_delete_files, Dlg._LengthShort);
             return;
@@ -973,7 +973,8 @@ public class FileChooserActivity extends Activity {
                                 .getFile().isFile() ? getString(R.string.afc_file) : getString(R.string.afc_folder),
                                 data.getFile().getName()), true) {
 
-                            private Thread mThread = Utils.createDeleteFileThread(data.getFile(), mFileProvider, true);
+                            private Thread mThread = FileUtils.createDeleteFileThread(data.getFile(), mFileProvider,
+                                    true);
                             private final boolean _isFile = data.getFile().isFile();
 
                             private void notifyFileDeleted() {
