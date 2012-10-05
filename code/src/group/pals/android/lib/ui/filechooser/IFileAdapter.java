@@ -78,7 +78,10 @@ public class IFileAdapter extends BaseAdapter {
      */
     public IFileAdapter(Context context, List<IFileDataModel> objects, IFileProvider.FilterMode filterMode,
             boolean multiSelection) {
-        mContext = context.getApplicationContext();
+        // DO NOT use getApplicationContext(), due to this bug:
+        // http://stackoverflow.com/questions/2634991/android-1-6-android-view-windowmanagerbadtokenexception-unable-to-add-window
+        // http://code.google.com/p/android/issues/detail?id=11199
+        mContext = context;
         mData = objects;
         mInflater = LayoutInflater.from(mContext);
         mFilterMode = filterMode;
