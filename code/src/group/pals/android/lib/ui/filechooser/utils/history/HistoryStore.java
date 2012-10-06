@@ -126,6 +126,7 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public ArrayList<A> items() {
         return (ArrayList<A>) mHistoryList.clone();
@@ -171,6 +172,7 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
             dest.writeParcelable(mHistoryList.get(i), flags);
     }
 
+    @SuppressWarnings("rawtypes")
     public static final Parcelable.Creator<HistoryStore> CREATOR = new Parcelable.Creator<HistoryStore>() {
 
         public HistoryStore createFromParcel(Parcel in) {
@@ -182,6 +184,7 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
         }
     };
 
+    @SuppressWarnings("unchecked")
     private HistoryStore(Parcel in) {
         mMaxSize = in.readInt();
 
