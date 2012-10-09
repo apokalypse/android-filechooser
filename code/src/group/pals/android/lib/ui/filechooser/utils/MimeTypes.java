@@ -28,7 +28,7 @@ public class MimeTypes {
     public static final String _RegexFileTypePlainTexts = "(?si).+\\.(txt|html?|json|csv|java|pas|php.*|c|cpp|"
             + "bas|python|js|javascript|scala|xml|kml|css|ps|xslt?|tpl|tsv|bash|cmd|pl|pm|ps1|ps1xml|psc1|psd1|psm1|"
             + "py|pyc|pyo|r|rb|sdl|sh|tcl|vbs|xpl|ada|adb|ads|clj|cls|cob|cbl|cxx|cs|csproj|d|e|el|go|h|hpp|hxx|l|"
-            + "m|url|ini)";
+            + "m|url|ini|prop|conf|properties)";
 
     public static final String _RegexFileTypeHtmls = "(?si).+\\.(html?)";
 
