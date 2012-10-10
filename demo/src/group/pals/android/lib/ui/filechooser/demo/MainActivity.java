@@ -27,9 +27,9 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -158,7 +158,7 @@ public class MainActivity extends Activity {
 
         @Override
         public void onClick(View v) {
-            mDir = createOrRetrieveExternalTempDir(MainActivity.this);
+            mDir = createOrRetrieveExternalTempDir();
 
             if (mDir == null || !mDir.isDirectory()) {
                 Toast.makeText(MainActivity.this, "Can't access external SD card", Toast.LENGTH_SHORT).show();
@@ -254,17 +254,27 @@ public class MainActivity extends Activity {
          *      "http://developer.android.com/guide/topics/data/data-storage.html#filesExternal"
          *      >Guide</a> for more information.<br>
          * 
-         * @param context
-         *            {@link Context}
          * @return {@link File} or {@code null} if an error occurred.
          */
-        private File createOrRetrieveExternalTempDir(Context context) {
-            File dir = Environment.getExternalStorageDirectory();
+        private File createOrRetrieveExternalTempDir() {
+            final String _hugeDir = "huge-dir";
+
+            File dir;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+                dir = ContextCompat.getExternalCacheDir(MainActivity.this);
+                if (dir != null)
+                    dir = new File(String.format("%s/%s", dir.getAbsolutePath(), _hugeDir));
+            } else {
+                dir = Environment.getExternalStorageDirectory();
+                if (dir != null)
+                    dir = new File(String.format("%s/Android/data/%s/cache/%s", dir.getAbsolutePath(),
+                            getApplicationInfo().packageName, _hugeDir));
+            }
+
             if (dir == null)
                 return null;
 
-            dir = new File(String.format("%s/Android/data/%s/cache/huge-dir", dir.getAbsolutePath(),
-                    context.getApplicationInfo().packageName));
             if (dir.isDirectory())
                 return dir;
             return dir.mkdirs() ? dir : null;
