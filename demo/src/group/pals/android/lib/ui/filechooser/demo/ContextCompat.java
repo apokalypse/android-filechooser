@@ -21,7 +21,7 @@ import java.io.File;
 import android.content.Context;
 
 /**
- * This supports some methods which is not available for older APIs.
+ * This supports some methods which are not available for older APIs.
  * 
  * @author Hai Bison
  * 
