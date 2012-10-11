@@ -137,7 +137,6 @@
                 android:id="@+id/afc_filechooser_activity_textview_saveas_filename"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
                 android:layout_margin="@dimen/afc_5dp"
                 android:layout_weight="1"
                 android:hint="@string/afc_hint_save_as_filename"

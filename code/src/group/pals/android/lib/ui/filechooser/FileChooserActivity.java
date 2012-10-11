@@ -705,7 +705,6 @@ public class FileChooserActivity extends Activity {
 
                 mBtnOk.setMinWidth(getResources().getDimensionPixelSize(R.dimen.afc_single_button_min_width));
                 mBtnOk.setText(android.R.string.ok);
-
                 mBtnOk.setVisibility(View.VISIBLE);
                 mBtnOk.setOnClickListener(mBtnOk_OpenDialog_OnClickListener);
             }
