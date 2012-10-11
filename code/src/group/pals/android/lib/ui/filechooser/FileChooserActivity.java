@@ -73,6 +73,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -700,6 +701,8 @@ public class FileChooserActivity extends Activity {
         mViewFilesContainer.addView(mViewFiles, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT, 1));
 
+        mViewFiles.setOnItemClickListener(mViewFilesOnItemClickListener);
+        mViewFiles.setOnItemLongClickListener(mViewFilesOnItemLongClickListener);
         mViewFiles.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
@@ -1616,6 +1619,10 @@ public class FileChooserActivity extends Activity {
         }
     };// mBtnOk_OpenDialog_OnClickListener
 
+    /*
+     * LIST VIEW HELPER
+     */
+
     private GestureDetector mListviewFilesGestureDetector;
 
     private void initGestureDetector() {
@@ -1653,52 +1660,13 @@ public class FileChooserActivity extends Activity {
 
             @Override
             public void onLongPress(MotionEvent e) {
-                IFileDataModel data = getDataModel(e);
-                if (data == null)
-                    return;
-
-                if (mDoubleTapToChooseFiles) {
-                    // do nothing
-                }// double tap to choose files
-                else {
-                    if (!mIsSaveDialog
-                            && !mIsMultiSelection
-                            && data.getFile().isDirectory()
-                            && (IFileProvider.FilterMode.DirectoriesOnly.equals(mFileProvider.getFilterMode()) || IFileProvider.FilterMode.FilesAndDirectories
-                                    .equals(mFileProvider.getFilterMode())))
-                        doFinish(data.getFile());
-                }// single tap to choose files
+                // do nothing
             }// onLongPress()
 
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {
-                IFileDataModel data = getDataModel(e);
-                if (data == null)
-                    return false;
-
-                if (data.getFile().isDirectory()) {
-                    goTo(data.getFile());
-                    return true;
-                }
-
-                if (mIsSaveDialog)
-                    mTxtSaveas.setText(data.getFile().getName());
-
-                if (mDoubleTapToChooseFiles) {
-                    // do nothing
-                    return false;
-                }// double tap to choose files
-                else {
-                    if (mIsMultiSelection)
-                        return false;
-
-                    if (mIsSaveDialog)
-                        doCheckSaveasFilenameAndFinish(data.getFile().getName());
-                    else
-                        doFinish(data.getFile());
-
-                    return true;
-                }// single tap to choose files
+                // do nothing
+                return false;
             }// onSingleTapConfirmed()
 
             @Override
@@ -1755,4 +1723,58 @@ public class FileChooserActivity extends Activity {
             }// onFling()
         });// mListviewFilesGestureDetector
     }// initGestureDetector()
+
+    private final AdapterView.OnItemClickListener mViewFilesOnItemClickListener = new AdapterView.OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            IFileDataModel data = mFileAdapter.getItem(position);
+
+            if (data.getFile().isDirectory()) {
+                goTo(data.getFile());
+                return;
+            }
+
+            if (mIsSaveDialog)
+                mTxtSaveas.setText(data.getFile().getName());
+
+            if (mDoubleTapToChooseFiles) {
+                // do nothing
+                return;
+            }// double tap to choose files
+            else {
+                if (mIsMultiSelection)
+                    return;
+
+                if (mIsSaveDialog)
+                    doCheckSaveasFilenameAndFinish(data.getFile().getName());
+                else
+                    doFinish(data.getFile());
+            }// single tap to choose files
+        }// onItemClick()
+    };// mViewFilesOnItemClickListener
+
+    private final AdapterView.OnItemLongClickListener mViewFilesOnItemLongClickListener = new AdapterView.OnItemLongClickListener() {
+
+        @Override
+        public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+            IFileDataModel data = mFileAdapter.getItem(position);
+
+            if (mDoubleTapToChooseFiles) {
+                // do nothing
+            }// double tap to choose files
+            else {
+                if (!mIsSaveDialog
+                        && !mIsMultiSelection
+                        && data.getFile().isDirectory()
+                        && (IFileProvider.FilterMode.DirectoriesOnly.equals(mFileProvider.getFilterMode()) || IFileProvider.FilterMode.FilesAndDirectories
+                                .equals(mFileProvider.getFilterMode()))) {
+                    doFinish(data.getFile());
+                }
+            }// single tap to choose files
+
+            // notify that we already handled long click here
+            return true;
+        }// onItemLongClick()
+    };// mViewFilesOnItemLongClickListener
 }
