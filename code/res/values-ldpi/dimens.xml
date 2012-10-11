@@ -18,6 +18,7 @@
 <resources>
 
     <dimen name="afc_button_navigators_min_height">24px</dimen>
+    <dimen name="afc_button_ok_saveas_size">24px</dimen>
     <dimen name="afc_thumbnail_size">36px</dimen>
     
 </resources>

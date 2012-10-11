@@ -80,7 +80,6 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 /**
@@ -674,9 +673,11 @@ public class FileChooserActivity extends Activity {
     private void setupFooter() {
         // by default, view group footer and all its child views are hidden
 
+        ViewGroup viewGroupFooterContainer = (ViewGroup) findViewById(R.id.afc_filechooser_activity_viewgroup_footer_container);
         ViewGroup viewGroupFooter = (ViewGroup) findViewById(R.id.afc_filechooser_activity_viewgroup_footer);
 
         if (mIsSaveDialog) {
+            viewGroupFooterContainer.setVisibility(View.VISIBLE);
             viewGroupFooter.setVisibility(View.VISIBLE);
 
             mTxtSaveas.setVisibility(View.VISIBLE);
@@ -686,19 +687,24 @@ public class FileChooserActivity extends Activity {
             mBtnOk.setVisibility(View.VISIBLE);
             mBtnOk.setOnClickListener(mBtnOk_SaveDialog_OnClickListener);
             mBtnOk.setBackgroundResource(R.drawable.afc_selector_button_ok_saveas);
+
+            int size = getResources().getDimensionPixelSize(R.dimen.afc_button_ok_saveas_size);
+            ViewGroup.LayoutParams lp = mBtnOk.getLayoutParams();
+            lp.width = size;
+            lp.height = size;
+            mBtnOk.setLayoutParams(lp);
         }// this is in save mode
         else {
             if (mIsMultiSelection) {
+                viewGroupFooterContainer.setVisibility(View.VISIBLE);
                 viewGroupFooter.setVisibility(View.VISIBLE);
+
+                ViewGroup.LayoutParams lp = viewGroupFooter.getLayoutParams();
+                lp.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                viewGroupFooter.setLayoutParams(lp);
 
                 mBtnOk.setMinWidth(getResources().getDimensionPixelSize(R.dimen.afc_single_button_min_width));
                 mBtnOk.setText(android.R.string.ok);
-
-                RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mBtnOk.getLayoutParams();
-                lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 0);
-                lp.addRule(RelativeLayout.CENTER_VERTICAL, 0);
-                lp.addRule(RelativeLayout.CENTER_IN_PARENT, 1);
-                mBtnOk.setLayoutParams(lp);
 
                 mBtnOk.setVisibility(View.VISIBLE);
                 mBtnOk.setOnClickListener(mBtnOk_OpenDialog_OnClickListener);
