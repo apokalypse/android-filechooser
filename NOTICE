@@ -38,6 +38,14 @@ And here is history:
 +++ Version 4.7 beta +++
  - Initialize: October 02, 2012
 
+ - Milestones:
+   + All date formatting utilities were moved from /IFileAdapter to
+     /utils.DateUtils;
+   + Removed key /FileChooserActivity._UseThemeDialog;
+   + Added options for single tapping/ double tapping to choose files;
+   + Auto remember last location;
+   + Minor changes;
+
 +++ Version 4.6.2 +++
  - Release: October 01, 2012
 
