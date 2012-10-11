@@ -63,12 +63,11 @@ public class DisplayPrefs extends Prefs {
      *            {@link ViewType}, if {@code null}, default value will be used.
      */
     public static void setViewType(Context c, ViewType v) {
+        String key = c.getString(R.string.afc_pkey_display_view_type);
         if (v == null)
-            p(c).edit()
-                    .putInt(c.getString(R.string.afc_pkey_display_view_type),
-                            c.getResources().getInteger(R.integer.afc_pkey_display_view_type_def)).commit();
+            p(c).edit().putInt(key, c.getResources().getInteger(R.integer.afc_pkey_display_view_type_def)).commit();
         else
-            p(c).edit().putInt(c.getString(R.string.afc_pkey_display_view_type), v.ordinal()).commit();
+            p(c).edit().putInt(key, v.ordinal()).commit();
     }
 
     /**
@@ -95,12 +94,11 @@ public class DisplayPrefs extends Prefs {
      *            {@link SortType}, if {@code null}, default value will be used.
      */
     public static void setSortType(Context c, SortType v) {
+        String key = c.getString(R.string.afc_pkey_display_sort_type);
         if (v == null)
-            p(c).edit()
-                    .putInt(c.getString(R.string.afc_pkey_display_sort_type),
-                            c.getResources().getInteger(R.integer.afc_pkey_display_sort_type_def)).commit();
+            p(c).edit().putInt(key, c.getResources().getInteger(R.integer.afc_pkey_display_sort_type_def)).commit();
         else
-            p(c).edit().putInt(c.getString(R.string.afc_pkey_display_sort_type), v.ordinal()).commit();
+            p(c).edit().putInt(key, v.ordinal()).commit();
     }
 
     /**
@@ -125,11 +123,8 @@ public class DisplayPrefs extends Prefs {
      */
     public static void setSortAscending(Context c, Boolean v) {
         if (v == null)
-            p(c).edit()
-                    .putBoolean(c.getString(R.string.afc_pkey_display_sort_ascending),
-                            c.getResources().getBoolean(R.bool.afc_pkey_display_sort_ascending_def)).commit();
-        else
-            p(c).edit().putBoolean(c.getString(R.string.afc_pkey_display_sort_ascending), v).commit();
+            v = c.getResources().getBoolean(R.bool.afc_pkey_display_sort_ascending_def);
+        p(c).edit().putBoolean(c.getString(R.string.afc_pkey_display_sort_ascending), v).commit();
     }
 
     /**
@@ -158,12 +153,8 @@ public class DisplayPrefs extends Prefs {
      */
     public static void setShowTimeForOldDaysThisYear(Context c, Boolean v) {
         if (v == null)
-            p(c).edit()
-                    .putBoolean(c.getString(R.string.afc_pkey_display_show_time_for_old_days_this_year),
-                            c.getResources().getBoolean(R.bool.afc_pkey_display_show_time_for_old_days_this_year_def))
-                    .commit();
-        else
-            p(c).edit().putBoolean(c.getString(R.string.afc_pkey_display_show_time_for_old_days_this_year), v).commit();
+            v = c.getResources().getBoolean(R.bool.afc_pkey_display_show_time_for_old_days_this_year_def);
+        p(c).edit().putBoolean(c.getString(R.string.afc_pkey_display_show_time_for_old_days_this_year), v).commit();
     }
 
     /**
@@ -192,10 +183,60 @@ public class DisplayPrefs extends Prefs {
      */
     public static void setShowTimeForOldDays(Context c, Boolean v) {
         if (v == null)
-            p(c).edit()
-                    .putBoolean(c.getString(R.string.afc_pkey_display_show_time_for_old_days),
-                            c.getResources().getBoolean(R.bool.afc_pkey_display_show_time_for_old_days_def)).commit();
-        else
-            p(c).edit().putBoolean(c.getString(R.string.afc_pkey_display_show_time_for_old_days), v).commit();
+            v = c.getResources().getBoolean(R.bool.afc_pkey_display_show_time_for_old_days_def);
+        p(c).edit().putBoolean(c.getString(R.string.afc_pkey_display_show_time_for_old_days), v).commit();
+    }
+
+    /**
+     * Checks if remembering last location is enabled or not.
+     * 
+     * @param c
+     *            {@link Context}.
+     * @return {@code true} if remembering last location is enabled.
+     * @since v4.7 beta
+     */
+    public static boolean isRememberLastLocation(Context c) {
+        return p(c).getBoolean(c.getString(R.string.afc_pkey_display_remember_last_location),
+                c.getResources().getBoolean(R.bool.afc_pkey_display_remember_last_location_def));
+    }
+
+    /**
+     * Enables or disables remembering last location.
+     * 
+     * @param c
+     *            {@link Context}.
+     * @param v
+     *            your preferred flag. If {@code null}, default will be used (
+     *            {@code true}).
+     * @since v4.7 beta
+     */
+    public static void setRememberLastLocation(Context c, Boolean v) {
+        if (v == null)
+            v = c.getResources().getBoolean(R.bool.afc_pkey_display_remember_last_location_def);
+        p(c).edit().putBoolean(c.getString(R.string.afc_pkey_display_remember_last_location), v).commit();
+    }
+
+    /**
+     * Gets last location.
+     * 
+     * @param c
+     *            {@link Context}.
+     * @return the last location, or {@code null} if not available.
+     * @since v4.7 beta
+     */
+    public static String getLastLocation(Context c) {
+        return p(c).getString(c.getString(R.string.afc_pkey_display_last_location), null);
+    }
+
+    /**
+     * Sets last location.
+     * 
+     * @param c
+     *            {@link Context}.
+     * @param v
+     *            the last location.
+     */
+    public static void setLastLocation(Context c, String v) {
+        p(c).edit().putString(c.getString(R.string.afc_pkey_display_last_location), v).commit();
     }
 }

@@ -444,6 +444,15 @@ public class FileChooserActivity extends Activity {
     }// onStart()
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if (DisplayPrefs.isRememberLastLocation(this) && getLocation() != null) {
+            DisplayPrefs.setLastLocation(this, getLocation().getAbsolutePath());
+        } else
+            DisplayPrefs.setLastLocation(this, null);
+    }// onPause()
+
+    @Override
     protected void onDestroy() {
         if (mFileProvider != null) {
             try {
@@ -534,12 +543,18 @@ public class FileChooserActivity extends Activity {
                     setupViewFiles();
                     setupFooter();
 
-                    final Object _path = savedInstanceState != null ? savedInstanceState.get(_CurrentLocation) : null;
-                    setLocation(_path instanceof IFile ? (IFile) _path : mRoot, new TaskListener() {
+                    IFile path = savedInstanceState != null ? (IFile) savedInstanceState.get(_CurrentLocation) : null;
+                    if (path == null && DisplayPrefs.isRememberLastLocation(FileChooserActivity.this)) {
+                        String lastLocation = DisplayPrefs.getLastLocation(FileChooserActivity.this);
+                        if (lastLocation != null)
+                            path = mFileProvider.fromPath(lastLocation);
+                    }
+
+                    setLocation(path != null && path.isDirectory() ? path : mRoot, new TaskListener() {
 
                         @Override
                         public void onFinish(boolean ok, Object any) {
-                            if (_path == null) {
+                            if (mRoot.equals(any)) {
                                 mHistory.push(mRoot);
                                 mFullHistory.push(mRoot);
                             } else
@@ -1103,19 +1118,21 @@ public class FileChooserActivity extends Activity {
     /**
      * Gets current location.
      * 
-     * @return current location.
+     * @return current location, can be {@code null}.
      */
     private IFile getLocation() {
         return (IFile) mViewLocations.getTag();
     }// getLocation()
 
     /**
-     * Sets current location
+     * Sets current location.
      * 
-     * @param _path
+     * @param path
      *            the path
      * @param listener
-     *            {@link TaskListener}
+     *            {@link TaskListener}: the second parameter {@code any} in
+     *            {@link TaskListener#onFinish(boolean, Object)} will be
+     *            {@code path}.
      */
     private void setLocation(final IFile path, final TaskListener listener) {
         new LoadingDialog(this, R.string.afc_msg_loading, true) {
@@ -1184,7 +1201,7 @@ public class FileChooserActivity extends Activity {
                     Dlg.toast(FileChooserActivity.this, getString(R.string.afc_pmsg_cannot_access_dir, path.getName()),
                             Dlg._LengthShort);
                     if (listener != null)
-                        listener.onFinish(false, null);
+                        listener.onFinish(false, path);
                     return;
                 }
 
@@ -1215,7 +1232,7 @@ public class FileChooserActivity extends Activity {
                 createLocationButtons(path);
 
                 if (listener != null)
-                    listener.onFinish(true, null);
+                    listener.onFinish(true, path);
             }// onPostExecute()
         }.execute();// new LoadingDialog()
     }// setLocation()
@@ -1373,15 +1390,14 @@ public class FileChooserActivity extends Activity {
                 mHistory.remove(preLoc);
 
             if (preLoc != null) {
-                final IFile _preLoc = preLoc;
-                setLocation(_preLoc, new TaskListener() {
+                setLocation(preLoc, new TaskListener() {
 
                     @Override
                     public void onFinish(boolean ok, Object any) {
                         if (ok) {
                             mViewGoBack.setEnabled(mHistory.prevOf(getLocation()) != null);
                             mViewGoForward.setEnabled(true);
-                            mFullHistory.push(_preLoc);
+                            mFullHistory.push((IFile) any);
                         }
                     }
                 });
@@ -1428,15 +1444,14 @@ public class FileChooserActivity extends Activity {
                 mHistory.remove(nextLoc);
 
             if (nextLoc != null) {
-                final IFile _nextLoc = nextLoc;
-                setLocation(_nextLoc, new TaskListener() {
+                setLocation(nextLoc, new TaskListener() {
 
                     @Override
                     public void onFinish(boolean ok, Object any) {
                         if (ok) {
                             mViewGoBack.setEnabled(true);
                             mViewGoForward.setEnabled(mHistory.nextOf(getLocation()) != null);
-                            mFullHistory.push(_nextLoc);
+                            mFullHistory.push((IFile) any);
                         }
                     }
                 });
