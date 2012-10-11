@@ -444,15 +444,6 @@ public class FileChooserActivity extends Activity {
     }// onStart()
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        if (DisplayPrefs.isRememberLastLocation(this) && getLocation() != null) {
-            DisplayPrefs.setLastLocation(this, getLocation().getAbsolutePath());
-        } else
-            DisplayPrefs.setLastLocation(this, null);
-    }// onPause()
-
-    @Override
     protected void onDestroy() {
         if (mFileProvider != null) {
             try {
@@ -1369,6 +1360,12 @@ public class FileChooserActivity extends Activity {
         intent.putExtra(_SaveDialog, mIsSaveDialog);
 
         setResult(RESULT_OK, intent);
+
+        if (DisplayPrefs.isRememberLastLocation(this) && getLocation() != null) {
+            DisplayPrefs.setLastLocation(this, getLocation().getAbsolutePath());
+        } else
+            DisplayPrefs.setLastLocation(this, null);
+
         finish();
     }// doFinish()
 
