@@ -689,7 +689,7 @@ public class FileChooserActivity extends Activity {
             mBtnOk.setBackgroundResource(R.drawable.afc_selector_button_ok_saveas);
 
             int size = getResources().getDimensionPixelSize(R.dimen.afc_button_ok_saveas_size);
-            ViewGroup.LayoutParams lp = mBtnOk.getLayoutParams();
+            LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mBtnOk.getLayoutParams();
             lp.width = size;
             lp.height = size;
             mBtnOk.setLayoutParams(lp);

@@ -31,7 +31,7 @@
    version="1.1"
    inkscape:version="0.48.1 r9760"
    sodipodi:docname="button_ok.svg"
-   inkscape:export-filename="/media/truecrypt64/projs/android/library/android-filechooser/code/res/drawable-xhdpi/afc_button_ok_saveas_pressed.png"
+   inkscape:export-filename="/media/truecrypt64/projs/android/library/android-filechooser/code/res/drawable-xhdpi/afc_button_ok_saveas.png"
    inkscape:export-xdpi="270"
    inkscape:export-ydpi="270"
    style="display:inline">
@@ -1033,11 +1033,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.7269983"
-     inkscape:cx="54.668383"
-     inkscape:cy="-23.474617"
+     inkscape:zoom="4.760658"
+     inkscape:cx="71.473027"
+     inkscape:cy="-43.48704"
      inkscape:document-units="px"
-     inkscape:current-layer="g4998"
+     inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1440"
      inkscape:window-height="846"
@@ -1074,21 +1074,21 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1028.3622)"
-     style="display:none">
+     style="display:inline">
     <text
        xml:space="preserve"
-       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#33b5e5;fill-opacity:1;stroke:#ffffff;stroke-width:0.5;stroke-miterlimit:4;stroke-opacity:0.39215686;stroke-dasharray:none;font-family:Advent Pro;-inkscape-font-specification:Advent Pro"
-       x="2.1914062"
-       y="1049.0809"
+       style="font-size:32px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#33b5e5;fill-opacity:1;stroke:#ffffff;stroke-width:0.5;stroke-miterlimit:4;stroke-opacity:0.39215686;stroke-dasharray:none;font-family:Advent Pro;-inkscape-font-specification:Advent Pro"
+       x="-1.078125"
+       y="1051.9872"
        id="text3004"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan3006"
-         x="2.1914062"
-         y="1049.0809">✓</tspan></text>
+         x="-1.078125"
+         y="1051.9872">✓</tspan></text>
   </g>
   <g
-     style="display:inline"
+     style="display:none"
      transform="translate(0,-1028.3622)"
      id="g4998"
      inkscape:groupmode="layer"
@@ -1096,12 +1096,12 @@
     <text
        sodipodi:linespacing="125%"
        id="text5000"
-       y="1049.0809"
-       x="2.1914062"
-       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#33b5e5;fill-opacity:1;stroke:#ffffff;stroke-width:0.5;stroke-miterlimit:4;stroke-opacity:0.39215686;stroke-dasharray:none;filter:url(#filter5288);font-family:Advent Pro;-inkscape-font-specification:Advent Pro"
+       y="1051.9872"
+       x="-1.078125"
+       style="font-size:32px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#33b5e5;fill-opacity:1;stroke:#ffffff;stroke-width:0.5;stroke-miterlimit:4;stroke-opacity:0.39215686;stroke-dasharray:none;filter:url(#filter5288);font-family:Advent Pro;-inkscape-font-specification:Advent Pro"
        xml:space="preserve"><tspan
-         y="1049.0809"
-         x="2.1914062"
+         y="1051.9872"
+         x="-1.078125"
          id="tspan5002"
          sodipodi:role="line">✓</tspan></text>
   </g>
