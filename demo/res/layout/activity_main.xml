@@ -21,6 +21,22 @@
             android:layout_gravity="center_horizontal"
             android:text="Multi-selection" />
 
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:checkedButton="@+id/activity_main_radiobutton_single_tap"
+            android:orientation="horizontal" >
+
+            <RadioButton
+                android:id="@+id/activity_main_radiobutton_single_tap"
+                android:text="Single tap" />
+
+            <RadioButton
+                android:id="@+id/activity_main_radiobutton_double_tap"
+                android:text="Double tap" />
+        </RadioGroup>
+
         <Button
             android:id="@+id/activity_main_button_choose_files"
             android:layout_width="wrap_content"

@@ -177,6 +177,15 @@ public class FileChooserActivity extends Activity {
      * Key to hold display-hidden-files, default = {@code false}
      */
     public static final String _DisplayHiddenFiles = _ClassName + ".display_hidden_files";
+    /**
+     * Sets this to {@code true} to enable double tapping to choose files/
+     * directories. In older versions, double tapping is default. However, since
+     * v4.7 beta, single tapping is default. So if you want to keep the old way,
+     * please set this key to {@code true}.
+     * 
+     * @since v4.7 beta
+     */
+    public static final String _DoubleTapToChooseFiles = _ClassName + ".double_tap_to_choose_files";
 
     // ---------------------------------------------------------
 
@@ -226,6 +235,7 @@ public class FileChooserActivity extends Activity {
     private IFile mRoot;
     private boolean mIsMultiSelection;
     private boolean mIsSaveDialog;
+    private boolean mDoubleTapToChooseFiles;
 
     /**
      * The history.
@@ -280,6 +290,8 @@ public class FileChooserActivity extends Activity {
 
         initGestureDetector();
 
+        // load configurations
+
         mFileProviderServiceClass = (Class<?>) getIntent().getSerializableExtra(_FileProviderClass);
         if (mFileProviderServiceClass == null)
             mFileProviderServiceClass = LocalFileProvider.class;
@@ -287,9 +299,12 @@ public class FileChooserActivity extends Activity {
         mIsMultiSelection = getIntent().getBooleanExtra(_MultiSelection, false);
 
         mIsSaveDialog = getIntent().getBooleanExtra(_SaveDialog, false);
-        if (mIsSaveDialog) {
+        if (mIsSaveDialog)
             mIsMultiSelection = false;
-        }
+
+        mDoubleTapToChooseFiles = getIntent().getBooleanExtra(_DoubleTapToChooseFiles, false);
+
+        // load controls
 
         mViewGoBack = (ImageView) findViewById(R.id.afc_filechooser_activity_button_go_back);
         mViewGoForward = (ImageView) findViewById(R.id.afc_filechooser_activity_button_go_forward);
@@ -424,7 +439,7 @@ public class FileChooserActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (!mIsMultiSelection && !mIsSaveDialog)
+        if (!mIsMultiSelection && !mIsSaveDialog && mDoubleTapToChooseFiles)
             Dlg.toast(this, R.string.afc_hint_double_tap_to_select_file, Dlg._LengthShort);
     }// onStart()
 
@@ -1389,7 +1404,7 @@ public class FileChooserActivity extends Activity {
 
         @Override
         public boolean onLongClick(View v) {
-            if (mFileProvider.getFilterMode() == IFileProvider.FilterMode.FilesOnly || mIsSaveDialog)
+            if (IFileProvider.FilterMode.FilesOnly.equals(mFileProvider.getFilterMode()) || mIsSaveDialog)
                 return false;
 
             doFinish((IFile) v.getTag());
@@ -1520,6 +1535,18 @@ public class FileChooserActivity extends Activity {
                 return null;
             }// getSubView()
 
+            /**
+             * Gets {@link IFileDataModel} from {@code e}.
+             * 
+             * @param e
+             *            {@link MotionEvent}.
+             * @return the data model, or {@code null} if not available.
+             */
+            private IFileDataModel getDataModel(MotionEvent e) {
+                Object o = getData(e.getX(), e.getY());
+                return o instanceof IFileDataModel ? (IFileDataModel) o : null;
+            }// getDataModel()
+
             private int getSubViewId(float x, float y) {
                 Rect r = new Rect();
                 for (int i = 0; i < mViewFiles.getChildCount(); i++) {
@@ -1532,46 +1559,84 @@ public class FileChooserActivity extends Activity {
             }// getSubViewId()
 
             @Override
-            public boolean onSingleTapConfirmed(MotionEvent e) {
-                Object o = getData(e.getX(), e.getY());
-                if (!(o instanceof IFileDataModel))
-                    return true;
+            public void onLongPress(MotionEvent e) {
+                IFileDataModel data = getDataModel(e);
+                if (data == null)
+                    return;
 
-                IFileDataModel data = (IFileDataModel) o;
+                if (mDoubleTapToChooseFiles) {
+                    // do nothing
+                }// double tap to choose files
+                else {
+                    if (!mIsSaveDialog
+                            && !mIsMultiSelection
+                            && data.getFile().isDirectory()
+                            && (IFileProvider.FilterMode.DirectoriesOnly.equals(mFileProvider.getFilterMode()) || IFileProvider.FilterMode.FilesAndDirectories
+                                    .equals(mFileProvider.getFilterMode())))
+                        doFinish(data.getFile());
+                }// single tap to choose files
+            }// onLongPress()
+
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                IFileDataModel data = getDataModel(e);
+                if (data == null)
+                    return false;
+
                 if (data.getFile().isDirectory()) {
                     goTo(data.getFile());
-                } else {
-                    if (mIsSaveDialog)
-                        mTxtSaveas.setText(data.getFile().getName());
+                    return true;
                 }
 
-                return false;
+                if (mIsSaveDialog)
+                    mTxtSaveas.setText(data.getFile().getName());
+
+                if (mDoubleTapToChooseFiles) {
+                    // do nothing
+                    return false;
+                }// double tap to choose files
+                else {
+                    if (mIsMultiSelection)
+                        return false;
+
+                    if (mIsSaveDialog)
+                        doCheckSaveasFilenameAndFinish(data.getFile().getName());
+                    else
+                        doFinish(data.getFile());
+
+                    return true;
+                }// single tap to choose files
             }// onSingleTapConfirmed()
 
             @Override
             public boolean onDoubleTap(MotionEvent e) {
-                if (mIsMultiSelection)
+                if (mDoubleTapToChooseFiles) {
+                    if (mIsMultiSelection)
+                        return false;
+
+                    IFileDataModel data = getDataModel(e);
+                    if (data == null)
+                        return false;
+
+                    if (data.getFile().isDirectory()
+                            && IFileProvider.FilterMode.FilesOnly.equals(mFileProvider.getFilterMode()))
+                        return false;
+
+                    // if mFilterMode == DirectoriesOnly, files won't be
+                    // shown
+
+                    if (mIsSaveDialog) {
+                        mTxtSaveas.setText(data.getFile().getName());
+                        doCheckSaveasFilenameAndFinish(data.getFile().getName());
+                    } else
+                        doFinish(data.getFile());
+                }// double tap to choose files
+                else {
+                    // do nothing
                     return false;
+                }// single tap to choose files
 
-                Object o = getData(e.getX(), e.getY());
-                if (!(o instanceof IFileDataModel))
-                    return false;
-
-                IFileDataModel data = (IFileDataModel) o;
-
-                if (data.getFile().isDirectory() && mFileProvider.getFilterMode() == IFileProvider.FilterMode.FilesOnly)
-                    return false;
-
-                // if mFilterMode == DirectoriesOnly, files won't be
-                // shown
-
-                if (mIsSaveDialog) {
-                    mTxtSaveas.setText(data.getFile().getName());
-                    doCheckSaveasFilenameAndFinish(data.getFile().getName());
-                } else
-                    doFinish(data.getFile());
-
-                return false;
+                return true;
             }// onDoubleTap()
 
             @Override
@@ -1585,8 +1650,8 @@ public class FileChooserActivity extends Activity {
                     if (o instanceof IFileDataModel) {
                         ((IFileDataModel) o).setTobeDeleted(true);
                         mFileAdapter.notifyDataSetChanged();
-
                         doDeleteFile((IFileDataModel) o);
+                        return true;
                     }
                 }
 

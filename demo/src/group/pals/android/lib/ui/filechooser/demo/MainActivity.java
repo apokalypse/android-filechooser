@@ -37,6 +37,7 @@ import android.os.Message;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 /**
@@ -50,6 +51,7 @@ public class MainActivity extends Activity {
 
     private CheckBox mChkDialogTheme;
     private CheckBox mChkMultiSelection;
+    private RadioButton mRadBtnDoubleTap;
     private Button mBtnCreateHugeDir;
 
     private static final int[] _FileChooserButtonIds = { R.id.activity_main_button_choose_files,
@@ -66,6 +68,7 @@ public class MainActivity extends Activity {
 
         mChkDialogTheme = (CheckBox) findViewById(R.id.activity_main_checkBox_use_dialog_theme);
         mChkMultiSelection = (CheckBox) findViewById(R.id.activity_main_checkBox_multi_selection);
+        mRadBtnDoubleTap = (RadioButton) findViewById(R.id.activity_main_radiobutton_double_tap);
         mBtnCreateHugeDir = (Button) findViewById(R.id.activity_main_button_create_hugedir);
 
         // init listeners
@@ -122,6 +125,9 @@ public class MainActivity extends Activity {
                 intent.putExtra(FileChooserActivity._Theme, R.style.AppTheme_Dialog);
             else
                 intent.putExtra(FileChooserActivity._Theme, R.style.AppTheme);
+
+            // single/ double tap
+            intent.putExtra(FileChooserActivity._DoubleTapToChooseFiles, mRadBtnDoubleTap.isChecked());
 
             // save as...
             if (v.getId() == R.id.activity_main_button_save_as) {

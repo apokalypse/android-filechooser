@@ -293,7 +293,7 @@ public class IFileAdapter extends BaseAdapter {
 
         // checkbox
         if (mMultiSelection) {
-            if (mFilterMode == FilterMode.FilesOnly && file.isDirectory()) {
+            if (FilterMode.FilesOnly.equals(mFilterMode) && file.isDirectory()) {
                 bag.mCheckboxSelection.setVisibility(View.GONE);
             } else {
                 bag.mCheckboxSelection.setVisibility(View.VISIBLE);
