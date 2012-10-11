@@ -1626,8 +1626,11 @@ public class FileChooserActivity extends Activity {
                     // shown
 
                     if (mIsSaveDialog) {
-                        mTxtSaveas.setText(data.getFile().getName());
-                        doCheckSaveasFilenameAndFinish(data.getFile().getName());
+                        if (data.getFile().isFile()) {
+                            mTxtSaveas.setText(data.getFile().getName());
+                            doCheckSaveasFilenameAndFinish(data.getFile().getName());
+                        } else
+                            return false;
                     } else
                         doFinish(data.getFile());
                 }// double tap to choose files
