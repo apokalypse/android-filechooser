@@ -598,7 +598,7 @@ public class FileChooserActivity extends Activity {
 
                         @Override
                         public void onFinish(boolean ok, Object any) {
-                            if (ok && _selectedFile.isFile() && mIsSaveDialog)
+                            if (ok && _selectedFile != null && _selectedFile.isFile() && mIsSaveDialog)
                                 mTxtSaveas.setText(_selectedFile.getName());
 
                             if (mRoot.equals(any)) {
