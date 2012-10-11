@@ -41,9 +41,11 @@ And here is history:
  - Milestones:
    + All date formatting utilities were moved from /IFileAdapter to
      /utils.DateUtils;
-   + Removed key /FileChooserActivity._UseThemeDialog;
-   + Added options for single tapping/ double tapping to choose files;
+   + Removes key /FileChooserActivity._UseThemeDialog;
+   + Adds options for single tapping/ double tapping to choose files;
    + Auto remember last location;
+   + Adds key /FileChooserActivity._SelectFile to select a specific file on
+     startup;
    + Minor changes;
 
 +++ Version 4.6.2 +++

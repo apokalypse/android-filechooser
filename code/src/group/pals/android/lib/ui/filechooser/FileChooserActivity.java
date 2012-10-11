@@ -83,7 +83,19 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 /**
- * Main activity for this library.
+ * Main activity for this library.<br>
+ * <br>
+ * <b>Notes:</b><br>
+ * <br>
+ * <b>I.</b> About keys {@link FileChooserActivity#_Rootpath},
+ * {@link FileChooserActivity#_SelectFile} and preference
+ * {@link DisplayPrefs#isRememberLastLocation(Context)}, the priorities of them
+ * are:<br>
+ * <li>1. {@link FileChooserActivity#_SelectFile}</li>
+ * 
+ * <li>2. {@link DisplayPrefs#isRememberLastLocation(Context)}</li>
+ * 
+ * <li>3. {@link FileChooserActivity#_Rootpath}</li>
  * 
  * @author Hai Bison
  * 
@@ -186,6 +198,18 @@ public class FileChooserActivity extends Activity {
      * @since v4.7 beta
      */
     public static final String _DoubleTapToChooseFiles = _ClassName + ".double_tap_to_choose_files";
+    /**
+     * Sets the file you want to select when starting this activity. The file is
+     * an {@link IFile}.<br>
+     * <b>Notes:</b><br>
+     * <li>Currently this key is only used for single selection mode.</li>
+     * 
+     * <li>If you use save dialog mode, this key will override key
+     * {@link #_DefaultFilename}.</li>
+     * 
+     * @since v4.7 beta
+     */
+    public static final String _SelectFile = _ClassName + ".select_file";
 
     // ---------------------------------------------------------
 
@@ -534,24 +558,56 @@ public class FileChooserActivity extends Activity {
                     setupViewFiles();
                     setupFooter();
 
+                    /*
+                     * Priorities for starting path:
+                     * 
+                     * 1. Current location (in case the activity has been killed
+                     * after configurations changed.
+                     * 
+                     * 2. Selected file from key _SelectFile.
+                     * 
+                     * 3. Last location.
+                     * 
+                     * 4. Root path from key _Rootpath.
+                     */
+
+                    // current location
                     IFile path = savedInstanceState != null ? (IFile) savedInstanceState.get(_CurrentLocation) : null;
+
+                    // selected file
+                    IFile selectedFile = null;
+                    if (path == null) {
+                        selectedFile = (IFile) getIntent().getParcelableExtra(_SelectFile);
+                        if (selectedFile != null && selectedFile.exists())
+                            path = selectedFile.parentFile();
+                        if (path == null)
+                            selectedFile = null;
+                    }
+
+                    // last location
                     if (path == null && DisplayPrefs.isRememberLastLocation(FileChooserActivity.this)) {
                         String lastLocation = DisplayPrefs.getLastLocation(FileChooserActivity.this);
                         if (lastLocation != null)
                             path = mFileProvider.fromPath(lastLocation);
                     }
 
+                    final IFile _selectedFile = selectedFile;
+
+                    // or root path
                     setLocation(path != null && path.isDirectory() ? path : mRoot, new TaskListener() {
 
                         @Override
                         public void onFinish(boolean ok, Object any) {
+                            if (ok && _selectedFile.isFile() && mIsSaveDialog)
+                                mTxtSaveas.setText(_selectedFile.getName());
+
                             if (mRoot.equals(any)) {
                                 mHistory.push(mRoot);
                                 mFullHistory.push(mRoot);
                             } else
                                 mHistory.notifyHistoryChanged();
                         }
-                    });
+                    }, selectedFile);
                 }
             }// onPostExecute()
         }.execute();// LoadingDialog
@@ -569,7 +625,7 @@ public class FileChooserActivity extends Activity {
          * set root path, if not specified, try using
          * IFileProvider#defaultPath()
          */
-        if (getIntent().getSerializableExtra(_Rootpath) != null)
+        if (getIntent().getParcelableExtra(_Rootpath) != null)
             mRoot = (IFile) getIntent().getSerializableExtra(_Rootpath);
         if (mRoot == null || !mRoot.isDirectory())
             mRoot = mFileProvider.defaultPath();
@@ -1126,6 +1182,23 @@ public class FileChooserActivity extends Activity {
      *            {@code path}.
      */
     private void setLocation(final IFile path, final TaskListener listener) {
+        setLocation(path, listener, null);
+    }// setLocation()
+
+    /**
+     * Sets current location.
+     * 
+     * @param path
+     *            the path
+     * @param listener
+     *            {@link TaskListener}: the second parameter {@code any} in
+     *            {@link TaskListener#onFinish(boolean, Object)} will be
+     *            {@code path}.
+     * @param selectedFile
+     *            the file should be selected after loading location done. Can
+     *            be {@code null}.
+     */
+    private void setLocation(final IFile path, final TaskListener listener, final IFile selectedFile) {
         new LoadingDialog(this, R.string.afc_msg_loading, true) {
 
             // IFile[] files = new IFile[0];
@@ -1161,7 +1234,15 @@ public class FileChooserActivity extends Activity {
                     if (files != null) {
                         Collections.sort(files,
                                 new FileComparator(mFileProvider.getSortType(), mFileProvider.getSortOrder()));
-                        if (mLastPath != null && mLastPath.length() >= path.getAbsolutePath().length()) {
+                        if (selectedFile != null && selectedFile.exists()
+                                && selectedFile.parentFile().equalsToPath(path)) {
+                            for (int i = 0; i < files.size(); i++) {
+                                if (files.get(i).equalsToPath(selectedFile)) {
+                                    shouldBeSelectedIdx = i;
+                                    break;
+                                }
+                            }
+                        } else if (mLastPath != null && mLastPath.length() >= path.getAbsolutePath().length()) {
                             for (int i = 0; i < files.size(); i++) {
                                 IFile f = files.get(i);
                                 if (f.isDirectory() && mLastPath.startsWith(f.getAbsolutePath())) {
