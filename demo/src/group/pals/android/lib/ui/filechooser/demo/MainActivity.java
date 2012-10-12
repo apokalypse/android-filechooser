@@ -17,6 +17,7 @@
 package group.pals.android.lib.ui.filechooser.demo;
 
 import group.pals.android.lib.ui.filechooser.FileChooserActivity;
+import group.pals.android.lib.ui.filechooser.io.IFile;
 import group.pals.android.lib.ui.filechooser.io.localfile.LocalFile;
 import group.pals.android.lib.ui.filechooser.services.IFileProvider;
 import group.pals.android.lib.ui.filechooser.utils.ui.Dlg;
@@ -56,10 +57,11 @@ public class MainActivity extends Activity {
 
     private static final int[] _FileChooserButtonIds = { R.id.activity_main_button_choose_files,
             R.id.activity_main_button_choose_dirs, R.id.activity_main_button_choose_files_and_dirs,
-            R.id.activity_main_button_save_as };
+            R.id.activity_main_button_save_as, R.id.activity_main_button_select_a_file_to_save_as };
 
     private static final int _ReqChooseFile = 0;
     private static final int _ReqSaveAs = 1;
+    private static final int _ReqSelectAFileToSaveAs = 2;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -99,6 +101,7 @@ public class MainActivity extends Activity {
 
                 Dlg.showInfo(MainActivity.this, msg);
             }
+
             break;// _ReqChooseFile
 
         case _ReqSaveAs:
@@ -107,9 +110,50 @@ public class MainActivity extends Activity {
                 Dlg.showInfo(MainActivity.this,
                         String.format("Data will be saved to \"%s\"", files.get(0).getAbsolutePath()));
             }
+
             break;// _ReqSaveAs
+
+        case _ReqSelectAFileToSaveAs:
+            if (resultCode == RESULT_OK) {
+                List<LocalFile> files = (List<LocalFile>) data.getSerializableExtra(FileChooserActivity._Results);
+                doSelectAFileToSaveAs(files.get(0));
+            }
+
+            break;// _ReqSelectAFileToSaveAs
         }
     }// onActivityResult()
+
+    /**
+     * Invokes {@link FileChooserActivity} to get a "save as" file. Selects
+     * {@code selectedFile} as default.
+     * 
+     * @param selectedFile
+     *            {@link IFile} the file you want to select as default.
+     */
+    private void doSelectAFileToSaveAs(final IFile selectedFile) {
+        Dlg.confirmYesno(this, String.format("Tap %s to open 'Save as' dialog with default selected file '%s'.",
+                getString(android.R.string.yes), selectedFile.getName()), new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(MainActivity.this, FileChooserActivity.class);
+
+                // theme
+                if (mChkDialogTheme.isChecked())
+                    intent.putExtra(FileChooserActivity._Theme, R.style.AppTheme_Dialog);
+                else
+                    intent.putExtra(FileChooserActivity._Theme, R.style.AppTheme);
+
+                // single/ double tap
+                intent.putExtra(FileChooserActivity._DoubleTapToChooseFiles, mRadBtnDoubleTap.isChecked());
+
+                // save as...
+                intent.putExtra(FileChooserActivity._SaveDialog, true);
+                intent.putExtra(FileChooserActivity._SelectFile, selectedFile);
+                startActivityForResult(intent, _ReqSaveAs);
+            }// onClick()
+        });
+    }// doSelectAFileToSaveAs()
 
     // =========
     // LISTENERS
@@ -138,17 +182,22 @@ public class MainActivity extends Activity {
             }
 
             // multi-selection
-            intent.putExtra(FileChooserActivity._MultiSelection, mChkMultiSelection.isChecked());
+            if (v.getId() != R.id.activity_main_button_select_a_file_to_save_as)
+                intent.putExtra(FileChooserActivity._MultiSelection, mChkMultiSelection.isChecked());
 
             // filter-mode
-            if (v.getId() == R.id.activity_main_button_choose_files)
+            if (v.getId() == R.id.activity_main_button_choose_files
+                    || v.getId() == R.id.activity_main_button_select_a_file_to_save_as)
                 intent.putExtra(FileChooserActivity._FilterMode, IFileProvider.FilterMode.FilesOnly);
             else if (v.getId() == R.id.activity_main_button_choose_dirs)
                 intent.putExtra(FileChooserActivity._FilterMode, IFileProvider.FilterMode.DirectoriesOnly);
             else if (v.getId() == R.id.activity_main_button_choose_files_and_dirs)
                 intent.putExtra(FileChooserActivity._FilterMode, IFileProvider.FilterMode.FilesAndDirectories);
 
-            startActivityForResult(intent, _ReqChooseFile);
+            if (v.getId() == R.id.activity_main_button_select_a_file_to_save_as)
+                startActivityForResult(intent, _ReqSelectAFileToSaveAs);
+            else
+                startActivityForResult(intent, _ReqChooseFile);
         }// onClick()
     };// mBtnFileChooserHandlers
 

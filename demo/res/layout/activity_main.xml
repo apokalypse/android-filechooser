@@ -37,19 +37,26 @@
                 android:text="Double tap" />
         </RadioGroup>
 
-        <Button
-            android:id="@+id/activity_main_button_choose_files"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Choose file(s)…" />
+            android:orientation="horizontal" >
 
-        <Button
-            android:id="@+id/activity_main_button_choose_dirs"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="Choose dir(s)…" />
+            <Button
+                android:id="@+id/activity_main_button_choose_files"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Choose file(s)…" />
+
+            <Button
+                android:id="@+id/activity_main_button_choose_dirs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Choose dir(s)…" />
+        </LinearLayout>
 
         <Button
             android:id="@+id/activity_main_button_choose_files_and_dirs"
@@ -58,12 +65,26 @@
             android:layout_gravity="center_horizontal"
             android:text="Choose file(s) and dir(s)…" />
 
-        <Button
-            android:id="@+id/activity_main_button_save_as"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Save as…" />
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/activity_main_button_save_as"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Save as…" />
+
+            <Button
+                android:id="@+id/activity_main_button_select_a_file_to_save_as"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Select a file to save as…" />
+        </LinearLayout>
 
         <Button
             android:id="@+id/activity_main_button_create_hugedir"
