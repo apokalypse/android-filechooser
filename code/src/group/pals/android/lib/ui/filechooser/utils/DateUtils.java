@@ -104,7 +104,7 @@ public class DateUtils {
             else
                 res = android.text.format.DateUtils.formatDateTime(context, date.getTimeInMillis(), _FormatMonthAndDay
                         | _FormatYear);
-        }// older
+        }// other years (maybe older or newer than this year)
 
         return res;
     }// formatDate()
