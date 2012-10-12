@@ -602,12 +602,16 @@ public class FileChooserActivity extends Activity {
                             if (ok && _selectedFile != null && _selectedFile.isFile() && mIsSaveDialog)
                                 mTxtSaveas.setText(_selectedFile.getName());
 
-                            if (mRoot.equals(any)) {
-                                mHistory.push(mRoot);
-                                mFullHistory.push(mRoot);
-                            } else
+                            // don't push current location into history
+                            boolean isCurrentLocation = savedInstanceState != null
+                                    && any.equals(savedInstanceState.get(_CurrentLocation));
+                            if (isCurrentLocation) {
                                 mHistory.notifyHistoryChanged();
-                        }
+                            } else {
+                                mHistory.push((IFile) any);
+                                mFullHistory.push((IFile) any);
+                            }
+                        }// onFinish()
                     }, selectedFile);
                 }
             }// onPostExecute()
