@@ -563,7 +563,7 @@ public class FileChooserActivity extends Activity {
                      * Priorities for starting path:
                      * 
                      * 1. Current location (in case the activity has been killed
-                     * after configurations changed.
+                     * after configurations changed).
                      * 
                      * 2. Selected file from key _SelectFile.
                      * 
