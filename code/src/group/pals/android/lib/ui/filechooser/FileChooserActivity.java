@@ -1719,10 +1719,13 @@ public class FileChooserActivity extends Activity {
                         ((IFileDataModel) o).setTobeDeleted(true);
                         mFileAdapter.notifyDataSetChanged();
                         doDeleteFile((IFileDataModel) o);
-                        return true;
                     }
                 }
 
+                /*
+                 * always return false to let the default handler draw the item
+                 * properly
+                 */
                 return false;
             }// onFling()
         });// mListviewFilesGestureDetector

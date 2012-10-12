@@ -1,7 +1,7 @@
 android-filechooser
 Copyright 2012 Hai Bison
 
-Version: 4.8
+Version: 4.8.1
 
 This product includes software developed at
 http://code.google.com/p/android-filechooser/
@@ -34,6 +34,12 @@ In short, you can use this library in your commercial apps with or without our
 knowledge. Hope you enjoy it  :-)
 
 And here is history:
+
++++ Version 4.8.1 +++
+ - Release: October 12, 2012
+
+ - Fixes a bug that file item does not draw properly after flinging it to delete
+   files;
 
 +++ Version 4.8 +++
  - Release: October 12, 2012
