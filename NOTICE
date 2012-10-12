@@ -1,7 +1,7 @@
 android-filechooser
 Copyright 2012 Hai Bison
 
-Version: 4.7 beta
+Version: 4.7
 
 This product includes software developed at
 http://code.google.com/p/android-filechooser/
@@ -35,18 +35,22 @@ knowledge. Hope you enjoy it  :-)
 
 And here is history:
 
++++ Version 4.7 +++
+ - Release: October 12, 2012
+
+ - All date formatting utilities were moved from /IFileAdapter to
+   /utils.DateUtils;
+ - Removes key /FileChooserActivity._UseThemeDialog;
+ - Adds options for single tapping/ double tapping to choose files;
+ - Auto remembers last location;
+ - Adds key /FileChooserActivity._SelectFile to select a specific file on
+   startup;
+ - Updates new mime types;
+ - UI for footer;
+ - Minor changes;
+
 +++ Version 4.7 beta +++
  - Initialize: October 02, 2012
-
- - Milestones:
-   + All date formatting utilities were moved from /IFileAdapter to
-     /utils.DateUtils;
-   + Removes key /FileChooserActivity._UseThemeDialog;
-   + Adds options for single tapping/ double tapping to choose files;
-   + Auto remember last location;
-   + Adds key /FileChooserActivity._SelectFile to select a specific file on
-     startup;
-   + Minor changes;
 
 +++ Version 4.6.2 +++
  - Release: October 01, 2012
