@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="group.pals.android.lib.ui.filechooser.demo"
     android:installLocation="auto"
-    android:versionCode="12"
-    android:versionName="1.5 beta" >
+    android:versionCode="13"
+    android:versionName="1.5" >
 
     <uses-sdk
         android:minSdkVersion="4"
@@ -17,7 +17,7 @@
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-            android:label="AFC 4.8b - Demo" >
+            android:label="AFC 4.8 - Demo" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
