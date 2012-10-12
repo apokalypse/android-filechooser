@@ -7,19 +7,27 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
-        <CheckBox
-            android:id="@+id/activity_main_checkBox_use_dialog_theme"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Dialog theme" />
+            android:orientation="horizontal" >
 
-        <CheckBox
-            android:id="@+id/activity_main_checkBox_multi_selection"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="Multi-selection" />
+            <CheckBox
+                android:id="@+id/activity_main_checkBox_use_dialog_theme"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:checked="true"
+                android:text="Dialog theme" />
+
+            <CheckBox
+                android:id="@+id/activity_main_checkBox_multi_selection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Multi-selection" />
+        </LinearLayout>
 
         <RadioGroup
             android:layout_width="wrap_content"
