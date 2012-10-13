@@ -18,6 +18,8 @@ package group.pals.android.lib.ui.filechooser;
 
 import group.pals.android.lib.ui.filechooser.io.IFile;
 import group.pals.android.lib.ui.filechooser.io.IFileFilter;
+import group.pals.android.lib.ui.filechooser.prefs.DisplayPrefs;
+import group.pals.android.lib.ui.filechooser.prefs.DisplayPrefs.FileTimeDisplay;
 import group.pals.android.lib.ui.filechooser.services.IFileProvider;
 import group.pals.android.lib.ui.filechooser.services.IFileProvider.FilterMode;
 import group.pals.android.lib.ui.filechooser.utils.Converter;
@@ -32,6 +34,8 @@ import java.util.List;
 
 import android.content.Context;
 import android.graphics.Paint;
+import android.preference.PreferenceActivity;
+import android.preference.PreferenceFragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,6 +63,7 @@ public class IFileAdapter extends BaseAdapter {
     private final Integer[] mAdvancedSelectionOptions;
     private final IFileProvider.FilterMode mFilterMode;
     private final Context mContext;
+    private final FileTimeDisplay mFileTimeDisplay;
 
     private List<IFileDataModel> mData;
     private LayoutInflater mInflater;
@@ -99,7 +104,30 @@ public class IFileAdapter extends BaseAdapter {
                     R.string.afc_cmd_select_all_files, R.string.afc_cmd_select_all_folders };
             break;// FilesAndDirectories
         }
+
+        mFileTimeDisplay = new FileTimeDisplay(DisplayPrefs.isShowTimeForOldDaysThisYear(mContext),
+                DisplayPrefs.isShowTimeForOldDays(mContext));
     }// IFileAdapter
+
+    @Override
+    public void notifyDataSetChanged() {
+        updateEnvironments();
+        super.notifyDataSetChanged();
+    }// notifyDataSetChanged()
+
+    /**
+     * Updates environments such as file time display... For example, this
+     * method is useful if you have {@link PreferenceActivity} or
+     * {@link PreferenceFragment} to let the user change preferences. So after
+     * the user changed preferences, you just simply call this method <i>and</i>
+     * {@link #notifyDataSetChanged()}, or just call
+     * {@link #notifyDataSetChanged()} (which also calls this method) to update
+     * the UI of this adapter.
+     */
+    public void updateEnvironments() {
+        mFileTimeDisplay.setShowTimeForOldDaysThisYear(DisplayPrefs.isShowTimeForOldDaysThisYear(mContext));
+        mFileTimeDisplay.setShowTimeForOldDays(DisplayPrefs.isShowTimeForOldDays(mContext));
+    }// updateEnvironments()
 
     @Override
     public int getCount() {
@@ -285,7 +313,7 @@ public class IFileAdapter extends BaseAdapter {
             bag.mTxtFileName.setPaintFlags(bag.mTxtFileName.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
 
         // file info
-        String time = DateUtils.formatDate(mContext, file.lastModified());
+        String time = DateUtils.formatDate(mContext, file.lastModified(), mFileTimeDisplay);
         if (file.isDirectory())
             bag.mTxtFileInfo.setText(time);
         else

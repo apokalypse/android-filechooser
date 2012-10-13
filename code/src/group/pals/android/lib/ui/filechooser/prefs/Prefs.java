@@ -19,6 +19,9 @@ package group.pals.android.lib.ui.filechooser.prefs;
 import group.pals.android.lib.ui.filechooser.R;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceActivity;
+import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 
 /**
  * Convenient class for working with preferences.
@@ -59,4 +62,20 @@ public class Prefs {
         return context.getApplicationContext().getSharedPreferences(genPreferenceFilename(context),
                 Context.MODE_MULTI_PROCESS);
     }
+
+    /**
+     * Setup {@code pm} to use global unique filename and global access mode.
+     * You must use this method if you let the user change preferences via UI
+     * (such as {@link PreferenceActivity}, {@link PreferenceFragment}...).
+     * 
+     * @param c
+     *            {@link Context}.
+     * @param pm
+     *            {@link PreferenceManager}.
+     * @since v4.9 beta
+     */
+    public static void setupPreferenceManager(Context c, PreferenceManager pm) {
+        pm.setSharedPreferencesMode(Context.MODE_MULTI_PROCESS);
+        pm.setSharedPreferencesName(genPreferenceFilename(c));
+    }// setupPreferenceManager()
 }

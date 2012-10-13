@@ -239,4 +239,52 @@ public class DisplayPrefs extends Prefs {
     public static void setLastLocation(Context c, String v) {
         p(c).edit().putString(c.getString(R.string.afc_pkey_display_last_location), v).commit();
     }
+
+    /*
+     * HELPER CLASSES
+     */
+
+    /**
+     * File time display options.
+     * 
+     * @see DisplayPrefs#isShowTimeForOldDaysThisYear(Context)
+     * @see DisplayPrefs#isShowTimeForOldDays(Context)
+     * @author Hai Bison
+     * @since v4.9 beta
+     * 
+     */
+    public static class FileTimeDisplay {
+
+        private boolean mShowTimeForOldDaysThisYear;
+        private boolean mShowTimeForOldDays;
+
+        /**
+         * Creates new instance.
+         * 
+         * @param showTimeForOldDaysThisYear
+         * @param showTimeForOldDays
+         */
+        public FileTimeDisplay(boolean showTimeForOldDaysThisYear, boolean showTimeForOldDays) {
+            mShowTimeForOldDaysThisYear = showTimeForOldDaysThisYear;
+            mShowTimeForOldDays = showTimeForOldDays;
+        }// FileTimeDisplay()
+
+        public boolean isShowTimeForOldDaysThisYear() {
+            return mShowTimeForOldDaysThisYear;
+        }// isShowTimeForOldDaysThisYear()
+
+        public FileTimeDisplay setShowTimeForOldDaysThisYear(boolean v) {
+            mShowTimeForOldDaysThisYear = v;
+            return this;
+        }// setShowTimeForOldDaysThisYear()
+
+        public boolean isShowTimeForOldDays() {
+            return mShowTimeForOldDays;
+        }// isShowTimeForOldDays()
+
+        public FileTimeDisplay setShowTimeForOldDays(boolean v) {
+            mShowTimeForOldDays = v;
+            return this;
+        }// setShowTimeForOldDays()
+    }// FileTimeDisplay
 }

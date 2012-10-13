@@ -17,7 +17,7 @@
 package group.pals.android.lib.ui.filechooser.utils;
 
 import group.pals.android.lib.ui.filechooser.R;
-import group.pals.android.lib.ui.filechooser.prefs.DisplayPrefs;
+import group.pals.android.lib.ui.filechooser.prefs.DisplayPrefs.FileTimeDisplay;
 
 import java.util.Calendar;
 
@@ -59,12 +59,14 @@ public class DateUtils {
      *            {@link Context}.
      * @param millis
      *            time in milliseconds.
+     * @param fileTimeDisplay
+     *            {@link FileTimeDisplay}.
      * @return the formatted string
      */
-    public static String formatDate(Context context, long millis) {
+    public static String formatDate(Context context, long millis, FileTimeDisplay fileTimeDisplay) {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(millis);
-        return formatDate(context, cal);
+        return formatDate(context, cal, fileTimeDisplay);
     }// formatDate()
 
     /**
@@ -74,9 +76,11 @@ public class DateUtils {
      *            {@link Context}.
      * @param date
      *            {@link Calendar}.
+     * @param fileTimeDisplay
+     *            {@link FileTimeDisplay}.
      * @return the formatted string, for local human reading.
      */
-    public static String formatDate(Context context, Calendar date) {
+    public static String formatDate(Context context, Calendar date, FileTimeDisplay fileTimeDisplay) {
         final Calendar _yesterday = Calendar.getInstance();
         _yesterday.add(Calendar.DAY_OF_YEAR, -1);
 
@@ -91,14 +95,14 @@ public class DateUtils {
                     android.text.format.DateUtils.formatDateTime(context, date.getTimeInMillis(), _FormatShortTime));
         }// yesterday
         else if (date.get(Calendar.YEAR) == _yesterday.get(Calendar.YEAR)) {
-            if (DisplayPrefs.isShowTimeForOldDaysThisYear(context))
+            if (fileTimeDisplay.isShowTimeForOldDaysThisYear())
                 res = android.text.format.DateUtils.formatDateTime(context, date.getTimeInMillis(), _FormatShortTime
                         | _FormatMonthAndDay);
             else
                 res = android.text.format.DateUtils.formatDateTime(context, date.getTimeInMillis(), _FormatMonthAndDay);
         }// this year
         else {
-            if (DisplayPrefs.isShowTimeForOldDays(context))
+            if (fileTimeDisplay.isShowTimeForOldDays())
                 res = android.text.format.DateUtils.formatDateTime(context, date.getTimeInMillis(), _FormatShortTime
                         | _FormatMonthAndDay | _FormatYear);
             else
