@@ -56,6 +56,7 @@ public class Prefs {
      */
     public static SharedPreferences p(Context context) {
         // always use application context
-        return context.getApplicationContext().getSharedPreferences(genPreferenceFilename(context), 0);
+        return context.getApplicationContext().getSharedPreferences(genPreferenceFilename(context),
+                Context.MODE_MULTI_PROCESS);
     }
 }
