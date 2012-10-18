@@ -1300,10 +1300,20 @@ public class FileChooserActivity extends Activity {
                 else if (mFileAdapter.isEmpty())
                     mFooterView.setText(R.string.afc_msg_empty);
 
-                if (shouldBeSelectedIdx >= 0 && shouldBeSelectedIdx < mFileAdapter.getCount())
-                    mViewFiles.setSelection(shouldBeSelectedIdx);
-                else if (!mFileAdapter.isEmpty())
-                    mViewFiles.setSelection(0);
+                /*
+                 * We use a Runnable to make sure this work. Because if the list
+                 * view is handling data, this might not work.
+                 */
+                mViewFiles.post(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if (shouldBeSelectedIdx >= 0 && shouldBeSelectedIdx < mFileAdapter.getCount()) {
+                            mViewFiles.setSelection(shouldBeSelectedIdx);
+                        } else if (!mFileAdapter.isEmpty())
+                            mViewFiles.setSelection(0);
+                    }// run()
+                });
 
                 /*
                  * navigation buttons
