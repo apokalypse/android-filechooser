@@ -42,6 +42,9 @@
             android:id="@+id/afc_file_item_textview_filename"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ellipsize="middle"
+            android:maxLines="3"
+            android:singleLine="false"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
@@ -49,7 +52,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:gravity="right" />
+            android:ellipsize="end"
+            android:gravity="right"
+            android:singleLine="true" />
     </LinearLayout>
 
     <CheckBox

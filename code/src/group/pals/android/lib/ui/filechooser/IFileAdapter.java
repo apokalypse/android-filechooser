@@ -36,7 +36,6 @@ import android.content.Context;
 import android.graphics.Paint;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -293,13 +292,10 @@ public class IFileAdapter extends BaseAdapter {
      * @since v2.0 alpha
      */
     private void updateView(ViewGroup parent, View childView, Bag bag, final IFileDataModel data, IFile file) {
-        // if parent is list view, enable multiple lines
-        boolean useSingleLine = parent instanceof GridView;
-        for (TextView tv : new TextView[] { bag.mTxtFileName, bag.mTxtFileInfo }) {
-            tv.setSingleLine(useSingleLine);
-            if (useSingleLine)
-                tv.setEllipsize(TextUtils.TruncateAt.END);
-        }
+        /*
+         * Use single line for grid view, multiline for list view
+         */
+        bag.mTxtFileName.setSingleLine(parent instanceof GridView);
 
         // file icon
         bag.mImageIcon.setImageResource(FileUtils.getResIcon(file));

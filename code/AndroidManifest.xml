@@ -17,8 +17,8 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="group.pals.android.lib.ui.filechooser"
-    android:versionCode="42"
-    android:versionName="4.9 beta" >
+    android:versionCode="43"
+    android:versionName="4.9" >
 
     <uses-sdk
         android:minSdkVersion="4"

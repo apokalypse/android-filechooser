@@ -1,7 +1,7 @@
 android-filechooser
 Copyright 2012 Hai Bison
 
-Version: 4.9 beta
+Version: 4.9
 
 This product includes software developed at
 http://code.google.com/p/android-filechooser/
@@ -18,7 +18,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-================================================================================
+===========
 
 Feel free to contact us at:
  - Homepage : http://www.haibison.com
@@ -33,7 +33,24 @@ bugs...), your e-mail address will be kept private:
 In short, you can use this library in your commercial apps with or without our
 knowledge. Hope you enjoy it  :-)
 
+But, we reserve the rights to require you to suspend using the library if your
+apps or your products is pornographic or obscene. In such case, you have no
+rights to use this library. We can change this terms from time to time and we
+reserve the rights to make our decisions at our sole discretion.
+
 And here is history:
+
++++ Version 4.9 +++
+ - Release: October 20, 2012
+
+ - Improves the speed of formatting file time;
+ - Uses a unique filename of SharedPreferences instead of default application's
+   SharedPreferences;
+ - Uses Context.MODE_MULTI_PROCESS for storing global preferences;
+ - Uses a Runnable + setSelection() to select item of list view of files.
+   Because if the list view is handling data, only setSelection() might not
+   work;
+ - Updates NOTICE;
 
 +++ Version 4.9 beta +++
  - Initialize: October 12, 2012
