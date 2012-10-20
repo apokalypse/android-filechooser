@@ -1,17 +1,8 @@
 /*
- *   Copyright 2012 Hai Bison
+ *    Copyright (c) 2012 Hai Bison
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ *    See the file LICENSE at the root directory of this project for copying
+ *    permission.
  */
 
 package group.pals.android.lib.ui.filechooser.utils;
@@ -39,7 +30,7 @@ public class E {
         String msg = null;
         try {
             msg = String.format("Hi  :-)\n\n" + "%s v%s\n" + "…by Hai Bison Apps\n\n" + "http://www.haibison.com\n\n"
-                    + "Hope you enjoy this library.", "android-filechooser", "4.9");
+                    + "Hope you enjoy this library.", "android-filechooser", "5.0");
         } catch (Exception e) {
             msg = "Oops… You've found a broken Easter egg, try again later  :-(";
         }
