@@ -10,6 +10,7 @@ package group.pals.android.lib.ui.filechooser.utils;
 import group.pals.android.lib.ui.filechooser.io.IFile;
 import group.pals.android.lib.ui.filechooser.services.IFileProvider;
 
+import java.text.Collator;
 import java.util.Comparator;
 
 /**
@@ -26,6 +27,7 @@ public class FileComparator implements Comparator<IFile> {
 
     private final IFileProvider.SortType mSortType;
     private final IFileProvider.SortOrder mSortOrder;
+    private final Collator mCollator = Collator.getInstance();
 
     /**
      * Creates new {@link FileComparator}
@@ -44,7 +46,7 @@ public class FileComparator implements Comparator<IFile> {
     public int compare(IFile lhs, IFile rhs) {
         if ((lhs.isDirectory() && rhs.isDirectory()) || (lhs.isFile() && rhs.isFile())) {
             // default is to compare by name (case insensitive)
-            int res = lhs.getName().compareToIgnoreCase(rhs.getName());
+            int res = mCollator.compare(lhs.getName(), rhs.getName());
 
             switch (mSortType) {
             case SortByName:

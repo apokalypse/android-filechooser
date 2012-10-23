@@ -1,6 +1,6 @@
 android-filechooser
 
-Version: 5.0
+Version: 5.1 beta
 
 ===========
 
@@ -15,6 +15,9 @@ bugs...), your e-mail address will be kept private:
  - https://groups.google.com/forum/#!forum/android-filechooser
 
 And here is history:
+
++++ Version 5.1 beta +++
+ - Initialize: October 23, 2012
 
 +++ Version 5.0 +++
  - Release: October 21, 2012
