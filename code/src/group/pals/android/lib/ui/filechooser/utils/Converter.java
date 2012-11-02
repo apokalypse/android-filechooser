@@ -24,7 +24,7 @@ public class Converter {
     public static String sizeToStr(double size) {
         if (size <= 0)
             return "0 B";
-        final String[] _units = new String[] { "B", "KB", "MB", "GB", "TB" };
+        final String[] _units = { "", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi", "Yi" };
         final Short _blockSize = 1024;
 
         int digitGroups = (int) (Math.log10(size) / Math.log10(_blockSize));
@@ -32,6 +32,6 @@ public class Converter {
             digitGroups = _units.length - 1;
         size = size / Math.pow(_blockSize, digitGroups);
 
-        return String.format(String.format("%s %%s", digitGroups == 0 ? "%,.0f" : "%,.2f"), size, _units[digitGroups]);
+        return String.format(String.format("%s %%sB", digitGroups == 0 ? "%,.0f" : "%,.2f"), size, _units[digitGroups]);
     }// sizeToStr()
 }
