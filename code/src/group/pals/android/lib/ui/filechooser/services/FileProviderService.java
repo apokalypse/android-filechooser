@@ -7,6 +7,7 @@
 
 package group.pals.android.lib.ui.filechooser.services;
 
+import group.pals.android.lib.ui.filechooser.io.IFileFilter;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
@@ -49,7 +50,7 @@ public abstract class FileProviderService extends Service implements IFileProvid
      */
 
     private boolean mDisplayHiddenFiles = false;
-    private String mRegexFilenameFilter = null;
+    private IFileFilter mFileFilter = null;
     private FilterMode mFilterMode = FilterMode.FilesOnly;
     private int mMaxFileCount = 1024;
     private SortType mSortType = SortType.SortByName;
@@ -66,13 +67,25 @@ public abstract class FileProviderService extends Service implements IFileProvid
     }
 
     @Override
-    public void setRegexFilenameFilter(String regex) {
-        mRegexFilenameFilter = regex;
-    };
+    public void setFileFilterClass(Class<IFileFilter> cls) {
+        if (cls == null)
+            mFileFilter = null;
+        else {
+            try {
+                mFileFilter = cls.newInstance();
+            } catch (InstantiationException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    };// setFileFilterClass()
 
     @Override
-    public String getRegexFilenameFilter() {
-        return mRegexFilenameFilter;
+    public IFileFilter getFileFilter() {
+        return mFileFilter;
     }
 
     @Override

@@ -158,18 +158,17 @@ public class LocalFileProvider extends FileProviderService {
         if (!isDisplayHiddenFiles() && pathname.getName().startsWith("."))
             return false;
 
+        if (getFileFilter() != null)
+            return getFileFilter().accept(pathname);
+
         switch (getFilterMode()) {
         case FilesOnly:
-            if (getRegexFilenameFilter() != null && pathname.isFile())
-                return pathname.getName().matches(getRegexFilenameFilter());
             return true;
 
         case DirectoriesOnly:
             return pathname.isDirectory();
 
         default:
-            if (getRegexFilenameFilter() != null && pathname.isFile())
-                return pathname.getName().matches(getRegexFilenameFilter());
             return true;
         }// switch
     }// accept()

@@ -115,17 +115,20 @@ public interface IFileProvider {
     boolean isDisplayHiddenFiles();
 
     /**
-     * Sets regular expression for filter filename.
+     * Sets the component class implementing {@link IFileFilter}.
      * 
-     * @param regex
+     * @param cls
+     *            the component class implementing {@link IFileFilter}.
+     * @since v5.1 beta
      */
-    void setRegexFilenameFilter(String regex);
+    void setFileFilterClass(Class<IFileFilter> cls);
 
     /**
      * 
-     * @return the regular expression for file name filter
+     * @return the file filter.
+     * @since v5.1 beta
      */
-    String getRegexFilenameFilter();
+    IFileFilter getFileFilter();
 
     /**
      * Sets filter mode.

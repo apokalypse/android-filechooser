@@ -174,9 +174,12 @@ public class FileChooserActivity extends Activity {
      */
     public static final String _MultiSelection = _ClassName + ".multi_selection";
     /**
-     * Key to hold regex filename filter, default = {@code null}
+     * Key to hold the component class implementing {@link IFileFilter}, default
+     * is {@code null}.
+     * 
+     * @since v5.1 beta
      */
-    public static final String _RegexFilenameFilter = _ClassName + ".regex_filename_filter";
+    public static final String _IFileFilterClass = _ClassName + ".ifile_filter_class";
     /**
      * Key to hold display-hidden-files, default = {@code false}
      */
@@ -636,7 +639,7 @@ public class FileChooserActivity extends Activity {
         mFileProvider.setDisplayHiddenFiles(getIntent().getBooleanExtra(_DisplayHiddenFiles, false));
         mFileProvider.setFilterMode(mIsSaveDialog ? IFileProvider.FilterMode.FilesOnly : filterMode);
         mFileProvider.setMaxFileCount(getIntent().getIntExtra(_MaxFileCount, 1024));
-        mFileProvider.setRegexFilenameFilter(mIsSaveDialog ? null : getIntent().getStringExtra(_RegexFilenameFilter));
+        mFileProvider.setFileFilterClass((Class<IFileFilter>) getIntent().getSerializableExtra(_IFileFilterClass));
         mFileProvider.setSortOrder(sortAscending ? IFileProvider.SortOrder.Ascending
                 : IFileProvider.SortOrder.Descending);
         mFileProvider.setSortType(sortType);
@@ -1223,6 +1226,7 @@ public class FileChooserActivity extends Activity {
                                     else
                                         hasMoreFiles = true;
                                 }
+
                                 return false;
                             }// accept()
                         });
