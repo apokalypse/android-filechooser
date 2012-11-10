@@ -19,6 +19,14 @@ And here is history:
 +++ Version 5.1 beta +++
  - Initialize: October 23, 2012
 
+ * Milestones:
+   + Removes key FileChooserActivity._RegexFilenameFilter; adds new key
+     FileChooserActivity._IFileFilterClass as a replacement;
+   + Removes methods IFileProvider.setRegexFilenameFilter(String),
+     IFileProvider.getRegexFilenameFilter(); adds new methods
+     IFileProvider.setFileFilterClass(Class<IFileFilter>) and
+     IFileProvider.getFileFilter() as replacements;
+
 +++ Version 5.0 +++
  - Release: October 21, 2012
 
