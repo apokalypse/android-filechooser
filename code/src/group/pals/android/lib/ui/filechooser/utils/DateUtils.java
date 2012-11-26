@@ -27,6 +27,7 @@ public class DateUtils {
      * Used with format methods of {@link android.text.format.DateUtils}. For
      * example: "10:01 AM".
      */
+    @SuppressWarnings("deprecation")
     public static final int _FormatShortTime = android.text.format.DateUtils.FORMAT_12HOUR
             | android.text.format.DateUtils.FORMAT_SHOW_TIME;
 

@@ -619,6 +619,7 @@ public class FileChooserActivity extends Activity {
      * - max file count;<br>
      * - ...
      */
+    @SuppressWarnings("unchecked")
     private void setupService() {
         /*
          * set root path, if not specified, try using
