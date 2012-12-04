@@ -199,7 +199,6 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
      * @param in
      *            {@link Parcel}.
      */
-
     @SuppressWarnings("unchecked")
     public void readFromParcel(Parcel in) {
         mCapacity = in.readInt();
