@@ -57,7 +57,7 @@ public class LocalFile extends File implements IFile {
     @Override
     public boolean equals(Object obj) {
         return this == obj;
-    }
+    }// equals()
 
     @Override
     public boolean equalsToPath(IFile file) {
@@ -67,7 +67,7 @@ public class LocalFile extends File implements IFile {
     @Override
     public IFile clone() {
         return new LocalFile(getAbsolutePath());
-    }
+    }// clone()
 
     /*-----------------------------------------------------
      * Parcelable
@@ -77,25 +77,25 @@ public class LocalFile extends File implements IFile {
     public int describeContents() {
         // TODO Auto-generated method stub
         return 0;
-    }
+    }// describeContents()
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(getAbsolutePath());
-    }
+    }// writeToParcel()
 
     public static final Parcelable.Creator<LocalFile> CREATOR = new Parcelable.Creator<LocalFile>() {
 
         public LocalFile createFromParcel(Parcel in) {
             return new LocalFile(in);
-        }
+        }// createFromParcel()
 
         public LocalFile[] newArray(int size) {
             return new LocalFile[size];
-        }
-    };
+        }// newArray()
+    };// CREATOR
 
     private LocalFile(Parcel in) {
         this(in.readString());
-    }
+    }// LocalFile()
 }

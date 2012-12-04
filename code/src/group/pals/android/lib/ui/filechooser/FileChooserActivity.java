@@ -340,7 +340,7 @@ public class FileChooserActivity extends Activity {
         if (savedInstanceState != null && savedInstanceState.get(_History) instanceof HistoryStore<?>)
             mHistory = savedInstanceState.getParcelable(_History);
         else
-            mHistory = new HistoryStore<IFile>(DisplayPrefs._DefHistoryCapacity);
+            mHistory = new HistoryStore<IFile>();
         mHistory.addListener(new HistoryListener<IFile>() {
 
             @Override
@@ -355,7 +355,7 @@ public class FileChooserActivity extends Activity {
         if (savedInstanceState != null && savedInstanceState.get(_FullHistory) instanceof HistoryStore<?>)
             mFullHistory = savedInstanceState.getParcelable(_FullHistory);
         else
-            mFullHistory = new HistoryStore<IFile>(DisplayPrefs._DefHistoryCapacity) {
+            mFullHistory = new HistoryStore<IFile>() {
 
                 @Override
                 public void push(IFile newItem) {

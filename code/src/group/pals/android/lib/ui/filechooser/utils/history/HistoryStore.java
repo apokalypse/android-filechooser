@@ -13,6 +13,7 @@ import java.util.List;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 /**
  * A history store of any object extending {@link Parcelable}.<br>
@@ -25,20 +26,46 @@ import android.os.Parcelable;
  */
 public class HistoryStore<A extends Parcelable> implements History<A> {
 
+    /**
+     * Uses for debugging...
+     */
+    private static final String _ClassName = HistoryStore.class.getName();
+
+    /**
+     * The default capacity of this store.
+     */
+    public static final int _DefaultCapacity = 100;
+
     private final ArrayList<A> mHistoryList = new ArrayList<A>();
-    private final int mMaxSize;
     private final List<HistoryListener<A>> mListeners = new ArrayList<HistoryListener<A>>();
+    private int mCapacity;
+
+    /**
+     * Creates new instance with {@link #_DefaultCapacity}.
+     */
+    public HistoryStore() {
+        this(_DefaultCapacity);
+    }// HistoryStore()
 
     /**
      * Creates new {@link HistoryStore}
      * 
-     * @param maxSize
-     *            the maximum size that allowed, if it is &lt;= {@code 0},
-     *            {@code 100} will be used
+     * @param capcacity
+     *            the maximum size that allowed, if it is {@code <= 0},
+     *            {@link #_DefaultCapacity} will be used
      */
-    public HistoryStore(int maxSize) {
-        this.mMaxSize = maxSize > 0 ? maxSize : 100;
-    }
+    public HistoryStore(int capcacity) {
+        mCapacity = capcacity > 0 ? capcacity : _DefaultCapacity;
+    }// HistoryStore()
+
+    /**
+     * Gets the capacity.
+     * 
+     * @return the capacity.
+     */
+    public int getCapacity() {
+        return mCapacity;
+    }// getCapacity()
 
     @Override
     public void push(A newItem) {
@@ -49,6 +76,9 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
             return;
 
         mHistoryList.add(newItem);
+        if (mHistoryList.size() > mCapacity)
+            mHistoryList.remove(0);
+
         notifyHistoryChanged();
     }// push()
 
@@ -68,7 +98,7 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
     public void remove(A item) {
         if (mHistoryList.remove(item))
             notifyHistoryChanged();
-    }
+    }// remove()
 
     @Override
     public void removeAll(HistoryFilter<A> filter) {
@@ -89,17 +119,17 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
     public void notifyHistoryChanged() {
         for (HistoryListener<A> listener : mListeners)
             listener.onChanged(this);
-    }
+    }// notifyHistoryChanged()
 
     @Override
     public int size() {
         return mHistoryList.size();
-    }
+    }// size()
 
     @Override
     public int indexOf(A a) {
         return mHistoryList.indexOf(a);
-    }
+    }// indexOf()
 
     @Override
     public A prevOf(A a) {
@@ -107,7 +137,7 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
         if (idx > 0)
             return mHistoryList.get(idx - 1);
         return null;
-    }
+    }// prevOf()
 
     @Override
     public A nextOf(A a) {
@@ -115,7 +145,7 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
         if (idx >= 0 && idx < mHistoryList.size() - 1)
             return mHistoryList.get(idx + 1);
         return null;
-    }
+    }// nextOf()
 
     @SuppressWarnings("unchecked")
     @Override
@@ -126,23 +156,23 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
     @Override
     public boolean isEmpty() {
         return mHistoryList.isEmpty();
-    }
+    }// isEmpty()
 
     @Override
     public void clear() {
         mHistoryList.clear();
         notifyHistoryChanged();
-    }
+    }// clear()
 
     @Override
     public void addListener(HistoryListener<A> listener) {
         mListeners.add(listener);
-    }
+    }// addListener()
 
     @Override
     public void removeListener(HistoryListener<A> listener) {
         mListeners.remove(listener);
-    }
+    }// removeListener()
 
     /*-----------------------------------------------------
      * Parcelable
@@ -152,35 +182,53 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
     public int describeContents() {
         // TODO Auto-generated method stub
         return 0;
-    }
+    }// describeContents()
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(mMaxSize);
+        dest.writeInt(mCapacity);
 
         dest.writeInt(size());
         for (int i = 0; i < size(); i++)
             dest.writeParcelable(mHistoryList.get(i), flags);
-    }
+    }// writeToParcel()
+
+    /**
+     * Reads data from {@code in}.
+     * 
+     * @param in
+     *            {@link Parcel}.
+     */
+
+    @SuppressWarnings("unchecked")
+    public void readFromParcel(Parcel in) {
+        mCapacity = in.readInt();
+
+        int count = in.readInt();
+        for (int i = 0; i < count; i++) {
+            try {
+                mHistoryList.add((A) in.readParcelable(null));
+            } catch (ClassCastException e) {
+                Log.e(_ClassName, "readFromParcel() >> " + e);
+                e.printStackTrace();
+                break;
+            }
+        }
+    }// readFromParcel()
 
     @SuppressWarnings("rawtypes")
     public static final Parcelable.Creator<HistoryStore> CREATOR = new Parcelable.Creator<HistoryStore>() {
 
         public HistoryStore createFromParcel(Parcel in) {
             return new HistoryStore(in);
-        }
+        }// createFromParcel()
 
         public HistoryStore[] newArray(int size) {
             return new HistoryStore[size];
-        }
-    };
+        }// newArray()
+    };// CREATOR
 
-    @SuppressWarnings("unchecked")
     private HistoryStore(Parcel in) {
-        mMaxSize = in.readInt();
-
-        int count = in.readInt();
-        for (int i = 0; i < count; i++)
-            mHistoryList.add((A) in.readParcelable(null));
-    }
+        readFromParcel(in);
+    }// HistoryStore()
 }
