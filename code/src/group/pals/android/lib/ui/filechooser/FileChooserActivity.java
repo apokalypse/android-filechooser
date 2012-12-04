@@ -35,6 +35,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CancellationException;
 
 import android.Manifest;
 import android.app.Activity;
@@ -1203,8 +1204,7 @@ public class FileChooserActivity extends Activity {
     private void setLocation(final IFile path, final TaskListener listener, final IFile selectedFile) {
         new LoadingDialog(this, R.string.afc_msg_loading, true) {
 
-            // IFile[] files = new IFile[0];
-            List<IFile> files;
+            List<IFile> mFiles;
             boolean hasMoreFiles = false;
             int shouldBeSelectedIdx = -1;
             /**
@@ -1216,45 +1216,52 @@ public class FileChooserActivity extends Activity {
             protected Object doInBackground(Void... params) {
                 try {
                     if (path.isDirectory() && path.canRead()) {
-                        files = new ArrayList<IFile>();
-                        mFileProvider.listAllFiles(path, new IFileFilter() {
+                        mFiles = new ArrayList<IFile>();
+                        try {
+                            mFileProvider.listAllFiles(path, new IFileFilter() {
 
-                            @Override
-                            public boolean accept(IFile pathname) {
-                                if (mFileProvider.accept(pathname)) {
-                                    if (files.size() < mFileProvider.getMaxFileCount())
-                                        files.add(pathname);
-                                    else
-                                        hasMoreFiles = true;
-                                }
+                                @Override
+                                public boolean accept(IFile pathname) {
+                                    if (isCancelled())
+                                        throw new CancellationException();
 
-                                return false;
-                            }// accept()
-                        });
+                                    if (mFileProvider.accept(pathname)) {
+                                        if (mFiles.size() < mFileProvider.getMaxFileCount())
+                                            mFiles.add(pathname);
+                                        else
+                                            hasMoreFiles = true;
+                                    }
+
+                                    return false;
+                                }// accept()
+                            });
+                        } catch (CancellationException e) {
+                            // ignore it
+                        }
                     } else
-                        files = null;
+                        mFiles = null;
 
-                    if (files != null) {
-                        Collections.sort(files,
+                    if (mFiles != null && !isCancelled()) {
+                        Collections.sort(mFiles,
                                 new FileComparator(mFileProvider.getSortType(), mFileProvider.getSortOrder()));
                         if (selectedFile != null && selectedFile.exists()
                                 && selectedFile.parentFile().equalsToPath(path)) {
-                            for (int i = 0; i < files.size(); i++) {
-                                if (files.get(i).equalsToPath(selectedFile)) {
+                            for (int i = 0; i < mFiles.size(); i++) {
+                                if (mFiles.get(i).equalsToPath(selectedFile)) {
                                     shouldBeSelectedIdx = i;
                                     break;
                                 }
                             }
                         } else if (mLastPath != null && mLastPath.length() >= path.getAbsolutePath().length()) {
-                            for (int i = 0; i < files.size(); i++) {
-                                IFile f = files.get(i);
+                            for (int i = 0; i < mFiles.size(); i++) {
+                                IFile f = mFiles.get(i);
                                 if (f.isDirectory() && mLastPath.startsWith(f.getAbsolutePath())) {
                                     shouldBeSelectedIdx = i;
                                     break;
                                 }
                             }
                         }
-                    }// if files != null
+                    }// if mFiles != null
                 } catch (Throwable t) {
                     setLastException(t);
                     cancel(false);
@@ -1272,7 +1279,7 @@ public class FileChooserActivity extends Activity {
             protected void onPostExecute(Object result) {
                 super.onPostExecute(result);
 
-                if (files == null) {
+                if (mFiles == null) {
                     Dlg.toast(FileChooserActivity.this, getString(R.string.afc_pmsg_cannot_access_dir, path.getName()),
                             Dlg._LengthShort);
                     if (listener != null)
@@ -1283,7 +1290,7 @@ public class FileChooserActivity extends Activity {
                 // update list view
 
                 createIFileAdapter();
-                for (IFile f : files)
+                for (IFile f : mFiles)
                     mFileAdapter.add(new IFileDataModel(f));
                 mFileAdapter.notifyDataSetChanged();
 
@@ -1693,8 +1700,9 @@ public class FileChooserActivity extends Activity {
                             && IFileProvider.FilterMode.FilesOnly.equals(mFileProvider.getFilterMode()))
                         return false;
 
-                    // if mFilterMode == DirectoriesOnly, files won't be
-                    // shown
+                    /*
+                     * If mFilterMode == DirectoriesOnly, files won't be shown.
+                     */
 
                     if (mIsSaveDialog) {
                         if (data.getFile().isFile()) {
