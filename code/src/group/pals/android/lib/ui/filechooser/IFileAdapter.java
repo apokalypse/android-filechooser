@@ -237,6 +237,7 @@ public class IFileAdapter extends BaseAdapter {
     private static final class Bag {
 
         ImageView mImageIcon;
+        ImageView mImageLockedSymbol;
         TextView mTxtFileName;
         TextView mTxtFileInfo;
         CheckBox mCheckboxSelection;
@@ -252,6 +253,7 @@ public class IFileAdapter extends BaseAdapter {
 
             bag = new Bag();
             bag.mImageIcon = (ImageView) convertView.findViewById(R.id.afc_file_item_imageview_icon);
+            bag.mImageLockedSymbol = (ImageView) convertView.findViewById(R.id.afc_file_item_imageview_locked_symbol);
             bag.mTxtFileName = (TextView) convertView.findViewById(R.id.afc_file_item_textview_filename);
             bag.mTxtFileInfo = (TextView) convertView.findViewById(R.id.afc_file_item_textview_file_info);
             bag.mCheckboxSelection = (CheckBox) convertView.findViewById(R.id.afc_file_item_checkbox_selection);
@@ -290,6 +292,7 @@ public class IFileAdapter extends BaseAdapter {
 
         // file icon
         bag.mImageIcon.setImageResource(FileUtils.getResIcon(file));
+        bag.mImageLockedSymbol.setVisibility(file.canRead() ? View.GONE : View.VISIBLE);
 
         // filename
         bag.mTxtFileName.setText(file.getName());

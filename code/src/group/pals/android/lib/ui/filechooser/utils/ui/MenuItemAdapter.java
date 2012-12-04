@@ -26,8 +26,6 @@ public class MenuItemAdapter extends BaseAdapter {
 
     private final Context mContext;
     private final Integer[] mItems;
-    private final int mPadding;
-    private final int mItemPaddingLeft;
 
     /**
      * Creates new instance.<br>
@@ -40,26 +38,22 @@ public class MenuItemAdapter extends BaseAdapter {
     public MenuItemAdapter(Context context, Integer[] itemIds) {
         mContext = context;
         mItems = itemIds;
-
-        mPadding = mContext.getResources().getDimensionPixelSize(R.dimen.afc_5dp);
-        mItemPaddingLeft = mContext.getResources()
-                .getDimensionPixelSize(R.dimen.afc_context_menu_item_padding_left);
     }// MenuItemAdapter()
 
     @Override
     public int getCount() {
         return mItems.length;
-    }
+    }// getCount()
 
     @Override
     public Object getItem(int position) {
         return mItems[position];
-    }
+    }// getItem()
 
     @Override
     public long getItemId(int position) {
         return position;
-    }
+    }// getItemId()
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -68,8 +62,7 @@ public class MenuItemAdapter extends BaseAdapter {
         }
 
         ((TextView) convertView).setText(mItems[position]);
-        convertView.setPadding(mItemPaddingLeft, mPadding, mPadding, mPadding);
 
         return convertView;
-    }
+    }// getView()
 }
