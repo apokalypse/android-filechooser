@@ -206,7 +206,7 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
         int count = in.readInt();
         for (int i = 0; i < count; i++) {
             try {
-                mHistoryList.add((A) in.readParcelable(null));
+                mHistoryList.add((A) in.readParcelable(getClass().getClassLoader()));
             } catch (ClassCastException e) {
                 Log.e(_ClassName, "readFromParcel() >> " + e);
                 e.printStackTrace();

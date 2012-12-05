@@ -1723,6 +1723,13 @@ public class FileChooserActivity extends Activity {
 
             @Override
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                /*
+                 * Sometimes e1 or e2 can be null. This came from users'
+                 * experiences.
+                 */
+                if (e1 == null || e2 == null)
+                    return false;
+
                 final int _max_y_distance = 19;// 10 is too short :-D
                 final int _min_x_distance = 80;
                 final int _min_x_velocity = 200;
@@ -1737,8 +1744,8 @@ public class FileChooserActivity extends Activity {
                 }
 
                 /*
-                 * always return false to let the default handler draw the item
-                 * properly
+                 * Always return false to let the default handler draw the item
+                 * properly.
                  */
                 return false;
             }// onFling()
