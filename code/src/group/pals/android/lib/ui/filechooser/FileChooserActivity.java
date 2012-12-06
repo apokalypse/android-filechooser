@@ -476,19 +476,10 @@ public class FileChooserActivity extends Activity {
                  */
                 Log.e(_ClassName, "onDestroy() - unbindService() - exception: " + t);
             }
-
-            try {
-                stopService(new Intent(this, mFileProviderServiceClass));
-            } catch (SecurityException e) {
-                /*
-                 * we have permission to stop our own service, so this exception
-                 * should never be thrown
-                 */
-            }
         }
 
         super.onDestroy();
-    }
+    }// onDestroy()
 
     /**
      * Connects to file provider service, then loads root directory. If can not,
@@ -498,11 +489,6 @@ public class FileChooserActivity extends Activity {
      * @param savedInstanceState
      */
     private void bindService(final Bundle savedInstanceState) {
-        if (startService(new Intent(this, mFileProviderServiceClass)) == null) {
-            doShowCannotConnectToServiceAndFinish();
-            return;
-        }
-
         mServiceConnection = new ServiceConnection() {
 
             public void onServiceConnected(ComponentName className, IBinder service) {
@@ -518,7 +504,11 @@ public class FileChooserActivity extends Activity {
             }// onServiceDisconnected()
         };
 
-        bindService(new Intent(this, mFileProviderServiceClass), mServiceConnection, Context.BIND_AUTO_CREATE);
+        if (!bindService(new Intent(this, mFileProviderServiceClass), mServiceConnection, Context.BIND_AUTO_CREATE
+                | Context.BIND_ADJUST_WITH_ACTIVITY)) {
+            doShowCannotConnectToServiceAndFinish();
+            return;
+        }
 
         new LoadingDialog(this, R.string.afc_msg_loading, false) {
 
