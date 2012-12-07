@@ -98,7 +98,7 @@ public class FileChooserActivity extends Activity {
     /**
      * The full name of this class. Generally used for debugging.
      */
-    public static final String _ClassName = FileChooserActivity.class.getName();
+    private static final String _ClassName = FileChooserActivity.class.getName();
 
     /**
      * Types of view.
