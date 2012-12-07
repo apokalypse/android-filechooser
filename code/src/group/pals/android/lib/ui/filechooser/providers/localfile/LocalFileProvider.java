@@ -7,9 +7,9 @@
 
 package group.pals.android.lib.ui.filechooser.providers.localfile;
 
+import group.pals.android.lib.ui.filechooser.providers.ProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileContract.BaseFile;
 import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileProvider;
-import group.pals.android.lib.ui.filechooser.providers.basefile.ProviderUtils;
 
 import java.io.File;
 import java.io.FileFilter;

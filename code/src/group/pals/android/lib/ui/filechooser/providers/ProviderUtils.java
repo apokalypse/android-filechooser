@@ -5,7 +5,7 @@
  *    permission.
  */
 
-package group.pals.android.lib.ui.filechooser.providers.basefile;
+package group.pals.android.lib.ui.filechooser.providers;
 
 import android.net.Uri;
 

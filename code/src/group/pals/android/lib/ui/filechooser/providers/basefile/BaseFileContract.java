@@ -7,6 +7,7 @@
 
 package group.pals.android.lib.ui.filechooser.providers.basefile;
 
+import group.pals.android.lib.ui.filechooser.providers.ProviderUtils;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -133,10 +134,10 @@ public class BaseFileContract {
         public static final String _ParamRecursive = "recursive";
 
         /**
-         * Use this parameter to show hidden files.<br>
-         * Default: {@code false}.
+         * Use this parameter to show hidden files (with value {@code = 1}).<br>
+         * Default: {@code 0}.
          * <p>
-         * Type: Boolean
+         * Type: Integer
          * </p>
          */
         public static final String _ParamShowHiddenFiles = "show_hidden_files";
