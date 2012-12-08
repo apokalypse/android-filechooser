@@ -56,6 +56,16 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
                 DisplayPrefs.isShowTimeForOldDays(context));
     }// BaseFileAdapter()
 
+    @Override
+    public int getCount() {
+        /*
+         * The last item is used for information from the provider, we ignore
+         * it.
+         */
+        int count = super.getCount();
+        return count > 0 ? count - 1 : 0;
+    }// getCount()
+
     /**
      * The "view holder"
      * 
@@ -190,6 +200,18 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
     /*
      * UTILITIES.
      */
+
+    /**
+     * Gets the path.
+     * 
+     * @return the location, can be {@code null} if there is no data.
+     */
+    public Uri getPath() {
+        Cursor cursor = getCursor();
+        if (cursor == null || !cursor.moveToLast())
+            return null;
+        return Uri.parse(cursor.getString(cursor.getColumnIndex(BaseFile._ColumnUri)));
+    }// getPath()
 
     /**
      * Selects all items.<br>

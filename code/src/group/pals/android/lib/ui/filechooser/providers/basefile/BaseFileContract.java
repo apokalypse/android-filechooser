@@ -57,6 +57,10 @@ public class BaseFileContract {
          * Unknown file type.
          */
         public static final int _FileTypeUnknown = 2;
+        /**
+         * File is not existed.
+         */
+        public static final int _FileTypeNotExisted = 3;
 
         /*
          * FILTER MODE.
@@ -104,10 +108,22 @@ public class BaseFileContract {
          */
 
         /**
-         * Use this parameter to cancel a previous task you executed.<br>
-         * Default: {@code false}.
+         * Use this parameter while querying a directory to have the provider
+         * automatically choose default directory if the given one does not
+         * exist.<br>
+         * Default:<br>
+         * <li>{@code 0} with {@code query()}.</li>
          * <p>
-         * Type: Boolean
+         * Type: Integer
+         * </p>
+         */
+        public static final String _ParamAuto = "auto";
+
+        /**
+         * Use this parameter to cancel a previous task you executed.<br>
+         * Default: {@code 0} with all methods.
+         * <p>
+         * Type: Integer
          * </p>
          * 
          * @see #_ParamTaskId
@@ -116,7 +132,7 @@ public class BaseFileContract {
 
         /**
          * Use this parameter to set an ID to any task.<br>
-         * Default: {@code 0}.
+         * Default: {@code 0} with all methods.
          * <p>
          * Type: Integer
          * </p>
@@ -126,16 +142,19 @@ public class BaseFileContract {
         /**
          * Use this parameter for operators which can work recursively, such as
          * deleting a directory...<br>
-         * Default: {@code false}.
+         * Default:<br>
+         * <li>{@code 0} with {@code query()}.</li>
+         * 
+         * <li>{@code 1} with {@code delete()}.</li>
          * <p>
-         * Type: Boolean
+         * Type: Integer
          * </p>
          */
         public static final String _ParamRecursive = "recursive";
 
         /**
          * Use this parameter to show hidden files (with value {@code = 1}).<br>
-         * Default: {@code 0}.
+         * Default: {@code 0} with {@code query()}.
          * <p>
          * Type: Integer
          * </p>
@@ -146,7 +165,7 @@ public class BaseFileContract {
          * Use this parameter to filter file type. Can be one of
          * {@link #_FilterFilesOnly}, {@link #_FilterDirectoriesOnly},
          * {@link #_FilterFilesAndDirectories}.<br>
-         * Default: {@link #_FilterFilesAndDirectories}.
+         * Default: {@link #_FilterFilesAndDirectories} with {@code query()}.
          * <p>
          * Type: Integer
          * </p>
@@ -157,7 +176,7 @@ public class BaseFileContract {
          * Use this parameter to sort files. Can be one of
          * {@link #_SortByModificationTime}, {@link #_SortByName},
          * {@link #_SortBySize}.<br>
-         * Default: {@link #_SortByName}.
+         * Default: {@link #_SortByName} with {@code query()}.
          * <p>
          * Type: Integer
          * </p>
@@ -167,7 +186,7 @@ public class BaseFileContract {
         /**
          * Use this parameter for sort order. Can be {@code 1} (ascending) or
          * {@code 0} (descending).<br>
-         * Default: {@code 1}.
+         * Default: {@code 1} with {@code query()}.
          * <p>
          * Type: Integer
          * </p>
@@ -176,12 +195,30 @@ public class BaseFileContract {
 
         /**
          * Use this parameter to limit results.<br>
-         * Default: {@code 1000}.
+         * Default: {@code 1000} with {@code query()}.
          * <p>
          * Type: Integer
          * </p>
          */
         public static final String _ParamLimit = "limit";
+
+        /**
+         * Use this parameter to get parent file of a file with {@code query()}.<br>
+         * <p>
+         * Type: Anything, you just need to put this parameter to the URI.
+         * </p>
+         */
+        public static final String _ParamGetParent = "get_parent";
+
+        /**
+         * This parameter is returned from the provider. It's only used for
+         * {@code query()} while querying directory contents. Can be {@code 1}
+         * (has more files) or {@code 0}.<br>
+         * <p>
+         * Type: Integer
+         * </p>
+         */
+        public static final String _ParamHasMoreFiles = "has_more_files";
 
         /*
          * URI builders.

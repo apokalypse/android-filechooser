@@ -9,6 +9,7 @@ package group.pals.android.lib.ui.filechooser.prefs;
 
 import group.pals.android.lib.ui.filechooser.FileChooserActivity.ViewType;
 import group.pals.android.lib.ui.filechooser.R;
+import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileContract.BaseFile;
 import group.pals.android.lib.ui.filechooser.services.IFileProvider.SortType;
 import android.content.Context;
 
@@ -60,14 +61,12 @@ public class DisplayPrefs extends Prefs {
      * 
      * @param c
      *            {@link Context}
-     * @return {@link SortType}
+     * @return one of {@link BaseFile#_SortByModificationTime},
+     *         {@link BaseFile#_SortByName}, {@link BaseFile#_SortBySize}.
      */
-    public static SortType getSortType(Context c) {
-        for (SortType s : SortType.values())
-            if (s.ordinal() == p(c).getInt(c.getString(R.string.afc_pkey_display_sort_type),
-                    c.getResources().getInteger(R.integer.afc_pkey_display_sort_type_def)))
-                return s;
-        return SortType.SortByName;
+    public static int getSortType(Context c) {
+        return p(c).getInt(c.getString(R.string.afc_pkey_display_sort_type),
+                c.getResources().getInteger(R.integer.afc_pkey_display_sort_type_def));
     }
 
     /**
@@ -76,14 +75,16 @@ public class DisplayPrefs extends Prefs {
      * @param c
      *            {@link Context}
      * @param v
-     *            {@link SortType}, if {@code null}, default value will be used.
+     *            one of {@link BaseFile#_SortByModificationTime},
+     *            {@link BaseFile#_SortByName}, {@link BaseFile#_SortBySize}.,
+     *            if {@code null}, default value will be used.
      */
-    public static void setSortType(Context c, SortType v) {
+    public static void setSortType(Context c, Integer v) {
         String key = c.getString(R.string.afc_pkey_display_sort_type);
         if (v == null)
             p(c).edit().putInt(key, c.getResources().getInteger(R.integer.afc_pkey_display_sort_type_def)).commit();
         else
-            p(c).edit().putInt(key, v.ordinal()).commit();
+            p(c).edit().putInt(key, v).commit();
     }
 
     /**

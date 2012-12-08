@@ -7,6 +7,7 @@
 
 package group.pals.android.lib.ui.filechooser.providers.localfile;
 
+import group.pals.android.lib.ui.filechooser.BuildConfig;
 import group.pals.android.lib.ui.filechooser.providers.ProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileContract.BaseFile;
 import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileProvider;
@@ -27,6 +28,8 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.MatrixCursor.RowBuilder;
 import android.net.Uri;
+import android.os.Environment;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 
 /**
@@ -38,20 +41,30 @@ import android.util.SparseBooleanArray;
  */
 public class LocalFileProvider extends BaseFileProvider {
 
+    /**
+     * Used for debugging or something...
+     */
+    private static final String _ClassName = LocalFileProvider.class.getName();
+
     /*
      * Constants used by the Uri matcher to choose an action based on the
      * pattern of the incoming URI.
      */
 
     /**
+     * The incoming URI matches the default directory URI pattern.
+     */
+    private static final int _DefaultDirectory = 1;
+
+    /**
      * The incoming URI matches the single directory URI pattern.
      */
-    private static final int _Directory = 1;
+    private static final int _Directory = 2;
 
     /**
      * The incoming URI matches the single file URI pattern.
      */
-    private static final int _File = 2;
+    private static final int _File = 3;
 
     /**
      * A {@link UriMatcher} instance.
@@ -64,6 +77,7 @@ public class LocalFileProvider extends BaseFileProvider {
     private static final SparseBooleanArray _MapInterruption = new SparseBooleanArray();
 
     static {
+        _UriMatcher.addURI(LocalFileContract._Authority, BaseFile._PathDirectory, _DefaultDirectory);
         _UriMatcher.addURI(LocalFileContract._Authority, BaseFile._PathDirectory + "/*", _Directory);
         _UriMatcher.addURI(LocalFileContract._Authority, BaseFile._PathFile + "/*", _File);
     }// static
@@ -98,20 +112,20 @@ public class LocalFileProvider extends BaseFileProvider {
             if (taskId == 0)
                 return 0;
 
-            boolean isCancelled = uri.getBooleanQueryParameter(BaseFile._ParamCancel, false);
+            boolean isCancelled = ProviderUtils.getBooleanQueryParam(uri, BaseFile._ParamCancel);
             if (isCancelled) {
                 synchronized (_MapInterruption) {
                     _MapInterruption.put(taskId, true);
                 }
             }// client wants to cancel the previous task
             else {
-                boolean isRecursive = uri.getBooleanQueryParameter(BaseFile._ParamRecursive, false);
-                File file = new File(uri.getLastPathSegment());
+                boolean isRecursive = ProviderUtils.getBooleanQueryParam(uri, BaseFile._ParamRecursive, true);
+                File file = new File(Uri.parse(uri.getLastPathSegment()).getPath());
                 if (file.isFile()) {
                     if (file.delete())
                         count = 1;
                 } else {
-                    deleteFile(taskId, file, isRecursive);
+                    count = deleteFile(taskId, file, isRecursive);
                     _MapInterruption.delete(taskId);
                 }
             }// client wants to create new task
@@ -140,7 +154,7 @@ public class LocalFileProvider extends BaseFileProvider {
     public Uri insert(Uri uri, ContentValues values) {
         switch (_UriMatcher.match(uri)) {
         case _Directory:
-            File file = new File(uri.getLastPathSegment());
+            File file = new File(Uri.parse(uri.getLastPathSegment()).getPath());
             if (!file.isDirectory() || !file.canWrite())
                 return null;
 
@@ -182,23 +196,45 @@ public class LocalFileProvider extends BaseFileProvider {
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        final File _srcFile = new File(uri.getLastPathSegment());
-        if (!_srcFile.exists())
-            return null;
+        if (BuildConfig.DEBUG)
+            Log.d(_ClassName,
+                    String.format("query() >> uri = %s (%s) >> match = %s", uri, uri.getLastPathSegment(),
+                            _UriMatcher.match(uri)));
 
-        MatrixCursor matrixCursor = new MatrixCursor(new String[] { BaseFile._ID, BaseFile._ColumnCanRead,
-                BaseFile._ColumnSize, BaseFile._ColumnType, BaseFile._ColumnUri, BaseFile._ColumnModificationTime });
+        MatrixCursor matrixCursor = new MatrixCursor(new String[] { BaseFile._ID, BaseFile._ColumnUri,
+                BaseFile._ColumnCanRead, BaseFile._ColumnSize, BaseFile._ColumnType, BaseFile._ColumnModificationTime });
 
         switch (_UriMatcher.match(uri)) {
+        case _DefaultDirectory: {
+            File file = Environment.getExternalStorageDirectory();
+            if (file == null || !file.isDirectory())
+                file = new File("/");
+            int type = file.isFile() ? BaseFile._FileTypeFile : (file.isDirectory() ? BaseFile._FileTypeDirectory
+                    : BaseFile._FileTypeUnknown);
+            RowBuilder newRow = matrixCursor.newRow();
+            newRow.add(0);// _ID
+            newRow.add(file.toURI().toString());
+            newRow.add(file.canRead() ? 1 : 0);
+            newRow.add(file.length());
+            newRow.add(type);
+            newRow.add(file.lastModified());
+
+            return matrixCursor;// _DefaultDirectory
+        }
+
         case _Directory: {
-            if (!_srcFile.isDirectory() || !_srcFile.canRead())
+            File file = new File(Uri.parse(uri.getLastPathSegment()).getPath());
+
+            if (BuildConfig.DEBUG)
+                Log.d(_ClassName, "srcFile = " + file);
+            if (!file.isDirectory() || !file.canRead())
                 return null;
 
             /*
              * Prepare params...
              */
             int taskId = ProviderUtils.getIntQueryParam(uri, BaseFile._ParamTaskId, 0);
-            boolean isCancelled = uri.getBooleanQueryParameter(BaseFile._ParamCancel, false);
+            boolean isCancelled = ProviderUtils.getBooleanQueryParam(uri, BaseFile._ParamCancel);
 
             if (isCancelled) {
                 synchronized (_MapInterruption) {
@@ -210,15 +246,16 @@ public class LocalFileProvider extends BaseFileProvider {
                 /*
                  * Prepare params...
                  */
-                boolean showHiddenFiles = uri.getBooleanQueryParameter(BaseFile._ParamShowHiddenFiles, false);
-                boolean sortAscending = uri.getBooleanQueryParameter(BaseFile._ParamSortAscending, true);
+                boolean showHiddenFiles = ProviderUtils.getBooleanQueryParam(uri, BaseFile._ParamShowHiddenFiles);
+                boolean sortAscending = ProviderUtils.getBooleanQueryParam(uri, BaseFile._ParamSortAscending, true);
                 int sortBy = ProviderUtils.getIntQueryParam(uri, BaseFile._ParamSortBy, BaseFile._SortByName);
                 int filterMode = ProviderUtils.getIntQueryParam(uri, BaseFile._ParamFilterMode,
                         BaseFile._FilterFilesAndDirectories);
                 int limit = ProviderUtils.getIntQueryParam(uri, BaseFile._ParamLimit, 1000);
 
+                boolean[] hasMoreFiles = { false };
                 List<File> files = new ArrayList<File>();
-                listFiles(taskId, _srcFile, showHiddenFiles, filterMode, limit, files);
+                listFiles(taskId, file, showHiddenFiles, filterMode, limit, files, hasMoreFiles);
                 if (!_MapInterruption.get(taskId)) {
                     sortFiles(files, sortAscending, sortBy);
                     for (int i = 0; i < files.size(); i++) {
@@ -227,29 +264,47 @@ public class LocalFileProvider extends BaseFileProvider {
                                 : BaseFile._FileTypeUnknown);
                         RowBuilder newRow = matrixCursor.newRow();
                         newRow.add(i);// _ID
-                        newRow.add(f.canRead());
+                        newRow.add(f.toURI().toString());
+                        newRow.add(f.canRead() ? 1 : 0);
                         newRow.add(f.length());
                         newRow.add(type);
-                        newRow.add(f.toURI().toString());
                         newRow.add(f.lastModified());
                     }// for files
+
+                    RowBuilder newRow = matrixCursor.newRow();
+                    newRow.add(files.size());// _ID
+                    newRow.add(uri.buildUpon()
+                            .appendQueryParameter(BaseFile._ParamHasMoreFiles, hasMoreFiles[0] ? "1" : "0").build()
+                            .toString());
                 }
                 _MapInterruption.delete(taskId);
+
+                /*
+                 * Tells the Cursor what URI to watch, so it knows when its
+                 * source data changes.
+                 */
+                matrixCursor.setNotificationUri(getContext().getContentResolver(), uri);
             }// client wants to query new data
 
             break;// _Directory
         }
 
         case _File: {
-            int type = _srcFile.isFile() ? BaseFile._FileTypeFile
-                    : (_srcFile.isDirectory() ? BaseFile._FileTypeDirectory : BaseFile._FileTypeUnknown);
+            File file = new File(Uri.parse(uri.getLastPathSegment()).getPath());
+            if (uri.getQueryParameter(BaseFile._ParamGetParent) != null)
+                file = file.getParentFile();
+            if (!file.exists())
+                return null;
+
+            int type = file.isFile() ? BaseFile._FileTypeFile : (file.isDirectory() ? BaseFile._FileTypeDirectory
+                    : (file.exists() ? BaseFile._FileTypeUnknown : BaseFile._FileTypeNotExisted));
             RowBuilder newRow = matrixCursor.newRow();
             newRow.add(0);// _ID
-            newRow.add(_srcFile.canRead());
-            newRow.add(_srcFile.length());
+            newRow.add(file.toURI().toString());
+            newRow.add(file.canRead() ? 1 : 0);
+            newRow.add(file.length());
             newRow.add(type);
-            newRow.add(_srcFile.toURI().toString());
-            newRow.add(_srcFile.lastModified());
+            newRow.add(file.lastModified());
 
             break;// _File
         }
@@ -258,17 +313,12 @@ public class LocalFileProvider extends BaseFileProvider {
             throw new IllegalArgumentException("Unknown URI " + uri);
         }
 
-        /*
-         * Tells the Cursor what URI to watch, so it knows when its source data
-         * changes.
-         */
-        matrixCursor.setNotificationUri(getContext().getContentResolver(), uri);
         return matrixCursor;
     }// query()
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        throw new IllegalArgumentException("Unsupported method update()");
+        throw new UnsupportedOperationException();
     }// update()
 
     /*
@@ -292,9 +342,13 @@ public class LocalFileProvider extends BaseFileProvider {
      *            the limit.
      * @param results
      *            the results.
+     * @param hasMoreFiles
+     *            the first item will contain a value representing that there is
+     *            more files (exceeding {@code limit}) or not.
      */
     private void listFiles(final int taskId, final File dir, final boolean showHiddenFiles, final int filterMode,
-            final int limit, final List<File> results) {
+            final int limit, final List<File> results, final boolean hasMoreFiles[]) {
+        hasMoreFiles[0] = false;
         try {
             dir.listFiles(new FileFilter() {
 
@@ -308,8 +362,10 @@ public class LocalFileProvider extends BaseFileProvider {
                     if (!showHiddenFiles && pathname.getName().startsWith("."))
                         return false;
 
-                    if (results.size() >= limit)
+                    if (results.size() >= limit) {
+                        hasMoreFiles[0] = true;
                         throw new CancellationException();
+                    }
                     results.add(pathname);
 
                     return false;
@@ -377,21 +433,29 @@ public class LocalFileProvider extends BaseFileProvider {
      * @param recursive
      *            if {@code true} and {@code file} is a directory, this thread
      *            will delete all sub files/ folders of it recursively.
+     * @return the total files deleted.
      */
-    private void deleteFile(final int taskId, final File file, final boolean recursive) {
+    private int deleteFile(final int taskId, final File file, final boolean recursive) {
+        final int[] _count = { 0 };
         if (_MapInterruption.get(taskId))
-            return;
+            return _count[0];
 
         if (file.isFile()) {
-            file.delete();
-            return;
+            if (file.delete())
+                _count[0]++;
+            return _count[0];
         }
 
         /*
          * If the directory is empty, try to delete it and return here.
          */
-        if (file.delete() || !recursive)
-            return;
+        if (file.delete()) {
+            _count[0]++;
+            return _count[0];
+        }
+
+        if (!recursive)
+            return _count[0];
 
         try {
             try {
@@ -402,25 +466,29 @@ public class LocalFileProvider extends BaseFileProvider {
                         if (_MapInterruption.get(taskId))
                             throw new CancellationException();
 
-                        if (pathname.isFile())
-                            pathname.delete();
-                        else if (pathname.isDirectory()) {
+                        if (pathname.isFile()) {
+                            if (pathname.delete())
+                                _count[0]++;
+                        } else if (pathname.isDirectory()) {
                             if (recursive)
-                                deleteFile(taskId, pathname, recursive);
-                            else
-                                pathname.delete();
+                                _count[0] += deleteFile(taskId, pathname, recursive);
+                            else if (pathname.delete())
+                                _count[0]++;
                         }
 
                         return false;
                     }// accept()
                 });
             } catch (CancellationException e) {
-                return;
+                return _count[0];
             }
 
-            file.delete();
+            if (file.delete())
+                _count[0]++;
         } catch (Throwable t) {
             // TODO
         }
+
+        return _count[0];
     }// deleteFile()
 }
