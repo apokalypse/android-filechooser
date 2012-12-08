@@ -220,6 +220,15 @@ public class BaseFileContract {
          */
         public static final String _ParamHasMoreFiles = "has_more_files";
 
+        /**
+         * Use this to append a file name to a full path of directory (with
+         * {@code query()}) to obtains its full pathname.
+         * <p>
+         * Type: String
+         * </p>
+         */
+        public static final String _ParamAppendName = "append_name";
+
         /*
          * URI builders.
          */
@@ -273,6 +282,14 @@ public class BaseFileContract {
          * </p>
          */
         public static final String _ColumnUri = "uri";
+
+        /**
+         * The name of this file.
+         * <p>
+         * Type: String
+         * </p>
+         */
+        public static final String _ColumnName = "name";
 
         /**
          * Size of this file.

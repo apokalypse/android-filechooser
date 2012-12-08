@@ -202,7 +202,8 @@ public class LocalFileProvider extends BaseFileProvider {
                             _UriMatcher.match(uri)));
 
         MatrixCursor matrixCursor = new MatrixCursor(new String[] { BaseFile._ID, BaseFile._ColumnUri,
-                BaseFile._ColumnCanRead, BaseFile._ColumnSize, BaseFile._ColumnType, BaseFile._ColumnModificationTime });
+                BaseFile._ColumnName, BaseFile._ColumnCanRead, BaseFile._ColumnSize, BaseFile._ColumnType,
+                BaseFile._ColumnModificationTime });
 
         switch (_UriMatcher.match(uri)) {
         case _DefaultDirectory: {
@@ -213,7 +214,8 @@ public class LocalFileProvider extends BaseFileProvider {
                     : BaseFile._FileTypeUnknown);
             RowBuilder newRow = matrixCursor.newRow();
             newRow.add(0);// _ID
-            newRow.add(file.toURI().toString());
+            newRow.add(Uri.fromFile(file).toString());
+            newRow.add(file.getName());
             newRow.add(file.canRead() ? 1 : 0);
             newRow.add(file.length());
             newRow.add(type);
@@ -264,7 +266,8 @@ public class LocalFileProvider extends BaseFileProvider {
                                 : BaseFile._FileTypeUnknown);
                         RowBuilder newRow = matrixCursor.newRow();
                         newRow.add(i);// _ID
-                        newRow.add(f.toURI().toString());
+                        newRow.add(Uri.fromFile(f).toString());
+                        newRow.add(f.getName());
                         newRow.add(f.canRead() ? 1 : 0);
                         newRow.add(f.length());
                         newRow.add(type);
@@ -273,7 +276,7 @@ public class LocalFileProvider extends BaseFileProvider {
 
                     RowBuilder newRow = matrixCursor.newRow();
                     newRow.add(files.size());// _ID
-                    newRow.add(uri.buildUpon()
+                    newRow.add(Uri.parse(file.toURI().toString()).buildUpon()
                             .appendQueryParameter(BaseFile._ParamHasMoreFiles, hasMoreFiles[0] ? "1" : "0").build()
                             .toString());
                 }
@@ -290,17 +293,21 @@ public class LocalFileProvider extends BaseFileProvider {
         }
 
         case _File: {
-            File file = new File(Uri.parse(uri.getLastPathSegment()).getPath());
+            Uri fileUri = Uri.parse(uri.getLastPathSegment());
+            String appendName = fileUri.getQueryParameter(BaseFile._ParamAppendName);
+            File file = new File(String.format("%s%s", fileUri.getPath(),
+                    appendName != null ? String.format("/%s", appendName) : ""));
             if (uri.getQueryParameter(BaseFile._ParamGetParent) != null)
                 file = file.getParentFile();
-            if (!file.exists())
+            if (file == null)
                 return null;
 
             int type = file.isFile() ? BaseFile._FileTypeFile : (file.isDirectory() ? BaseFile._FileTypeDirectory
                     : (file.exists() ? BaseFile._FileTypeUnknown : BaseFile._FileTypeNotExisted));
             RowBuilder newRow = matrixCursor.newRow();
             newRow.add(0);// _ID
-            newRow.add(file.toURI().toString());
+            newRow.add(Uri.fromFile(file).toString());
+            newRow.add(file.getName());
             newRow.add(file.canRead() ? 1 : 0);
             newRow.add(file.length());
             newRow.add(type);

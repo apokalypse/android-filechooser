@@ -131,7 +131,8 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
          * File icon.
          */
         bag.mImageIcon.setImageResource(FileUtils.getResIcon(
-                cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnType)), uri.getLastPathSegment()));
+                cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnType)),
+                cursor.getString(cursor.getColumnIndex(BaseFile._ColumnName))));
         bag.mImageLockedSymbol
                 .setVisibility(cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnCanRead)) > 0 ? View.GONE
                         : View.VISIBLE);
@@ -139,7 +140,7 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
         /*
          * Filename.
          */
-        bag.mTxtFileName.setText(uri.getLastPathSegment());
+        bag.mTxtFileName.setText(cursor.getString(cursor.getColumnIndex(BaseFile._ColumnName)));
         Ui.strikeOutText(bag.mTxtFileName, _bagInfo.mMarkedAsDeleted);
 
         /*
