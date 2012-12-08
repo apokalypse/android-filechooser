@@ -9,6 +9,7 @@ package group.pals.android.lib.ui.filechooser;
 
 import group.pals.android.lib.ui.filechooser.prefs.DisplayPrefs;
 import group.pals.android.lib.ui.filechooser.prefs.DisplayPrefs.FileTimeDisplay;
+import group.pals.android.lib.ui.filechooser.providers.BaseFileProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileContract.BaseFile;
 import group.pals.android.lib.ui.filechooser.utils.Converter;
 import group.pals.android.lib.ui.filechooser.utils.DateUtils;
@@ -16,6 +17,9 @@ import group.pals.android.lib.ui.filechooser.utils.FileUtils;
 import group.pals.android.lib.ui.filechooser.utils.Ui;
 import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.LoadingDialog;
+
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -85,6 +89,7 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
 
         boolean mChecked = false;
         boolean mMarkedAsDeleted = false;
+        Uri mUri;
     }// BagChildInfo
 
     /**
@@ -108,10 +113,12 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
         }
 
         final int _id = cursor.getInt(cursor.getColumnIndex(BaseFile._ID));
+        final Uri _uri = BaseFileProviderUtils.getUri(cursor);
 
         final BagInfo _bagInfo;
         if (mSelectedChildrenMap.get(_id) == null) {
             _bagInfo = new BagInfo();
+            _bagInfo.mUri = _uri;
             mSelectedChildrenMap.put(_id, _bagInfo);
         } else
             _bagInfo = mSelectedChildrenMap.get(_id);
@@ -125,14 +132,11 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
          */
         bag.mTxtFileName.setSingleLine(view.getParent() instanceof GridView);
 
-        Uri uri = Uri.parse(cursor.getString(cursor.getColumnIndex(BaseFile._ColumnUri)));
-
         /*
          * File icon.
          */
         bag.mImageIcon.setImageResource(FileUtils.getResIcon(
-                cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnType)),
-                cursor.getString(cursor.getColumnIndex(BaseFile._ColumnName))));
+                cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnType)), BaseFileProviderUtils.getFileName(cursor)));
         bag.mImageLockedSymbol
                 .setVisibility(cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnCanRead)) > 0 ? View.GONE
                         : View.VISIBLE);
@@ -140,7 +144,7 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
         /*
          * Filename.
          */
-        bag.mTxtFileName.setText(cursor.getString(cursor.getColumnIndex(BaseFile._ColumnName)));
+        bag.mTxtFileName.setText(BaseFileProviderUtils.getFileName(cursor));
         Ui.strikeOutText(bag.mTxtFileName, _bagInfo.mMarkedAsDeleted);
 
         /*
@@ -148,7 +152,7 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
          */
         String time = DateUtils.formatDate(mContext,
                 cursor.getLong(cursor.getColumnIndex(BaseFile._ColumnModificationTime)), mFileTimeDisplay);
-        if (cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnType)) == BaseFile._FileTypeFile)
+        if (BaseFileProviderUtils.isFile(cursor))
             bag.mTxtFileInfo.setText(String.format("%s, %s",
                     Converter.sizeToStr(cursor.getLong(cursor.getColumnIndex(BaseFile._ColumnSize))), time));
         else
@@ -158,8 +162,7 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
          * Check box.
          */
         if (mMultiSelection) {
-            if (mFilterMode == BaseFile._FilterFilesOnly
-                    && cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnType)) == BaseFile._FileTypeDirectory) {
+            if (mFilterMode == BaseFile._FilterFilesOnly && BaseFileProviderUtils.isDirectory(cursor)) {
                 bag.mCheckboxSelection.setVisibility(View.GONE);
             } else {
                 bag.mCheckboxSelection.setVisibility(View.VISIBLE);
@@ -211,8 +214,20 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
         Cursor cursor = getCursor();
         if (cursor == null || !cursor.moveToLast())
             return null;
-        return Uri.parse(cursor.getString(cursor.getColumnIndex(BaseFile._ColumnUri)));
+        return BaseFileProviderUtils.getUri(cursor);
     }// getPath()
+
+    /**
+     * Gets the short name of this path.
+     * 
+     * @return the path name, can be {@code null} if there is no data.
+     */
+    public String getPathName() {
+        Cursor cursor = getCursor();
+        if (cursor == null || !cursor.moveToLast())
+            return null;
+        return BaseFileProviderUtils.getFileName(cursor);
+    }// getPathName()
 
     /**
      * Selects all items.<br>
@@ -285,6 +300,71 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
         asyncInvertSelection();
         notifyDataSetChanged();
     }// invertSelection()
+
+    /**
+     * Checks if item with {@code id} is selected or not.
+     * 
+     * @param id
+     *            the database ID.
+     * @return {@code true} or {@code false}.
+     */
+    public boolean isSelected(int id) {
+        synchronized (mSelectedChildrenMap) {
+            return mSelectedChildrenMap.get(id) != null ? mSelectedChildrenMap.get(id).mChecked : false;
+        }
+    }// isSelected()
+
+    /**
+     * Gets selected items.
+     * 
+     * @return list of URIs, can be empty.
+     */
+    public ArrayList<Uri> getSelectedItems() {
+        ArrayList<Uri> res = new ArrayList<Uri>();
+
+        synchronized (mSelectedChildrenMap) {
+            for (int i = 0; i < mSelectedChildrenMap.size(); i++)
+                if (mSelectedChildrenMap.get(mSelectedChildrenMap.keyAt(i)).mChecked)
+                    res.add(mSelectedChildrenMap.get(mSelectedChildrenMap.keyAt(i)).mUri);
+        }
+
+        return res;
+    }// getSelectedItems()
+
+    /**
+     * Marks all selected items as deleted.<br>
+     * <b>Note:</b> This calls {@link #notifyDataSetChanged()} after done.
+     * 
+     * @param deleted
+     *            {@code true} or {@code false}.
+     */
+    public void markSelectedItemsAsDeleted(boolean deleted) {
+        synchronized (mSelectedChildrenMap) {
+            for (int i = 0; i < mSelectedChildrenMap.size(); i++)
+                if (mSelectedChildrenMap.get(mSelectedChildrenMap.keyAt(i)).mChecked)
+                    mSelectedChildrenMap.get(mSelectedChildrenMap.keyAt(i)).mMarkedAsDeleted = deleted;
+        }
+
+        notifyDataSetChanged();
+    }// markSelectedItemsAsDeleted()
+
+    /**
+     * Marks specified item as deleted.<br>
+     * <b>Note:</b> This calls {@link #notifyDataSetChanged()} after done.
+     * 
+     * @param id
+     *            the ID of the item.
+     * @param deleted
+     *            {@code true} or {@code false}.
+     */
+    public void markItemAsDeleted(int id, boolean deleted) {
+        synchronized (mSelectedChildrenMap) {
+            if (mSelectedChildrenMap.get(id) != null) {
+                mSelectedChildrenMap.get(id).mMarkedAsDeleted = deleted;
+                notifyDataSetChanged();
+            }
+        }
+    }// markItemAsDeleted()
 
     /*
      * LISTENERS

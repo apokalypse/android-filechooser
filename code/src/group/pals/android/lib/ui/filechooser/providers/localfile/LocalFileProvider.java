@@ -276,9 +276,10 @@ public class LocalFileProvider extends BaseFileProvider {
 
                     RowBuilder newRow = matrixCursor.newRow();
                     newRow.add(files.size());// _ID
-                    newRow.add(Uri.parse(file.toURI().toString()).buildUpon()
+                    newRow.add(Uri.fromFile(file).buildUpon()
                             .appendQueryParameter(BaseFile._ParamHasMoreFiles, hasMoreFiles[0] ? "1" : "0").build()
                             .toString());
+                    newRow.add(file.getName());
                 }
                 _MapInterruption.delete(taskId);
 

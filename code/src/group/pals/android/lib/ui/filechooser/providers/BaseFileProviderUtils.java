@@ -42,11 +42,23 @@ public class BaseFileProviderUtils {
 
         try {
             if (cursor.moveToFirst())
-                return cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnType)) == BaseFile._FileTypeDirectory;
+                return isDirectory(cursor);
             return false;
         } finally {
             cursor.close();
         }
+    }// isDirectory()
+
+    /**
+     * Checks if {@code cursor} is a directory.
+     * 
+     * @param cursor
+     *            the cursor points to a file.
+     * @return {@code true} if {@code uri} is a directory, {@code false}
+     *         otherwise.
+     */
+    public static boolean isDirectory(Cursor cursor) {
+        return cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnType)) == BaseFile._FileTypeDirectory;
     }// isDirectory()
 
     /**
@@ -69,12 +81,72 @@ public class BaseFileProviderUtils {
 
         try {
             if (cursor.moveToFirst())
-                return cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnType)) == BaseFile._FileTypeFile;
+                return isFile(cursor);
             return false;
         } finally {
             cursor.close();
         }
     }// isFile()
+
+    /**
+     * Checks if {@code cursor} is a file.
+     * 
+     * @param cursor
+     *            the cursor points to a file.
+     * @return {@code true} if {@code uri} is a file, {@code false} otherwise.
+     */
+    public static boolean isFile(Cursor cursor) {
+        return cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnType)) == BaseFile._FileTypeFile;
+    }// isFile()
+
+    /**
+     * Gets file name of {@code uri}.
+     * 
+     * @param context
+     *            {@link Context}.
+     * @param authority
+     *            the file provider authority.
+     * @param uri
+     *            the URI you want to get.
+     * @return the file name if {@code uri} is a file, {@code null} otherwise.
+     */
+    public static String getFileName(Context context, String authority, Uri uri) {
+        Cursor cursor = context.getContentResolver().query(
+                BaseFile.genContentIdUriBase(authority).buildUpon().appendPath(uri.toString()).build(), null, null,
+                null, null);
+        if (cursor == null)
+            return null;
+
+        try {
+            if (cursor.moveToFirst())
+                return getFileName(cursor);
+            return null;
+        } finally {
+            cursor.close();
+        }
+    }// getFileName()
+
+    /**
+     * Gets filename of {@code cursor}.
+     * 
+     * @param cursor
+     *            the cursor points to a file.
+     * @return the filename.
+     */
+    public static String getFileName(Cursor cursor) {
+        return cursor.getString(cursor.getColumnIndex(BaseFile._ColumnName));
+    }// getFileName()
+
+    /**
+     * Gets URI of {@code cursor}.
+     * 
+     * @param cursor
+     *            the cursor points to a file.
+     * @return the URI.
+     */
+    public static Uri getUri(Cursor cursor) {
+        return Uri.parse(cursor.getString(cursor.getColumnIndex(BaseFile._ColumnUri)));
+    }// getFileName()
 
     /**
      * Checks if {@code uri} is existed or not.
