@@ -8,7 +8,6 @@
 package group.pals.android.lib.ui.filechooser.utils;
 
 import group.pals.android.lib.ui.filechooser.R;
-import group.pals.android.lib.ui.filechooser.io.IFile;
 import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileContract.BaseFile;
 import android.util.SparseArray;
 
@@ -39,30 +38,6 @@ public class FileUtils {
         _MapFileIcons.put(R.drawable.afc_file_apk, MimeTypes._RegexFileTypeApks);
         _MapFileIcons.put(R.drawable.afc_file_compressed, MimeTypes._RegexFileTypeCompressed);
     }
-
-    /**
-     * Gets resource icon ID of an {@link IFile}.
-     * 
-     * @param file
-     *            {@link IFile}.
-     * @return the resource icon ID.
-     */
-    public static int getResIcon(IFile file) {
-        if (file == null || !file.exists())
-            return android.R.drawable.ic_delete;
-
-        if (file.isFile()) {
-            String filename = file.getName();
-            for (int i = 0; i < _MapFileIcons.size(); i++)
-                if (filename.matches(_MapFileIcons.valueAt(i)))
-                    return _MapFileIcons.keyAt(i);
-
-            return R.drawable.afc_file;
-        } else if (file.isDirectory())
-            return R.drawable.afc_folder;
-
-        return android.R.drawable.ic_delete;
-    }// getResIcon()
 
     /**
      * Gets resource icon based on file type and name.

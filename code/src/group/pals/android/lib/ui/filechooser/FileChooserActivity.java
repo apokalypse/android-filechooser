@@ -7,7 +7,6 @@
 
 package group.pals.android.lib.ui.filechooser;
 
-import group.pals.android.lib.ui.filechooser.io.IFileFilter;
 import group.pals.android.lib.ui.filechooser.prefs.DisplayPrefs;
 import group.pals.android.lib.ui.filechooser.providers.BaseFileProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.ProviderUtils;
@@ -176,8 +175,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
      */
     public static final String _MultiSelection = _ClassName + ".multi_selection";
     /**
-     * Key to hold the component class implementing {@link IFileFilter}, default
-     * is {@code null}.
+     * Key to hold the component class to filter files, default is {@code null}.
      * 
      * @since v5.1 beta
      */
