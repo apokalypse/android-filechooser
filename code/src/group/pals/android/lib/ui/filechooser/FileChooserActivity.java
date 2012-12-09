@@ -598,6 +598,11 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+        /*
+         * Cancel previous loader if there is one.
+         */
+        cancelPreviousLoader();
+
         mFileAdapter.changeCursor(null);
         mViewGroupFiles.setVisibility(View.GONE);
         mViewLoadingHandler.postDelayed(new Runnable() {
