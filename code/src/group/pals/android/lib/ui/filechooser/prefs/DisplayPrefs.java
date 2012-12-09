@@ -10,7 +10,6 @@ package group.pals.android.lib.ui.filechooser.prefs;
 import group.pals.android.lib.ui.filechooser.FileChooserActivity.ViewType;
 import group.pals.android.lib.ui.filechooser.R;
 import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileContract.BaseFile;
-import group.pals.android.lib.ui.filechooser.services.IFileProvider.SortType;
 import android.content.Context;
 
 /**
