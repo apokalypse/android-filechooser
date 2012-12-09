@@ -39,6 +39,7 @@
     <string name="afc_msg_cannot_create_new_folder_here">No se puede crear un nuevo directorio aquí</string>
     <string name="afc_msg_done">Hecho</string>
     <string name="afc_msg_empty">…vacío</string>
+    <string name="afc_msg_failed_please_try_again">Error. Por favor, inténtelo de nuevo.</string>
     <string name="afc_msg_filename_is_empty">Nombre de fichero vacío</string>
     <string name="afc_msg_loading">Cargando…</string>
     <string name="afc_pmsg_cannot_access_dir">No se puede acceder a \"%1$s\"</string>

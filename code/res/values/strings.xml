@@ -35,6 +35,7 @@
     <string name="afc_msg_cannot_create_new_folder_here">Can not create new folder here</string>
     <string name="afc_msg_done">Done</string>
     <string name="afc_msg_empty">…empty</string>
+    <string name="afc_msg_failed_please_try_again">Failed. Please try again.</string>
     <string name="afc_msg_filename_is_empty">Filename is empty</string>
     <string name="afc_msg_loading">Loading…</string>
     <string name="afc_pmsg_cannot_access_dir">Can not access \"%1$s\"</string>

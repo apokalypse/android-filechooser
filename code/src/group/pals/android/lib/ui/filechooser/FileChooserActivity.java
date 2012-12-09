@@ -256,10 +256,8 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
     private boolean mIsSaveDialog;
     private boolean mDoubleTapToChooseFiles;
 
-    /**
-     * The history.
-     */
     private History<Uri> mHistory;
+    private Uri mCurrentLocation;
 
     /**
      * The adapter of list view.
@@ -353,10 +351,10 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
             @Override
             public void onChanged(History<Uri> history) {
-                int idx = history.indexOf(mFileAdapter.getPath());
+                int idx = history.indexOf(getCurrentLocation());
                 mViewGoBack.setEnabled(idx > 0);
                 mViewGoForward.setEnabled(idx >= 0 && idx < history.size() - 1);
-            }
+            }// onChanged()
         });
 
         // make sure RESULT_CANCELED is default
@@ -379,7 +377,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         /*
-         * sorting
+         * Sorting.
          */
 
         final boolean _sortAscending = DisplayPrefs.isSortAscending(this);
@@ -401,7 +399,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
         }
 
         /*
-         * view type
+         * View type.
          */
 
         MenuItem menuItem = menu.findItem(R.id.afc_filechooser_activity_menuitem_switch_viewmode);
@@ -415,6 +413,12 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
             menuItem.setTitle(R.string.afc_cmd_grid_view);
             break;
         }
+
+        /*
+         * New folder.
+         */
+
+        menu.findItem(R.id.afc_filechooser_activity_menuitem_new_folder).setEnabled(!mViewLoading.isShown());
 
         return true;
     }// onPrepareOptionsMenu()
@@ -431,7 +435,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
         } else if (item.getItemId() == R.id.afc_filechooser_activity_menuitem_home) {
             doGoHome();
         } else if (item.getItemId() == R.id.afc_filechooser_activity_menuitem_reload) {
-            doReloadCurrentLocation();
+            goTo(getCurrentLocation());
         }
 
         return true;
@@ -444,7 +448,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable(_CurrentLocation, mFileAdapter.getPath());
+        outState.putParcelable(_CurrentLocation, getCurrentLocation());
         outState.putParcelable(_History, mHistory);
     }// onSaveInstanceState()
 
@@ -465,13 +469,6 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                 Log.d(_ClassName, "onBackPressed() >> cancelling previous query...");
             cancelPreviousLoader();
             Dlg.toast(FileChooserActivity.this, R.string.afc_msg_cancelled, Dlg._LengthShort);
-
-            if (mFileAdapter == null || mFileAdapter.getPath() == null)
-                super.onBackPressed();
-            else {
-                mViewGroupFiles.setVisibility(View.VISIBLE);
-                mViewLoading.setVisibility(View.GONE);
-            }
         } else
             super.onBackPressed();
     }// onbackPressed()
@@ -487,18 +484,17 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        /*
-         * Cancel previous loader if there is one.
-         */
-        cancelPreviousLoader();
-
         mViewGroupFiles.setVisibility(View.GONE);
         mViewLoading.setVisibility(View.VISIBLE);
+        supportInvalidateOptionsMenu();
+
+        Uri path = ((Uri) args.getParcelable(_Path));
+        createLocationButtons(path);
 
         return new CursorLoader(this, BaseFile
                 .genContentUriBase(mFileProviderAuthority)
                 .buildUpon()
-                .appendPath(args.getString(_Path))
+                .appendPath(path.toString())
                 .appendQueryParameter(BaseFile._ParamTaskId, Integer.toString(_IdLoaderData))
                 .appendQueryParameter(BaseFile._ParamShowHiddenFiles,
                         Boolean.toString(getIntent().getBooleanExtra(_DisplayHiddenFiles, false)))
@@ -512,35 +508,50 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, final Cursor data) {
-        if (data == null) {
-            if (mFileAdapter.getPath() == null)
-                doShowCannotConnectToServiceAndFinish();
-            return;
-        }
-
-        final Uri _lastPath = mFileAdapter.getPath();
-
         /*
          * Update list view.
          */
         mFileAdapter.changeCursor(data);
 
+        mViewGroupFiles.setVisibility(View.VISIBLE);
+        mViewLoading.setVisibility(View.GONE);
+        supportInvalidateOptionsMenu();
+
+        if (data == null) {
+            showFooterView(true, getString(R.string.afc_msg_failed_please_try_again), true);
+            return;
+        }
+
+        final Uri _lastPath = mHistory.prevOf(getCurrentLocation());
+
         data.moveToLast();
         final Uri _uriInfo = BaseFileProviderUtils.getUri(data);
         final Uri _selectedFile = (Uri) getIntent().getParcelableExtra(_SelectFile);
+        final int _colUri = data.getColumnIndex(BaseFile._ColumnUri);
         if (_selectedFile != null)
             getIntent().removeExtra(_SelectFile);
 
         /*
-         * We use a Runnable to make sure this work. Because if the list view is
+         * Footer.
+         */
+
+        if (_selectedFile != null && mIsSaveDialog
+                && BaseFileProviderUtils.isFile(this, mFileProviderAuthority, _selectedFile))
+            mTxtSaveas.setText(BaseFileProviderUtils.getFileName(this, mFileProviderAuthority, _selectedFile));
+
+        boolean hasMoreFiles = ProviderUtils.getBooleanQueryParam(_uriInfo, BaseFile._ParamHasMoreFiles);
+        showFooterView(hasMoreFiles || mFileAdapter.isEmpty(),
+                hasMoreFiles ? getString(R.string.afc_pmsg_max_file_count_allowed, mMaxFileCount)
+                        : getString(R.string.afc_msg_empty), mFileAdapter.isEmpty());
+
+        /*
+         * Use a Runnable to make sure this work. Because if the list view is
          * handling data, this might not work.
          */
         mViewFiles.post(new Runnable() {
 
             @Override
             public void run() {
-                final int _colUri = data.getColumnIndex(BaseFile._ColumnUri);
-
                 int shouldBeSelectedIdx = -1;
                 final Uri _uri = _selectedFile != null ? _selectedFile : _lastPath;
                 if (_uri != null
@@ -550,7 +561,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                     if (_fileName != null) {
                         Uri parentUri = BaseFileProviderUtils.getParentFile(FileChooserActivity.this,
                                 mFileProviderAuthority, _uri);
-                        if (parentUri != null && parentUri.equals(mFileAdapter.getPath())) {
+                        if (parentUri != null && parentUri.equals(getCurrentLocation())) {
                             if (data.moveToFirst()) {
                                 while (!data.isLast()) {
                                     Uri tmpUri = Uri.parse(data.getString(_colUri));
@@ -572,36 +583,6 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                     mViewFiles.setSelection(0);
             }// run()
         });
-
-        /*
-         * Navigation buttons.
-         */
-        createLocationButtons(mFileAdapter.getPath());
-
-        if (_selectedFile != null && mIsSaveDialog
-                && BaseFileProviderUtils.isFile(this, mFileProviderAuthority, _selectedFile))
-            mTxtSaveas.setText(_selectedFile.getLastPathSegment());
-
-        /*
-         * Don't push current location into history.
-         */
-        if (mFileAdapter.getPath().equals(getIntent().getParcelableExtra(_CurrentLocation))) {
-            getIntent().removeExtra(_CurrentLocation);
-            mHistory.notifyHistoryChanged();
-        } else {
-            mHistory.push(mFileAdapter.getPath());
-        }
-
-        /*
-         * Footer.
-         */
-        boolean hasMoreFiles = ProviderUtils.getBooleanQueryParam(_uriInfo, BaseFile._ParamHasMoreFiles);
-        showFooterView(hasMoreFiles || mFileAdapter.isEmpty(),
-                hasMoreFiles ? getString(R.string.afc_pmsg_max_file_count_allowed, mMaxFileCount)
-                        : getString(R.string.afc_msg_empty), mFileAdapter.isEmpty());
-
-        mViewGroupFiles.setVisibility(View.VISIBLE);
-        mViewLoading.setVisibility(View.GONE);
     }// onLoadFinished()
 
     @Override
@@ -609,6 +590,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
         mFileAdapter.changeCursor(null);
         mViewGroupFiles.setVisibility(View.GONE);
         mViewLoading.setVisibility(View.VISIBLE);
+        supportInvalidateOptionsMenu();
     }// onLoaderReset()
 
     /**
@@ -669,17 +651,21 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
         }
 
         if (!BaseFileProviderUtils.fileCanRead(this, mFileProviderAuthority, path)) {
-            Dlg.toast(FileChooserActivity.this,
-                    getString(R.string.afc_pmsg_cannot_access_dir, path.getLastPathSegment()), Dlg._LengthShort);
+            Dlg.toast(
+                    FileChooserActivity.this,
+                    getString(R.string.afc_pmsg_cannot_access_dir,
+                            BaseFileProviderUtils.getFileName(this, mFileProviderAuthority, path)), Dlg._LengthShort);
             finish();
         }
+
+        setCurrentLocation(path);
 
         /*
          * Prepare the loader. Either re-connect with an existing one, or start
          * a new one.
          */
         Bundle b = new Bundle();
-        b.putString(_Path, path.toString());
+        b.putParcelable(_Path, path);
         getSupportLoaderManager().initLoader(_LoaderData, b, this);
     }// loadInitialPath()
 
@@ -874,11 +860,35 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
             mFooterView.setVisibility(View.GONE);
     }// showFooterView()
 
-    private void doReloadCurrentLocation() {
-        Bundle b = new Bundle();
-        b.putString(_Path, mFileAdapter.getPath().toString());
-        getSupportLoaderManager().restartLoader(_LoaderData, b, this);
-    }// doReloadCurrentLocation()
+    /**
+     * Gets current location.
+     * 
+     * @return the current location.
+     */
+    private Uri getCurrentLocation() {
+        return mCurrentLocation;
+    }// getCurrentLocation()
+
+    /**
+     * Sets current location.
+     * 
+     * @param location
+     *            the location to set.
+     */
+    private void setCurrentLocation(Uri location) {
+        /*
+         * Do this so history's listener will retrieve the right current
+         * location.
+         */
+        Uri lastLocation = mCurrentLocation;
+        mCurrentLocation = location;
+
+        if (mHistory.indexOf(location) < 0) {
+            mHistory.truncateAfter(lastLocation);
+            mHistory.push(location);
+        } else
+            mHistory.notifyHistoryChanged();
+    }// setCurrentLocation()
 
     private void doGoHome() {
         goTo(mRoot);
@@ -943,7 +953,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                 /*
                  * Reload current location.
                  */
-                doReloadCurrentLocation();
+                goTo(getCurrentLocation());
                 supportInvalidateOptionsMenu();
             }// onClick()
         };// listener
@@ -982,7 +992,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
             ActivityCompat.invalidateOptionsMenu(FileChooserActivity.this);
 
-        doReloadCurrentLocation();
+        goTo(getCurrentLocation());
     }// doSwitchViewType()
 
     /**
@@ -995,8 +1005,8 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
             return;
         }
 
-        if (mFileAdapter.getPath() == null
-                || !BaseFileProviderUtils.fileCanWrite(this, mFileProviderAuthority, mFileAdapter.getPath())) {
+        if (getCurrentLocation() == null
+                || !BaseFileProviderUtils.fileCanWrite(this, mFileProviderAuthority, getCurrentLocation())) {
             Dlg.toast(this, R.string.afc_msg_cannot_create_new_folder_here, Dlg._LengthShort);
             return;
         }
@@ -1040,9 +1050,9 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
                         if (getContentResolver().insert(
                                 BaseFile.genContentUriBase(mFileProviderAuthority).buildUpon()
-                                        .appendPath(mFileAdapter.getPath().toString()).build(), values) != null) {
+                                        .appendPath(getCurrentLocation().toString()).build(), values) != null) {
                             Dlg.toast(FileChooserActivity.this, getString(R.string.afc_msg_done), Dlg._LengthShort);
-                            doReloadCurrentLocation();
+                            goTo(getCurrentLocation());
                         } else
                             Dlg.toast(FileChooserActivity.this,
                                     getString(R.string.afc_pmsg_cannot_create_folder, name), Dlg._LengthShort);
@@ -1126,8 +1136,17 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                             final int mTaskId = newTaskId();
 
                             private void notifyFileDeleted() {
-                                refreshHistories();
-                                // TODO remove all duplicate history items
+                                mHistory.removeAll(new HistoryFilter<Uri>() {
+
+                                    @Override
+                                    public boolean accept(Uri item) {
+                                        return !BaseFileProviderUtils.isDirectory(FileChooserActivity.this,
+                                                mFileProviderAuthority, item);
+                                    }// accept()
+                                });
+                                /*
+                                 * TODO remove all duplicate items?
+                                 */
 
                                 Dlg.toast(
                                         FileChooserActivity.this,
@@ -1135,7 +1154,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                                                 R.string.afc_pmsg_file_has_been_deleted,
                                                 _isFile ? getString(R.string.afc_file) : getString(R.string.afc_folder),
                                                 _filename), Dlg._LengthShort);
-                                doReloadCurrentLocation();
+                                goTo(getCurrentLocation());
                             }// notifyFileDeleted()
 
                             @Override
@@ -1209,7 +1228,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
         final Cursor _cursor = getContentResolver().query(
                 BaseFile.genContentIdUriBase(mFileProviderAuthority).buildUpon()
-                        .appendPath(mFileAdapter.getPath().toString())
+                        .appendPath(getCurrentLocation().toString())
                         .appendQueryParameter(BaseFile._ParamAppendName, filename).build(), null, null, null, null);
         if (_cursor != null) {
             try {
@@ -1260,15 +1279,16 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
         }
 
         if (BaseFileProviderUtils.fileCanRead(this, mFileProviderAuthority, dir)) {
+            /*
+             * Cancel previous loader if there is one.
+             */
+            cancelPreviousLoader();
+
+            setCurrentLocation(dir);
+
             Bundle b = new Bundle();
-            b.putString(_Path, dir.toString());
+            b.putParcelable(_Path, dir);
             getSupportLoaderManager().restartLoader(_LoaderData, b, this);
-
-            // TODO history?
-            // // mHistory.truncateAfter(mLastPath);
-            // // mHistory.push(dir);
-            // });
-
             return true;
         }
 
@@ -1279,7 +1299,13 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
         return false;
     }// goTo()
 
+    /**
+     * As the name means.
+     */
     private void createLocationButtons(Uri path) {
+        if (path == null)
+            return;
+
         mViewLocations.removeAllViews();
 
         LinearLayout.LayoutParams lpBtnLoc = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -1311,7 +1337,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                     btnLoc.getPaint().getTextBounds(name, 0, name.length(), r);
                     if (r.width() >= getResources().getDimensionPixelSize(R.dimen.afc_button_location_max_width)
                             - btnLoc.getPaddingLeft() - btnLoc.getPaddingRight()) {
-                        mTxtFullDirName.setText(path.getLastPathSegment());
+                        mTxtFullDirName.setText(cursor.getString(cursor.getColumnIndex(BaseFile._ColumnName)));
                         mTxtFullDirName.setVisibility(View.VISIBLE);
                     } else
                         mTxtFullDirName.setVisibility(View.GONE);
@@ -1351,22 +1377,6 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
     }// createLocationButtons()
 
     /**
-     * Refreshes all the histories. This removes invalid items (which are not
-     * existed anymore).
-     */
-    private void refreshHistories() {
-        HistoryFilter<Uri> historyFilter = new HistoryFilter<Uri>() {
-
-            @Override
-            public boolean accept(Uri item) {
-                return !BaseFileProviderUtils.isDirectory(FileChooserActivity.this, mFileProviderAuthority, item);
-            }
-        };
-
-        mHistory.removeAll(historyFilter);
-    }// refreshHistories()
-
-    /**
      * Finishes this activity.
      * 
      * @param files
@@ -1403,8 +1413,8 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
         setResult(RESULT_OK, intent);
 
-        if (DisplayPrefs.isRememberLastLocation(this) && mFileAdapter.getPath() != null)
-            DisplayPrefs.setLastLocation(this, mFileAdapter.getPath().toString());
+        if (DisplayPrefs.isRememberLastLocation(this) && getCurrentLocation() != null)
+            DisplayPrefs.setLastLocation(this, getCurrentLocation().toString());
         else
             DisplayPrefs.setLastLocation(this, null);
 
@@ -1420,33 +1430,19 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
         @Override
         public void onClick(View v) {
             /*
-             * if user deleted a dir which was one in history, then maybe there
-             * are duplicates, so we check and remove them here
+             * If user deleted a dir which was one in history, then maybe there
+             * are duplicates, so we check and remove them here.
              */
-            Uri currentLoc = mFileAdapter.getPath();
+            Uri currentLoc = getCurrentLocation();
             Uri preLoc = null;
 
             while (currentLoc.equals(preLoc = mHistory.prevOf(currentLoc)))
                 mHistory.remove(preLoc);
 
-            if (preLoc != null) {
+            if (preLoc != null)
                 goTo(preLoc);
-
-                // TODO
-                // setLocation(preLoc, new TaskListener() {
-                //
-                // @Override
-                // public void onFinish(boolean ok, Object any) {
-                // if (ok) {
-                // mViewGoBack.setEnabled(mHistory.prevOf(getLocation()) !=
-                // null);
-                // mViewGoForward.setEnabled(true);
-                // }
-                // }
-                // });
-            } else {
+            else
                 mViewGoBack.setEnabled(false);
-            }
         }
     };// mBtnGoBackOnClickListener
 
@@ -1454,8 +1450,9 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
         @Override
         public void onClick(View v) {
-            if (v.getTag() instanceof Uri)
+            if (v.getTag() instanceof Uri) {
                 goTo((Uri) v.getTag());
+            }
         }// onClick()
     };// mBtnLocationOnClickListener
 
@@ -1478,33 +1475,19 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
         @Override
         public void onClick(View v) {
             /*
-             * if user deleted a dir which was one in history, then maybe there
-             * are duplicates, so we check and remove them here
+             * If user deleted a dir which was one in history, then maybe there
+             * are duplicates, so we check and remove them here.
              */
-            Uri currentLoc = mFileAdapter.getPath();
+            Uri currentLoc = getCurrentLocation();
             Uri nextLoc = null;
 
             while (currentLoc.equals(nextLoc = mHistory.nextOf(currentLoc)))
                 mHistory.remove(nextLoc);
 
-            if (nextLoc != null) {
+            if (nextLoc != null)
                 goTo(nextLoc);
-
-                // TODO
-                // setLocation(nextLoc, new TaskListener() {
-                //
-                // @Override
-                // public void onFinish(boolean ok, Object any) {
-                // if (ok) {
-                // mViewGoBack.setEnabled(true);
-                // mViewGoForward.setEnabled(mHistory.nextOf(getLocation()) !=
-                // null);
-                // }
-                // }
-                // });
-            } else {
+            else
                 mViewGoForward.setEnabled(false);
-            }
         }// onClick()
     };// mBtnGoForwardOnClickListener
 
@@ -1512,35 +1495,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
         @Override
         public boolean onLongClick(View v) {
-            // TODO
-            // ViewFilesContextMenuUtils.doShowHistoryContents(FileChooserActivity.this,
-            // mFileProvider, mFullHistory,
-            // getLocation(), new TaskListener() {
-            //
-            // @Override
-            // public void onFinish(boolean ok, Object any) {
-            // mHistory.removeAll(new HistoryFilter<IFile>() {
-            //
-            // @Override
-            // public boolean accept(IFile item) {
-            // return mFullHistory.indexOf(item) < 0;
-            // }
-            // });
-            //
-            // if (any instanceof IFile) {
-            // setLocation((IFile) any, new TaskListener() {
-            //
-            // @Override
-            // public void onFinish(boolean ok, Object any) {
-            // if (ok)
-            // mHistory.notifyHistoryChanged();
-            // }
-            // });
-            // } else if (mHistory.isEmpty()) {
-            // mHistory.push(getLocation());
-            // }
-            // }// onFinish()
-            // });
+            // TODO show history manager
             return false;
         }// onLongClick()
     };// mBtnGoBackForwardOnLongClickListener

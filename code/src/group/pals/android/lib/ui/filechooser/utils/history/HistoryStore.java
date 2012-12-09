@@ -34,7 +34,7 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
     /**
      * The default capacity of this store.
      */
-    public static final int _DefaultCapacity = 100;
+    public static final int _DefaultCapacity = 99;
 
     private final ArrayList<A> mHistoryList = new ArrayList<A>();
     private final List<HistoryListener<A>> mListeners = new ArrayList<HistoryListener<A>>();
@@ -72,7 +72,7 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
         if (newItem == null)
             return;
 
-        if (!mHistoryList.isEmpty() && mHistoryList.indexOf(newItem) == mHistoryList.size() - 1)
+        if (!mHistoryList.isEmpty() && indexOf(newItem) == mHistoryList.size() - 1)
             return;
 
         mHistoryList.add(newItem);
@@ -83,15 +83,23 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
     }// push()
 
     @Override
-    public void truncateAfter(A item) {
+    public int truncateAfter(A item) {
         if (item == null)
-            return;
+            return 0;
 
-        int idx = mHistoryList.indexOf(item);
-        if (idx >= 0 && idx < mHistoryList.size() - 1) {
-            mHistoryList.subList(idx + 1, mHistoryList.size()).clear();
-            notifyHistoryChanged();
+        for (int i = mHistoryList.size() - 2; i >= 0; i--) {
+            if (mHistoryList.get(i) == item) {
+                List<A> subList = mHistoryList.subList(i + 1, mHistoryList.size());
+                int count = subList.size();
+
+                subList.clear();
+                notifyHistoryChanged();
+
+                return count;
+            }
         }
+
+        return 0;
     }// truncateAfter()
 
     @Override
@@ -128,12 +136,15 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
 
     @Override
     public int indexOf(A a) {
-        return mHistoryList.indexOf(a);
+        for (int i = 0; i < mHistoryList.size(); i++)
+            if (mHistoryList.get(i) == a)
+                return i;
+        return -1;
     }// indexOf()
 
     @Override
     public A prevOf(A a) {
-        int idx = mHistoryList.indexOf(a);
+        int idx = indexOf(a);
         if (idx > 0)
             return mHistoryList.get(idx - 1);
         return null;
@@ -141,7 +152,7 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
 
     @Override
     public A nextOf(A a) {
-        int idx = mHistoryList.indexOf(a);
+        int idx = indexOf(a);
         if (idx >= 0 && idx < mHistoryList.size() - 1)
             return mHistoryList.get(idx + 1);
         return null;
@@ -180,7 +191,6 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
 
     @Override
     public int describeContents() {
-        // TODO Auto-generated method stub
         return 0;
     }// describeContents()
 

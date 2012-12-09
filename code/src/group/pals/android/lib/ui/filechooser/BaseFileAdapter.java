@@ -196,22 +196,6 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
      */
 
     /**
-     * Gets the path.
-     * 
-     * @return the location, can be {@code null} if there is no data.
-     */
-    public Uri getPath() {
-        Cursor cursor = getCursor();
-        if (cursor == null || !cursor.moveToLast())
-            return null;
-
-        /*
-         * Remove all query parameters.
-         */
-        return Uri.parse(cursor.getString(cursor.getColumnIndex(BaseFile._ColumnUri)).replaceFirst("(?s)\\?.*$", ""));
-    }// getPath()
-
-    /**
      * Gets the short name of this path.
      * 
      * @return the path name, can be {@code null} if there is no data.

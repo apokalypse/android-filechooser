@@ -36,9 +36,10 @@ public interface History<A> extends Parcelable {
      * 
      * @param item
      *            {@link A}
+     * @return the total items truncated.
      * @since v4.3 beta
      */
-    void truncateAfter(A item);
+    int truncateAfter(A item);
 
     /**
      * Removes an item.
