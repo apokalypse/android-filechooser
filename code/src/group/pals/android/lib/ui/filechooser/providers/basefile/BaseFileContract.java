@@ -108,22 +108,12 @@ public class BaseFileContract {
          */
 
         /**
-         * Use this parameter while querying a directory to have the provider
-         * automatically choose default directory if the given one does not
-         * exist.<br>
-         * Default:<br>
-         * <li>{@code 0} with {@code query()}.</li>
+         * Use this parameter to cancel a previous task you executed. The value
+         * can be {@code "true"} or {@code "1"} for {@code true},
+         * {@code "false"} or {@code "0"} for {@code false}.<br>
+         * Default: {@code "false"} with all methods.
          * <p>
-         * Type: Integer
-         * </p>
-         */
-        public static final String _ParamAuto = "auto";
-
-        /**
-         * Use this parameter to cancel a previous task you executed.<br>
-         * Default: {@code 0} with all methods.
-         * <p>
-         * Type: Integer
+         * Type: {@code Boolean}
          * </p>
          * 
          * @see #_ParamTaskId
@@ -134,29 +124,31 @@ public class BaseFileContract {
          * Use this parameter to set an ID to any task.<br>
          * Default: {@code 0} with all methods.
          * <p>
-         * Type: Integer
+         * Type: {@code Integer}
          * </p>
          */
         public static final String _ParamTaskId = "task_id";
 
         /**
          * Use this parameter for operators which can work recursively, such as
-         * deleting a directory...<br>
+         * deleting a directory... The value can be {@code "true"} or
+         * {@code "1"} for {@code true}, {@code "false"} or {@code "0"} for
+         * {@code false}.<br>
          * Default:<br>
-         * <li>{@code 0} with {@code query()}.</li>
-         * 
-         * <li>{@code 1} with {@code delete()}.</li>
+         * <li>{@code "true"} with {@code delete()}.</li>
          * <p>
-         * Type: Integer
+         * Type: {@code Boolean}
          * </p>
          */
         public static final String _ParamRecursive = "recursive";
 
         /**
-         * Use this parameter to show hidden files (with value {@code = 1}).<br>
-         * Default: {@code 0} with {@code query()}.
+         * Use this parameter to show hidden files. The value can be
+         * {@code "true"} or {@code "1"} for {@code true}, {@code "false"} or
+         * {@code "0"} for {@code false}.<br>
+         * Default: {@code "false"} with {@code query()}.
          * <p>
-         * Type: Integer
+         * Type: {@code Boolean}
          * </p>
          */
         public static final String _ParamShowHiddenFiles = "show_hidden_files";
@@ -167,7 +159,7 @@ public class BaseFileContract {
          * {@link #_FilterFilesAndDirectories}.<br>
          * Default: {@link #_FilterFilesAndDirectories} with {@code query()}.
          * <p>
-         * Type: Integer
+         * Type: {@code Integer}
          * </p>
          */
         public static final String _ParamFilterMode = "filter_mode";
@@ -178,17 +170,18 @@ public class BaseFileContract {
          * {@link #_SortBySize}.<br>
          * Default: {@link #_SortByName} with {@code query()}.
          * <p>
-         * Type: Integer
+         * Type: {@code Integer}
          * </p>
          */
         public static final String _ParamSortBy = "sort_by";
 
         /**
-         * Use this parameter for sort order. Can be {@code 1} (ascending) or
-         * {@code 0} (descending).<br>
-         * Default: {@code 1} with {@code query()}.
+         * Use this parameter for sort order. Can be {@code "true"} or
+         * {@code "1"} for {@code true}, {@code "false"} or {@code "0"} for
+         * {@code false}..<br>
+         * Default: {@code "true"} with {@code query()}.
          * <p>
-         * Type: Integer
+         * Type: {@code Boolean}
          * </p>
          */
         public static final String _ParamSortAscending = "sort_ascending";
@@ -197,25 +190,28 @@ public class BaseFileContract {
          * Use this parameter to limit results.<br>
          * Default: {@code 1000} with {@code query()}.
          * <p>
-         * Type: Integer
+         * Type: {@code Integer}
          * </p>
          */
         public static final String _ParamLimit = "limit";
 
         /**
-         * Use this parameter to get parent file of a file with {@code query()}.<br>
+         * Use this parameter to get parent file of a file with {@code query()}.
+         * The value can be {@code "true"} or {@code "1"} for {@code true},
+         * {@code "false"} or {@code "0"} for {@code false}.<br>
          * <p>
-         * Type: Anything, you just need to put this parameter to the URI.
+         * Type: {@code Boolean}
          * </p>
          */
         public static final String _ParamGetParent = "get_parent";
 
         /**
          * This parameter is returned from the provider. It's only used for
-         * {@code query()} while querying directory contents. Can be {@code 1}
-         * (has more files) or {@code 0}.<br>
+         * {@code query()} while querying directory contents. Can be
+         * {@code "true"} or {@code "1"} for {@code true}, {@code "false"} or
+         * {@code "0"} for {@code false}.<br>
          * <p>
-         * Type: Integer
+         * Type: {@code Boolean}
          * </p>
          */
         public static final String _ParamHasMoreFiles = "has_more_files";
@@ -224,7 +220,7 @@ public class BaseFileContract {
          * Use this to append a file name to a full path of directory (with
          * {@code query()}) to obtains its full pathname.
          * <p>
-         * Type: String
+         * Type: {@code String}
          * </p>
          */
         public static final String _ParamAppendName = "append_name";

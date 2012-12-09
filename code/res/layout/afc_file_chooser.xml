@@ -72,7 +72,6 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/afc_filechooser_activity_viewgroup_files"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/afc_filechooser_activity_viewgroup_footer_container"
@@ -80,26 +79,32 @@
         android:layout_marginBottom="@dimen/afc_10dp"
         android:layout_marginTop="@dimen/afc_10dp" >
 
-        <LinearLayout
-            android:id="@+id/afc_filechooser_activity_view_files_container"
+        <RelativeLayout
+            android:id="@+id/afc_filechooser_activity_viewgroup_files"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/afc_filechooser_activity_view_files_footer_view"
-            android:orientation="horizontal"
             android:visibility="gone" >
-        </LinearLayout>
 
-        <TextView
-            android:id="@+id/afc_filechooser_activity_view_files_footer_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_gravity="center"
-            android:layout_margin="@dimen/afc_10dp"
-            android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textStyle="italic"
-            android:visibility="gone" />
+            <LinearLayout
+                android:id="@+id/afc_filechooser_activity_view_files_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/afc_filechooser_activity_view_files_footer_view"
+                android:orientation="horizontal" >
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/afc_filechooser_activity_view_files_footer_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/afc_10dp"
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textStyle="italic"
+                android:visibility="gone" />
+        </RelativeLayout>
 
         <include
             android:id="@+id/afc_filechooser_activity_view_loading"

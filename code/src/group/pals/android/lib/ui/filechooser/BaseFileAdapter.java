@@ -214,7 +214,11 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
         Cursor cursor = getCursor();
         if (cursor == null || !cursor.moveToLast())
             return null;
-        return BaseFileProviderUtils.getUri(cursor);
+
+        /*
+         * Remove all query parameters.
+         */
+        return Uri.parse(cursor.getString(cursor.getColumnIndex(BaseFile._ColumnUri)).replaceFirst("(?s)\\?.*$", ""));
     }// getPath()
 
     /**

@@ -29,6 +29,7 @@ import android.database.MatrixCursor;
 import android.database.MatrixCursor.RowBuilder;
 import android.net.Uri;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 
@@ -108,27 +109,23 @@ public class LocalFileProvider extends BaseFileProvider {
         switch (_UriMatcher.match(uri)) {
         case _File: {
             int taskId = ProviderUtils.getIntQueryParam(uri, BaseFile._ParamTaskId, 0);
-
-            if (taskId == 0)
-                return 0;
-
             boolean isCancelled = ProviderUtils.getBooleanQueryParam(uri, BaseFile._ParamCancel);
             if (isCancelled) {
                 synchronized (_MapInterruption) {
                     _MapInterruption.put(taskId, true);
                 }
+                return 0;
             }// client wants to cancel the previous task
-            else {
-                boolean isRecursive = ProviderUtils.getBooleanQueryParam(uri, BaseFile._ParamRecursive, true);
-                File file = new File(Uri.parse(uri.getLastPathSegment()).getPath());
-                if (file.isFile()) {
-                    if (file.delete())
-                        count = 1;
-                } else {
-                    count = deleteFile(taskId, file, isRecursive);
-                    _MapInterruption.delete(taskId);
-                }
-            }// client wants to create new task
+
+            boolean isRecursive = ProviderUtils.getBooleanQueryParam(uri, BaseFile._ParamRecursive, true);
+            File file = new File(Uri.parse(uri.getLastPathSegment()).getPath());
+            if (file.isFile()) {
+                if (file.delete())
+                    count = 1;
+            } else {
+                count = deleteFile(taskId, file, isRecursive);
+                _MapInterruption.delete(taskId);
+            }
 
             break;// single file
         }
@@ -229,8 +226,6 @@ public class LocalFileProvider extends BaseFileProvider {
 
             if (BuildConfig.DEBUG)
                 Log.d(_ClassName, "srcFile = " + file);
-            if (!file.isDirectory() || !file.canRead())
-                return null;
 
             /*
              * Prepare params...
@@ -240,27 +235,34 @@ public class LocalFileProvider extends BaseFileProvider {
 
             if (isCancelled) {
                 synchronized (_MapInterruption) {
-                    if (_MapInterruption.indexOfKey(taskId) >= 0)
-                        _MapInterruption.put(taskId, true);
+                    _MapInterruption.put(taskId, true);
                 }
+                return null;
             }// client wants to cancel the previous task
-            else {
-                /*
-                 * Prepare params...
-                 */
-                boolean showHiddenFiles = ProviderUtils.getBooleanQueryParam(uri, BaseFile._ParamShowHiddenFiles);
-                boolean sortAscending = ProviderUtils.getBooleanQueryParam(uri, BaseFile._ParamSortAscending, true);
-                int sortBy = ProviderUtils.getIntQueryParam(uri, BaseFile._ParamSortBy, BaseFile._SortByName);
-                int filterMode = ProviderUtils.getIntQueryParam(uri, BaseFile._ParamFilterMode,
-                        BaseFile._FilterFilesAndDirectories);
-                int limit = ProviderUtils.getIntQueryParam(uri, BaseFile._ParamLimit, 1000);
 
-                boolean[] hasMoreFiles = { false };
-                List<File> files = new ArrayList<File>();
-                listFiles(taskId, file, showHiddenFiles, filterMode, limit, files, hasMoreFiles);
+            if (!file.isDirectory() || !file.canRead())
+                return null;
+
+            /*
+             * Prepare params...
+             */
+            boolean showHiddenFiles = ProviderUtils.getBooleanQueryParam(uri, BaseFile._ParamShowHiddenFiles);
+            boolean sortAscending = ProviderUtils.getBooleanQueryParam(uri, BaseFile._ParamSortAscending, true);
+            int sortBy = ProviderUtils.getIntQueryParam(uri, BaseFile._ParamSortBy, BaseFile._SortByName);
+            int filterMode = ProviderUtils.getIntQueryParam(uri, BaseFile._ParamFilterMode,
+                    BaseFile._FilterFilesAndDirectories);
+            int limit = ProviderUtils.getIntQueryParam(uri, BaseFile._ParamLimit, 1000);
+
+            boolean[] hasMoreFiles = { false };
+            List<File> files = new ArrayList<File>();
+            listFiles(taskId, file, showHiddenFiles, filterMode, limit, files, hasMoreFiles);
+            if (!_MapInterruption.get(taskId)) {
+                sortFiles(taskId, files, sortAscending, sortBy);
                 if (!_MapInterruption.get(taskId)) {
-                    sortFiles(files, sortAscending, sortBy);
                     for (int i = 0; i < files.size(); i++) {
+                        if (_MapInterruption.get(taskId))
+                            break;
+
                         File f = files.get(i);
                         int type = f.isFile() ? BaseFile._FileTypeFile : (f.isDirectory() ? BaseFile._FileTypeDirectory
                                 : BaseFile._FileTypeUnknown);
@@ -277,28 +279,35 @@ public class LocalFileProvider extends BaseFileProvider {
                     RowBuilder newRow = matrixCursor.newRow();
                     newRow.add(files.size());// _ID
                     newRow.add(Uri.fromFile(file).buildUpon()
-                            .appendQueryParameter(BaseFile._ParamHasMoreFiles, hasMoreFiles[0] ? "1" : "0").build()
-                            .toString());
+                            .appendQueryParameter(BaseFile._ParamHasMoreFiles, Boolean.toString(hasMoreFiles[0]))
+                            .build().toString());
                     newRow.add(file.getName());
                 }
-                _MapInterruption.delete(taskId);
+            }
 
-                /*
-                 * Tells the Cursor what URI to watch, so it knows when its
-                 * source data changes.
-                 */
-                matrixCursor.setNotificationUri(getContext().getContentResolver(), uri);
-            }// client wants to query new data
+            if (_MapInterruption.get(taskId)) {
+                if (BuildConfig.DEBUG)
+                    Log.d(_ClassName, "query() >> cancelled...");
+                _MapInterruption.delete(taskId);
+                return null;
+            }
+
+            /*
+             * Tells the Cursor what URI to watch, so it knows when its source
+             * data changes.
+             */
+            matrixCursor.setNotificationUri(getContext().getContentResolver(), uri);
 
             break;// _Directory
         }
 
         case _File: {
             Uri fileUri = Uri.parse(uri.getLastPathSegment());
-            String appendName = fileUri.getQueryParameter(BaseFile._ParamAppendName);
+            String appendName = uri.getQueryParameter(BaseFile._ParamAppendName);
+
             File file = new File(String.format("%s%s", fileUri.getPath(),
-                    appendName != null ? String.format("/%s", appendName) : ""));
-            if (uri.getQueryParameter(BaseFile._ParamGetParent) != null)
+                    !TextUtils.isEmpty(appendName) ? String.format("/%s", appendName) : ""));
+            if (ProviderUtils.getBooleanQueryParam(uri, BaseFile._ParamGetParent))
                 file = file.getParentFile();
             if (file == null)
                 return null;
@@ -380,13 +389,16 @@ public class LocalFileProvider extends BaseFileProvider {
                 }// accept()
             });
         } catch (CancellationException e) {
-            // ignore it
+            if (BuildConfig.DEBUG)
+                Log.d(_ClassName, "listFiles() >> cancelled...");
         }
     }// listFiles()
 
     /**
      * Sorts {@code files}.
      * 
+     * @param taskId
+     *            the task ID.
      * @param files
      *            list of files.
      * @param ascending
@@ -395,40 +407,48 @@ public class LocalFileProvider extends BaseFileProvider {
      *            can be one of {@link BaseFile.#_SortByModificationTime},
      *            {@link BaseFile.#_SortByName}, {@link BaseFile.#_SortBySize}.
      */
-    private void sortFiles(final List<File> files, final boolean ascending, final int sortBy) {
-        Collections.sort(files, new Comparator<File>() {
+    private void sortFiles(final int taskId, final List<File> files, final boolean ascending, final int sortBy) {
+        try {
+            Collections.sort(files, new Comparator<File>() {
 
-            @Override
-            public int compare(File lhs, File rhs) {
-                if ((lhs.isDirectory() && rhs.isDirectory()) || (lhs.isFile() && rhs.isFile())) {
-                    // default is to compare by name (case insensitive)
-                    int res = mCollator.compare(lhs.getName(), rhs.getName());
+                @Override
+                public int compare(File lhs, File rhs) {
+                    if (_MapInterruption.get(taskId))
+                        throw new CancellationException();
 
-                    switch (sortBy) {
-                    case BaseFile._SortByName:
-                        break;// SortByName
+                    if ((lhs.isDirectory() && rhs.isDirectory()) || (lhs.isFile() && rhs.isFile())) {
+                        // default is to compare by name (case insensitive)
+                        int res = mCollator.compare(lhs.getName(), rhs.getName());
 
-                    case BaseFile._SortBySize:
-                        if (lhs.length() > rhs.length())
-                            res = 1;
-                        else if (lhs.length() < rhs.length())
-                            res = -1;
-                        break;// SortBySize
+                        switch (sortBy) {
+                        case BaseFile._SortByName:
+                            break;// SortByName
 
-                    case BaseFile._SortByModificationTime:
-                        if (lhs.lastModified() > rhs.lastModified())
-                            res = 1;
-                        else if (lhs.lastModified() < rhs.lastModified())
-                            res = -1;
-                        break;// SortByDate
+                        case BaseFile._SortBySize:
+                            if (lhs.length() > rhs.length())
+                                res = 1;
+                            else if (lhs.length() < rhs.length())
+                                res = -1;
+                            break;// SortBySize
+
+                        case BaseFile._SortByModificationTime:
+                            if (lhs.lastModified() > rhs.lastModified())
+                                res = 1;
+                            else if (lhs.lastModified() < rhs.lastModified())
+                                res = -1;
+                            break;// SortByDate
+                        }
+
+                        return ascending ? res : -res;
                     }
 
-                    return ascending ? res : -res;
-                }
-
-                return lhs.isDirectory() ? -1 : 1;
-            }// compare()
-        });
+                    return lhs.isDirectory() ? -1 : 1;
+                }// compare()
+            });
+        } catch (CancellationException e) {
+            if (BuildConfig.DEBUG)
+                Log.d(_ClassName, "sortFiles() >> cancelled...");
+        }
     }// sortFiles()
 
     /**

@@ -71,36 +71,46 @@
         </RelativeLayout>
     </RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/afc_filechooser_activity_viewgroup_files"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/afc_filechooser_activity_viewgroup_footer_container"
         android:layout_below="@id/afc_filechooser_activity_viewgroup_header"
         android:layout_marginBottom="@dimen/afc_10dp"
-        android:layout_marginTop="@dimen/afc_10dp"
-        android:orientation="vertical" >
+        android:layout_marginTop="@dimen/afc_10dp" >
 
-        <LinearLayout
-            android:id="@+id/afc_filechooser_activity_view_files_container"
+        <RelativeLayout
+            android:id="@+id/afc_filechooser_activity_viewgroup_files"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="horizontal" >
-        </LinearLayout>
+            android:visibility="gone" >
 
-        <TextView
-            android:id="@+id/afc_filechooser_activity_view_files_footer_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="0.1"
-            android:gravity="center"
-            android:padding="@dimen/afc_10dp"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textStyle="italic"
-            android:visibility="gone" />
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/afc_filechooser_activity_view_files_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/afc_filechooser_activity_view_files_footer_view"
+                android:orientation="horizontal" >
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/afc_filechooser_activity_view_files_footer_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/afc_10dp"
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textStyle="italic"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <include
+            android:id="@+id/afc_filechooser_activity_view_loading"
+            android:layout_centerInParent="true"
+            layout="@layout/afc_view_loading" />
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/afc_filechooser_activity_viewgroup_footer_container"
@@ -135,7 +145,7 @@
                 android:hint="@string/afc_hint_save_as_filename"
                 android:imeOptions="actionDone"
                 android:singleLine="true"
-                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:visibility="gone" >
 
                 <requestFocus />

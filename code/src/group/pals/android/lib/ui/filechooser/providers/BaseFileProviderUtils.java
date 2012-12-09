@@ -195,7 +195,9 @@ public class BaseFileProviderUtils {
 
         try {
             if (cursor.moveToFirst())
-                return cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnCanRead)) != 0;
+                return cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnCanRead)) != 0
+                        && (cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnType)) == BaseFile._FileTypeDirectory || cursor
+                                .getInt(cursor.getColumnIndex(BaseFile._ColumnType)) == BaseFile._FileTypeFile);
             return false;
         } finally {
             cursor.close();
@@ -240,7 +242,8 @@ public class BaseFileProviderUtils {
     public static Uri getParentFile(Context context, String authority, Uri uri) {
         Cursor cursor = context.getContentResolver().query(
                 BaseFile.genContentIdUriBase(authority).buildUpon().appendPath(uri.toString())
-                        .appendQueryParameter(BaseFile._ParamGetParent, "").build(), null, null, null, null);
+                        .appendQueryParameter(BaseFile._ParamGetParent, Boolean.toString(true)).build(), null, null,
+                null, null);
         if (cursor == null)
             return null;
 

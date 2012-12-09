@@ -7,7 +7,6 @@
 
 package group.pals.android.lib.ui.filechooser;
 
-import group.pals.android.lib.ui.filechooser.io.IFile;
 import group.pals.android.lib.ui.filechooser.io.IFileFilter;
 import group.pals.android.lib.ui.filechooser.prefs.DisplayPrefs;
 import group.pals.android.lib.ui.filechooser.providers.BaseFileProviderUtils;
@@ -50,6 +49,7 @@ import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -228,14 +228,24 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
      * This key holds current location (a {@link Uri}), to restore it after
      * screen orientation changed.
      */
-    static final String _CurrentLocation = _ClassName + ".current_location";
+    private static final String _CurrentLocation = _ClassName + ".current_location";
     /**
-     * This key holds current history (a {@link History}&lt;{@link IFile}&gt;),
-     * to restore it after screen orientation changed
+     * This key holds current history (a {@link History}{@code <}{@link Uri}
+     * {@code >}), to restore it after screen orientation changed
      */
-    static final String _History = _ClassName + ".history";
+    private static final String _History = _ClassName + ".history";
 
-    static final String _Path = _ClassName + ".path";
+    private static final String _Path = _ClassName + ".path";
+
+    /**
+     * Default loader ID.
+     */
+    private static final int _LoaderData = 1;
+
+    /**
+     * Default task ID for loading directory content.
+     */
+    private static final int _IdLoaderData = 1;
 
     // ====================
     // "CONSTANT" VARIABLES
@@ -258,11 +268,18 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
      */
     private BaseFileAdapter mFileAdapter;
 
-    /*
-     * controls
+    /**
+     * Task ID.
      */
+    private int mTaskId = 0;
+
+    /*
+     * Controls.
+     */
+
     private HorizontalScrollView mViewLocationsContainer;
     private ViewGroup mViewLocations;
+    private View mViewGroupFiles;
     private ViewGroup mViewFilesContainer;
     private TextView mTxtFullDirName;
     private AbsListView mViewFiles;
@@ -322,6 +339,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
         mViewLocations = (ViewGroup) findViewById(R.id.afc_filechooser_activity_view_locations);
         mViewLocationsContainer = (HorizontalScrollView) findViewById(R.id.afc_filechooser_activity_view_locations_container);
         mTxtFullDirName = (TextView) findViewById(R.id.afc_filechooser_activity_textview_full_dir_name);
+        mViewGroupFiles = findViewById(R.id.afc_filechooser_activity_viewgroup_files);
         mViewFilesContainer = (ViewGroup) findViewById(R.id.afc_filechooser_activity_view_files_container);
         mFooterView = (TextView) findViewById(R.id.afc_filechooser_activity_view_files_footer_view);
         mViewLoading = findViewById(R.id.afc_filechooser_activity_view_loading);
@@ -441,14 +459,31 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
     @Override
     public void onBackPressed() {
-        // TODO: task ID?
-        // getContentResolver().query(
-        // BaseFile.genContentUriBase(mFileProviderAuthority).buildUpon().appendPath(String.valueOf(""))
-        // .appendQueryParameter(BaseFile._ParamCancel, "1").build(), null,
-        // null, null, null);
-        // Dlg.toast(FileChooserActivity.this, R.string.afc_msg_cancelled,
-        // Dlg._LengthShort);
-        super.onBackPressed();
+        /*
+         * TODO another way to check if there is a task loading?
+         */
+        if (mViewLoading.isShown()) {
+            if (BuildConfig.DEBUG)
+                Log.d(_ClassName, "onBackPressed() >> cancelling previous query...");
+            /*
+             * Adds a fake path...
+             */
+            getContentResolver().query(
+                    BaseFile.genContentUriBase(mFileProviderAuthority).buildUpon()
+                            .appendPath(Integer.toString(_IdLoaderData))
+                            .appendQueryParameter(BaseFile._ParamTaskId, Integer.toString(_IdLoaderData))
+                            .appendQueryParameter(BaseFile._ParamCancel, Boolean.toString(true)).build(), null, null,
+                    null, null);
+            Dlg.toast(FileChooserActivity.this, R.string.afc_msg_cancelled, Dlg._LengthShort);
+
+            if (mFileAdapter == null || mFileAdapter.getPath() == null)
+                super.onBackPressed();
+            else {
+                mViewGroupFiles.setVisibility(View.VISIBLE);
+                mViewLoading.setVisibility(View.GONE);
+            }
+        } else
+            super.onBackPressed();
     }// onbackPressed()
 
     @Override
@@ -462,14 +497,14 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        mViewFilesContainer.setVisibility(View.GONE);
-        mFooterView.setVisibility(View.GONE);
+        mViewGroupFiles.setVisibility(View.GONE);
         mViewLoading.setVisibility(View.VISIBLE);
 
         return new CursorLoader(this, BaseFile
                 .genContentUriBase(mFileProviderAuthority)
                 .buildUpon()
                 .appendPath(args.getString(_Path))
+                .appendQueryParameter(BaseFile._ParamTaskId, Integer.toString(_IdLoaderData))
                 .appendQueryParameter(BaseFile._ParamShowHiddenFiles,
                         Boolean.toString(getIntent().getBooleanExtra(_DisplayHiddenFiles, false)))
                 .appendQueryParameter(BaseFile._ParamFilterMode, Integer.toString(mFilterMode))
@@ -482,27 +517,21 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, final Cursor data) {
-        // TODO
-        if (data == null)
+        if (data == null) {
+            if (mFileAdapter.getPath() == null)
+                doShowCannotConnectToServiceAndFinish();
             return;
+        }
 
         final Uri _lastPath = mFileAdapter.getPath();
 
-        // update list view
+        /*
+         * Update list view.
+         */
         mFileAdapter.changeCursor(data);
-
-        // update footers
 
         data.moveToLast();
         final Uri _uriInfo = BaseFileProviderUtils.getUri(data);
-
-        mFooterView.setVisibility(ProviderUtils.getBooleanQueryParam(_uriInfo, BaseFile._ParamHasMoreFiles)
-                || mFileAdapter.isEmpty() ? View.VISIBLE : View.GONE);
-        if (ProviderUtils.getBooleanQueryParam(_uriInfo, BaseFile._ParamHasMoreFiles))
-            mFooterView.setText(getString(R.string.afc_pmsg_max_file_count_allowed, mMaxFileCount));
-        else if (mFileAdapter.isEmpty())
-            mFooterView.setText(R.string.afc_msg_empty);
-
         final Uri _selectedFile = (Uri) getIntent().getParcelableExtra(_SelectFile);
         if (_selectedFile != null)
             getIntent().removeExtra(_SelectFile);
@@ -550,7 +579,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
         });
 
         /*
-         * navigation buttons
+         * Navigation buttons.
          */
         createLocationButtons(mFileAdapter.getPath());
 
@@ -568,22 +597,33 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
             mHistory.push(mFileAdapter.getPath());
         }
 
+        /*
+         * Footer.
+         */
         boolean hasMoreFiles = ProviderUtils.getBooleanQueryParam(_uriInfo, BaseFile._ParamHasMoreFiles);
         showFooterView(hasMoreFiles || mFileAdapter.isEmpty(),
                 hasMoreFiles ? getString(R.string.afc_pmsg_max_file_count_allowed, mMaxFileCount)
                         : getString(R.string.afc_msg_empty), mFileAdapter.isEmpty());
 
-        mViewFilesContainer.setVisibility(View.VISIBLE);
+        mViewGroupFiles.setVisibility(View.VISIBLE);
         mViewLoading.setVisibility(View.GONE);
     }// onLoadFinished()
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mFileAdapter.changeCursor(null);
-        mViewFilesContainer.setVisibility(View.GONE);
-        mFooterView.setVisibility(View.GONE);
+        mViewGroupFiles.setVisibility(View.GONE);
         mViewLoading.setVisibility(View.VISIBLE);
     }// onLoaderReset()
+
+    /**
+     * Generates new task ID.
+     * 
+     * @return the new task ID.
+     */
+    private int newTaskId() {
+        return mTaskId++;
+    }// newTaskId()
 
     /**
      * Connects to file provider service, then loads root directory. If can not,
@@ -628,8 +668,8 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
             if (path == null || !BaseFileProviderUtils.isDirectory(this, mFileProviderAuthority, path))
                 path = BaseFileProviderUtils.getDefaultPath(this, mFileProviderAuthority);
             if (path == null) {
-                // TODO: show message/ toast
-                finish();
+                doShowCannotConnectToServiceAndFinish();
+                return;
             }
         }
 
@@ -645,8 +685,23 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
          */
         Bundle b = new Bundle();
         b.putString(_Path, path.toString());
-        getSupportLoaderManager().initLoader(0, b, this);
+        getSupportLoaderManager().initLoader(_LoaderData, b, this);
     }// loadInitialPath()
+
+    /**
+     * As the name means...
+     */
+    private void doShowCannotConnectToServiceAndFinish() {
+        Dlg.showError(this, R.string.afc_msg_cannot_connect_to_file_provider_service,
+                new DialogInterface.OnCancelListener() {
+
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        setResult(Activity.RESULT_CANCELED);
+                        finish();
+                    }// onCancel()
+                });
+    }// doShowCannotConnectToServiceAndFinish()
 
     /**
      * Setup:<br>
@@ -812,11 +867,10 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
     private void doReloadCurrentLocation() {
         Bundle b = new Bundle();
         b.putString(_Path, mFileAdapter.getPath().toString());
-        getSupportLoaderManager().restartLoader(0, b, this);
+        getSupportLoaderManager().restartLoader(_LoaderData, b, this);
     }// doReloadCurrentLocation()
 
     private void doGoHome() {
-        // TODO explain why?
         goTo(mRoot);
     }// doGoHome()
 
@@ -987,12 +1041,12 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // TODO Auto-generated method stub
+                // do nothing
             }
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // TODO Auto-generated method stub
+                // do nothing
             }
 
             @Override
@@ -1040,6 +1094,8 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                                 _isFile ? getString(R.string.afc_file) : getString(R.string.afc_folder), _filename),
                                 true) {
 
+                            final int mTaskId = newTaskId();
+
                             private void notifyFileDeleted() {
                                 refreshHistories();
                                 // TODO remove all duplicate history items
@@ -1054,12 +1110,12 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
                             @Override
                             protected Object doInBackground(Void... arg0) {
-                                // TODO taskID
                                 getContentResolver().delete(
                                         BaseFile.genContentIdUriBase(mFileProviderAuthority)
                                                 .buildUpon()
                                                 .appendPath(
                                                         cursor.getString(cursor.getColumnIndex(BaseFile._ColumnUri)))
+                                                .appendQueryParameter(BaseFile._ParamTaskId, Integer.toString(mTaskId))
                                                 .build(), null, null);
 
                                 return null;
@@ -1067,12 +1123,12 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
                             @Override
                             protected void onCancelled() {
-                                // TODO taskID
                                 getContentResolver().delete(
                                         BaseFile.genContentIdUriBase(mFileProviderAuthority)
                                                 .buildUpon()
                                                 .appendPath(
                                                         cursor.getString(cursor.getColumnIndex(BaseFile._ColumnUri)))
+                                                .appendQueryParameter(BaseFile._ParamTaskId, Integer.toString(mTaskId))
                                                 .appendQueryParameter(BaseFile._ParamCancel, Boolean.toString(true))
                                                 .build(), null, null);
 
@@ -1129,9 +1185,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                 BaseFile.genContentIdUriBase(mFileProviderAuthority).buildUpon()
                         .appendPath(mFileAdapter.getPath().toString())
                         .appendQueryParameter(BaseFile._ParamAppendName, filename).build(), null, null, null, null);
-        if (_cursor == null) {
-            // TODO
-        } else {
+        if (_cursor != null) {
             try {
                 if (_cursor.moveToFirst()) {
                     switch (_cursor.getInt(_cursor.getColumnIndex(BaseFile._ColumnType))) {
@@ -1171,15 +1225,27 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
      * @return {@code true} if {@code dir} <b><i>can</i></b> be browsed to.
      * @since v4.3 beta
      */
-    private boolean goTo(final Uri dir) {
-        Bundle b = new Bundle();
-        b.putString(_Path, mFileAdapter.getPath().toString());
-        getSupportLoaderManager().restartLoader(0, b, this);
-        // TODO history?
-        // // mHistory.truncateAfter(mLastPath);
-        // // mHistory.push(dir);
-        // });
-        return true;
+    private boolean goTo(Uri dir) {
+        if (dir == null || !BaseFileProviderUtils.isDirectory(this, mFileProviderAuthority, dir))
+            dir = BaseFileProviderUtils.getDefaultPath(this, mFileProviderAuthority);
+        if (dir == null) {
+            doShowCannotConnectToServiceAndFinish();
+            return false;
+        }
+
+        if (BaseFileProviderUtils.fileCanRead(this, mFileProviderAuthority, dir)) {
+            Bundle b = new Bundle();
+            b.putString(_Path, dir.toString());
+            getSupportLoaderManager().restartLoader(_LoaderData, b, this);
+
+            // TODO history?
+            // // mHistory.truncateAfter(mLastPath);
+            // // mHistory.push(dir);
+            // });
+
+            return true;
+        }
+        return false;
     }// goTo()
 
     private void createLocationButtons(Uri path) {
@@ -1204,15 +1270,14 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                 TextView btnLoc = (TextView) inflater.inflate(R.layout.afc_button_location, null);
                 String name = BaseFileProviderUtils.getFileName(cursor);
                 btnLoc.setText(TextUtils.isEmpty(name) ? getString(R.string.afc_root) : name);
-                btnLoc.setTag(path);
+                btnLoc.setTag(Uri.parse(lastUri));
                 btnLoc.setOnClickListener(mBtnLocationOnClickListener);
                 btnLoc.setOnLongClickListener(mBtnLocationOnLongClickListener);
                 mViewLocations.addView(btnLoc, 0, lpBtnLoc);
 
                 if (count++ == 0) {
                     Rect r = new Rect();
-                    btnLoc.getPaint()
-                            .getTextBounds(path.getLastPathSegment(), 0, path.getLastPathSegment().length(), r);
+                    btnLoc.getPaint().getTextBounds(name, 0, name.length(), r);
                     if (r.width() >= getResources().getDimensionPixelSize(R.dimen.afc_button_location_max_width)
                             - btnLoc.getPaddingLeft() - btnLoc.getPaddingRight()) {
                         mTxtFullDirName.setText(path.getLastPathSegment());
@@ -1232,7 +1297,8 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
              */
             cursor = getContentResolver().query(
                     BaseFile.genContentIdUriBase(mFileProviderAuthority).buildUpon().appendPath(lastUri)
-                            .appendQueryParameter(BaseFile._ParamGetParent, "").build(), null, null, null, null);
+                            .appendQueryParameter(BaseFile._ParamGetParent, Boolean.toString(true)).build(), null,
+                    null, null, null);
             if (cursor != null) {
                 View divider = inflater.inflate(R.layout.afc_view_locations_divider, null);
 
@@ -1357,9 +1423,9 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
         @Override
         public void onClick(View v) {
-            if (v.getTag() instanceof IFile)
+            if (v.getTag() instanceof Uri)
                 goTo((Uri) v.getTag());
-        }
+        }// onClick()
     };// mBtnLocationOnClickListener
 
     private final View.OnLongClickListener mBtnLocationOnLongClickListener = new View.OnLongClickListener() {
@@ -1372,7 +1438,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
             doFinish((Uri) v.getTag());
 
             return false;
-        }
+        }// onLongClick()
 
     };// mBtnLocationOnLongClickListener
 
@@ -1408,7 +1474,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
             } else {
                 mViewGoForward.setEnabled(false);
             }
-        }
+        }// onClick()
     };// mBtnGoForwardOnClickListener
 
     private final View.OnLongClickListener mBtnGoBackForwardOnLongClickListener = new View.OnLongClickListener() {
@@ -1458,7 +1524,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                 return true;
             }
             return false;
-        }
+        }// onEditorAction()
     };// mTxtFilenameOnEditorActionListener
 
     private final View.OnClickListener mBtnOk_SaveDialog_OnClickListener = new View.OnClickListener() {
@@ -1468,7 +1534,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
             Ui.hideSoftKeyboard(FileChooserActivity.this, mTxtSaveas.getWindowToken());
             String filename = mTxtSaveas.getText().toString().trim();
             doCheckSaveasFilenameAndFinish(filename);
-        }
+        }// onClick()
     };// mBtnOk_SaveDialog_OnClickListener
 
     private final View.OnClickListener mBtnOk_OpenDialog_OnClickListener = new View.OnClickListener() {
@@ -1476,7 +1542,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
         @Override
         public void onClick(View v) {
             doFinish(mFileAdapter.getSelectedItems());
-        }
+        }// onClick()
     };// mBtnOk_OpenDialog_OnClickListener
 
     /*
@@ -1554,7 +1620,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                         } else
                             return false;
                     } else
-                        ;// TODO doFinish(data.getFile());
+                        doFinish(BaseFileProviderUtils.getUri(data));
                 }// double tap to choose files
                 else {
                     // do nothing
@@ -1629,7 +1695,6 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-            // TODO
             Cursor cursor = (Cursor) mFileAdapter.getItem(position);
 
             if (mDoubleTapToChooseFiles) {
