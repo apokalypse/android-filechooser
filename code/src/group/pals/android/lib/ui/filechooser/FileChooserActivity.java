@@ -13,7 +13,6 @@ import group.pals.android.lib.ui.filechooser.providers.ProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileContract.BaseFile;
 import group.pals.android.lib.ui.filechooser.providers.localfile.LocalFileContract;
 import group.pals.android.lib.ui.filechooser.providers.localfile.LocalFileProvider;
-import group.pals.android.lib.ui.filechooser.utils.ActivityCompat;
 import group.pals.android.lib.ui.filechooser.utils.E;
 import group.pals.android.lib.ui.filechooser.utils.FileUtils;
 import group.pals.android.lib.ui.filechooser.utils.Ui;
@@ -41,6 +40,7 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -258,6 +258,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
     private History<Uri> mHistory;
     private Uri mCurrentLocation;
+    private Handler mViewLoadingHandler = new Handler();
 
     /**
      * The adapter of list view.
@@ -268,6 +269,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
      * Task ID.
      */
     private int mTaskId = 0;
+    private boolean mLoading = false;
 
     /*
      * Controls.
@@ -418,7 +420,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
          * New folder.
          */
 
-        menu.findItem(R.id.afc_filechooser_activity_menuitem_new_folder).setEnabled(!mViewLoading.isShown());
+        menu.findItem(R.id.afc_filechooser_activity_menuitem_new_folder).setEnabled(!mLoading);
 
         return true;
     }// onPrepareOptionsMenu()
@@ -461,10 +463,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
     @Override
     public void onBackPressed() {
-        /*
-         * TODO another way to check if there is a task loading?
-         */
-        if (mViewLoading.isShown()) {
+        if (mLoading) {
             if (BuildConfig.DEBUG)
                 Log.d(_ClassName, "onBackPressed() >> cancelling previous query...");
             cancelPreviousLoader();
@@ -484,8 +483,17 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        mLoading = true;
+
         mViewGroupFiles.setVisibility(View.GONE);
-        mViewLoading.setVisibility(View.VISIBLE);
+        mViewLoadingHandler.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                mViewLoading.setVisibility(View.VISIBLE);
+            }// run()
+        }, DisplayPrefs._DelayTimeForSimpleAnimation);
+
         supportInvalidateOptionsMenu();
 
         Uri path = ((Uri) args.getParcelable(_Path));
@@ -508,12 +516,15 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, final Cursor data) {
+        mLoading = false;
+
         /*
          * Update list view.
          */
         mFileAdapter.changeCursor(data);
 
         mViewGroupFiles.setVisibility(View.VISIBLE);
+        mViewLoadingHandler.removeCallbacksAndMessages(null);
         mViewLoading.setVisibility(View.GONE);
         supportInvalidateOptionsMenu();
 
@@ -589,7 +600,14 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
     public void onLoaderReset(Loader<Cursor> loader) {
         mFileAdapter.changeCursor(null);
         mViewGroupFiles.setVisibility(View.GONE);
-        mViewLoading.setVisibility(View.VISIBLE);
+        mViewLoadingHandler.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                mViewLoading.setVisibility(View.VISIBLE);
+            }// run()
+        }, DisplayPrefs._DelayTimeForSimpleAnimation);
+
         supportInvalidateOptionsMenu();
     }// onLoaderReset()
 
@@ -989,9 +1007,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
         }
 
         setupViewFiles();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-            ActivityCompat.invalidateOptionsMenu(FileChooserActivity.this);
-
+        supportInvalidateOptionsMenu();
         goTo(getCurrentLocation());
     }// doSwitchViewType()
 

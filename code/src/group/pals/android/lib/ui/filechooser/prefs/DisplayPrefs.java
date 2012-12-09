@@ -28,6 +28,16 @@ public class DisplayPrefs extends Prefs {
     public static final int _DelayTimeWaitingThreads = 10;
 
     /**
+     * Delay time for waiting for short animation, in milliseconds.
+     */
+    public static final int _DelayTimeForShortAnimation = 499;
+
+    /**
+     * Delay time for waiting for simple animation, in milliseconds.
+     */
+    public static final int _DelayTimeForSimpleAnimation = 999;
+
+    /**
      * Gets view type.
      * 
      * @param c
