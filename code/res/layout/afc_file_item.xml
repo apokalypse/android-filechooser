@@ -42,7 +42,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:layout_marginBottom="@dimen/afc_2dp"
         android:layout_marginRight="@dimen/afc_5dp"
+        android:layout_marginTop="@dimen/afc_2dp"
         android:layout_weight="0.1"
         android:orientation="vertical" >
 
@@ -72,6 +74,7 @@
         android:layout_gravity="center_horizontal|top"
         android:focusable="false"
         android:focusableInTouchMode="false"
-        android:gravity="center_horizontal|top" />
+        android:gravity="center_horizontal|top"
+        android:padding="@dimen/afc_2dp" />
 
 </LinearLayout>
