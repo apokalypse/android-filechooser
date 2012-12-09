@@ -1011,7 +1011,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    Ui.hideSoftKeyboard(FileChooserActivity.this, _textFile.getWindowToken());
+                    Ui.showSoftKeyboard(v, false);
                     _dlg.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
                     return true;
                 }
@@ -1049,6 +1049,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                     }// onClick()
                 });
         _dlg.show();
+        Ui.showSoftKeyboard(_textFile, true);
 
         final Button _btnOk = _dlg.getButton(DialogInterface.BUTTON_POSITIVE);
         _btnOk.setEnabled(false);
@@ -1549,7 +1550,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                Ui.hideSoftKeyboard(FileChooserActivity.this, mTxtSaveas.getWindowToken());
+                Ui.showSoftKeyboard(v, false);
                 mBtnOk.performClick();
                 return true;
             }
@@ -1561,7 +1562,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
         @Override
         public void onClick(View v) {
-            Ui.hideSoftKeyboard(FileChooserActivity.this, mTxtSaveas.getWindowToken());
+            Ui.showSoftKeyboard(v, false);
             String filename = mTxtSaveas.getText().toString().trim();
             doCheckSaveasFilenameAndFinish(filename);
         }// onClick()

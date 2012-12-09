@@ -9,7 +9,7 @@ package group.pals.android.lib.ui.filechooser.utils;
 
 import android.content.Context;
 import android.graphics.Paint;
-import android.os.IBinder;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
@@ -22,23 +22,33 @@ import android.widget.TextView;
 public class Ui {
 
     /**
-     * Hides soft keyboard.
+     * Shows/ hides soft input (soft keyboard).
      * 
-     * @param context
-     *            {@link Context}.
-     * @param binder
-     *            {@link IBinder}.
+     * @param view
+     *            {@link View}.
+     * @param show
+     *            {@code true} or {@code false}. If {@code true}, this method
+     *            will use a {@link Runnable} to show the IMM. So you don't need
+     *            to use it, and consider using
+     *            {@link View#removeCallbacks(Runnable)} if you want to cancel.
      */
-    public static void hideSoftKeyboard(Context context, IBinder binder) {
-        /*
-         * hide soft keyboard
-         * http://stackoverflow.com/questions/1109022/how-to-close
-         * -hide-the-android-soft-keyboard
-         */
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null)
-            imm.hideSoftInputFromWindow(binder, 0);
-    }// hideSoftKeyboard()
+    public static void showSoftKeyboard(final View view, final boolean show) {
+        final InputMethodManager _imm = (InputMethodManager) view.getContext().getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        if (_imm == null)
+            return;
+
+        if (show) {
+            view.post(new Runnable() {
+
+                @Override
+                public void run() {
+                    _imm.showSoftInput(view, 0, null);
+                }// run()
+            });
+        } else
+            _imm.hideSoftInputFromWindow(view.getWindowToken(), 0, null);
+    }// showSoftKeyboard()
 
     /**
      * Strikes out text of {@code view}.
