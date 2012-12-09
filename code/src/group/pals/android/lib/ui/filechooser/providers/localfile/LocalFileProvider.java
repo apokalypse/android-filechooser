@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CancellationException;
+import java.util.regex.Pattern;
 
 import android.content.ContentValues;
 import android.content.UriMatcher;
@@ -262,12 +263,15 @@ public class LocalFileProvider extends BaseFileProvider {
             int filterMode = ProviderUtils.getIntQueryParam(uri, BaseFile._ParamFilterMode,
                     BaseFile._FilterFilesAndDirectories);
             int limit = ProviderUtils.getIntQueryParam(uri, BaseFile._ParamLimit, 1000);
+            String positiveRegex = uri.getQueryParameter(BaseFile._ParamPositiveRegexFilter);
+            String negativeRegex = uri.getQueryParameter(BaseFile._ParamNegativeRegexFilter);
 
             _MapInterruption.put(taskId, false);
 
             boolean[] hasMoreFiles = { false };
             List<File> files = new ArrayList<File>();
-            listFiles(taskId, file, showHiddenFiles, filterMode, limit, files, hasMoreFiles);
+            listFiles(taskId, file, showHiddenFiles, filterMode, limit, positiveRegex, negativeRegex, files,
+                    hasMoreFiles);
             if (!_MapInterruption.get(taskId)) {
                 sortFiles(taskId, files, sortAscending, sortBy);
                 if (!_MapInterruption.get(taskId)) {
@@ -372,6 +376,10 @@ public class LocalFileProvider extends BaseFileProvider {
      *            {@link BaseFile#_FilterFilesAndDirectories}.
      * @param limit
      *            the limit.
+     * @param positiveRegex
+     *            the positive regex filter.
+     * @param negativeRegex
+     *            the negative regex filter.
      * @param results
      *            the results.
      * @param hasMoreFiles
@@ -379,7 +387,13 @@ public class LocalFileProvider extends BaseFileProvider {
      *            more files (exceeding {@code limit}) or not.
      */
     private void listFiles(final int taskId, final File dir, final boolean showHiddenFiles, final int filterMode,
-            final int limit, final List<File> results, final boolean hasMoreFiles[]) {
+            final int limit, String positiveRegex, String negativeRegex, final List<File> results,
+            final boolean hasMoreFiles[]) {
+        final Pattern _positivePattern = group.pals.android.lib.ui.filechooser.utils.TextUtils
+                .compileRegex(positiveRegex);
+        final Pattern _negativePattern = group.pals.android.lib.ui.filechooser.utils.TextUtils
+                .compileRegex(negativeRegex);
+
         hasMoreFiles[0] = false;
         try {
             dir.listFiles(new FileFilter() {
@@ -392,6 +406,10 @@ public class LocalFileProvider extends BaseFileProvider {
                     if (filterMode == BaseFile._FilterDirectoriesOnly && pathname.isFile())
                         return false;
                     if (!showHiddenFiles && pathname.getName().startsWith("."))
+                        return false;
+                    if (_positivePattern != null && !_positivePattern.matcher(pathname.getName()).find())
+                        return false;
+                    if (_negativePattern != null && _negativePattern.matcher(pathname.getName()).find())
                         return false;
 
                     if (results.size() >= limit) {

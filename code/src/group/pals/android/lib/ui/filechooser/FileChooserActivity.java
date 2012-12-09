@@ -175,12 +175,17 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
      */
     public static final String _MultiSelection = _ClassName + ".multi_selection";
     /**
-     * Key to hold the component class to filter files, default is {@code null}.
+     * Key to hold the positive regex to filter files, default is {@code null}.
      * 
      * @since v5.1 beta
      */
-    @Deprecated
-    public static final String _IFileFilterClass = _ClassName + ".ifile_filter_class";
+    public static final String _PositiveRegexFilter = _ClassName + ".positive_regex_filter";
+    /**
+     * Key to hold the negative regex to filter files, default is {@code null}.
+     * 
+     * @since v5.1 beta
+     */
+    public static final String _NegativeRegexFilter = _ClassName + ".negative_regex_filter";
     /**
      * Key to hold display-hidden-files, default = {@code false}
      */
@@ -408,11 +413,13 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
         MenuItem menuItem = menu.findItem(R.id.afc_filechooser_activity_menuitem_switch_viewmode);
         switch (DisplayPrefs.getViewType(this)) {
         case Grid:
-            menuItem.setIcon(R.drawable.afc_ic_menu_listview);
+            menuItem.setIcon(Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB ? R.drawable.afc_ic_menu_listview
+                    : R.drawable.afc_ic_menu_listview_light);
             menuItem.setTitle(R.string.afc_cmd_list_view);
             break;
         case List:
-            menuItem.setIcon(R.drawable.afc_ic_menu_gridview);
+            menuItem.setIcon(Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB ? R.drawable.afc_ic_menu_gridview
+                    : R.drawable.afc_ic_menu_gridview_light);
             menuItem.setTitle(R.string.afc_cmd_grid_view);
             break;
         }
@@ -501,6 +508,9 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
         Uri path = ((Uri) args.getParcelable(_Path));
         createLocationButtons(path);
 
+        String positiveRegex = getIntent().getStringExtra(_PositiveRegexFilter);
+        String negativeRegex = getIntent().getStringExtra(_NegativeRegexFilter);
+
         return new CursorLoader(this, BaseFile
                 .genContentUriBase(mFileProviderAuthority)
                 .buildUpon()
@@ -512,8 +522,11 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                 .appendQueryParameter(BaseFile._ParamSortBy, Integer.toString(DisplayPrefs.getSortType(this)))
                 .appendQueryParameter(BaseFile._ParamSortAscending,
                         Boolean.toString(DisplayPrefs.isSortAscending(this)))
-                .appendQueryParameter(BaseFile._ParamLimit, Integer.toString(mMaxFileCount)).build(), null, null, null,
-                null);
+                .appendQueryParameter(BaseFile._ParamLimit, Integer.toString(mMaxFileCount))
+                .appendQueryParameter(BaseFile._ParamPositiveRegexFilter,
+                        TextUtils.isEmpty(positiveRegex) ? "" : positiveRegex)
+                .appendQueryParameter(BaseFile._ParamNegativeRegexFilter,
+                        TextUtils.isEmpty(negativeRegex) ? "" : negativeRegex).build(), null, null, null, null);
     }// onCreateLoader()
 
     @Override

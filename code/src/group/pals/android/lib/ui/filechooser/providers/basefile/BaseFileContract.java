@@ -225,6 +225,26 @@ public class BaseFileContract {
          */
         public static final String _ParamAppendName = "append_name";
 
+        /**
+         * Use this parameter to set a positive regex to filter filename (with
+         * {@code query()}). If the regex can't be compiled due to syntax error,
+         * then it will be ignored.
+         * <p>
+         * Type: {@code String}
+         * </p>
+         */
+        public static final String _ParamPositiveRegexFilter = "positive_regex_filter";
+
+        /**
+         * Use this parameter to set a negative regex to filter filename (with
+         * {@code query()}). If the regex can't be compiled due to syntax error,
+         * then it will be ignored.
+         * <p>
+         * Type: {@code String}
+         * </p>
+         */
+        public static final String _ParamNegativeRegexFilter = "negative_regex_filter";
+
         /*
          * URI builders.
          */

@@ -7,6 +7,8 @@
 
 package group.pals.android.lib.ui.filechooser.utils;
 
+import java.util.regex.Pattern;
+
 /**
  * Text utilities.
  * 
@@ -26,4 +28,22 @@ public class TextUtils {
     public static String quote(String s) {
         return String.format("\"%s\"", s != null ? s : "");
     }// quote()
+
+    /**
+     * Compiles {@code regex}.
+     * 
+     * @param regex
+     *            the regex.
+     * @return a compiled {@link Pattern}, or {@code null} if there is an error
+     *         while compiling.
+     */
+    public static Pattern compileRegex(String regex) {
+        if (android.text.TextUtils.isEmpty(regex))
+            return null;
+        try {
+            return Pattern.compile(regex);
+        } catch (Throwable t) {
+            return null;
+        }
+    }// compileRegex()
 }
