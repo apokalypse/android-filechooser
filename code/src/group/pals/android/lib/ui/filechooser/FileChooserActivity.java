@@ -492,7 +492,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
             public void run() {
                 mViewLoading.setVisibility(View.VISIBLE);
             }// run()
-        }, DisplayPrefs._DelayTimeForSimpleAnimation);
+        }, DisplayPrefs._DelayTimeForShortAnimation);
 
         supportInvalidateOptionsMenu();
 
@@ -606,7 +606,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
             public void run() {
                 mViewLoading.setVisibility(View.VISIBLE);
             }// run()
-        }, DisplayPrefs._DelayTimeForSimpleAnimation);
+        }, DisplayPrefs._DelayTimeForShortAnimation);
 
         supportInvalidateOptionsMenu();
     }// onLoaderReset()
