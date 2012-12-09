@@ -112,7 +112,8 @@ public class LocalFileProvider extends BaseFileProvider {
             boolean isCancelled = ProviderUtils.getBooleanQueryParam(uri, BaseFile._ParamCancel);
             if (isCancelled) {
                 synchronized (_MapInterruption) {
-                    _MapInterruption.put(taskId, true);
+                    if (_MapInterruption.indexOfKey(taskId) >= 0)
+                        _MapInterruption.put(taskId, true);
                 }
                 return 0;
             }// client wants to cancel the previous task
@@ -123,12 +124,12 @@ public class LocalFileProvider extends BaseFileProvider {
                 if (file.delete())
                     count = 1;
             } else {
+                _MapInterruption.put(taskId, false);
                 count = deleteFile(taskId, file, isRecursive);
-                if (_MapInterruption.get(taskId)) {
+                if (_MapInterruption.get(taskId))
                     if (BuildConfig.DEBUG)
                         Log.d(_ClassName, "delete() >> cancelled...");
-                    _MapInterruption.delete(taskId);
-                }
+                _MapInterruption.delete(taskId);
             }
 
             break;// single file
@@ -243,7 +244,8 @@ public class LocalFileProvider extends BaseFileProvider {
 
             if (isCancelled) {
                 synchronized (_MapInterruption) {
-                    _MapInterruption.put(taskId, true);
+                    if (_MapInterruption.indexOfKey(taskId) >= 0)
+                        _MapInterruption.put(taskId, true);
                 }
                 return null;
             }// client wants to cancel the previous task
@@ -260,6 +262,8 @@ public class LocalFileProvider extends BaseFileProvider {
             int filterMode = ProviderUtils.getIntQueryParam(uri, BaseFile._ParamFilterMode,
                     BaseFile._FilterFilesAndDirectories);
             int limit = ProviderUtils.getIntQueryParam(uri, BaseFile._ParamLimit, 1000);
+
+            _MapInterruption.put(taskId, false);
 
             boolean[] hasMoreFiles = { false };
             List<File> files = new ArrayList<File>();
@@ -294,11 +298,14 @@ public class LocalFileProvider extends BaseFileProvider {
                 }
             }
 
-            if (_MapInterruption.get(taskId)) {
-                if (BuildConfig.DEBUG)
-                    Log.d(_ClassName, "query() >> cancelled...");
+            try {
+                if (_MapInterruption.get(taskId)) {
+                    if (BuildConfig.DEBUG)
+                        Log.d(_ClassName, "query() >> cancelled...");
+                    return null;
+                }
+            } finally {
                 _MapInterruption.delete(taskId);
-                return null;
             }
 
             /*

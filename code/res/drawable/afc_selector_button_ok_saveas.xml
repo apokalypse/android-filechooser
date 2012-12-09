@@ -8,7 +8,8 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:drawable="@drawable/afc_button_ok_saveas_pressed" android:state_pressed="true"/> <!-- pressed -->
-    <item android:drawable="@drawable/afc_button_ok_saveas"/> <!-- default -->
+    <item android:drawable="@drawable/afc_button_ok_saveas_light_pressed" android:state_pressed="true"/>
+    <item android:drawable="@drawable/afc_button_ok_saveas_light_focused" android:state_focused="true"/>
+    <item android:drawable="@drawable/afc_button_ok_saveas_light"/>
 
 </selector>

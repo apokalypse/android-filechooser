@@ -465,15 +465,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
         if (mViewLoading.isShown()) {
             if (BuildConfig.DEBUG)
                 Log.d(_ClassName, "onBackPressed() >> cancelling previous query...");
-            /*
-             * Adds a fake path...
-             */
-            getContentResolver().query(
-                    BaseFile.genContentUriBase(mFileProviderAuthority).buildUpon()
-                            .appendPath(Integer.toString(_IdLoaderData))
-                            .appendQueryParameter(BaseFile._ParamTaskId, Integer.toString(_IdLoaderData))
-                            .appendQueryParameter(BaseFile._ParamCancel, Boolean.toString(true)).build(), null, null,
-                    null, null);
+            cancelPreviousLoader();
             Dlg.toast(FileChooserActivity.this, R.string.afc_msg_cancelled, Dlg._LengthShort);
 
             if (mFileAdapter == null || mFileAdapter.getPath() == null)
@@ -497,6 +489,11 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        /*
+         * Cancel previous loader if there is one.
+         */
+        cancelPreviousLoader();
+
         mViewGroupFiles.setVisibility(View.GONE);
         mViewLoading.setVisibility(View.VISIBLE);
 
@@ -687,6 +684,21 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
         b.putString(_Path, path.toString());
         getSupportLoaderManager().initLoader(_LoaderData, b, this);
     }// loadInitialPath()
+
+    /**
+     * Cancels the loader in progress.
+     */
+    private void cancelPreviousLoader() {
+        /*
+         * Adds a fake path...
+         */
+        getContentResolver().query(
+                BaseFile.genContentUriBase(mFileProviderAuthority).buildUpon()
+                        .appendPath(Integer.toString(_IdLoaderData))
+                        .appendQueryParameter(BaseFile._ParamTaskId, Integer.toString(_IdLoaderData))
+                        .appendQueryParameter(BaseFile._ParamCancel, Boolean.toString(true)).build(), null, null, null,
+                null);
+    }// cancelPreviousLoader()
 
     /**
      * As the name means...
@@ -985,6 +997,12 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
             return;
         }
 
+        if (mFileAdapter.getPath() == null
+                || !BaseFileProviderUtils.fileCanWrite(this, mFileProviderAuthority, mFileAdapter.getPath())) {
+            Dlg.toast(this, R.string.afc_msg_cannot_create_new_folder_here, Dlg._LengthShort);
+            return;
+        }
+
         final AlertDialog _dlg = Dlg.newDlg(this);
 
         View view = getLayoutInflater().inflate(R.layout.afc_simple_text_input_view, null);
@@ -1254,6 +1272,11 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
             return true;
         }
+
+        Dlg.toast(
+                FileChooserActivity.this,
+                getString(R.string.afc_pmsg_cannot_access_dir,
+                        BaseFileProviderUtils.getFileName(this, mFileProviderAuthority, dir)), Dlg._LengthShort);
         return false;
     }// goTo()
 

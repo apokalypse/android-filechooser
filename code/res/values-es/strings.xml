@@ -36,6 +36,7 @@
     <string name="afc_msg_app_doesnot_have_permission_to_delete_files">La aplicación no tiene permisos para eliminar ficheros/directorios</string>
     <string name="afc_msg_cancelled">Cancelado</string>
     <string name="afc_msg_cannot_connect_to_file_provider_service">No se puede conectar con el servicio proveedor de ficheros</string>
+    <string name="afc_msg_cannot_create_new_folder_here">No se puede crear un nuevo directorio aquí</string>
     <string name="afc_msg_done">Hecho</string>
     <string name="afc_msg_empty">…vacío</string>
     <string name="afc_msg_filename_is_empty">Nombre de fichero vacío</string>

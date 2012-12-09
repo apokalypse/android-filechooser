@@ -32,6 +32,7 @@
     <string name="afc_msg_app_doesnot_have_permission_to_delete_files">This application does not have permission to delete files/ folders</string>
     <string name="afc_msg_cancelled">Cancelled</string>
     <string name="afc_msg_cannot_connect_to_file_provider_service">Can not connect to file provider service</string>
+    <string name="afc_msg_cannot_create_new_folder_here">Can not create new folder here</string>
     <string name="afc_msg_done">Done</string>
     <string name="afc_msg_empty">…empty</string>
     <string name="afc_msg_filename_is_empty">Filename is empty</string>
