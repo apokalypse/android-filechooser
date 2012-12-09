@@ -1057,31 +1057,43 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
     }// doCreateNewDir()
 
     /**
-     * Updates UI that {@code cursor} will not be deleted.
-     * 
-     * @param cursor
-     *            {@link IFileDataModel}.
-     */
-    private void notifyDataModelNotDeleted(Cursor cursor) {
-        mFileAdapter.markItemAsDeleted(cursor.getInt(cursor.getColumnIndex(BaseFile._ID)), false);
-    }// notifyDataModelNotDeleted(()
-
-    /**
      * Deletes a file.
      * 
-     * @param cursor
-     *            {@link Cursor}.
+     * @param position
+     *            the position of item to be delete.
      */
-    private void doDeleteFile(final Cursor cursor) {
+    private void doDeleteFile(final int position) {
+        Cursor cursor = (Cursor) mFileAdapter.getItem(position);
+
+        /*
+         * The cursor can be changed if the list view is updated, so we take its
+         * properties here.
+         */
+        final boolean _isFile = BaseFileProviderUtils.isFile(cursor);
+        final String _filename = BaseFileProviderUtils.getFileName(cursor);
+
+        if (!BaseFileProviderUtils.fileCanWrite(cursor)) {
+            Dlg.toast(
+                    FileChooserActivity.this,
+                    getString(R.string.afc_pmsg_cannot_delete_file, _isFile ? getString(R.string.afc_file)
+                            : getString(R.string.afc_folder), _filename), Dlg._LengthShort);
+            return;
+        }
+
         if (LocalFileContract._Authority.equals(mFileProviderAuthority)
                 && !Utils.hasPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            notifyDataModelNotDeleted(cursor);
             Dlg.toast(this, R.string.afc_msg_app_doesnot_have_permission_to_delete_files, Dlg._LengthShort);
             return;
         }
 
-        final boolean _isFile = BaseFileProviderUtils.isFile(cursor);
-        final String _filename = BaseFileProviderUtils.getFileName(cursor);
+        /*
+         * The cursor can be changed if the list view is updated, so we take its
+         * properties here.
+         */
+        final int _id = cursor.getInt(cursor.getColumnIndex(BaseFile._ID));
+        final Uri _uri = BaseFileProviderUtils.getUri(cursor);
+
+        mFileAdapter.markItemAsDeleted(_id, true);
 
         Dlg.confirmYesno(
                 this,
@@ -1106,15 +1118,14 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                                                 R.string.afc_pmsg_file_has_been_deleted,
                                                 _isFile ? getString(R.string.afc_file) : getString(R.string.afc_folder),
                                                 _filename), Dlg._LengthShort);
+                                doReloadCurrentLocation();
                             }// notifyFileDeleted()
 
                             @Override
                             protected Object doInBackground(Void... arg0) {
                                 getContentResolver().delete(
-                                        BaseFile.genContentIdUriBase(mFileProviderAuthority)
-                                                .buildUpon()
-                                                .appendPath(
-                                                        cursor.getString(cursor.getColumnIndex(BaseFile._ColumnUri)))
+                                        BaseFile.genContentIdUriBase(mFileProviderAuthority).buildUpon()
+                                                .appendPath(_uri.toString())
                                                 .appendQueryParameter(BaseFile._ParamTaskId, Integer.toString(mTaskId))
                                                 .build(), null, null);
 
@@ -1124,17 +1135,15 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                             @Override
                             protected void onCancelled() {
                                 getContentResolver().delete(
-                                        BaseFile.genContentIdUriBase(mFileProviderAuthority)
-                                                .buildUpon()
-                                                .appendPath(
-                                                        cursor.getString(cursor.getColumnIndex(BaseFile._ColumnUri)))
+                                        BaseFile.genContentIdUriBase(mFileProviderAuthority).buildUpon()
+                                                .appendPath(_uri.toString())
                                                 .appendQueryParameter(BaseFile._ParamTaskId, Integer.toString(mTaskId))
                                                 .appendQueryParameter(BaseFile._ParamCancel, Boolean.toString(true))
                                                 .build(), null, null);
 
                                 if (BaseFileProviderUtils.fileExists(FileChooserActivity.this, mFileProviderAuthority,
-                                        BaseFileProviderUtils.getUri(cursor))) {
-                                    notifyDataModelNotDeleted(cursor);
+                                        _uri)) {
+                                    mFileAdapter.markItemAsDeleted(_id, false);
                                     Dlg.toast(FileChooserActivity.this, R.string.afc_msg_cancelled, Dlg._LengthShort);
                                 } else
                                     notifyFileDeleted();
@@ -1147,8 +1156,8 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                                 super.onPostExecute(result);
 
                                 if (BaseFileProviderUtils.fileExists(FileChooserActivity.this, mFileProviderAuthority,
-                                        BaseFileProviderUtils.getUri(cursor))) {
-                                    notifyDataModelNotDeleted(cursor);
+                                        _uri)) {
+                                    mFileAdapter.markItemAsDeleted(_id, false);
                                     Dlg.toast(
                                             FileChooserActivity.this,
                                             getString(R.string.afc_pmsg_cannot_delete_file,
@@ -1164,7 +1173,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
                     @Override
                     public void onCancel(DialogInterface dialog) {
-                        notifyDataModelNotDeleted(cursor);
+                        mFileAdapter.markItemAsDeleted(_id, false);
                     }// onCancel()
                 });
     }// doDeleteFile()
@@ -1644,11 +1653,17 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                 final int _min_x_velocity = 200;
                 if (Math.abs(e1.getY() - e2.getY()) < _max_y_distance
                         && Math.abs(e1.getX() - e2.getX()) > _min_x_distance && Math.abs(velocityX) > _min_x_velocity) {
-                    Object o = getData(e1.getX(), e1.getY());
-                    if (o instanceof Cursor) {
-                        Cursor cursor = (Cursor) o;
-                        mFileAdapter.markItemAsDeleted(cursor.getInt(cursor.getColumnIndex(BaseFile._ID)), true);
-                        doDeleteFile(cursor);
+                    int pos = getSubViewId(e1.getX(), e1.getY());
+                    if (pos >= 0) {
+                        /*
+                         * Don't let this event to be recognized as a single
+                         * tap.
+                         */
+                        MotionEvent cancelEvent = MotionEvent.obtain(e1);
+                        cancelEvent.setAction(MotionEvent.ACTION_CANCEL);
+                        mViewFiles.onTouchEvent(cancelEvent);
+
+                        doDeleteFile(mViewFiles.getFirstVisiblePosition() + pos);
                     }
                 }
 

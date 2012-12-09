@@ -206,8 +206,8 @@ public class LocalFileProvider extends BaseFileProvider {
                             _UriMatcher.match(uri)));
 
         MatrixCursor matrixCursor = new MatrixCursor(new String[] { BaseFile._ID, BaseFile._ColumnUri,
-                BaseFile._ColumnName, BaseFile._ColumnCanRead, BaseFile._ColumnSize, BaseFile._ColumnType,
-                BaseFile._ColumnModificationTime });
+                BaseFile._ColumnName, BaseFile._ColumnCanRead, BaseFile._ColumnCanWrite, BaseFile._ColumnSize,
+                BaseFile._ColumnType, BaseFile._ColumnModificationTime });
 
         switch (_UriMatcher.match(uri)) {
         case _DefaultDirectory: {
@@ -221,6 +221,7 @@ public class LocalFileProvider extends BaseFileProvider {
             newRow.add(Uri.fromFile(file).toString());
             newRow.add(file.getName());
             newRow.add(file.canRead() ? 1 : 0);
+            newRow.add(file.canWrite() ? 1 : 0);
             newRow.add(file.length());
             newRow.add(type);
             newRow.add(file.lastModified());
@@ -278,6 +279,7 @@ public class LocalFileProvider extends BaseFileProvider {
                         newRow.add(Uri.fromFile(f).toString());
                         newRow.add(f.getName());
                         newRow.add(f.canRead() ? 1 : 0);
+                        newRow.add(f.canWrite() ? 1 : 0);
                         newRow.add(f.length());
                         newRow.add(type);
                         newRow.add(f.lastModified());
@@ -326,6 +328,7 @@ public class LocalFileProvider extends BaseFileProvider {
             newRow.add(Uri.fromFile(file).toString());
             newRow.add(file.getName());
             newRow.add(file.canRead() ? 1 : 0);
+            newRow.add(file.canWrite() ? 1 : 0);
             newRow.add(file.length());
             newRow.add(type);
             newRow.add(file.lastModified());

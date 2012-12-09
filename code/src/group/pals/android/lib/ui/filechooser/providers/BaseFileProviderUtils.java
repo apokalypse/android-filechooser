@@ -149,7 +149,7 @@ public class BaseFileProviderUtils {
     }// getFileName()
 
     /**
-     * Checks if {@code uri} is existed or not.
+     * Checks if the file pointed by {@code uri} is existed or not.
      * 
      * @param context
      *            {@link Context}.
@@ -157,7 +157,7 @@ public class BaseFileProviderUtils {
      *            the file provider authority.
      * @param uri
      *            the URI you want to check.
-     * @return {@code true} if {@code uri} is existed, {@code false} otherwise.
+     * @return {@code true} or {@code false}.
      */
     public static boolean fileExists(Context context, String authority, Uri uri) {
         Cursor cursor = context.getContentResolver().query(
@@ -176,7 +176,7 @@ public class BaseFileProviderUtils {
     }// fileExists()
 
     /**
-     * Checks if {@code uri} is readable or not.
+     * Checks if the file pointed by {@code uri} is readable or not.
      * 
      * @param context
      *            {@link Context}.
@@ -184,7 +184,7 @@ public class BaseFileProviderUtils {
      *            the file provider authority.
      * @param uri
      *            the URI you want to check.
-     * @return {@code true} if {@code uri} is readable, {@code false} otherwise.
+     * @return {@code true} or {@code false}.
      */
     public static boolean fileCanRead(Context context, String authority, Uri uri) {
         Cursor cursor = context.getContentResolver().query(
@@ -195,14 +195,65 @@ public class BaseFileProviderUtils {
 
         try {
             if (cursor.moveToFirst())
-                return cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnCanRead)) != 0
-                        && (cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnType)) == BaseFile._FileTypeDirectory || cursor
-                                .getInt(cursor.getColumnIndex(BaseFile._ColumnType)) == BaseFile._FileTypeFile);
+                return fileCanRead(cursor);
             return false;
         } finally {
             cursor.close();
         }
-    }// fileRanRead()
+    }// fileCanRead()
+
+    /**
+     * Checks if the file pointed be {@code cursor} is readable or not.
+     * 
+     * @param cursor
+     *            the cursor points to a file.
+     * @return {@code true} or {@code false}.
+     */
+    public static boolean fileCanRead(Cursor cursor) {
+        return cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnCanRead)) != 0
+                && (cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnType)) == BaseFile._FileTypeDirectory || cursor
+                        .getInt(cursor.getColumnIndex(BaseFile._ColumnType)) == BaseFile._FileTypeFile);
+    }// fileCanRead()
+
+    /**
+     * Checks if the file pointed by {@code uri} is writable or not.
+     * 
+     * @param context
+     *            {@link Context}.
+     * @param authority
+     *            the file provider authority.
+     * @param uri
+     *            the URI you want to check.
+     * @return {@code true} or {@code false}.
+     */
+    public static boolean fileCanWrite(Context context, String authority, Uri uri) {
+        Cursor cursor = context.getContentResolver().query(
+                BaseFile.genContentIdUriBase(authority).buildUpon().appendPath(uri.toString()).build(), null, null,
+                null, null);
+        if (cursor == null)
+            return false;
+
+        try {
+            if (cursor.moveToFirst())
+                return fileCanWrite(cursor);
+            return false;
+        } finally {
+            cursor.close();
+        }
+    }// fileCanWrite()
+
+    /**
+     * Checks if the file pointed by {@code cursor} is writable or not.
+     * 
+     * @param cursor
+     *            the cursor points to a file.
+     * @return {@code true} or {@code false}.
+     */
+    public static boolean fileCanWrite(Cursor cursor) {
+        return cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnCanWrite)) != 0
+                && (cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnType)) == BaseFile._FileTypeDirectory || cursor
+                        .getInt(cursor.getColumnIndex(BaseFile._ColumnType)) == BaseFile._FileTypeFile);
+    }// fileCanWrite()
 
     /**
      * Gets default path of a provider.

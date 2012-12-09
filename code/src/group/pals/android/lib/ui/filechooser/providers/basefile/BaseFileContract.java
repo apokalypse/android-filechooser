@@ -274,7 +274,7 @@ public class BaseFileContract {
         /**
          * The URI of this file.
          * <p>
-         * Type: String
+         * Type: {@code String}
          * </p>
          */
         public static final String _ColumnUri = "uri";
@@ -282,7 +282,7 @@ public class BaseFileContract {
         /**
          * The name of this file.
          * <p>
-         * Type: String
+         * Type: {@code String}
          * </p>
          */
         public static final String _ColumnName = "name";
@@ -290,24 +290,34 @@ public class BaseFileContract {
         /**
          * Size of this file.
          * <p>
-         * Type: Long
+         * Type: {@code Long}
          * </p>
          */
         public static final String _ColumnSize = "size";
 
         /**
-         * Holds the readable attribute of this file.
+         * Holds the readable attribute of this file, {@code 0 == false} and
+         * {@code 1 == true}.
          * <p>
-         * Type: Boolean
+         * Type: {@code Integer}
          * </p>
          */
         public static final String _ColumnCanRead = "can_read";
 
         /**
+         * Holds the writable attribute of this file, {@code 0 == false} and
+         * {@code 1 == true}.
+         * <p>
+         * Type: {@code Integer}
+         * </p>
+         */
+        public static final String _ColumnCanWrite = "can_write";
+
+        /**
          * The type of this file. Can be one of {@link #_FileTypeDirectory},
          * {@link #_FileTypeFile}, {@link #_FileTypeUnknown}.
          * <p>
-         * Type: Integer
+         * Type: {@code Integer}
          * </p>
          */
         public static final String _ColumnType = "type";
@@ -315,7 +325,7 @@ public class BaseFileContract {
         /**
          * The modification time of this file, in milliseconds.
          * <p>
-         * Type: Long
+         * Type: {@code Long}
          * </p>
          */
         public static final String _ColumnModificationTime = "modification_time";
