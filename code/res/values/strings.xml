@@ -33,6 +33,7 @@
     <string name="afc_msg_cancelled">Cancelled</string>
     <string name="afc_msg_cannot_connect_to_file_provider_service">Can not connect to file provider service</string>
     <string name="afc_msg_cannot_create_new_folder_here">Can not create new folder here</string>
+    <string name="afc_msg_cannot_save_a_file_here">Can not save a file here</string>
     <string name="afc_msg_done">Done</string>
     <string name="afc_msg_empty">…empty</string>
     <string name="afc_msg_failed_please_try_again">Failed. Please try again.</string>

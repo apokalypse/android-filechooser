@@ -240,13 +240,18 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
      */
     private static final int _LoaderData = 1;
 
-    /**
-     * Default task ID for loading directory content.
-     */
-    private static final int _IdLoaderData = 1;
-
     // ====================
     // "CONSTANT" VARIABLES
+
+    /**
+     * Task ID.
+     */
+    private static int mTaskId = 0;
+
+    /**
+     * Task ID for loading directory content.
+     */
+    private final int _IdLoaderData = newTaskId();
 
     private String mFileProviderAuthority;
     private Uri mRoot;
@@ -265,10 +270,6 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
      */
     private BaseFileAdapter mFileAdapter;
 
-    /**
-     * Task ID.
-     */
-    private int mTaskId = 0;
     private boolean mLoading = false;
 
     /*
@@ -475,6 +476,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        cancelPreviousLoader();
     }// onDestroy()
 
     /*
@@ -705,6 +707,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                         .appendQueryParameter(BaseFile._ParamTaskId, Integer.toString(_IdLoaderData))
                         .appendQueryParameter(BaseFile._ParamCancel, Boolean.toString(true)).build(), null, null, null,
                 null);
+        mLoading = false;
     }// cancelPreviousLoader()
 
     /**
@@ -1242,6 +1245,10 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
      * @since v1.91
      */
     private void doCheckSaveasFilenameAndFinish(String filename) {
+        if (!BaseFileProviderUtils.fileCanWrite(this, mFileProviderAuthority, getCurrentLocation())) {
+            Dlg.toast(this, getString(R.string.afc_msg_cannot_save_a_file_here), Dlg._LengthShort);
+            return;
+        }
         if (TextUtils.isEmpty(filename) || !FileUtils.isFilenameValid(filename)) {
             Dlg.toast(this, getString(R.string.afc_pmsg_filename_is_invalid, filename), Dlg._LengthShort);
             return;

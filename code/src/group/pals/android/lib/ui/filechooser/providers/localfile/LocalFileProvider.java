@@ -298,15 +298,13 @@ public class LocalFileProvider extends BaseFileProvider {
                 }
             }
 
-            try {
-                if (_MapInterruption.get(taskId)) {
-                    if (BuildConfig.DEBUG)
-                        Log.d(_ClassName, "query() >> cancelled...");
-                    return null;
-                }
-            } finally {
+            if (_MapInterruption.get(taskId)) {
+                if (BuildConfig.DEBUG)
+                    Log.d(_ClassName, "query() >> cancelled...");
                 _MapInterruption.delete(taskId);
+                return null;
             }
+            _MapInterruption.delete(taskId);
 
             /*
              * Tells the Cursor what URI to watch, so it knows when its source

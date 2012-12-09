@@ -32,6 +32,7 @@
     <string name="afc_msg_cancelled">Hủy bỏ</string>
     <string name="afc_msg_cannot_connect_to_file_provider_service">Không thể kết nối đến dịch vụ cung cấp tập tin</string>
     <string name="afc_msg_cannot_create_new_folder_here">Không thể tạo thư mục mới ở đây</string>
+    <string name="afc_msg_cannot_save_a_file_here">Không thể lưu tập tin ở đây</string>
     <string name="afc_msg_done">Xong</string>
     <string name="afc_msg_empty">…trống</string>
     <string name="afc_msg_failed_please_try_again">Thất bại. Vui lòng thử lại.</string>
