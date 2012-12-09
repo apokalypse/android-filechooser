@@ -184,22 +184,12 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
     }// bindView()
 
     @Override
-    public void notifyDataSetChanged() {
-        super.notifyDataSetChanged();
-        // TODO
-        // synchronized (mSelectedChildrenMap) {
-        // mSelectedChildrenMap.clear();
-        // }
-    }// notifyDataSetChanged()
-
-    @Override
-    public void notifyDataSetInvalidated() {
-        super.notifyDataSetInvalidated();
-        // TODO
-        // synchronized (mSelectedChildrenMap) {
-        // mSelectedChildrenMap.clear();
-        // }
-    }// notifyDataSetInvalidated()
+    public void changeCursor(Cursor cursor) {
+        super.changeCursor(cursor);
+        synchronized (mSelectedChildrenMap) {
+            mSelectedChildrenMap.clear();
+        }
+    }// changeCursor()
 
     /*
      * UTILITIES.

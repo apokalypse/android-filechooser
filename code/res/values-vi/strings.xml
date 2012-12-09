@@ -41,7 +41,7 @@
     <string name="afc_pmsg_confirm_delete_file">Bạn có chắc muốn xóa %1$s \"%2$s\"?</string>
     <string name="afc_pmsg_confirm_replace_file">Tập tin \"%1$s\" đã có.\n\nBạn có muốn ghi đè lên?</string>
     <string name="afc_pmsg_deleting_file">Đang xóa %1$s \"%2$s\"…</string>
-    <string name="afc_pmsg_file_has_been_deleted">…%1$s \"%2$s\" đã được xoá</string>
+    <string name="afc_pmsg_file_has_been_deleted">%1$s \"%2$s\" đã được xoá</string>
     <string name="afc_pmsg_filename_is_directory">\"%1$s\" là một thư mục</string>
     <string name="afc_pmsg_filename_is_invalid">Tên tập tin \"%1$s\" không hợp lệ</string>
     <string name="afc_pmsg_max_file_count_allowed">…còn nhiều tập tin hơn, cho phép hiển thị: %1$,d</string>

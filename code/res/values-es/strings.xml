@@ -46,7 +46,7 @@
     <string name="afc_pmsg_confirm_delete_file">¿Seguro que deseas eliminar este %1$s \"%2$s\"?</string>
     <string name="afc_pmsg_confirm_replace_file">El fichero \"%1$s\" ya existe.\n\n¿Quieres reemplazarlo?</string>
     <string name="afc_pmsg_deleting_file">Eliminando %1$s \"%2$s\"…</string>
-    <string name="afc_pmsg_file_has_been_deleted">…%1$s \"%2$s\" ha sido eliminado</string>
+    <string name="afc_pmsg_file_has_been_deleted">%1$s \"%2$s\" ha sido eliminado</string>
     <string name="afc_pmsg_filename_is_directory">\"%1$s\" es un directorio</string>
     <string name="afc_pmsg_filename_is_invalid">El nombre de fichero \"%1$s\" no es válido</string>
     <string name="afc_pmsg_max_file_count_allowed">…tiene mas ficheros, máximos permitidos: %1$,d</string>

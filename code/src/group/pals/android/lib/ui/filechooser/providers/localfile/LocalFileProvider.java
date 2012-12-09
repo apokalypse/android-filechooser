@@ -124,7 +124,11 @@ public class LocalFileProvider extends BaseFileProvider {
                     count = 1;
             } else {
                 count = deleteFile(taskId, file, isRecursive);
-                _MapInterruption.delete(taskId);
+                if (_MapInterruption.get(taskId)) {
+                    if (BuildConfig.DEBUG)
+                        Log.d(_ClassName, "delete() >> cancelled...");
+                    _MapInterruption.delete(taskId);
+                }
             }
 
             break;// single file
@@ -133,6 +137,9 @@ public class LocalFileProvider extends BaseFileProvider {
         default:
             throw new IllegalArgumentException("Unknown URI " + uri);
         }
+
+        if (BuildConfig.DEBUG)
+            Log.d(_ClassName, "delete() >> count = " + count);
 
         if (count > 0) {
             /*
