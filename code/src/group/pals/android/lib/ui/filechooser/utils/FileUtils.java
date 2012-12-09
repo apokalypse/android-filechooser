@@ -9,6 +9,9 @@ package group.pals.android.lib.ui.filechooser.utils;
 
 import group.pals.android.lib.ui.filechooser.R;
 import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileContract.BaseFile;
+
+import java.util.regex.Pattern;
+
 import android.util.SparseArray;
 
 /**
@@ -21,22 +24,22 @@ import android.util.SparseArray;
 public class FileUtils {
 
     /**
-     * Map of the regexes for file types corresponding to resource IDs for
+     * Map of the pattern for file types corresponding to resource IDs for
      * icons.
      */
-    private static final SparseArray<String> _MapFileIcons = new SparseArray<String>();
+    private static final SparseArray<Pattern> _MapFileIcons = new SparseArray<Pattern>();
 
     static {
-        _MapFileIcons.put(R.drawable.afc_file_audio, MimeTypes._RegexFileTypeAudios);
-        _MapFileIcons.put(R.drawable.afc_file_video, MimeTypes._RegexFileTypeVideos);
-        _MapFileIcons.put(R.drawable.afc_file_image, MimeTypes._RegexFileTypeImages);
-        _MapFileIcons.put(R.drawable.afc_file_plain_text, MimeTypes._RegexFileTypePlainTexts);
+        _MapFileIcons.put(R.drawable.afc_file_audio, Pattern.compile(MimeTypes._RegexFileTypeAudios));
+        _MapFileIcons.put(R.drawable.afc_file_video, Pattern.compile(MimeTypes._RegexFileTypeVideos));
+        _MapFileIcons.put(R.drawable.afc_file_image, Pattern.compile(MimeTypes._RegexFileTypeImages));
+        _MapFileIcons.put(R.drawable.afc_file_plain_text, Pattern.compile(MimeTypes._RegexFileTypePlainTexts));
 
         /*
          * APK files are counted before compressed files.
          */
-        _MapFileIcons.put(R.drawable.afc_file_apk, MimeTypes._RegexFileTypeApks);
-        _MapFileIcons.put(R.drawable.afc_file_compressed, MimeTypes._RegexFileTypeCompressed);
+        _MapFileIcons.put(R.drawable.afc_file_apk, Pattern.compile(MimeTypes._RegexFileTypeApks));
+        _MapFileIcons.put(R.drawable.afc_file_compressed, Pattern.compile(MimeTypes._RegexFileTypeCompressed));
     }
 
     /**
@@ -58,7 +61,7 @@ public class FileUtils {
 
         case BaseFile._FileTypeFile:
             for (int i = 0; i < _MapFileIcons.size(); i++)
-                if (fileName.matches(_MapFileIcons.valueAt(i)))
+                if (_MapFileIcons.valueAt(i).matcher(fileName).find())
                     return _MapFileIcons.keyAt(i);
 
             return R.drawable.afc_file;
