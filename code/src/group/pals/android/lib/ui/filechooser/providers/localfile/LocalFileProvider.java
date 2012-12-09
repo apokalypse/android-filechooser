@@ -414,7 +414,7 @@ public class LocalFileProvider extends BaseFileProvider {
 
                     if (results.size() >= limit) {
                         hasMoreFiles[0] = true;
-                        throw new CancellationException();
+                        throw new CancellationException("Exceeding limit...");
                     }
                     results.add(pathname);
 
@@ -423,7 +423,7 @@ public class LocalFileProvider extends BaseFileProvider {
             });
         } catch (CancellationException e) {
             if (BuildConfig.DEBUG)
-                Log.d(_ClassName, "listFiles() >> cancelled...");
+                Log.d(_ClassName, "listFiles() >> cancelled... >> " + e);
         }
     }// listFiles()
 
