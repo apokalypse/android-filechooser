@@ -21,7 +21,6 @@
     <string name="afc_cmd_select_all_files">Chọn hết tập tin</string>
     <string name="afc_cmd_select_all_folders">Chọn hết thư mục</string>
     <string name="afc_cmd_sort">Sắp xếp…</string>
-    <string name="afc_ellipsize">…</string>
     <string name="afc_file">tập tin</string>
     <string name="afc_folder">thư mục</string>
     <string name="afc_hint_clear">xóa</string>

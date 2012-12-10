@@ -62,4 +62,12 @@
         <item name="android:background">@drawable/afc_ic_action_clear_dark</item>
     </style>
 
+    <style name="afc_button_sort_symbol_dark" parent="@android:style/Widget.ImageButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:background">@drawable/afc_selector_button_sort_symbol_dark</item>
+        <item name="android:padding">@dimen/afc_5dp</item>
+    </style>
+
 </resources>

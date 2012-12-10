@@ -1073,12 +1073,12 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
         View view = getLayoutInflater().inflate(R.layout.afc_settings_sort_view, null);
         for (int i = 0; i < _BtnSortIds.length; i++) {
-            Button btn = (Button) view.findViewById(_BtnSortIds[i]);
-            btn.setOnClickListener(listener);
+            View v = view.findViewById(_BtnSortIds[i]);
+            v.setOnClickListener(listener);
             if (i == btnCurrentSortTypeIdx) {
-                btn.setEnabled(false);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-                    btn.setText(R.string.afc_ellipsize);
+                v.setEnabled(false);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB && v instanceof Button)
+                    ((Button) v).setText(R.string.afc_bullet);
             }
         }
 

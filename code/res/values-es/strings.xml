@@ -26,7 +26,6 @@
     <string name="afc_cmd_select_all_files">Seleccionar todos los ficheros</string>
     <string name="afc_cmd_select_all_folders">Seleccionar todas los directorios</string>
     <string name="afc_cmd_sort">Ordenar…</string>
-    <string name="afc_ellipsize">…</string>
     <string name="afc_file">fichero</string>
     <string name="afc_folder">directorio</string>
     <string name="afc_hint_clear">limpiar</string>
