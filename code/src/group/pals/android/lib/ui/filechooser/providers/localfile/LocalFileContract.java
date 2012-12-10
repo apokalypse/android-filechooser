@@ -16,5 +16,13 @@ package group.pals.android.lib.ui.filechooser.providers.localfile;
  */
 public class LocalFileContract {
 
+    /**
+     * The authority of this provider.
+     */
     public static final String _Authority = "group.pals.android.lib.ui.filechooser.provider.LocalFile";
+
+    /**
+     * The unique ID of this provider.
+     */
+    public static final String _ID = "7dab9818-0a8b-47ef-88cc-10fe538bfaf7";
 }

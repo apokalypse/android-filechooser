@@ -8,6 +8,11 @@
 package group.pals.android.lib.ui.filechooser.providers;
 
 import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileContract.BaseFile;
+import group.pals.android.lib.ui.filechooser.providers.localfile.LocalFileContract;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -20,6 +25,43 @@ import android.net.Uri;
  * 
  */
 public class BaseFileProviderUtils {
+
+    /**
+     * Map of provider ID to its authority.
+     */
+    private static final Map<String, String> _MapProviderInfo = new HashMap<String, String>();
+
+    static {
+        _MapProviderInfo.put(LocalFileContract._ID, LocalFileContract._Authority);
+    }// static
+
+    /**
+     * Gets provider name from its ID.
+     * 
+     * @param context
+     *            {@link Context}.
+     * @param providerId
+     *            the provider ID.
+     * @return the provider name, can be {@code null} if not provided.
+     */
+    public static String getProviderName(Context context, String providerId) {
+        for (String id : _MapProviderInfo.keySet()) {
+            if (!id.equals(providerId))
+                continue;
+
+            Cursor cursor = context.getContentResolver().query(BaseFile.genContentUriInfo(_MapProviderInfo.get(id)),
+                    null, null, null, null);
+            if (cursor == null)
+                return null;
+            try {
+                return cursor.getString(cursor.getColumnIndex(BaseFile._ColumnProviderName));
+            } finally {
+                cursor.close();
+            }
+        }
+
+        return null;
+    }// getProviderName()
 
     /**
      * Checks if {@code uri} is a directory.

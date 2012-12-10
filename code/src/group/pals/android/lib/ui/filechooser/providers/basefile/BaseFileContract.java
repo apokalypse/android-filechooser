@@ -100,8 +100,18 @@ public class BaseFileContract {
          * PATHS
          */
 
+        /**
+         * The path to a single directory.
+         */
         public static final String _PathDirectory = "directory";
+        /**
+         * The path to a single file. This can be a file or a directory.
+         */
         public static final String _PathFile = "file";
+        /**
+         * The path to query the provider's identification such as name, ID...
+         */
+        public static final String _PathInfo = "info";
 
         /*
          * Parameters.
@@ -273,6 +283,18 @@ public class BaseFileContract {
             return Uri.parse(ProviderUtils._Scheme + authority + "/" + _PathFile + "/");
         }// genContentIdUriBase()
 
+        /**
+         * Generates content URI containing the provider identification, such as
+         * name, ID...
+         * 
+         * @param authority
+         *            the authority of file provider.
+         * @return The base URI containing provider's identification.
+         */
+        public static Uri genContentUriInfo(String authority) {
+            return Uri.parse(ProviderUtils._Scheme + authority + "/" + _PathInfo);
+        }// genContentUriInfo()
+
         /*
          * MIME type definitions.
          */
@@ -349,5 +371,21 @@ public class BaseFileContract {
          * </p>
          */
         public static final String _ColumnModificationTime = "modification_time";
+
+        /**
+         * The name of this provider.
+         * <p>
+         * Type: {@code String}
+         * </p>
+         */
+        public static final String _ColumnProviderName = "provider_name";
+
+        /**
+         * The ID of this provider.
+         * <p>
+         * Type: {@code String}
+         * </p>
+         */
+        public static final String _ColumnProviderId = "provider_id";
     }// BaseFile
 }

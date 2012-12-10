@@ -33,12 +33,24 @@ public class Prefs {
      * Generates global preference filename of this library.
      * 
      * @param context
-     *            {@link Context} - will be used to obtain the application
-     *            context.
+     *            {@link Context}.
      * @return the global preference filename.
      */
     public static final String genPreferenceFilename(Context context) {
         return String.format("%s_%s", context.getString(R.string.afc_lib_name), _Uid);
+    }
+
+    /**
+     * Generates global database filename.
+     * 
+     * @param context
+     *            {@link Context}.
+     * @param name
+     *            the database filename.
+     * @return the global database filename.
+     */
+    public static final String genDatabaseFilename(Context context, String name) {
+        return String.format("%s_%s_%s", context.getString(R.string.afc_lib_name), _Uid, name);
     }
 
     /**

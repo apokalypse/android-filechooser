@@ -43,6 +43,7 @@
     <string name="afc_msg_failed_please_try_again">Error. Por favor, inténtelo de nuevo.</string>
     <string name="afc_msg_filename_is_empty">Nombre de fichero vacío</string>
     <string name="afc_msg_loading">Cargando…</string>
+    <string name="afc_phone">Fon</string>
     <string name="afc_pmsg_cannot_access_dir">No se puede acceder a \"%1$s\"</string>
     <string name="afc_pmsg_cannot_create_folder">No se puede crear el directorio \"%1$s\"</string>
     <string name="afc_pmsg_cannot_delete_file">No se puede borrar %1$s \"%2$s\"</string>
@@ -70,6 +71,7 @@
     <string name="afc_title_save_as">Guardar como…</string>
     <string name="afc_title_size">Tamaño</string>
     <string name="afc_title_sort_by">Ordenar por…</string>
+    <string name="afc_today">Hoy</string>
     <string name="afc_yesterday">Ayer</string>
 
 </resources>

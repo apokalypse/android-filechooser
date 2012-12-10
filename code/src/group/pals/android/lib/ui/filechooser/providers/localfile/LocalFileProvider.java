@@ -8,6 +8,7 @@
 package group.pals.android.lib.ui.filechooser.providers.localfile;
 
 import group.pals.android.lib.ui.filechooser.BuildConfig;
+import group.pals.android.lib.ui.filechooser.R;
 import group.pals.android.lib.ui.filechooser.providers.ProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileContract.BaseFile;
 import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileProvider;
@@ -69,6 +70,11 @@ public class LocalFileProvider extends BaseFileProvider {
     private static final int _File = 3;
 
     /**
+     * The incoming URI matches the identification URI pattern.
+     */
+    private static final int _Info = 4;
+
+    /**
      * A {@link UriMatcher} instance.
      */
     private static final UriMatcher _UriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -82,6 +88,7 @@ public class LocalFileProvider extends BaseFileProvider {
         _UriMatcher.addURI(LocalFileContract._Authority, BaseFile._PathDirectory, _DefaultDirectory);
         _UriMatcher.addURI(LocalFileContract._Authority, BaseFile._PathDirectory + "/*", _Directory);
         _UriMatcher.addURI(LocalFileContract._Authority, BaseFile._PathFile + "/*", _File);
+        _UriMatcher.addURI(LocalFileContract._Authority, BaseFile._PathInfo, _Info);
     }// static
 
     private final Collator mCollator = Collator.getInstance();
@@ -302,13 +309,15 @@ public class LocalFileProvider extends BaseFileProvider {
                 }
             }
 
-            if (_MapInterruption.get(taskId)) {
-                if (BuildConfig.DEBUG)
-                    Log.d(_ClassName, "query() >> cancelled...");
+            try {
+                if (_MapInterruption.get(taskId)) {
+                    if (BuildConfig.DEBUG)
+                        Log.d(_ClassName, "query() >> cancelled...");
+                    return null;
+                }
+            } finally {
                 _MapInterruption.delete(taskId);
-                return null;
             }
-            _MapInterruption.delete(taskId);
 
             /*
              * Tells the Cursor what URI to watch, so it knows when its source
@@ -343,6 +352,14 @@ public class LocalFileProvider extends BaseFileProvider {
             newRow.add(file.lastModified());
 
             break;// _File
+        }
+
+        case _Info: {
+            MatrixCursor mc = new MatrixCursor(
+                    new String[] { BaseFile._ColumnProviderId, BaseFile._ColumnProviderName });
+            mc.newRow().add(LocalFileContract._ID).add(getContext().getString(R.string.afc_phone));
+
+            return mc;// _Info
         }
 
         default:

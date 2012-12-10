@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+
+    <TextView
+        android:id="@+id/afc_view_history_sub_item_textview_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/afc_2sp"
+        android:layout_marginLeft="@dimen/afc_5sp"
+        android:layout_marginRight="@dimen/afc_5sp"
+        android:layout_marginTop="@dimen/afc_2sp"
+        android:gravity="right|center_vertical"
+        android:minWidth="@dimen/afc_view_history_sub_item_textview_time_min_width" />
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/afc_2sp"
+        android:layout_weight="1" >
+
+        <TextView
+            android:id="@+id/afc_view_history_sub_item_textview_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:ellipsize="middle"
+            android:maxLines="@integer/afc_history_filename_max_lines"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/afc_view_history_sub_item_textview_path"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/afc_view_history_sub_item_textview_name"
+            android:layout_marginTop="@dimen/afc_2sp"
+            android:layout_toLeftOf="@+id/afc_view_history_sub_item_textview_type"
+            android:ellipsize="middle"
+            android:maxLines="@integer/afc_history_pathname_max_lines" />
+
+        <TextView
+            android:id="@+id/afc_view_history_sub_item_textview_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/afc_view_history_sub_item_textview_name"
+            android:layout_marginLeft="@dimen/afc_10sp"
+            android:layout_marginTop="@dimen/afc_2sp"
+            android:gravity="right|center_vertical"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="italic" />
+    </RelativeLayout>
+
+    <CheckBox
+        android:id="@+id/afc_view_history_sub_item_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:gravity="top|right"
+        android:padding="@dimen/afc_5sp" />
+
+</LinearLayout>

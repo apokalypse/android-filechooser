@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#cc1f1f1f" >
+
+    <TextView
+        android:id="@+id/afc_view_history_item_textview_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:ellipsize="middle"
+        android:gravity="center"
+        android:maxLines="@integer/afc_history_filename_max_lines"
+        android:padding="@dimen/afc_10sp"
+        android:textStyle="bold" />
+
+</RelativeLayout>

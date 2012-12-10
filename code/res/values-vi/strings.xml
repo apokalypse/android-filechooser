@@ -38,6 +38,7 @@
     <string name="afc_msg_failed_please_try_again">Thất bại. Vui lòng thử lại.</string>
     <string name="afc_msg_filename_is_empty">Tên tập tin không hợp lệ</string>
     <string name="afc_msg_loading">Đang tải…</string>
+    <string name="afc_phone">Điện thoại</string>
     <string name="afc_pmsg_cannot_access_dir">Không thể truy cập \"%1$s\"</string>
     <string name="afc_pmsg_cannot_create_folder">Không thể tạo thư mục \"%1$s\"</string>
     <string name="afc_pmsg_cannot_delete_file">Không thể xóa %1$s \"%2$s\"</string>
@@ -64,6 +65,7 @@
     <string name="afc_title_save_as">Lưu…</string>
     <string name="afc_title_size">Kích thước</string>
     <string name="afc_title_sort_by">Sắp xếp theo…</string>
+    <string name="afc_today">Hôm nay</string>
     <string name="afc_yesterday">Hôm qua</string>
 
 </resources>
