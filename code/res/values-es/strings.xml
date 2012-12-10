@@ -43,6 +43,7 @@
     <string name="afc_msg_cannot_connect_to_file_provider_service">No se puede conectar con el servicio proveedor de ficheros</string>
     <string name="afc_msg_cannot_create_new_folder_here">No se puede crear un nuevo directorio aquí</string>
     <string name="afc_msg_cannot_save_a_file_here">No se puede guardar un archivo aquí</string>
+    <string name="afc_msg_confirm_clear_all_bookmarks">¿Seguro que deseas borrar todos los favoritos?</string>
     <string name="afc_msg_confirm_clear_history">¿Está seguro que desea borrar el historial?</string>
     <string name="afc_msg_done">Hecho</string>
     <string name="afc_msg_empty">…vacío</string>
@@ -65,6 +66,8 @@
     <string name="afc_root">Raiz</string>
     <string name="afc_title_advanced_selection">Seleccionar…</string>
     <string name="afc_title_alert">Alerta</string>
+    <string name="afc_title_bookmark_manager">Administrador de favoritos</string>
+    <string name="afc_title_bookmarks">Favoritos</string>
     <string name="afc_title_choose_directories">Seleccionar directorios…</string>
     <string name="afc_title_choose_files">Seleccionar ficheros…</string>
     <string name="afc_title_choose_files_and_directories">Seleccionar ficheros/directorios…</string>

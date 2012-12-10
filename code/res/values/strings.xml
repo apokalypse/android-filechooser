@@ -39,6 +39,7 @@
     <string name="afc_msg_cannot_connect_to_file_provider_service">Can not connect to file provider service</string>
     <string name="afc_msg_cannot_create_new_folder_here">Can not create new folder here</string>
     <string name="afc_msg_cannot_save_a_file_here">Can not save a file here</string>
+    <string name="afc_msg_confirm_clear_all_bookmarks">Do you really want to clear all bookmarks?</string>
     <string name="afc_msg_confirm_clear_history">Are you sure you want to clear history?</string>
     <string name="afc_msg_done">Done</string>
     <string name="afc_msg_empty">…empty</string>
@@ -61,6 +62,8 @@
     <string name="afc_root">Root</string>
     <string name="afc_title_advanced_selection">Select…</string>
     <string name="afc_title_alert">Alert</string>
+    <string name="afc_title_bookmark_manager">Bookmark manager</string>
+    <string name="afc_title_bookmarks">Bookmarks</string>
     <string name="afc_title_choose_directories">Choose folders…</string>
     <string name="afc_title_choose_files">Choose files…</string>
     <string name="afc_title_choose_files_and_directories">Choose files/ folders…</string>
