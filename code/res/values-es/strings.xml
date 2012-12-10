@@ -29,9 +29,14 @@
     <string name="afc_ellipsize">…</string>
     <string name="afc_file">fichero</string>
     <string name="afc_folder">directorio</string>
+    <string name="afc_hint_clear">limpiar</string>
     <string name="afc_hint_double_tap_to_select_file">Doble clic para seleccionar fichero/directorio</string>
     <string name="afc_hint_folder_name">nombre de directorio</string>
+    <string name="afc_hint_newer">más nuevo</string>
+    <string name="afc_hint_older">más viejo</string>
     <string name="afc_hint_save_as_filename">nombre de fichero</string>
+    <string name="afc_hint_search">búsqueda</string>
+    <string name="afc_history">Historia</string>
     <string name="afc_msg_app_doesnot_have_permission_to_create_files">La aplicación no tiene permisos para crear ficheros/directorios</string>
     <string name="afc_msg_app_doesnot_have_permission_to_delete_files">La aplicación no tiene permisos para eliminar ficheros/directorios</string>
     <string name="afc_msg_cancelled">Cancelado</string>

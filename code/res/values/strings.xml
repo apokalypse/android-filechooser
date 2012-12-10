@@ -25,9 +25,14 @@
     <string name="afc_ellipsize">…</string>
     <string name="afc_file">file</string>
     <string name="afc_folder">folder</string>
+    <string name="afc_hint_clear">clear</string>
     <string name="afc_hint_double_tap_to_select_file">Double tap to select file/ folder</string>
     <string name="afc_hint_folder_name">folder name</string>
+    <string name="afc_hint_newer">newer</string>
+    <string name="afc_hint_older">older</string>
     <string name="afc_hint_save_as_filename">filename</string>
+    <string name="afc_hint_search">search</string>
+    <string name="afc_history">History</string>
     <string name="afc_msg_app_doesnot_have_permission_to_create_files">This application does not have permission to create files/ folders</string>
     <string name="afc_msg_app_doesnot_have_permission_to_delete_files">This application does not have permission to delete files/ folders</string>
     <string name="afc_msg_cancelled">Cancelled</string>

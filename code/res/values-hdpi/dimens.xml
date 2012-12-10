@@ -8,6 +8,7 @@
 
 <resources>
 
+    <dimen name="afc_widget_search_view_button_clear_size">48px</dimen>
     <dimen name="afc_button_navigators_min_height">48px</dimen>
     <dimen name="afc_button_ok_saveas_size">48px</dimen>
     <dimen name="afc_thumbnail_size">72px</dimen>

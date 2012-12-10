@@ -24,9 +24,14 @@
     <string name="afc_ellipsize">…</string>
     <string name="afc_file">tập tin</string>
     <string name="afc_folder">thư mục</string>
+    <string name="afc_hint_clear">xóa</string>
     <string name="afc_hint_double_tap_to_select_file">Chạm 2 lần để chọn tập tin/ thư mục…</string>
     <string name="afc_hint_folder_name">tên thư mục</string>
+    <string name="afc_hint_newer">mới hơn</string>
+    <string name="afc_hint_older">cũ hơn</string>
     <string name="afc_hint_save_as_filename">tên tập tin</string>
+    <string name="afc_hint_search">tìm kiếm</string>
+    <string name="afc_history">Lịch sử</string>
     <string name="afc_msg_app_doesnot_have_permission_to_create_files">Ứng dụng này không có quyền tạo mới tập tin/ thư mục</string>
     <string name="afc_msg_app_doesnot_have_permission_to_delete_files">Ứng dụng này không có quyền xóa tập tin/ thư mục</string>
     <string name="afc_msg_cancelled">Hủy bỏ</string>

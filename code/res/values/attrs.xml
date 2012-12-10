@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="AfcSearchView">
+
+        <!--
+             Delay time to invoke a submission after the user entered a search query and waited for.
+             Format in milliseconds.
+        -->
+        <attr name="delayTimeSubmission" format="integer" />
+
+        <!-- Specifies if the view is iconfied or not. True is default. -->
+        <attr name="iconified" format="boolean" />
+
+        <!-- Specifies if this view is closable. True is default. -->
+        <attr name="closable" format="boolean" />
+        <attr name="enabled" format="boolean" />
+        <attr name="hint" format="string" />
+    </declare-styleable>
+
+</resources>
