@@ -15,25 +15,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|top"
-        android:layout_margin="@dimen/afc_5dp" >
+        android:layout_marginLeft="@dimen/afc_2dp" >
 
         <ImageView
             android:id="@+id/afc_file_item_imageview_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/afc_file_icon_size"
+            android:layout_height="@dimen/afc_file_icon_size"
             android:layout_centerHorizontal="true"
             android:adjustViewBounds="true"
-            android:maxHeight="@dimen/afc_thumbnail_size"
-            android:maxWidth="@dimen/afc_thumbnail_size" />
+            android:background="@drawable/afc_selector_button_sort_symbol_dark"
+            android:scaleType="center" />
 
         <ImageView
             android:id="@+id/afc_file_item_imageview_locked_symbol"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/afc_file_icon_size"
+            android:layout_height="@dimen/afc_file_icon_size"
             android:layout_centerHorizontal="true"
             android:adjustViewBounds="true"
-            android:maxHeight="@dimen/afc_thumbnail_size"
-            android:maxWidth="@dimen/afc_thumbnail_size"
+            android:scaleType="center"
             android:src="@drawable/afc_file_locked_dark"
             android:visibility="gone" />
     </RelativeLayout>

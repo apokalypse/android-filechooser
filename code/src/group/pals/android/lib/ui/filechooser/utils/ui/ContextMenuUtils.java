@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
@@ -70,6 +71,14 @@ public class ContextMenuUtils {
         }// if listener != null
 
         _dlg.show();
+
+        /*
+         * Hardcode width...
+         */
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(_dlg.getWindow().getAttributes());
+        lp.width = context.getResources().getDimensionPixelSize(R.dimen.afc_context_menu_width);
+        _dlg.getWindow().setAttributes(lp);
     }// showContextMenu()
 
     /**

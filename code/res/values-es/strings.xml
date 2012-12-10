@@ -13,6 +13,7 @@
 
 <resources>
 
+    <string name="afc_cmd_add_to_bookmarks">Añadir a favoritos</string>
     <string name="afc_cmd_advanced_selection_all">Todos</string>
     <string name="afc_cmd_advanced_selection_invert">Invertir selección</string>
     <string name="afc_cmd_advanced_selection_none">Ninguno</string>

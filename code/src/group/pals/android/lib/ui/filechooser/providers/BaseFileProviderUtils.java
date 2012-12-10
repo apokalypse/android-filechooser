@@ -123,7 +123,7 @@ public class BaseFileProviderUtils {
      * 
      * @param cursor
      *            the cursor points to a file.
-     * @return {@code true} if {@code uri} is a directory, {@code false}
+     * @return {@code true} if {@code cursor} is a directory, {@code false}
      *         otherwise.
      */
     public static boolean isDirectory(Cursor cursor) {

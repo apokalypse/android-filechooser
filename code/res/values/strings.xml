@@ -9,6 +9,7 @@
 <resources>
 
     <string name="afc_lib_name">android-filechooser</string>
+    <string name="afc_cmd_add_to_bookmarks">Add to bookmarks…</string>
     <string name="afc_cmd_advanced_selection_all">All</string>
     <string name="afc_cmd_advanced_selection_invert">Invert selection</string>
     <string name="afc_cmd_advanced_selection_none">None</string>

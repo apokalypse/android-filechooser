@@ -12,5 +12,6 @@
     <dimen name="afc_button_navigators_min_height">72px</dimen>
     <dimen name="afc_button_ok_saveas_size">72px</dimen>
     <dimen name="afc_thumbnail_size">96px</dimen>
+    <dimen name="afc_file_icon_size">96px</dimen>
 
 </resources>

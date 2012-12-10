@@ -140,6 +140,9 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
         bag.mImageLockedSymbol
                 .setVisibility(cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnCanRead)) > 0 ? View.GONE
                         : View.VISIBLE);
+        bag.mImageIcon
+                .setOnClickListener(BaseFileProviderUtils.isDirectory(cursor) ? newImageIconOnClickListener(cursor
+                        .getPosition()) : null);
 
         /*
          * Filename.
@@ -347,6 +350,33 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
     /*
      * LISTENERS
      */
+
+    /**
+     * Creates new listener to handle click event of image icon.
+     * 
+     * @param cursorPosition
+     *            the cursor position.
+     * @return the listener.
+     */
+    private View.OnClickListener newImageIconOnClickListener(final int cursorPosition) {
+        return new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                ContextMenuUtils.showContextMenu(v.getContext(), 0, 0,
+                        new Integer[] { R.string.afc_cmd_add_to_bookmarks },
+                        new ContextMenuUtils.OnMenuItemClickListener() {
+
+                            @Override
+                            public void onClick(final int resId) {
+                                if (resId == R.string.afc_cmd_add_to_bookmarks) {
+                                    // TODO
+                                }
+                            }// onClick()
+                        });
+            }// onClick()
+        };
+    }// newImageIconOnClickListener()
 
     private final View.OnLongClickListener mCheckboxSelectionOnLongClickListener = new View.OnLongClickListener() {
 

@@ -8,6 +8,7 @@
 
 <resources>
 
+    <string name="afc_cmd_add_to_bookmarks">Thêm vào danh sách ưa thích…</string>
     <string name="afc_cmd_advanced_selection_all">Tất cả</string>
     <string name="afc_cmd_advanced_selection_invert">Đảo lựa chọn</string>
     <string name="afc_cmd_advanced_selection_none">Không chọn</string>
