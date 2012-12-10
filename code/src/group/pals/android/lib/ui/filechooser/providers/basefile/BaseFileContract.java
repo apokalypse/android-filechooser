@@ -357,7 +357,8 @@ public class BaseFileContract {
 
         /**
          * The type of this file. Can be one of {@link #_FileTypeDirectory},
-         * {@link #_FileTypeFile}, {@link #_FileTypeUnknown}.
+         * {@link #_FileTypeFile}, {@link #_FileTypeUnknown},
+         * {@link #_FileTypeNotExisted}.
          * <p>
          * Type: {@code Integer}
          * </p>

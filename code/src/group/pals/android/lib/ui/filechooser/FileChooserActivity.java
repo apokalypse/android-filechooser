@@ -9,8 +9,10 @@ package group.pals.android.lib.ui.filechooser;
 
 import group.pals.android.lib.ui.filechooser.prefs.DisplayPrefs;
 import group.pals.android.lib.ui.filechooser.providers.BaseFileProviderUtils;
+import group.pals.android.lib.ui.filechooser.providers.DbUtils;
 import group.pals.android.lib.ui.filechooser.providers.ProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileContract.BaseFile;
+import group.pals.android.lib.ui.filechooser.providers.history.HistoryContract;
 import group.pals.android.lib.ui.filechooser.providers.localfile.LocalFileContract;
 import group.pals.android.lib.ui.filechooser.providers.localfile.LocalFileProvider;
 import group.pals.android.lib.ui.filechooser.utils.E;
@@ -23,8 +25,11 @@ import group.pals.android.lib.ui.filechooser.utils.history.HistoryListener;
 import group.pals.android.lib.ui.filechooser.utils.history.HistoryStore;
 import group.pals.android.lib.ui.filechooser.utils.ui.Dlg;
 import group.pals.android.lib.ui.filechooser.utils.ui.LoadingDialog;
+import group.pals.android.lib.ui.filechooser.utils.ui.history.HistoryFragment;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import android.Manifest;
@@ -36,6 +41,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
@@ -48,6 +54,7 @@ import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -446,6 +453,8 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
             doGoHome();
         } else if (item.getItemId() == R.id.afc_filechooser_activity_menuitem_reload) {
             goTo(getCurrentLocation());
+        } else if (item.getItemId() == R.id.afc_filechooser_activity_menuitem_history) {
+            doShowHistoryManager();
         }
 
         return true;
@@ -927,11 +936,59 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
             mHistory.push(location);
         } else
             mHistory.notifyHistoryChanged();
+
+        updateDbHistory(location);
     }// setCurrentLocation()
 
     private void doGoHome() {
         goTo(mRoot);
     }// doGoHome()
+
+    /**
+     * Shows history manager.
+     */
+    private void doShowHistoryManager() {
+        if (BuildConfig.DEBUG)
+            Log.d(_ClassName, "doShowHistoryManager()");
+
+        // Create and show the dialog.
+        final HistoryFragment _fragmentHistory = HistoryFragment.newInstance();
+        _fragmentHistory.addOnHistoryItemClickListener(new HistoryFragment.OnHistoryItemClickListener() {
+
+            @Override
+            public void onItemClick(String providerId, final Uri uri) {
+                /*
+                 * TODO what to do with `providerId`?
+                 */
+                _fragmentHistory.dismiss();
+
+                /*
+                 * Check if `uri` is in internal list, then use it instead of
+                 * this.
+                 */
+                if (!mHistory.find(new HistoryFilter<Uri>() {
+
+                    @Override
+                    public boolean accept(Uri item) {
+                        if (uri.equals(item)) {
+                            goTo(item);
+                            return true;
+                        }
+
+                        return false;
+                    }// accept()
+                }, false))
+                    goTo(uri);
+            }// onItemClick()
+        });
+
+        /*
+         * DialogFragment.show() will take care of adding the fragment in a
+         * transaction. We also want to remove any currently showing dialog, so
+         * make our own transaction and take care of that here.
+         */
+        _fragmentHistory.show(getSupportFragmentManager().beginTransaction(), HistoryFragment.class.getName());
+    }// doShowHistoryManager()
 
     private static final int[] _BtnSortIds = { R.id.afc_settings_sort_view_button_sort_by_name_asc,
             R.id.afc_settings_sort_view_button_sort_by_name_desc, R.id.afc_settings_sort_view_button_sort_by_size_asc,
@@ -1339,6 +1396,50 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                         BaseFileProviderUtils.getFileName(this, mFileProviderAuthority, dir)), Dlg._LengthShort);
         return false;
     }// goTo()
+
+    /**
+     * Updates or inserts {@code path} into history database.
+     */
+    private void updateDbHistory(Uri path) {
+        Calendar cal = Calendar.getInstance();
+        final long _beginTodayMillis = cal.getTimeInMillis()
+                - (cal.get(Calendar.HOUR_OF_DAY) * 60 * 60 * 1000 + cal.get(Calendar.MINUTE) * 60 * 1000 + cal
+                        .get(Calendar.SECOND) * 1000);
+        if (BuildConfig.DEBUG) {
+            Log.d(_ClassName, String.format("beginToday = %s (%s)", DbUtils.formatNumber(_beginTodayMillis), new Date(
+                    _beginTodayMillis)));
+            Log.d(_ClassName,
+                    String.format("endToday = %s (%s)", DbUtils.formatNumber(_beginTodayMillis
+                            + DateUtils.DAY_IN_MILLIS), new Date(_beginTodayMillis + DateUtils.DAY_IN_MILLIS)));
+        }
+
+        /*
+         * Does the update and returns the number of rows updated.
+         */
+        long time = new Date().getTime();
+        ContentValues values = new ContentValues();
+        values.put(HistoryContract.History._ColumnProviderId,
+                BaseFileProviderUtils.getProviderId(mFileProviderAuthority));
+        values.put(HistoryContract.History._ColumnFileType, BaseFile._FileTypeDirectory);
+        values.put(HistoryContract.History._ColumnUri, path.toString());
+        values.put(HistoryContract.History._ColumnModificationTime, DbUtils.formatNumber(time));
+
+        int count = getContentResolver().update(
+                HistoryContract.History._ContentUri,
+                values,
+                String.format("%s >= '%s' and %s < '%s' and %s = %s and %s like %s",
+                        HistoryContract.History._ColumnModificationTime, DbUtils.formatNumber(_beginTodayMillis),
+                        HistoryContract.History._ColumnModificationTime,
+                        DbUtils.formatNumber(_beginTodayMillis + DateUtils.DAY_IN_MILLIS),
+                        HistoryContract.History._ColumnProviderId,
+                        DatabaseUtils.sqlEscapeString(values.getAsString(HistoryContract.History._ColumnProviderId)),
+                        HistoryContract.History._ColumnUri,
+                        DatabaseUtils.sqlEscapeString(values.getAsString(HistoryContract.History._ColumnUri))), null);
+        if (count <= 0) {
+            values.put(HistoryContract.History._ColumnCreateTime, DbUtils.formatNumber(time));
+            getContentResolver().insert(HistoryContract.History._ContentUri, values);
+        }
+    }// updateDbHistory()
 
     /**
      * As the name means.

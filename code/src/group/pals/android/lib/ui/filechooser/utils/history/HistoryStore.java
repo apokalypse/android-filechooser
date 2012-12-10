@@ -185,6 +185,20 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
         mListeners.remove(listener);
     }// removeListener()
 
+    @Override
+    public boolean find(HistoryFilter<A> filter, boolean ascending) {
+        for (int i = ascending ? 0 : mHistoryList.size() - 1; ascending ? i < mHistoryList.size() : i >= 0;) {
+            if (filter.accept(mHistoryList.get(i)))
+                return true;
+            if (ascending)
+                i++;
+            else
+                i--;
+        }
+
+        return false;
+    }// find()
+
     /*-----------------------------------------------------
      * Parcelable
      */

@@ -60,6 +60,26 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
     private static final String _ClassName = HistoryFragment.class.getName();
 
     /**
+     * As the name means.
+     * 
+     * @since v5.1 beta
+     * @author Hai Bison
+     * 
+     */
+    public static interface OnHistoryItemClickListener {
+
+        /**
+         * Will be called after {@code history} was clicked.
+         * 
+         * @param providerId
+         *            the original provider ID.
+         * @param uri
+         *            the URI to a directory or a file.
+         */
+        void onItemClick(String providerId, Uri uri);
+    }// OnHistoryItemClickListener
+
+    /**
      * Creates a new instance of {@link HistoryFragment}.
      */
     public static HistoryFragment newInstance() {
@@ -470,31 +490,27 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
         }// run()
     };// mViewLoadingShower
 
-    // private final List<OnHistoryItemClickListener>
-    // mOnHistoryItemClickListeners = new
-    // ArrayList<HistoryBarListeners.OnHistoryItemClickListener>();
-    //
-    // /**
-    // * Adds {@code listener}.
-    // *
-    // * @param listener
-    // * {@link OnHistoryItemClickListener}.
-    // */
-    // public void addOnHistoryItemClickListener(OnHistoryItemClickListener
-    // listener) {
-    // mOnHistoryItemClickListeners.add(listener);
-    // }
-    //
-    // /**
-    // * Removes {@code listener}.
-    // *
-    // * @param listener
-    // * {@link OnHistoryItemClickListener}.
-    // */
-    // public void removeOnHistoryItemClickListener(OnHistoryItemClickListener
-    // listener) {
-    // mOnHistoryItemClickListeners.remove(listener);
-    // }
+    private final List<OnHistoryItemClickListener> mOnHistoryItemClickListeners = new ArrayList<OnHistoryItemClickListener>();
+
+    /**
+     * Adds {@code listener}.
+     * 
+     * @param listener
+     *            {@link OnHistoryItemClickListener}.
+     */
+    public void addOnHistoryItemClickListener(OnHistoryItemClickListener listener) {
+        mOnHistoryItemClickListeners.add(listener);
+    }
+
+    /**
+     * Removes {@code listener}.
+     * 
+     * @param listener
+     *            {@link OnHistoryItemClickListener}.
+     */
+    public void removeOnHistoryItemClickListener(OnHistoryItemClickListener listener) {
+        mOnHistoryItemClickListeners.remove(listener);
+    }
 
     /*
      * CONTROLS' LISTENERS.
@@ -634,16 +650,13 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
         @Override
         public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
             Cursor cursor = mHistoryCursorAdapter.getChild(groupPosition, childPosition);
-            // TODO
-            // History h = History.toHistory(cursor);
-            // if (h != null) {
-            // for (OnHistoryItemClickListener listener :
-            // mOnHistoryItemClickListeners)
-            // listener.onItemClick(h);
-            // return true;
-            // }
 
-            return false;
+            String providerId = cursor.getString(cursor.getColumnIndex(HistoryContract.History._ColumnProviderId));
+            Uri uri = Uri.parse(cursor.getString(cursor.getColumnIndex(HistoryContract.History._ColumnUri)));
+            for (OnHistoryItemClickListener listener : mOnHistoryItemClickListeners)
+                listener.onItemClick(providerId, uri);
+
+            return true;
         }// onChildClick()
     };// mListViewOnChildClickListener
 

@@ -12,6 +12,7 @@ import group.pals.android.lib.ui.filechooser.providers.localfile.LocalFileContra
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -27,13 +28,40 @@ import android.net.Uri;
 public class BaseFileProviderUtils {
 
     /**
-     * Map of provider ID to its authority.
+     * Map of provider ID to its authority.<br>
+     * <b>Note for developers:</b> If you provide your own provider, add its ID
+     * and authority to this map, in the {@code static} block below.
      */
     private static final Map<String, String> _MapProviderInfo = new HashMap<String, String>();
 
     static {
         _MapProviderInfo.put(LocalFileContract._ID, LocalFileContract._Authority);
     }// static
+
+    /**
+     * Gets provider authority from its ID.
+     * 
+     * @param providerId
+     *            the provider ID.
+     * @return the provider authority, or {@code null} if not available.
+     */
+    public static String getProviderAuthority(String providerId) {
+        return _MapProviderInfo.get(providerId);
+    }// getProviderAuthority()
+
+    /**
+     * Gets provider ID from its authority.
+     * 
+     * @param authority
+     *            the provider authority.
+     * @return the provider ID, or {@code null} if not available.
+     */
+    public static String getProviderId(String authority) {
+        for (Entry<String, String> entry : _MapProviderInfo.entrySet())
+            if (entry.getValue().equals(authority))
+                return entry.getKey();
+        return null;
+    }// getProviderId()
 
     /**
      * Gets provider name from its ID.
@@ -45,22 +73,21 @@ public class BaseFileProviderUtils {
      * @return the provider name, can be {@code null} if not provided.
      */
     public static String getProviderName(Context context, String providerId) {
-        for (String id : _MapProviderInfo.keySet()) {
-            if (!id.equals(providerId))
-                continue;
+        String authority = getProviderAuthority(providerId);
+        if (authority == null)
+            return null;
 
-            Cursor cursor = context.getContentResolver().query(BaseFile.genContentUriInfo(_MapProviderInfo.get(id)),
-                    null, null, null, null);
-            if (cursor == null)
-                return null;
-            try {
+        Cursor cursor = context.getContentResolver().query(BaseFile.genContentUriInfo(authority), null, null, null,
+                null);
+        if (cursor == null)
+            return null;
+        try {
+            if (cursor.moveToFirst())
                 return cursor.getString(cursor.getColumnIndex(BaseFile._ColumnProviderName));
-            } finally {
-                cursor.close();
-            }
+            return null;
+        } finally {
+            cursor.close();
         }
-
-        return null;
     }// getProviderName()
 
     /**
@@ -178,6 +205,48 @@ public class BaseFileProviderUtils {
     public static String getFileName(Cursor cursor) {
         return cursor.getString(cursor.getColumnIndex(BaseFile._ColumnName));
     }// getFileName()
+
+    /**
+     * Gets file type of the file pointed by {@code uri}.
+     * 
+     * @param context
+     *            {@link Context}.
+     * @param authority
+     *            the file provider authority.
+     * @param uri
+     *            the URI you want to get.
+     * @return the file type of {@code uri}, can be one of
+     *         {@link #_FileTypeDirectory}, {@link #_FileTypeFile},
+     *         {@link #_FileTypeUnknown}, {@link #_FileTypeNotExisted}.
+     */
+    public static int getFileType(Context context, String authority, Uri uri) {
+        Cursor cursor = context.getContentResolver().query(
+                BaseFile.genContentIdUriBase(authority).buildUpon().appendPath(uri.toString()).build(), null, null,
+                null, null);
+        if (cursor == null)
+            return BaseFile._FileTypeNotExisted;
+
+        try {
+            if (cursor.moveToFirst())
+                return getFileType(cursor);
+            return BaseFile._FileTypeNotExisted;
+        } finally {
+            cursor.close();
+        }
+    }// getFileType()
+
+    /**
+     * Gets file type of the file pointed by {@code cursor}.
+     * 
+     * @param cursor
+     *            the cursor points to a file.
+     * @return the file type, can be one of {@link #_FileTypeDirectory},
+     *         {@link #_FileTypeFile}, {@link #_FileTypeUnknown},
+     *         {@link #_FileTypeNotExisted}.
+     */
+    public static int getFileType(Cursor cursor) {
+        return cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnType));
+    }// getFileType()
 
     /**
      * Gets URI of {@code cursor}.

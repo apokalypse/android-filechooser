@@ -139,4 +139,18 @@ public interface History<A> extends Parcelable {
      * Notifies to all {@link HistoryListener}'s that the history changed.
      */
     void notifyHistoryChanged();
+
+    /**
+     * Finds items with a filter.
+     * 
+     * @param filter
+     *            {@link HistoryFilter}
+     * @param ascending
+     *            {@code true} if you want to process the history list ascending
+     *            (oldest to newest), {@code false} for descending.
+     * @return {@code true} if the desired items have been found, {@code false}
+     *         otherwise.
+     * @since v5.1 beta
+     */
+    boolean find(HistoryFilter<A> filter, boolean ascending);
 }

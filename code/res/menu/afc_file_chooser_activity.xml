@@ -21,6 +21,12 @@
             android:showAsAction="ifRoom"
             android:title="@string/afc_cmd_reload">
         </item>
+        <item
+            android:id="@+id/afc_filechooser_activity_menuitem_history"
+            android:icon="@android:drawable/ic_menu_recent_history"
+            android:showAsAction="ifRoom"
+            android:title="@string/afc_history">
+        </item>
     </group>
     <group android:id="@+id/afc_filechooser_activity_menugroup_sorter" >
         <item
