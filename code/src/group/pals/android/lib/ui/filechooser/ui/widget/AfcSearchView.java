@@ -1,3 +1,10 @@
+/*
+ *    Copyright (c) 2012 Hai Bison
+ *
+ *    See the file LICENSE at the root directory of this project for copying
+ *    permission.
+ */
+
 package group.pals.android.lib.ui.filechooser.ui.widget;
 
 import group.pals.android.lib.ui.filechooser.BuildConfig;
@@ -20,9 +27,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
- * AFB Search view.
+ * AFC Search view.
  * 
- * @since v4.6 beta
+ * @since v5.1 beta
  * @author Hai Bison
  * 
  */
