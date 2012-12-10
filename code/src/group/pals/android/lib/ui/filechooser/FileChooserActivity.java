@@ -1527,12 +1527,15 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
             }
         }
 
-        mViewLocationsContainer.post(new Runnable() {
+        /*
+         * Sometimes without delay time, it doesn't work...
+         */
+        mViewLocationsContainer.postDelayed(new Runnable() {
 
             public void run() {
                 mViewLocationsContainer.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
             }
-        });
+        }, DisplayPrefs._DelayTimeForVeryShortAnimation);
     }// createLocationButtons()
 
     /**
