@@ -417,4 +417,33 @@ public class BaseFileProviderUtils {
             cursor.close();
         }
     }// getParentFile()
+
+    /**
+     * Checks if {@code uri1} is ancestor of {@code uri2}.
+     * 
+     * @param context
+     *            {@link Context}.
+     * @param authority
+     *            the provider authority.
+     * @param uri1
+     *            the first URI.
+     * @param uri2
+     *            the second URI.
+     * @return {@code true} if {@code uri1} is ancestor of {@code uri2},
+     *         {@code false} otherwise.
+     */
+    public static boolean isAncestorOf(Context context, String authority, Uri uri1, Uri uri2) {
+        Cursor cursor = context.getContentResolver().query(
+                BaseFile.genContentIdUriBase(authority).buildUpon().appendPath(uri1.toString())
+                        .appendQueryParameter(BaseFile._ParamIsAncestorOf, uri2.toString()).build(), null, null, null,
+                null);
+        if (cursor == null)
+            return false;
+
+        try {
+            return true;
+        } finally {
+            cursor.close();
+        }
+    }// isAncestorOf()
 }

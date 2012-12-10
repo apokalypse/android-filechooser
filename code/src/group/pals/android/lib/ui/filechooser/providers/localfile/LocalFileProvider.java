@@ -332,8 +332,27 @@ public class LocalFileProvider extends BaseFileProvider {
             Uri fileUri = Uri.parse(uri.getLastPathSegment());
             String appendName = uri.getQueryParameter(BaseFile._ParamAppendName);
 
+            /*
+             * Test ancestor...
+             */
+            String paramIsAncestorOf = uri.getQueryParameter(BaseFile._ParamIsAncestorOf);
+            File fileToTestDescendant = null;
+            if (!TextUtils.isEmpty(paramIsAncestorOf))
+                fileToTestDescendant = new File(Uri.parse(paramIsAncestorOf).getPath());
+
             File file = new File(String.format("%s%s", fileUri.getPath(),
                     !TextUtils.isEmpty(appendName) ? String.format("/%s", appendName) : ""));
+
+            /*
+             * Test ancestor...
+             */
+            if (fileToTestDescendant != null) {
+                if (!file.isDirectory() || !fileToTestDescendant.exists()
+                        || !fileToTestDescendant.getAbsolutePath().startsWith(file.getAbsolutePath()))
+                    return null;
+                return new MatrixCursor(new String[0]);
+            }
+
             if (ProviderUtils.getBooleanQueryParam(uri, BaseFile._ParamGetParent))
                 file = file.getParentFile();
             if (file == null)

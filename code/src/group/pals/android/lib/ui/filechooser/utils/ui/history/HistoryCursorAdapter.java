@@ -18,7 +18,9 @@ import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
 import android.content.AsyncQueryHandler;
@@ -98,6 +100,11 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
      * Map of child IDs to {@link BagChildInfo}.
      */
     private final SparseArray<BagChildInfo> mSelectedChildrenMap = new SparseArray<BagChildInfo>();
+    /**
+     * Map of provider IDs to their names, to avoid of querying multiple times
+     * for a same ID.
+     */
+    private final Map<String, String> mMapProviderName = new HashMap<String, String>();
 
     private CharSequence mSearchText;
 
@@ -143,10 +150,18 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
         _b.mTextViewName.setText(uri.getLastPathSegment());
         Ui.strikeOutText(_b.mTextViewName, _bci.mMarkedAsDeleted);
         _b.mTextViewPath.setText(uri.getPath());
-        _b.mTextViewType.setText(BaseFileProviderUtils.getProviderName(context,
-                cursor.getString(cursor.getColumnIndex(HistoryContract.History._ColumnProviderId))));
 
-        // checkbox
+        /*
+         * Provider name.
+         */
+        String providerId = cursor.getString(cursor.getColumnIndex(HistoryContract.History._ColumnProviderId));
+        if (mMapProviderName.get(providerId) == null)
+            mMapProviderName.put(providerId, BaseFileProviderUtils.getProviderName(context, providerId));
+        _b.mTextViewType.setText(mMapProviderName.get(providerId));
+
+        /*
+         * Check box.
+         */
         _b.mCheckBox.setOnCheckedChangeListener(null);
         _b.mCheckBox.setChecked(_bci.mChecked);
         _b.mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

@@ -8,6 +8,7 @@
 package group.pals.android.lib.ui.filechooser.providers.basefile;
 
 import group.pals.android.lib.ui.filechooser.providers.ProviderUtils;
+import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -143,9 +144,13 @@ public class BaseFileContract {
          * Use this parameter for operators which can work recursively, such as
          * deleting a directory... The value can be {@code "true"} or
          * {@code "1"} for {@code true}, {@code "false"} or {@code "0"} for
-         * {@code false}.<br>
-         * Default:<br>
+         * {@code false}.
+         * <p>
+         * Default:
+         * </p>
+         * <p>
          * <li>{@code "true"} with {@code delete()}.</li>
+         * </p>
          * <p>
          * Type: {@code Boolean}
          * </p>
@@ -155,8 +160,10 @@ public class BaseFileContract {
         /**
          * Use this parameter to show hidden files. The value can be
          * {@code "true"} or {@code "1"} for {@code true}, {@code "false"} or
-         * {@code "0"} for {@code false}.<br>
+         * {@code "0"} for {@code false}.
+         * <p>
          * Default: {@code "false"} with {@code query()}.
+         * </p>
          * <p>
          * Type: {@code Boolean}
          * </p>
@@ -166,8 +173,10 @@ public class BaseFileContract {
         /**
          * Use this parameter to filter file type. Can be one of
          * {@link #_FilterFilesOnly}, {@link #_FilterDirectoriesOnly},
-         * {@link #_FilterFilesAndDirectories}.<br>
+         * {@link #_FilterFilesAndDirectories}.
+         * <p>
          * Default: {@link #_FilterFilesAndDirectories} with {@code query()}.
+         * </p>
          * <p>
          * Type: {@code Integer}
          * </p>
@@ -177,8 +186,10 @@ public class BaseFileContract {
         /**
          * Use this parameter to sort files. Can be one of
          * {@link #_SortByModificationTime}, {@link #_SortByName},
-         * {@link #_SortBySize}.<br>
+         * {@link #_SortBySize}.
+         * <p>
          * Default: {@link #_SortByName} with {@code query()}.
+         * </p>
          * <p>
          * Type: {@code Integer}
          * </p>
@@ -188,8 +199,10 @@ public class BaseFileContract {
         /**
          * Use this parameter for sort order. Can be {@code "true"} or
          * {@code "1"} for {@code true}, {@code "false"} or {@code "0"} for
-         * {@code false}..<br>
+         * {@code false}.
+         * <p>
          * Default: {@code "true"} with {@code query()}.
+         * </p>
          * <p>
          * Type: {@code Boolean}
          * </p>
@@ -197,8 +210,10 @@ public class BaseFileContract {
         public static final String _ParamSortAscending = "sort_ascending";
 
         /**
-         * Use this parameter to limit results.<br>
+         * Use this parameter to limit results.
+         * <p>
          * Default: {@code 1000} with {@code query()}.
+         * </p>
          * <p>
          * Type: {@code Integer}
          * </p>
@@ -208,7 +223,7 @@ public class BaseFileContract {
         /**
          * Use this parameter to get parent file of a file with {@code query()}.
          * The value can be {@code "true"} or {@code "1"} for {@code true},
-         * {@code "false"} or {@code "0"} for {@code false}.<br>
+         * {@code "false"} or {@code "0"} for {@code false}.
          * <p>
          * Type: {@code Boolean}
          * </p>
@@ -219,7 +234,7 @@ public class BaseFileContract {
          * This parameter is returned from the provider. It's only used for
          * {@code query()} while querying directory contents. Can be
          * {@code "true"} or {@code "1"} for {@code true}, {@code "false"} or
-         * {@code "0"} for {@code false}.<br>
+         * {@code "0"} for {@code false}.
          * <p>
          * Type: {@code Boolean}
          * </p>
@@ -254,6 +269,32 @@ public class BaseFileContract {
          * </p>
          */
         public static final String _ParamNegativeRegexFilter = "negative_regex_filter";
+
+        /**
+         * Use this parameter along with a file/ directory while querying to a
+         * single file/ directory. It will return a <i>non-null but empty</i>
+         * cursor if the given file is a directory and it is ancestor of the
+         * file provided by this parameter. Note that you also have to call
+         * {@link Cursor#close()} anyway.
+         * <p>
+         * If the given file is not a directory or is not ancestor of the file
+         * provided by this parameter, the result will be {@code null}.
+         * </p>
+         * <p>
+         * For example, with local file, this query return {@code true}:
+         * </p>
+         * <p>
+         * {@code content://local-file-authority/file/"/mnt/sdcard"?is_ancestor_of="/mnt/sdcard/Android/data/cache"}
+         * </p>
+         * Note that no matter how many levels between the ancestor and the
+         * descendant are, it is still the ancestor. This is <b><i>not</i></b>
+         * the same concept as "parent", which will return {@code false} in
+         * above example.
+         * <p>
+         * Type: {@code String}
+         * </p>
+         */
+        public static final String _ParamIsAncestorOf = "is_ancestor_of";
 
         /*
          * URI builders.

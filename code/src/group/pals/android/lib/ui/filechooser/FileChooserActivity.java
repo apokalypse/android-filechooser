@@ -13,6 +13,7 @@ import group.pals.android.lib.ui.filechooser.providers.DbUtils;
 import group.pals.android.lib.ui.filechooser.providers.ProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileContract.BaseFile;
 import group.pals.android.lib.ui.filechooser.providers.history.HistoryContract;
+import group.pals.android.lib.ui.filechooser.providers.history.HistoryProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.localfile.LocalFileContract;
 import group.pals.android.lib.ui.filechooser.providers.localfile.LocalFileProvider;
 import group.pals.android.lib.ui.filechooser.utils.E;
@@ -493,6 +494,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
     protected void onDestroy() {
         super.onDestroy();
         cancelPreviousLoader();
+        HistoryProviderUtils.doCleanupOutdatedHistoryItems(this);
     }// onDestroy()
 
     /*
@@ -580,8 +582,9 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                         : getString(R.string.afc_msg_empty), mFileAdapter.isEmpty());
 
         /*
-         * Use a Runnable to make sure this work. Because if the list view is
-         * handling data, this might not work.
+         * Select either the parent path of last path, or the file provided by
+         * key _SelectFile. Use a Runnable to make sure this work. Because if
+         * the list view is handling data, this might not work.
          */
         mViewFiles.post(new Runnable() {
 
@@ -596,15 +599,29 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                     if (_fileName != null) {
                         Uri parentUri = BaseFileProviderUtils.getParentFile(FileChooserActivity.this,
                                 mFileProviderAuthority, _uri);
-                        if (parentUri != null && parentUri.equals(getCurrentLocation())) {
+                        if ((_uri == _lastPath && !getCurrentLocation().equals(_lastPath) && BaseFileProviderUtils
+                                .isAncestorOf(FileChooserActivity.this, mFileProviderAuthority, getCurrentLocation(),
+                                        _uri))
+                                || getCurrentLocation().equals(parentUri)) {
                             if (data.moveToFirst()) {
                                 while (!data.isLast()) {
-                                    Uri tmpUri = Uri.parse(data.getString(_colUri));
-                                    if (_uri.equals(tmpUri)) {
-                                        if (_uri != _lastPath || BaseFileProviderUtils.isDirectory(data))
-                                            shouldBeSelectedIdx = data.getPosition();
-                                        break;
+                                    Uri subUri = Uri.parse(data.getString(_colUri));
+                                    if (_uri == _lastPath) {
+                                        if (data.getInt(data.getColumnIndex(BaseFile._ColumnType)) == BaseFile._FileTypeDirectory) {
+                                            if (BaseFileProviderUtils.isAncestorOf(FileChooserActivity.this,
+                                                    mFileProviderAuthority, subUri, _uri)) {
+                                                shouldBeSelectedIdx = data.getPosition();
+                                                break;
+                                            }
+                                        }
+                                    } else {
+                                        if (_uri.equals(subUri)) {
+                                            if (_uri != _lastPath || BaseFileProviderUtils.isDirectory(data))
+                                                shouldBeSelectedIdx = data.getPosition();
+                                            break;
+                                        }
                                     }
+
                                     data.moveToNext();
                                 }
                             }
@@ -1637,8 +1654,8 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
         @Override
         public boolean onLongClick(View v) {
-            // TODO show history manager
-            return false;
+            doShowHistoryManager();
+            return true;
         }// onLongClick()
     };// mBtnGoBackForwardOnLongClickListener
 
