@@ -28,6 +28,11 @@ public class DisplayPrefs extends Prefs {
     public static final int _DelayTimeWaitingThreads = 10;
 
     /**
+     * Delay time for waiting for very short animation, in milliseconds.
+     */
+    public static final int _DelayTimeForVeryShortAnimation = 199;
+
+    /**
      * Delay time for waiting for short animation, in milliseconds.
      */
     public static final int _DelayTimeForShortAnimation = 499;

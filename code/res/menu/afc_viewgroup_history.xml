@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <group android:id="@+id/afc_viewgroup_history_menugroup_editor" >
+        <item
+            android:id="@+id/afc_viewgroup_history_menuitem_clear"
+            android:icon="@android:drawable/ic_menu_close_clear_cancel"
+            android:showAsAction="ifRoom|withText"
+            android:title="@string/afc_cmd_clear"/>
+    </group>
+
+</menu>
