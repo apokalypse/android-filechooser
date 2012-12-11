@@ -610,14 +610,14 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                                         if (data.getInt(data.getColumnIndex(BaseFile._ColumnType)) == BaseFile._FileTypeDirectory) {
                                             if (BaseFileProviderUtils.isAncestorOf(FileChooserActivity.this,
                                                     mFileProviderAuthority, subUri, _uri)) {
-                                                shouldBeSelectedIdx = data.getPosition();
+                                                shouldBeSelectedIdx = Math.max(0, data.getPosition() - 2);
                                                 break;
                                             }
                                         }
                                     } else {
                                         if (_uri.equals(subUri)) {
                                             if (_uri != _lastPath || BaseFileProviderUtils.isDirectory(data))
-                                                shouldBeSelectedIdx = data.getPosition();
+                                                shouldBeSelectedIdx = Math.max(0, data.getPosition() - 2);
                                             break;
                                         }
                                     }

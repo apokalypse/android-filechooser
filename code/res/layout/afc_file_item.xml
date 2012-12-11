@@ -23,7 +23,6 @@
             android:layout_height="@dimen/afc_file_icon_size"
             android:layout_centerHorizontal="true"
             android:adjustViewBounds="true"
-            android:background="@drawable/afc_selector_button_sort_symbol_dark"
             android:scaleType="center" />
 
         <ImageView

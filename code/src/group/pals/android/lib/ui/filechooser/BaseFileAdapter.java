@@ -25,6 +25,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.widget.ResourceCursorAdapter;
 import android.util.SparseArray;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -135,11 +136,12 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
         /*
          * File icon.
          */
-        bag.mImageIcon.setImageResource(FileUtils.getResIcon(
-                cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnType)), BaseFileProviderUtils.getFileName(cursor)));
         bag.mImageLockedSymbol
                 .setVisibility(cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnCanRead)) > 0 ? View.GONE
                         : View.VISIBLE);
+        bag.mImageIcon.setImageResource(FileUtils.getResIcon(
+                cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnType)), BaseFileProviderUtils.getFileName(cursor)));
+        bag.mImageIcon.setOnTouchListener(mImageIconOnTouchListener);
         bag.mImageIcon
                 .setOnClickListener(BaseFileProviderUtils.isDirectory(cursor) ? newImageIconOnClickListener(cursor
                         .getPosition()) : null);
@@ -350,6 +352,27 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
     /*
      * LISTENERS
      */
+
+    /**
+     * If the user touches the list item, and the image icon <i>declared</i> a
+     * selector in XML, then that selector works. But we just want the selector
+     * to work only when the user touches the image, hence this listener.
+     */
+    private final View.OnTouchListener mImageIconOnTouchListener = new View.OnTouchListener() {
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                v.setBackgroundResource(R.drawable.afc_selector_button_sort_symbol_dark);
+                break;
+            case MotionEvent.ACTION_UP:
+                v.setBackgroundResource(0);
+                break;
+            }
+            return false;
+        }// onTouch()
+    };// mImageIconOnTouchListener
 
     /**
      * Creates new listener to handle click event of image icon.
