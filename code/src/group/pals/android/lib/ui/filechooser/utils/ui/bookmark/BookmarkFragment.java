@@ -573,8 +573,6 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
                 contentResolver.update(BookmarkContract.Bookmark._ContentUri, values,
                         String.format("%s = %d", DbUtils._SqliteFtsColumnRowId, bookmarks.get(names[i])), null);
             }
-
-            // mBookmarkCursorAdapter.notifyDataSetChanged();
         }// sortBookmarks()
     };// mListViewOnItemLongClickListener
 
