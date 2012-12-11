@@ -1447,7 +1447,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
      * @since v4.3 beta
      */
     private boolean goTo(Uri dir) {
-        if (dir == null || !BaseFileProviderUtils.isDirectory(this, mFileProviderAuthority, dir))
+        if (dir == null)
             dir = BaseFileProviderUtils.getDefaultPath(this, mFileProviderAuthority);
         if (dir == null) {
             doShowCannotConnectToServiceAndFinish();
