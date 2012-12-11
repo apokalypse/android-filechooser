@@ -20,8 +20,10 @@ import group.pals.android.lib.ui.filechooser.utils.ui.GestureUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.GestureUtils.FlingDirection;
 import group.pals.android.lib.ui.filechooser.utils.ui.history.HistoryFragment;
 
+import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -556,8 +558,16 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
                         cursor.getInt(cursor.getColumnIndex(BookmarkContract.Bookmark._ID)));
             }
 
-            Object[] names = bookmarks.keySet().toArray();
-            Arrays.sort(names);
+            List<String> names = new ArrayList<String>(bookmarks.keySet());
+            Collections.sort(names, new Comparator<String>() {
+
+                final Collator mCollator = Collator.getInstance();
+
+                @Override
+                public int compare(String lhs, String rhs) {
+                    return mCollator.compare(lhs, rhs);
+                }// compare()
+            });
 
             ContentResolver contentResolver = getActivity().getContentResolver();
             /*
@@ -567,11 +577,11 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
              * modified.
              */
             ContentValues values = new ContentValues();
-            for (int i = names.length - 1; i >= 0; i--) {
+            for (int i = names.size() - 1; i >= 0; i--) {
                 values.put(BookmarkContract.Bookmark._ColumnModificationTime,
                         DbUtils.formatNumber(new Date().getTime() + i));
                 contentResolver.update(BookmarkContract.Bookmark._ContentUri, values,
-                        String.format("%s = %d", DbUtils._SqliteFtsColumnRowId, bookmarks.get(names[i])), null);
+                        String.format("%s = %d", DbUtils._SqliteFtsColumnRowId, bookmarks.get(names.get(i))), null);
             }
         }// sortBookmarks()
     };// mListViewOnItemLongClickListener
