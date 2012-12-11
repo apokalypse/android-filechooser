@@ -414,7 +414,7 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
         public boolean onTouch(View v, MotionEvent event) {
             switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                v.setBackgroundResource(R.drawable.afc_selector_button_sort_symbol_dark);
+                v.setBackgroundResource(R.drawable.afc_button_sort_symbol_dark_pressed);
                 break;
             case MotionEvent.ACTION_UP:
                 v.setBackgroundResource(0);
