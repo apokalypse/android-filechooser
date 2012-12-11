@@ -12,41 +12,48 @@ import group.pals.android.lib.ui.filechooser.R;
 import group.pals.android.lib.ui.filechooser.prefs.DisplayPrefs;
 import group.pals.android.lib.ui.filechooser.providers.DbUtils;
 import group.pals.android.lib.ui.filechooser.providers.bookmark.BookmarkContract;
-import group.pals.android.lib.ui.filechooser.providers.bookmark.BookmarkContract.Bookmark;
 import group.pals.android.lib.ui.filechooser.utils.TextUtils;
+import group.pals.android.lib.ui.filechooser.utils.Ui;
 import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.Dlg;
 import group.pals.android.lib.ui.filechooser.utils.ui.GestureUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.GestureUtils.FlingDirection;
-import group.pals.android.lib.ui.filechooser.utils.ui.TaskListener;
 import group.pals.android.lib.ui.filechooser.utils.ui.history.HistoryFragment;
 
-import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.TextView;
 
 /**
  * Fragment to manage bookmarks.
@@ -56,6 +63,26 @@ import android.widget.ExpandableListView;
  * 
  */
 public class BookmarkFragment extends DialogFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    /**
+     * As the name means.
+     * 
+     * @since v5.1 beta
+     * @author Hai Bison
+     * 
+     */
+    public static interface OnBookmarkItemClickListener {
+
+        /**
+         * Will be called after the bookmark was clicked.
+         * 
+         * @param providerId
+         *            the original provider ID.
+         * @param uri
+         *            the URI to a directory.
+         */
+        void onItemClick(String providerId, Uri uri);
+    }// OnBookmarkItemClickListener
 
     /**
      * Used for debugging or something...
@@ -108,6 +135,7 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
      * Initializes to {@code -1} to avoid of re-loading the first load.
      */
     private int mItemCount = -1;
+    private OnBookmarkItemClickListener mOnBookmarkItemClickListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -392,27 +420,24 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
         return mEditor;
     }// isEditor()
 
-    // /**
-    // * Adds {@code listener}.
-    // *
-    // * @param listener
-    // * {@link OnBookmarkItemClickListener}.
-    // */
-    // public void addOnBookmarkItemClickListener(OnBookmarkItemClickListener
-    // listener) {
-    // mOnBookmarkItemClickListeners.add(listener);
-    // }// addOnBookmarkItemClickListener()
-    //
-    // /**
-    // * Removes {@code listener}.
-    // *
-    // * @param listener
-    // * {@link OnBookmarkItemClickListener}.
-    // */
-    // public void removeOnBookmarkItemClickListener(OnBookmarkItemClickListener
-    // listener) {
-    // mOnBookmarkItemClickListeners.remove(listener);
-    // }// removeOnBookmarkItemClickListener()
+    /**
+     * Sets a listener to {@link OnBookmarkItemClickListener}.
+     * 
+     * @param listener
+     *            the listener.
+     */
+    public void setOnBookmarkItemClickListener(OnBookmarkItemClickListener listener) {
+        mOnBookmarkItemClickListener = listener;
+    }// setOnBookmarkItemClickListener()
+
+    /**
+     * Gets the listener of {@link OnBookmarkItemClickListener}.
+     * 
+     * @return the listener.
+     */
+    public OnBookmarkItemClickListener getOnBookmarkItemClickListener() {
+        return mOnBookmarkItemClickListener;
+    }// getOnBookmarkItemClickListener()
 
     /*
      * LISTENERS
@@ -433,17 +458,15 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
 
         @Override
         public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-            Cursor cursor = mBookmarkCursorAdapter.getChild(groupPosition, childPosition);
-            // TODO
-            // Bookmark b = Bookmark.toBookmark(cursor);
-            // if (b != null) {
-            // for (OnBookmarkItemClickListener listener :
-            // mOnBookmarkItemClickListeners)
-            // listener.onItemClick(b);
-            // if (getDialog() != null)
-            // getDialog().dismiss();
-            // return true;
-            // }
+            if (getOnBookmarkItemClickListener() != null) {
+                Cursor cursor = mBookmarkCursorAdapter.getChild(groupPosition, childPosition);
+                getOnBookmarkItemClickListener().onItemClick(
+                        cursor.getString(cursor.getColumnIndex(BookmarkContract.Bookmark._ColumnProviderId)),
+                        Uri.parse(cursor.getString(cursor.getColumnIndex(BookmarkContract.Bookmark._ColumnUri))));
+            }
+
+            if (getDialog() != null)
+                getDialog().dismiss();
 
             return false;
         }// onChildClick()
@@ -486,42 +509,29 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
                 return true;// PACKED_POSITION_TYPE_GROUP
 
             case ExpandableListView.PACKED_POSITION_TYPE_CHILD:
-                // TODO
-                // final Bookmark _bookmark =
-                // Bookmark.toBookmark(mBookmarkCursorAdapter.getChild(_iGroup,
-                // _iChild));
-                // ContextMenuUtils.showContextMenu(getActivity(),
-                // R.drawable.afc_bookmarks_dark,
-                // TextUtils.quote(_bookmark.getName()), null, new Integer[][] {
-                // { R.string.afc_cmd_rename },
-                // { R.string.afc_cmd_sort_by_name } }, null,
-                // new ContextMenuUtils.OnMenuItemClickListener() {
-                //
-                // @Override
-                // public void onClick(int resId) {
-                // if (resId == R.string.afc_cmd_rename) {
-                // BookmarkBarContextMenuUtils.doEnterNewNameOrRenameBookmark(getActivity(),
-                // _bookmark, false, new TaskListener() {
-                //
-                // @Override
-                // public void onFinish(boolean ok, Object any) {
-                // getActivity().getContentResolver().update(
-                // BookmarkContract.Bookmark._ContentUri,
-                // Bookmark.toContentValues(_bookmark),
-                // String.format("%s = %s and %s like %s",
-                // BookmarkContract.Bookmark._ColumnProviderId,
-                // DatabaseUtils.sqlEscapeString(_bookmark
-                // .getProvider()),
-                // BookmarkContract.Bookmark._ColumnUri, DatabaseUtils
-                // .sqlEscapeString(_bookmark.getUri()
-                // .toString())), null);
-                // }// onFinish()
-                // });
-                // } else if (resId == R.string.afc_cmd_sort_by_name) {
-                // sortBookmarks(_iGroup);
-                // }
-                // }// onClick()
-                // });
+                Cursor cursor = mBookmarkCursorAdapter.getChild(_iGroup, _iChild);
+                final String _providerId = cursor.getString(cursor
+                        .getColumnIndex(BookmarkContract.Bookmark._ColumnProviderId));
+                final int _id = cursor.getInt(cursor.getColumnIndex(BookmarkContract.Bookmark._ID));
+                final Uri _uri = Uri
+                        .parse(cursor.getString(cursor.getColumnIndex(BookmarkContract.Bookmark._ColumnUri)));
+                final String _name = cursor.getString(cursor.getColumnIndex(BookmarkContract.Bookmark._ColumnName));
+
+                ContextMenuUtils
+                        .showContextMenu(getActivity(), R.drawable.afc_bookmarks_dark, TextUtils.quote(cursor
+                                .getString(cursor.getColumnIndex(BookmarkContract.Bookmark._ColumnName))),
+                                new Integer[] { R.string.afc_cmd_rename, R.string.afc_cmd_sort_by_name },
+                                new ContextMenuUtils.OnMenuItemClickListener() {
+
+                                    @Override
+                                    public void onClick(int resId) {
+                                        if (resId == R.string.afc_cmd_rename) {
+                                            doEnterNewNameOrRenameBookmark(getActivity(), _providerId, _id, _uri, _name);
+                                        } else if (resId == R.string.afc_cmd_sort_by_name) {
+                                            sortBookmarks(_iGroup);
+                                        }
+                                    }// onClick()
+                                });
                 return true;// PACKED_POSITION_TYPE_CHILD
             }
 
@@ -536,42 +546,145 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
          */
         private void sortBookmarks(int groupPosition) {
             // TODO
-            // List<Bookmark> bookmarks = new ArrayList<Bookmark>();
-            //
-            // for (int i = 0; i <
-            // mBookmarkCursorAdapter.getChildrenCount(groupPosition); i++)
-            // bookmarks.add(Bookmark.toBookmark(mBookmarkCursorAdapter.getChild(groupPosition,
-            // i)));
-            // final Collator _collator = Collator.getInstance();
-            // /*
-            // * Sorts descending.
-            // */
-            // Collections.sort(bookmarks, new Comparator<Bookmark>() {
-            //
-            // @Override
-            // public int compare(Bookmark lhs, Bookmark rhs) {
-            // return _collator.compare(rhs.getName(), lhs.getName());
-            // }// compare()
-            // });
-            //
-            // ContentResolver contentResolver =
-            // getActivity().getContentResolver();
-            // for (int i = 0; i < bookmarks.size(); i++) {
-            // /*
-            // * The list was sorted descending by name (Z-A), now we add "i"
-            // * to timestamp (last modified), so the list will be obtained
-            // * ascending by name (A-Z) as it will be obtained from DB
-            // * descending by last modified.
-            // */
-            // contentResolver.update(BookmarkContract.Bookmark._ContentUri,
-            // Bookmark.toContentValues(bookmarks.get(i).setLastModified(new
-            // Date().getTime() + i)),
-            // String.format("%s = %d", DbUtils._SqliteFtsColumnRowId,
-            // bookmarks.get(i).getId()), null);
-            // }
+
+            Map<String, Integer> bookmarks = new HashMap<String, Integer>();
+
+            for (int i = 0; i < mBookmarkCursorAdapter.getChildrenCount(groupPosition); i++) {
+                Cursor cursor = mBookmarkCursorAdapter.getChild(groupPosition, i);
+                bookmarks.put(cursor.getString(cursor.getColumnIndex(BookmarkContract.Bookmark._ColumnName)),
+                        cursor.getInt(cursor.getColumnIndex(BookmarkContract.Bookmark._ID)));
+            }
+
+            Object[] names = bookmarks.keySet().toArray();
+            Arrays.sort(names);
+
+            ContentResolver contentResolver = getActivity().getContentResolver();
+            /*
+             * The list was sorted ascending by name (A-Z), now we add "i" to
+             * timestamp (last modified), so the list will be obtained ascending
+             * by name (A-Z) as it will be obtained from DB descending by last
+             * modified.
+             */
+            ContentValues values = new ContentValues();
+            for (int i = names.length - 1; i >= 0; i--) {
+                values.put(BookmarkContract.Bookmark._ColumnModificationTime,
+                        DbUtils.formatNumber(new Date().getTime() + i));
+                contentResolver.update(BookmarkContract.Bookmark._ContentUri, values,
+                        String.format("%s = %d", DbUtils._SqliteFtsColumnRowId, bookmarks.get(names[i])), null);
+            }
+
             // mBookmarkCursorAdapter.notifyDataSetChanged();
-        }// doConfirmAndSortBookmarks()
+        }// sortBookmarks()
     };// mListViewOnItemLongClickListener
+
+    /**
+     * Shows a dialog to let user enter new name or change current name of a
+     * bookmark.
+     * 
+     * @param context
+     *            {@link Context}
+     * @param providerId
+     *            the provider ID.
+     * @param id
+     *            the bookmark ID.
+     * @param uri
+     *            the URI to the bookmark.
+     * @param name
+     *            the name. To enter new name, this is the suggested name you
+     *            provide. To rename, this is the old name.
+     */
+    public static void doEnterNewNameOrRenameBookmark(final Context context, final String providerId, final int id,
+            final Uri uri, final String name) {
+        final AlertDialog _dlg = Dlg.newDlg(context);
+
+        View view = LayoutInflater.from(context).inflate(R.layout.afc_simple_text_input_view, null);
+        final EditText _txtName = (EditText) view.findViewById(R.id.afc_simple_text_input_view_text1);
+        _txtName.setText(name);
+        _txtName.selectAll();
+        _txtName.setHint(R.string.afc_hint_new_name);
+        _txtName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    Ui.showSoftKeyboard(_txtName, false);
+                    Button btn = _dlg.getButton(DialogInterface.BUTTON_POSITIVE);
+                    if (btn.isEnabled())
+                        btn.performClick();
+                    return true;
+                }
+                return false;
+            }// onEditorAction()
+        });
+
+        _dlg.setView(view);
+        _dlg.setIcon(R.drawable.afc_bookmarks_dark);
+        _dlg.setTitle(id < 0 ? R.string.afc_title_new_bookmark : R.string.afc_title_rename);
+        _dlg.setButton(DialogInterface.BUTTON_POSITIVE, context.getString(android.R.string.ok),
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String newName = _txtName.getText().toString().trim();
+                        if (newName.length() == 0) {
+                            Dlg.toast(context, R.string.afc_msg_bookmark_name_is_invalid, Dlg._LengthShort);
+                            return;
+                        }
+
+                        Ui.showSoftKeyboard(_txtName, false);
+
+                        ContentValues values = new ContentValues();
+                        values.put(BookmarkContract.Bookmark._ColumnName, newName);
+
+                        if (id >= 0) {
+                            values.put(BookmarkContract.Bookmark._ColumnModificationTime,
+                                    DbUtils.formatNumber(new Date().getTime()));
+
+                            context.getContentResolver().update(
+                                    Uri.withAppendedPath(BookmarkContract.Bookmark._ContentIdUriBase,
+                                            Integer.toString(id)), values, null, null);
+                        } else {
+                            values.put(BookmarkContract.Bookmark._ColumnProviderId, providerId);
+                            values.put(BookmarkContract.Bookmark._ColumnUri, uri.toString());
+
+                            context.getContentResolver().insert(BookmarkContract.Bookmark._ContentUri, values);
+                        }
+
+                        Dlg.toast(context, context.getString(R.string.afc_msg_done), Dlg._LengthShort);
+                    }// onClick()
+                });
+
+        _dlg.show();
+        Ui.showSoftKeyboard(_txtName, true);
+
+        final Button _btnOk = _dlg.getButton(DialogInterface.BUTTON_POSITIVE);
+        _btnOk.setEnabled(id < 0);
+
+        /*
+         * If renaming, only enable button OK if new name is not equal to the
+         * old one.
+         */
+        if (id >= 0) {
+            _txtName.addTextChangedListener(new TextWatcher() {
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    // TODO Auto-generated method stub
+                }
+
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    // TODO Auto-generated method stub
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    String newName = s.toString().trim();
+                    _btnOk.setEnabled(!newName.equals(name));
+                }
+            });
+        }
+    }// doEnterNewNameOrRenameBookmark()
 
     private final View.OnClickListener mBtnClearOnClickListener = new View.OnClickListener() {
 

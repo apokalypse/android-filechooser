@@ -7,6 +7,9 @@
 
 package group.pals.android.lib.ui.filechooser.providers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import android.net.Uri;
 
 /**
@@ -98,4 +101,33 @@ public class ProviderUtils {
             return false;
         return true;
     }// getLongQueryParam()
+
+    /**
+     * Map of provider IDs to their names, to avoid of querying multiple times
+     * for a same ID.
+     */
+    private static final Map<String, String> _MapProviderName = new HashMap<String, String>();
+
+    /**
+     * Gets provider name from its ID.
+     * 
+     * @param providerId
+     *            the provider ID.
+     * @return the provider name, or {@code null} if not available.
+     */
+    public static String getProviderName(String providerId) {
+        return _MapProviderName.get(providerId);
+    }// getProviderName()
+
+    /**
+     * Sets provider name and ID.
+     * 
+     * @param providerId
+     *            the provider ID.
+     * @param providerName
+     *            the provider name.
+     */
+    public static void setProviderName(String providerId, String providerName) {
+        _MapProviderName.put(providerId, providerName);
+    }// setProviderName()
 }

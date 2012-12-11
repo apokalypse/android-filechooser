@@ -20,14 +20,17 @@
     <string name="afc_cmd_new_folder">New folder…</string>
     <string name="afc_cmd_reload">Reload</string>
     <string name="afc_cmd_remove_from_list">Remove from list</string>
+    <string name="afc_cmd_rename">Rename</string>
     <string name="afc_cmd_select_all_files">Select all files</string>
     <string name="afc_cmd_select_all_folders">Select all folders</string>
     <string name="afc_cmd_sort">Sort…</string>
+    <string name="afc_cmd_sort_by_name">Sort by name</string>
     <string name="afc_file">file</string>
     <string name="afc_folder">folder</string>
     <string name="afc_hint_clear">clear</string>
     <string name="afc_hint_double_tap_to_select_file">Double tap to select file/ folder</string>
     <string name="afc_hint_folder_name">folder name</string>
+    <string name="afc_hint_new_name">new name</string>
     <string name="afc_hint_newer">newer</string>
     <string name="afc_hint_older">older</string>
     <string name="afc_hint_save_as_filename">filename</string>
@@ -35,6 +38,7 @@
     <string name="afc_history">History</string>
     <string name="afc_msg_app_doesnot_have_permission_to_create_files">This application does not have permission to create files/ folders</string>
     <string name="afc_msg_app_doesnot_have_permission_to_delete_files">This application does not have permission to delete files/ folders</string>
+    <string name="afc_msg_bookmark_name_is_invalid">Bookmark name is invalid</string>
     <string name="afc_msg_cancelled">Cancelled</string>
     <string name="afc_msg_cannot_connect_to_file_provider_service">Can not connect to file provider service</string>
     <string name="afc_msg_cannot_create_new_folder_here">Can not create new folder here</string>
@@ -73,6 +77,8 @@
     <string name="afc_title_history">History</string>
     <string name="afc_title_info">Info</string>
     <string name="afc_title_name">Name</string>
+    <string name="afc_title_new_bookmark">New bookmark</string>
+    <string name="afc_title_rename">Rename…</string>
     <string name="afc_title_save_as">Save as…</string>
     <string name="afc_title_size">Size</string>
     <string name="afc_title_sort_by">Sort by…</string>

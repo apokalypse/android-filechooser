@@ -10,14 +10,13 @@ package group.pals.android.lib.ui.filechooser.utils.ui.bookmark;
 import group.pals.android.lib.ui.filechooser.BuildConfig;
 import group.pals.android.lib.ui.filechooser.R;
 import group.pals.android.lib.ui.filechooser.providers.BaseFileProviderUtils;
+import group.pals.android.lib.ui.filechooser.providers.ProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.bookmark.BookmarkContract;
 import group.pals.android.lib.ui.filechooser.utils.Ui;
 import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import android.content.AsyncQueryHandler;
 import android.content.Context;
@@ -102,11 +101,6 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
      * Map of child IDs to {@link BagChildInfo}.
      */
     private final SparseArray<BagChildInfo> mSelectedChildrenMap = new SparseArray<BagChildInfo>();
-    /**
-     * Map of provider IDs to their names, to avoid of querying multiple times
-     * for a same ID.
-     */
-    private final Map<String, String> mMapProviderName = new HashMap<String, String>();
     private boolean mEditor;
 
     /**
@@ -218,9 +212,9 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
          * Provider name.
          */
         String providerId = cursor.getString(cursor.getColumnIndex(BookmarkContract.Bookmark._ColumnProviderId));
-        if (mMapProviderName.get(providerId) == null)
-            mMapProviderName.put(providerId, BaseFileProviderUtils.getProviderName(context, providerId));
-        b.mTextHeader.setText(mMapProviderName.get(providerId));
+        if (ProviderUtils.getProviderName(providerId) == null)
+            ProviderUtils.setProviderName(providerId, BaseFileProviderUtils.getProviderName(context, providerId));
+        b.mTextHeader.setText(ProviderUtils.getProviderName(providerId));
     }// bindGroupView()
 
     @Override

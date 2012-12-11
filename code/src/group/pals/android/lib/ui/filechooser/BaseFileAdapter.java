@@ -35,10 +35,41 @@ import android.widget.TextView;
 
 public class BaseFileAdapter extends ResourceCursorAdapter {
 
+    /**
+     * Listener for building context menu editor.
+     * 
+     * @author Hai Bison
+     * @since v5.1 beta
+     */
+    public static interface OnBuildOptionsMenuListener {
+
+        /**
+         * Will be called after the user touched on the icon of the item.
+         * 
+         * @param view
+         *            the view displaying the item.
+         * @param cursor
+         *            the item which its icon has been touched.
+         */
+        void onBuildOptionsMenu(View view, Cursor cursor);
+
+        /**
+         * Will be called after the user touched and held ("long click") on the
+         * icon of the item.
+         * 
+         * @param view
+         *            the view displaying the item.
+         * @param cursor
+         *            the item which its icon has been touched.
+         */
+        void onBuildAdvancedOptionsMenu(View view, Cursor cursor);
+    }// OnBuildOptionsMenuListener
+
     private final int mFilterMode;
     private final FileTimeDisplay mFileTimeDisplay;
     private final Integer[] mAdvancedSelectionOptions;
     private boolean mMultiSelection;
+    private OnBuildOptionsMenuListener mOnBuildOptionsMenuListener;
 
     public BaseFileAdapter(Context context, int filterMode, boolean multiSelection) {
         super(context, R.layout.afc_file_item, null, 0);
@@ -199,6 +230,25 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
     /*
      * UTILITIES.
      */
+
+    /**
+     * Sets the listener {@link OnBuildOptionsMenuListener}.
+     * 
+     * @param listener
+     *            the listener.
+     */
+    public void setBuildOptionsMenuListener(OnBuildOptionsMenuListener listener) {
+        mOnBuildOptionsMenuListener = listener;
+    }// setBuildOptionsMenuListener()
+
+    /**
+     * Gets the listener {@link OnBuildOptionsMenuListener}.
+     * 
+     * @return the listener.
+     */
+    public OnBuildOptionsMenuListener getOnBuildOptionsMenuListener() {
+        return mOnBuildOptionsMenuListener;
+    }// getOnBuildOptionsMenuListener()
 
     /**
      * Gets the short name of this path.
@@ -386,17 +436,8 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
 
             @Override
             public void onClick(View v) {
-                ContextMenuUtils.showContextMenu(v.getContext(), 0, 0,
-                        new Integer[] { R.string.afc_cmd_add_to_bookmarks },
-                        new ContextMenuUtils.OnMenuItemClickListener() {
-
-                            @Override
-                            public void onClick(final int resId) {
-                                if (resId == R.string.afc_cmd_add_to_bookmarks) {
-                                    // TODO
-                                }
-                            }// onClick()
-                        });
+                if (getOnBuildOptionsMenuListener() != null)
+                    getOnBuildOptionsMenuListener().onBuildOptionsMenu(v, (Cursor) getItem(cursorPosition));
             }// onClick()
         };
     }// newImageIconOnClickListener()

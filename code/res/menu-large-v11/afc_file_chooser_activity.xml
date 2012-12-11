@@ -1,26 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (c) 2012 Hai Bison
-
-    See the file LICENSE at the root directory of this project for copying
-    permission.
+    Copyright (c) 2012 Hai Bison See the file LICENSE at the root directory 
+	of this project for copying permission.
 -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/afc_filechooser_activity_menuitem_bookmarks"
-        android:icon="@drawable/afc_ic_menu_bookmarks"
-        android:showAsAction="ifRoom"
-        android:title="@string/afc_title_bookmarks"/>
-    <item
-        android:id="@+id/afc_filechooser_activity_menuitem_home"
-        android:icon="@drawable/afc_ic_menu_home"
-        android:showAsAction="ifRoom"
-        android:title="@string/afc_cmd_home"/>
-    <item
         android:id="@+id/afc_filechooser_activity_menuitem_reload"
-        android:icon="@drawable/afc_ic_menu_reload"
+        android:icon="@drawable/afc_ic_menu_reload_light"
         android:showAsAction="ifRoom"
         android:title="@string/afc_cmd_reload"/>
     <item

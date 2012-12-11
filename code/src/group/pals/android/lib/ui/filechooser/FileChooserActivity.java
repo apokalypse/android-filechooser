@@ -24,8 +24,10 @@ import group.pals.android.lib.ui.filechooser.utils.history.History;
 import group.pals.android.lib.ui.filechooser.utils.history.HistoryFilter;
 import group.pals.android.lib.ui.filechooser.utils.history.HistoryListener;
 import group.pals.android.lib.ui.filechooser.utils.history.HistoryStore;
+import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.Dlg;
 import group.pals.android.lib.ui.filechooser.utils.ui.LoadingDialog;
+import group.pals.android.lib.ui.filechooser.utils.ui.bookmark.BookmarkFragment;
 import group.pals.android.lib.ui.filechooser.utils.ui.history.HistoryFragment;
 
 import java.util.ArrayList;
@@ -343,6 +345,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
         mFilterMode = getIntent().getIntExtra(_FilterMode, BaseFile._FilterFilesOnly);
         mMaxFileCount = getIntent().getIntExtra(_MaxFileCount, 1000);
         mFileAdapter = new BaseFileAdapter(this, mFilterMode, mIsMultiSelection);
+        mFileAdapter.setBuildOptionsMenuListener(mOnBuildOptionsMenuListener);
 
         // load controls
 
@@ -443,10 +446,9 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getGroupId() == R.id.afc_filechooser_activity_menugroup_sorter) {
+        if (item.getItemId() == R.id.afc_filechooser_activity_menuitem_sort) {
             doResortViewFiles();
-        }// group_sorter
-        else if (item.getItemId() == R.id.afc_filechooser_activity_menuitem_new_folder) {
+        } else if (item.getItemId() == R.id.afc_filechooser_activity_menuitem_new_folder) {
             doCreateNewDir();
         } else if (item.getItemId() == R.id.afc_filechooser_activity_menuitem_switch_viewmode) {
             doSwitchViewType();
@@ -456,6 +458,8 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
             goTo(getCurrentLocation());
         } else if (item.getItemId() == R.id.afc_filechooser_activity_menuitem_history) {
             doShowHistoryManager();
+        } else if (item.getItemId() == R.id.afc_filechooser_activity_menuitem_bookmarks) {
+            doShowBookmarkManager();
         }
 
         return true;
@@ -962,6 +966,15 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
     }// doGoHome()
 
     /**
+     * Shows bookmark manager.
+     */
+    private void doShowBookmarkManager() {
+        BookmarkFragment bf = BookmarkFragment.newInstance(true);
+        bf.setOnBookmarkItemClickListener(mBookmarkFragmentOnBookmarkItemClickListener);
+        bf.show(getSupportFragmentManager().beginTransaction(), BookmarkFragment.class.getName());
+    }// doShowBookmarkManager()
+
+    /**
      * Shows history manager.
      */
     private void doShowHistoryManager() {
@@ -970,18 +983,17 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
         // Create and show the dialog.
         final HistoryFragment _fragmentHistory = HistoryFragment.newInstance();
-        _fragmentHistory.addOnHistoryItemClickListener(new HistoryFragment.OnHistoryItemClickListener() {
+        _fragmentHistory.setOnHistoryItemClickListener(new HistoryFragment.OnHistoryItemClickListener() {
 
             @Override
             public void onItemClick(String providerId, final Uri uri) {
                 /*
                  * TODO what to do with `providerId`?
                  */
-                _fragmentHistory.dismiss();
 
                 /*
                  * Check if `uri` is in internal list, then use it instead of
-                 * this.
+                 * that.
                  */
                 if (!mHistory.find(new HistoryFilter<Uri>() {
 
@@ -1694,6 +1706,37 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
     };// mBtnOk_OpenDialog_OnClickListener
 
     /*
+     * FRAGMENT LISTENERS
+     */
+
+    private final BookmarkFragment.OnBookmarkItemClickListener mBookmarkFragmentOnBookmarkItemClickListener = new BookmarkFragment.OnBookmarkItemClickListener() {
+
+        @Override
+        public void onItemClick(String providerId, final Uri uri) {
+            /*
+             * TODO what to do with `providerId`?
+             */
+
+            /*
+             * Check if `uri` is in internal list, then use it instead of that.
+             */
+            if (!mHistory.find(new HistoryFilter<Uri>() {
+
+                @Override
+                public boolean accept(Uri item) {
+                    if (uri.equals(item)) {
+                        goTo(item);
+                        return true;
+                    }
+
+                    return false;
+                }// accept()
+            }, false))
+                goTo(uri);
+        }// onItemClick()
+    };// mBookmarkFragmentOnBookmarkItemClickListener
+
+    /*
      * LIST VIEW HELPER
      */
 
@@ -1869,4 +1912,34 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
             return true;
         }// onItemLongClick()
     };// mViewFilesOnItemLongClickListener
+
+    private final BaseFileAdapter.OnBuildOptionsMenuListener mOnBuildOptionsMenuListener = new BaseFileAdapter.OnBuildOptionsMenuListener() {
+
+        @Override
+        public void onBuildOptionsMenu(View view, Cursor cursor) {
+            if (!BaseFileProviderUtils.fileCanRead(cursor) || !BaseFileProviderUtils.isDirectory(cursor))
+                return;
+
+            final Uri _uri = BaseFileProviderUtils.getUri(cursor);
+            final String _name = BaseFileProviderUtils.getFileName(cursor);
+
+            ContextMenuUtils.showContextMenu(FileChooserActivity.this, 0, 0,
+                    new Integer[] { R.string.afc_cmd_add_to_bookmarks },
+                    new ContextMenuUtils.OnMenuItemClickListener() {
+
+                        @Override
+                        public void onClick(final int resId) {
+                            if (resId == R.string.afc_cmd_add_to_bookmarks) {
+                                BookmarkFragment.doEnterNewNameOrRenameBookmark(FileChooserActivity.this,
+                                        BaseFileProviderUtils.getProviderId(mFileProviderAuthority), -1, _uri, _name);
+                            }
+                        }// onClick()
+                    });
+        }// onBuildOptionsMenu()
+
+        @Override
+        public void onBuildAdvancedOptionsMenu(View view, Cursor cursor) {
+            // TODO Auto-generated method stub
+        }// onBuildAdvancedOptionsMenu()
+    };// mOnBuildOptionsMenuListener
 }
