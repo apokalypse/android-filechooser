@@ -651,7 +651,7 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
                             Cursor cursor = context.getContentResolver().query(
                                     BookmarkContract.Bookmark._ContentUri,
                                     null,
-                                    String.format("%s = %s and %s like %s",
+                                    String.format("%s = %s AND %s LIKE %s",
                                             BookmarkContract.Bookmark._ColumnProviderId,
                                             DatabaseUtils.sqlEscapeString(providerId),
                                             BookmarkContract.Bookmark._ColumnUri,
