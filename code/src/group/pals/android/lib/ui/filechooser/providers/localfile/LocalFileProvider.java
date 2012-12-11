@@ -393,6 +393,20 @@ public class LocalFileProvider extends BaseFileProvider {
         throw new UnsupportedOperationException();
     }// update()
 
+    @Override
+    public void shutdown() {
+        if (BuildConfig.DEBUG)
+            Log.d(_ClassName, "shutdown()");
+
+        /*
+         * Stop all tasks.
+         */
+        synchronized (_MapInterruption) {
+            for (int i = 0; i < _MapInterruption.size(); i++)
+                _MapInterruption.put(_MapInterruption.keyAt(i), true);
+        }
+    }// shutdown()
+
     /*
      * UTILITIES
      */
