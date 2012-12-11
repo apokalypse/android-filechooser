@@ -548,8 +548,6 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
          *            the group position.
          */
         private void sortBookmarks(int groupPosition) {
-            // TODO
-
             Map<String, Integer> bookmarks = new HashMap<String, Integer>();
 
             for (int i = 0; i < mBookmarkCursorAdapter.getChildrenCount(groupPosition); i++) {
