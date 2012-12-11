@@ -36,6 +36,12 @@ import android.widget.TextView;
 public class BaseFileAdapter extends ResourceCursorAdapter {
 
     /**
+     * Used for debugging...
+     */
+    @SuppressWarnings("unused")
+    private static final String _ClassName = BaseFileAdapter.class.getName();
+
+    /**
      * Listener for building context menu editor.
      * 
      * @author Hai Bison
@@ -417,6 +423,7 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
                 v.setBackgroundResource(R.drawable.afc_button_sort_symbol_dark_pressed);
                 break;
             case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_MOVE:
                 v.setBackgroundResource(0);
                 break;
             }
