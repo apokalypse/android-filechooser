@@ -292,6 +292,8 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
      * Controls.
      */
 
+    private View mBtnGoHome;
+    private View mBtnBookmarkManager;
     private BookmarkFragment mBookmarkFragment;
     private HorizontalScrollView mViewLocationsContainer;
     private ViewGroup mViewLocations;
@@ -373,6 +375,8 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
          * Load controls.
          */
 
+        mBtnGoHome = findViewById(R.id.afc_filechooser_activity_textview_home);
+        mBtnBookmarkManager = findViewById(R.id.afc_filechooser_activity_textview_bookmarks);
         mViewGoBack = (ImageView) findViewById(R.id.afc_filechooser_activity_button_go_back);
         mViewGoForward = (ImageView) findViewById(R.id.afc_filechooser_activity_button_go_forward);
         mViewLocations = (ViewGroup) findViewById(R.id.afc_filechooser_activity_view_locations);
@@ -816,6 +820,11 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
      * - button go forward;
      */
     private void setupHeader() {
+        if (mBtnGoHome != null)
+            mBtnGoHome.setOnClickListener(mBtnGoHomeOnClickListener);
+        if (mBtnBookmarkManager != null)
+            mBtnBookmarkManager.setOnClickListener(mBtnBookmarkManagerOnClickListener);
+
         if (mIsSaveDialog) {
             setTitle(R.string.afc_title_save_as);
         } else {
@@ -1638,6 +1647,23 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
     /**********************************************************
      * BUTTON LISTENERS
      */
+
+    private final View.OnClickListener mBtnGoHomeOnClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            doGoHome();
+        }// onClick()
+    };// mBtnGoHomeOnClickListener
+
+    private final View.OnClickListener mBtnBookmarkManagerOnClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            if (mBookmarkFragment != null)
+                mBookmarkFragment.setEditor(!mBookmarkFragment.isEditor());
+        }// onClick()
+    };// mBtnBookmarkManagerOnClickListener
 
     private final View.OnClickListener mBtnGoBackOnClickListener = new View.OnClickListener() {
 
