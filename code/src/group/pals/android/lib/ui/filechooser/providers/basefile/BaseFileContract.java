@@ -7,10 +7,10 @@
 
 package group.pals.android.lib.ui.filechooser.providers.basefile;
 
+import group.pals.android.lib.ui.filechooser.providers.BaseColumns;
 import group.pals.android.lib.ui.filechooser.providers.ProviderUtils;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.BaseColumns;
 
 /**
  * Base file contract.
@@ -102,17 +102,13 @@ public class BaseFileContract {
          */
 
         /**
-         * The path to a single directory.
-         */
-        public static final String _PathDirectory = "directory";
-        /**
          * The path to a single file. This can be a file or a directory.
          */
         public static final String _PathFile = "file";
         /**
-         * The path to query the provider's identification such as name, ID...
+         * The path to query the provider's information such as name, ID...
          */
-        public static final String _PathInfo = "info";
+        public static final String _PathApi = "api";
 
         /*
          * Parameters.
@@ -222,10 +218,10 @@ public class BaseFileContract {
 
         /**
          * Use this parameter to get parent file of a file with {@code query()}.
-         * The value can be {@code "true"} or {@code "1"} for {@code true},
-         * {@code "false"} or {@code "0"} for {@code false}.
+         * The value can be anything. That means you just need to add this
+         * parameter to the query URI.
          * <p>
-         * Type: {@code Boolean}
+         * Type: {@code String}
          * </p>
          */
         public static final String _ParamGetParent = "get_parent";
@@ -296,20 +292,52 @@ public class BaseFileContract {
          */
         public static final String _ParamIsAncestorOf = "is_ancestor_of";
 
+        /**
+         * Use this parameter to get default path of a provider with
+         * {@code query()}. The value can be anything. That means you just need
+         * to add this parameter to the query URI.
+         * <p>
+         * Type: {@code String}
+         * </p>
+         */
+        public static final String _ParamGetDefaultPath = "get_default_path";
+
+        /**
+         * Use this parameter to get the content of a directory with
+         * {@code query()}. The value can be anything. That means you just need
+         * to add this parameter to the query URI.
+         * <p>
+         * Type: {@code String}
+         * </p>
+         */
+        public static final String _ParamListFiles = "list_files";
+
+        /**
+         * Use this parameter to get the human-readable path of a file
+         * {@code query()}. The value can be anything. That means you just need
+         * to add this parameter to the query URI.
+         * <p>
+         * Type: {@code String}
+         * </p>
+         * 
+         * @see #_ColumnPath
+         */
+        public static final String _ParamGetPath = "get_path";
+
         /*
          * URI builders.
          */
 
         /**
-         * Generates content URI base for a single directory.
+         * Generates content URI API for a provider.
          * 
          * @param authority
          *            the authority of file provider.
-         * @return The base URI for a single directory. You append it with the
-         *         URI to full path of a single directory.
+         * @return The API URI for a provider. Default will return provider name
+         *         and ID.
          */
-        public static Uri genContentUriBase(String authority) {
-            return Uri.parse(ProviderUtils._Scheme + authority + "/" + _PathDirectory + "/");
+        public static Uri genContentUriApi(String authority) {
+            return Uri.parse(ProviderUtils._Scheme + authority + "/" + _PathApi);
         }// genContentUriBase()
 
         /**
@@ -323,18 +351,6 @@ public class BaseFileContract {
         public static Uri genContentIdUriBase(String authority) {
             return Uri.parse(ProviderUtils._Scheme + authority + "/" + _PathFile + "/");
         }// genContentIdUriBase()
-
-        /**
-         * Generates content URI containing the provider identification, such as
-         * name, ID...
-         * 
-         * @param authority
-         *            the authority of file provider.
-         * @return The base URI containing provider's identification.
-         */
-        public static Uri genContentUriInfo(String authority) {
-            return Uri.parse(ProviderUtils._Scheme + authority + "/" + _PathInfo);
-        }// genContentUriInfo()
 
         /*
          * MIME type definitions.
@@ -361,6 +377,14 @@ public class BaseFileContract {
          * </p>
          */
         public static final String _ColumnUri = "uri";
+
+        /**
+         * The human-readable path of this file.
+         * <p>
+         * Type: {@code String}
+         * </p>
+         */
+        public static final String _ColumnPath = "path";
 
         /**
          * The name of this file.
@@ -405,14 +429,6 @@ public class BaseFileContract {
          * </p>
          */
         public static final String _ColumnType = "type";
-
-        /**
-         * The modification time of this file, in milliseconds.
-         * <p>
-         * Type: {@code Long}
-         * </p>
-         */
-        public static final String _ColumnModificationTime = "modification_time";
 
         /**
          * The name of this provider.

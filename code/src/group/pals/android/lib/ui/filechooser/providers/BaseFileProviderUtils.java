@@ -77,8 +77,8 @@ public class BaseFileProviderUtils {
         if (authority == null)
             return null;
 
-        Cursor cursor = context.getContentResolver().query(BaseFile.genContentUriInfo(authority), null, null, null,
-                null);
+        Cursor cursor = context.getContentResolver()
+                .query(BaseFile.genContentUriApi(authority), null, null, null, null);
         if (cursor == null)
             return null;
         try {
@@ -95,17 +95,13 @@ public class BaseFileProviderUtils {
      * 
      * @param context
      *            {@link Context}.
-     * @param authority
-     *            the file provider authority.
      * @param uri
      *            the URI you want to check.
      * @return {@code true} if {@code uri} is a directory, {@code false}
      *         otherwise.
      */
-    public static boolean isDirectory(Context context, String authority, Uri uri) {
-        Cursor cursor = context.getContentResolver().query(
-                BaseFile.genContentIdUriBase(authority).buildUpon().appendPath(uri.toString()).build(), null, null,
-                null, null);
+    public static boolean isDirectory(Context context, Uri uri) {
+        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
         if (cursor == null)
             return false;
 
@@ -135,16 +131,12 @@ public class BaseFileProviderUtils {
      * 
      * @param context
      *            {@link Context}.
-     * @param authority
-     *            the file provider authority.
      * @param uri
      *            the URI you want to check.
      * @return {@code true} if {@code uri} is a file, {@code false} otherwise.
      */
-    public static boolean isFile(Context context, String authority, Uri uri) {
-        Cursor cursor = context.getContentResolver().query(
-                BaseFile.genContentIdUriBase(authority).buildUpon().appendPath(uri.toString()).build(), null, null,
-                null, null);
+    public static boolean isFile(Context context, Uri uri) {
+        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
         if (cursor == null)
             return false;
 
@@ -173,16 +165,12 @@ public class BaseFileProviderUtils {
      * 
      * @param context
      *            {@link Context}.
-     * @param authority
-     *            the file provider authority.
      * @param uri
      *            the URI you want to get.
      * @return the file name if {@code uri} is a file, {@code null} otherwise.
      */
-    public static String getFileName(Context context, String authority, Uri uri) {
-        Cursor cursor = context.getContentResolver().query(
-                BaseFile.genContentIdUriBase(authority).buildUpon().appendPath(uri.toString()).build(), null, null,
-                null, null);
+    public static String getFileName(Context context, Uri uri) {
+        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
         if (cursor == null)
             return null;
 
@@ -207,22 +195,52 @@ public class BaseFileProviderUtils {
     }// getFileName()
 
     /**
+     * Gets human-readable path of {@code uri}.
+     * 
+     * @param context
+     *            {@link Context}.
+     * @param uri
+     *            the URI you want to get.
+     * @return the human-readable path of {@code uri}.
+     */
+    public static String getFilePath(Context context, Uri uri) {
+        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+        if (cursor == null)
+            return null;
+
+        try {
+            if (cursor.moveToFirst())
+                return getFilePath(cursor);
+            return null;
+        } finally {
+            cursor.close();
+        }
+    }// getFilePath()
+
+    /**
+     * Gets human-readable path of file pointed by {@code cursor}.
+     * 
+     * @param cursor
+     *            the cursor points to a file.
+     * @return the human-readable path.
+     */
+    public static String getFilePath(Cursor cursor) {
+        return cursor.getString(cursor.getColumnIndex(BaseFile._ColumnPath));
+    }// getFilePath()
+
+    /**
      * Gets file type of the file pointed by {@code uri}.
      * 
      * @param context
      *            {@link Context}.
-     * @param authority
-     *            the file provider authority.
      * @param uri
      *            the URI you want to get.
      * @return the file type of {@code uri}, can be one of
      *         {@link #_FileTypeDirectory}, {@link #_FileTypeFile},
      *         {@link #_FileTypeUnknown}, {@link #_FileTypeNotExisted}.
      */
-    public static int getFileType(Context context, String authority, Uri uri) {
-        Cursor cursor = context.getContentResolver().query(
-                BaseFile.genContentIdUriBase(authority).buildUpon().appendPath(uri.toString()).build(), null, null,
-                null, null);
+    public static int getFileType(Context context, Uri uri) {
+        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
         if (cursor == null)
             return BaseFile._FileTypeNotExisted;
 
@@ -264,16 +282,12 @@ public class BaseFileProviderUtils {
      * 
      * @param context
      *            {@link Context}.
-     * @param authority
-     *            the file provider authority.
      * @param uri
      *            the URI you want to check.
      * @return {@code true} or {@code false}.
      */
-    public static boolean fileExists(Context context, String authority, Uri uri) {
-        Cursor cursor = context.getContentResolver().query(
-                BaseFile.genContentIdUriBase(authority).buildUpon().appendPath(uri.toString()).build(), null, null,
-                null, null);
+    public static boolean fileExists(Context context, Uri uri) {
+        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
         if (cursor == null)
             return false;
 
@@ -291,16 +305,12 @@ public class BaseFileProviderUtils {
      * 
      * @param context
      *            {@link Context}.
-     * @param authority
-     *            the file provider authority.
      * @param uri
      *            the URI you want to check.
      * @return {@code true} or {@code false}.
      */
-    public static boolean fileCanRead(Context context, String authority, Uri uri) {
-        Cursor cursor = context.getContentResolver().query(
-                BaseFile.genContentIdUriBase(authority).buildUpon().appendPath(uri.toString()).build(), null, null,
-                null, null);
+    public static boolean fileCanRead(Context context, Uri uri) {
+        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
         if (cursor == null)
             return false;
 
@@ -331,16 +341,12 @@ public class BaseFileProviderUtils {
      * 
      * @param context
      *            {@link Context}.
-     * @param authority
-     *            the file provider authority.
      * @param uri
      *            the URI you want to check.
      * @return {@code true} or {@code false}.
      */
-    public static boolean fileCanWrite(Context context, String authority, Uri uri) {
-        Cursor cursor = context.getContentResolver().query(
-                BaseFile.genContentIdUriBase(authority).buildUpon().appendPath(uri.toString()).build(), null, null,
-                null, null);
+    public static boolean fileCanWrite(Context context, Uri uri) {
+        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
         if (cursor == null)
             return false;
 
@@ -376,8 +382,10 @@ public class BaseFileProviderUtils {
      * @return the default path, can be {@code null}.
      */
     public static Uri getDefaultPath(Context context, String authority) {
-        Cursor cursor = context.getContentResolver().query(BaseFile.genContentUriBase(authority), null, null, null,
-                null);
+        Cursor cursor = context.getContentResolver().query(
+                BaseFile.genContentUriApi(authority).buildUpon()
+                        .appendQueryParameter(BaseFile._ParamGetDefaultPath, Boolean.toString(true)).build(), null,
+                null, null, null);
         if (cursor == null)
             return null;
 
@@ -395,17 +403,14 @@ public class BaseFileProviderUtils {
      * 
      * @param context
      *            {@link Context}.
-     * @param authority
-     *            the file provider authority.
      * @param uri
      *            the URI of an existing file.
      * @return the parent file if it exists, {@code null} otherwise.
      */
-    public static Uri getParentFile(Context context, String authority, Uri uri) {
+    public static Uri getParentFile(Context context, Uri uri) {
         Cursor cursor = context.getContentResolver().query(
-                BaseFile.genContentIdUriBase(authority).buildUpon().appendPath(uri.toString())
-                        .appendQueryParameter(BaseFile._ParamGetParent, Boolean.toString(true)).build(), null, null,
-                null, null);
+                uri.buildUpon().appendQueryParameter(BaseFile._ParamGetParent, Boolean.toString(true)).build(), null,
+                null, null, null);
         if (cursor == null)
             return null;
 
@@ -423,8 +428,6 @@ public class BaseFileProviderUtils {
      * 
      * @param context
      *            {@link Context}.
-     * @param authority
-     *            the provider authority.
      * @param uri1
      *            the first URI.
      * @param uri2
@@ -432,11 +435,10 @@ public class BaseFileProviderUtils {
      * @return {@code true} if {@code uri1} is ancestor of {@code uri2},
      *         {@code false} otherwise.
      */
-    public static boolean isAncestorOf(Context context, String authority, Uri uri1, Uri uri2) {
+    public static boolean isAncestorOf(Context context, Uri uri1, Uri uri2) {
         Cursor cursor = context.getContentResolver().query(
-                BaseFile.genContentIdUriBase(authority).buildUpon().appendPath(uri1.toString())
-                        .appendQueryParameter(BaseFile._ParamIsAncestorOf, uri2.toString()).build(), null, null, null,
-                null);
+                uri1.buildUpon().appendQueryParameter(BaseFile._ParamIsAncestorOf, uri2.toString()).build(), null,
+                null, null, null);
         if (cursor == null)
             return false;
 

@@ -156,7 +156,7 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
 
         if (isEditor()) {
             bag.mTextPath.setVisibility(View.VISIBLE);
-            bag.mTextPath.setText(uri.getPath());
+            bag.mTextPath.setText(BaseFileProviderUtils.getFilePath(context, uri));
         } else
             bag.mTextPath.setVisibility(View.GONE);
 

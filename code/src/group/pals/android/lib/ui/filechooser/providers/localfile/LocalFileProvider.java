@@ -55,24 +55,14 @@ public class LocalFileProvider extends BaseFileProvider {
      */
 
     /**
-     * The incoming URI matches the default directory URI pattern.
-     */
-    private static final int _DefaultDirectory = 1;
-
-    /**
-     * The incoming URI matches the single directory URI pattern.
-     */
-    private static final int _Directory = 2;
-
-    /**
      * The incoming URI matches the single file URI pattern.
      */
-    private static final int _File = 3;
+    private static final int _File = 1;
 
     /**
      * The incoming URI matches the identification URI pattern.
      */
-    private static final int _Info = 4;
+    private static final int _Api = 2;
 
     /**
      * A {@link UriMatcher} instance.
@@ -85,10 +75,8 @@ public class LocalFileProvider extends BaseFileProvider {
     private static final SparseBooleanArray _MapInterruption = new SparseBooleanArray();
 
     static {
-        _UriMatcher.addURI(LocalFileContract._Authority, BaseFile._PathDirectory, _DefaultDirectory);
-        _UriMatcher.addURI(LocalFileContract._Authority, BaseFile._PathDirectory + "/*", _Directory);
         _UriMatcher.addURI(LocalFileContract._Authority, BaseFile._PathFile + "/*", _File);
-        _UriMatcher.addURI(LocalFileContract._Authority, BaseFile._PathInfo, _Info);
+        _UriMatcher.addURI(LocalFileContract._Authority, BaseFile._PathApi, _Api);
     }// static
 
     private final Collator mCollator = Collator.getInstance();
@@ -99,7 +87,7 @@ public class LocalFileProvider extends BaseFileProvider {
          * Chooses the MIME type based on the incoming URI pattern.
          */
         switch (_UriMatcher.match(uri)) {
-        case _Directory:
+        case _Api:
             return BaseFile._ContentType;
 
         case _File:
@@ -140,7 +128,7 @@ public class LocalFileProvider extends BaseFileProvider {
                 _MapInterruption.delete(taskId);
             }
 
-            break;// single file
+            break;// _File
         }
 
         default:
@@ -166,7 +154,7 @@ public class LocalFileProvider extends BaseFileProvider {
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         switch (_UriMatcher.match(uri)) {
-        case _Directory:
+        case _File:
             File file = new File(Uri.parse(uri.getLastPathSegment()).getPath());
             if (!file.isDirectory() || !file.canWrite())
                 return null;
@@ -200,7 +188,7 @@ public class LocalFileProvider extends BaseFileProvider {
                 getContext().getContentResolver().notifyChange(newUri, null);
                 return newUri;
             }
-            return null;// _Directory
+            return null;// _File
 
         default:
             throw new IllegalArgumentException("Unknown URI " + uri);
@@ -214,178 +202,20 @@ public class LocalFileProvider extends BaseFileProvider {
                     String.format("query() >> uri = %s (%s) >> match = %s", uri, uri.getLastPathSegment(),
                             _UriMatcher.match(uri)));
 
-        MatrixCursor matrixCursor = new MatrixCursor(new String[] { BaseFile._ID, BaseFile._ColumnUri,
-                BaseFile._ColumnName, BaseFile._ColumnCanRead, BaseFile._ColumnCanWrite, BaseFile._ColumnSize,
-                BaseFile._ColumnType, BaseFile._ColumnModificationTime });
-
         switch (_UriMatcher.match(uri)) {
-        case _DefaultDirectory: {
-            File file = Environment.getExternalStorageDirectory();
-            if (file == null || !file.isDirectory())
-                file = new File("/");
-            int type = file.isFile() ? BaseFile._FileTypeFile : (file.isDirectory() ? BaseFile._FileTypeDirectory
-                    : BaseFile._FileTypeUnknown);
-            RowBuilder newRow = matrixCursor.newRow();
-            newRow.add(0);// _ID
-            newRow.add(Uri.fromFile(file).toString());
-            newRow.add(file.getName());
-            newRow.add(file.canRead() ? 1 : 0);
-            newRow.add(file.canWrite() ? 1 : 0);
-            newRow.add(file.length());
-            newRow.add(type);
-            newRow.add(file.lastModified());
-
-            return matrixCursor;// _DefaultDirectory
-        }
-
-        case _Directory: {
-            File file = new File(Uri.parse(uri.getLastPathSegment()).getPath());
-
-            if (BuildConfig.DEBUG)
-                Log.d(_ClassName, "srcFile = " + file);
-
-            /*
-             * Prepare params...
-             */
-            int taskId = ProviderUtils.getIntQueryParam(uri, BaseFile._ParamTaskId, 0);
-            boolean isCancelled = ProviderUtils.getBooleanQueryParam(uri, BaseFile._ParamCancel);
-
-            if (isCancelled) {
-                synchronized (_MapInterruption) {
-                    if (_MapInterruption.indexOfKey(taskId) >= 0)
-                        _MapInterruption.put(taskId, true);
-                }
-                return null;
-            }// client wants to cancel the previous task
-
-            if (!file.isDirectory() || !file.canRead())
-                return null;
-
-            /*
-             * Prepare params...
-             */
-            boolean showHiddenFiles = ProviderUtils.getBooleanQueryParam(uri, BaseFile._ParamShowHiddenFiles);
-            boolean sortAscending = ProviderUtils.getBooleanQueryParam(uri, BaseFile._ParamSortAscending, true);
-            int sortBy = ProviderUtils.getIntQueryParam(uri, BaseFile._ParamSortBy, BaseFile._SortByName);
-            int filterMode = ProviderUtils.getIntQueryParam(uri, BaseFile._ParamFilterMode,
-                    BaseFile._FilterFilesAndDirectories);
-            int limit = ProviderUtils.getIntQueryParam(uri, BaseFile._ParamLimit, 1000);
-            String positiveRegex = uri.getQueryParameter(BaseFile._ParamPositiveRegexFilter);
-            String negativeRegex = uri.getQueryParameter(BaseFile._ParamNegativeRegexFilter);
-
-            _MapInterruption.put(taskId, false);
-
-            boolean[] hasMoreFiles = { false };
-            List<File> files = new ArrayList<File>();
-            listFiles(taskId, file, showHiddenFiles, filterMode, limit, positiveRegex, negativeRegex, files,
-                    hasMoreFiles);
-            if (!_MapInterruption.get(taskId)) {
-                sortFiles(taskId, files, sortAscending, sortBy);
-                if (!_MapInterruption.get(taskId)) {
-                    for (int i = 0; i < files.size(); i++) {
-                        if (_MapInterruption.get(taskId))
-                            break;
-
-                        File f = files.get(i);
-                        int type = f.isFile() ? BaseFile._FileTypeFile : (f.isDirectory() ? BaseFile._FileTypeDirectory
-                                : BaseFile._FileTypeUnknown);
-                        RowBuilder newRow = matrixCursor.newRow();
-                        newRow.add(i);// _ID
-                        newRow.add(Uri.fromFile(f).toString());
-                        newRow.add(f.getName());
-                        newRow.add(f.canRead() ? 1 : 0);
-                        newRow.add(f.canWrite() ? 1 : 0);
-                        newRow.add(f.length());
-                        newRow.add(type);
-                        newRow.add(f.lastModified());
-                    }// for files
-
-                    RowBuilder newRow = matrixCursor.newRow();
-                    newRow.add(files.size());// _ID
-                    newRow.add(Uri.fromFile(file).buildUpon()
-                            .appendQueryParameter(BaseFile._ParamHasMoreFiles, Boolean.toString(hasMoreFiles[0]))
-                            .build().toString());
-                    newRow.add(file.getName());
-                }
-            }
-
-            try {
-                if (_MapInterruption.get(taskId)) {
-                    if (BuildConfig.DEBUG)
-                        Log.d(_ClassName, "query() >> cancelled...");
-                    return null;
-                }
-            } finally {
-                _MapInterruption.delete(taskId);
-            }
-
-            /*
-             * Tells the Cursor what URI to watch, so it knows when its source
-             * data changes.
-             */
-            matrixCursor.setNotificationUri(getContext().getContentResolver(), uri);
-
-            break;// _Directory
+        case _Api: {
+            return doAnswerApi(uri);
         }
 
         case _File: {
-            Uri fileUri = Uri.parse(uri.getLastPathSegment());
-            String appendName = uri.getQueryParameter(BaseFile._ParamAppendName);
-
-            /*
-             * Test ancestor...
-             */
-            String paramIsAncestorOf = uri.getQueryParameter(BaseFile._ParamIsAncestorOf);
-            File fileToTestDescendant = null;
-            if (!TextUtils.isEmpty(paramIsAncestorOf))
-                fileToTestDescendant = new File(Uri.parse(paramIsAncestorOf).getPath());
-
-            File file = new File(String.format("%s%s", fileUri.getPath(),
-                    !TextUtils.isEmpty(appendName) ? String.format("/%s", appendName) : ""));
-
-            /*
-             * Test ancestor...
-             */
-            if (fileToTestDescendant != null) {
-                if (!file.isDirectory() || !fileToTestDescendant.exists()
-                        || !fileToTestDescendant.getAbsolutePath().startsWith(file.getAbsolutePath()))
-                    return null;
-                return new MatrixCursor(new String[0]);
-            }
-
-            if (ProviderUtils.getBooleanQueryParam(uri, BaseFile._ParamGetParent))
-                file = file.getParentFile();
-            if (file == null)
-                return null;
-
-            int type = file.isFile() ? BaseFile._FileTypeFile : (file.isDirectory() ? BaseFile._FileTypeDirectory
-                    : (file.exists() ? BaseFile._FileTypeUnknown : BaseFile._FileTypeNotExisted));
-            RowBuilder newRow = matrixCursor.newRow();
-            newRow.add(0);// _ID
-            newRow.add(Uri.fromFile(file).toString());
-            newRow.add(file.getName());
-            newRow.add(file.canRead() ? 1 : 0);
-            newRow.add(file.canWrite() ? 1 : 0);
-            newRow.add(file.length());
-            newRow.add(type);
-            newRow.add(file.lastModified());
-
-            break;// _File
-        }
-
-        case _Info: {
-            MatrixCursor mc = new MatrixCursor(
-                    new String[] { BaseFile._ColumnProviderId, BaseFile._ColumnProviderName });
-            mc.newRow().add(LocalFileContract._ID).add(getContext().getString(R.string.afc_phone));
-
-            return mc;// _Info
+            if (uri.getQueryParameter(BaseFile._ParamListFiles) != null)
+                return doListFiles(uri);
+            return doRetrieveFileInfo(uri);// _File
         }
 
         default:
             throw new IllegalArgumentException("Unknown URI " + uri);
         }
-
-        return matrixCursor;
     }// query()
 
     @Override
@@ -410,6 +240,208 @@ public class LocalFileProvider extends BaseFileProvider {
     /*
      * UTILITIES
      */
+
+    /**
+     * Answers the incoming URI.
+     * 
+     * @param uri
+     *            the request URI.
+     * @return the response.
+     */
+    private MatrixCursor doAnswerApi(Uri uri) {
+        MatrixCursor matrixCursor = null;
+
+        if (uri.getQueryParameter(BaseFile._ParamGetDefaultPath) != null) {
+            matrixCursor = new MatrixCursor(new String[] { BaseFile._ID, BaseFile._ColumnUri, BaseFile._ColumnPath,
+                    BaseFile._ColumnName, BaseFile._ColumnCanRead, BaseFile._ColumnCanWrite, BaseFile._ColumnSize,
+                    BaseFile._ColumnType, BaseFile._ColumnModificationTime });
+
+            File file = Environment.getExternalStorageDirectory();
+            if (file == null || !file.isDirectory())
+                file = new File("/");
+            int type = file.isFile() ? BaseFile._FileTypeFile : (file.isDirectory() ? BaseFile._FileTypeDirectory
+                    : BaseFile._FileTypeUnknown);
+            RowBuilder newRow = matrixCursor.newRow();
+            newRow.add(0);// _ID
+            newRow.add(BaseFile.genContentIdUriBase(LocalFileContract._Authority).buildUpon()
+                    .appendPath(Uri.fromFile(file).toString()).build().toString());
+            newRow.add(file.getAbsolutePath());
+            newRow.add(file.getName());
+            newRow.add(file.canRead() ? 1 : 0);
+            newRow.add(file.canWrite() ? 1 : 0);
+            newRow.add(file.length());
+            newRow.add(type);
+            newRow.add(file.lastModified());
+        }// get default path
+        else {
+            matrixCursor = new MatrixCursor(new String[] { BaseFile._ColumnProviderId, BaseFile._ColumnProviderName });
+            matrixCursor.newRow().add(LocalFileContract._ID).add(getContext().getString(R.string.afc_phone));
+        }// default API (returns provider name and ID)
+
+        return matrixCursor;
+    }// doAnswerApi()
+
+    /**
+     * Lists the content of a directory, if available.
+     * 
+     * @param uri
+     *            the URI pointing to a directory.
+     * @return the content of a directory, or {@code null} if not available.
+     */
+    private MatrixCursor doListFiles(Uri uri) {
+        MatrixCursor matrixCursor = new MatrixCursor(new String[] { BaseFile._ID, BaseFile._ColumnUri,
+                BaseFile._ColumnPath, BaseFile._ColumnName, BaseFile._ColumnCanRead, BaseFile._ColumnCanWrite,
+                BaseFile._ColumnSize, BaseFile._ColumnType, BaseFile._ColumnModificationTime });
+
+        File file = new File(Uri.parse(uri.getLastPathSegment()).getPath());
+
+        if (BuildConfig.DEBUG)
+            Log.d(_ClassName, "srcFile = " + file);
+
+        /*
+         * Prepare params...
+         */
+        int taskId = ProviderUtils.getIntQueryParam(uri, BaseFile._ParamTaskId, 0);
+        boolean isCancelled = ProviderUtils.getBooleanQueryParam(uri, BaseFile._ParamCancel);
+
+        if (isCancelled) {
+            synchronized (_MapInterruption) {
+                if (_MapInterruption.indexOfKey(taskId) >= 0)
+                    _MapInterruption.put(taskId, true);
+            }
+            return null;
+        }// client wants to cancel the previous task
+
+        if (!file.isDirectory() || !file.canRead())
+            return null;
+
+        /*
+         * Prepare params...
+         */
+        boolean showHiddenFiles = ProviderUtils.getBooleanQueryParam(uri, BaseFile._ParamShowHiddenFiles);
+        boolean sortAscending = ProviderUtils.getBooleanQueryParam(uri, BaseFile._ParamSortAscending, true);
+        int sortBy = ProviderUtils.getIntQueryParam(uri, BaseFile._ParamSortBy, BaseFile._SortByName);
+        int filterMode = ProviderUtils.getIntQueryParam(uri, BaseFile._ParamFilterMode,
+                BaseFile._FilterFilesAndDirectories);
+        int limit = ProviderUtils.getIntQueryParam(uri, BaseFile._ParamLimit, 1000);
+        String positiveRegex = uri.getQueryParameter(BaseFile._ParamPositiveRegexFilter);
+        String negativeRegex = uri.getQueryParameter(BaseFile._ParamNegativeRegexFilter);
+
+        _MapInterruption.put(taskId, false);
+
+        boolean[] hasMoreFiles = { false };
+        List<File> files = new ArrayList<File>();
+        listFiles(taskId, file, showHiddenFiles, filterMode, limit, positiveRegex, negativeRegex, files, hasMoreFiles);
+        if (!_MapInterruption.get(taskId)) {
+            sortFiles(taskId, files, sortAscending, sortBy);
+            if (!_MapInterruption.get(taskId)) {
+                for (int i = 0; i < files.size(); i++) {
+                    if (_MapInterruption.get(taskId))
+                        break;
+
+                    File f = files.get(i);
+                    int type = f.isFile() ? BaseFile._FileTypeFile : (f.isDirectory() ? BaseFile._FileTypeDirectory
+                            : BaseFile._FileTypeUnknown);
+                    RowBuilder newRow = matrixCursor.newRow();
+                    newRow.add(i);// _ID
+                    newRow.add(BaseFile.genContentIdUriBase(LocalFileContract._Authority).buildUpon()
+                            .appendPath(Uri.fromFile(f).toString()).build().toString());
+                    newRow.add(f.getAbsolutePath());
+                    newRow.add(f.getName());
+                    newRow.add(f.canRead() ? 1 : 0);
+                    newRow.add(f.canWrite() ? 1 : 0);
+                    newRow.add(f.length());
+                    newRow.add(type);
+                    newRow.add(f.lastModified());
+                }// for files
+
+                RowBuilder newRow = matrixCursor.newRow();
+                newRow.add(files.size());// _ID
+                newRow.add(BaseFile.genContentIdUriBase(LocalFileContract._Authority).buildUpon()
+                        .appendPath(Uri.fromFile(file).toString())
+                        .appendQueryParameter(BaseFile._ParamHasMoreFiles, Boolean.toString(hasMoreFiles[0])).build()
+                        .toString());
+                newRow.add(file.getAbsolutePath());
+                newRow.add(file.getName());
+            }
+        }
+
+        try {
+            if (_MapInterruption.get(taskId)) {
+                if (BuildConfig.DEBUG)
+                    Log.d(_ClassName, "query() >> cancelled...");
+                return null;
+            }
+        } finally {
+            _MapInterruption.delete(taskId);
+        }
+
+        /*
+         * Tells the Cursor what URI to watch, so it knows when its source data
+         * changes.
+         */
+        matrixCursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return matrixCursor;
+    }// doListFiles()
+
+    /**
+     * Retrieves file information of a single file.
+     * 
+     * @param uri
+     *            the URI pointing to a file.
+     * @return the file information. Can be {@code null}, based on the input
+     *         parameters.
+     */
+    private MatrixCursor doRetrieveFileInfo(Uri uri) {
+        MatrixCursor matrixCursor = new MatrixCursor(new String[] { BaseFile._ID, BaseFile._ColumnUri,
+                BaseFile._ColumnPath, BaseFile._ColumnName, BaseFile._ColumnCanRead, BaseFile._ColumnCanWrite,
+                BaseFile._ColumnSize, BaseFile._ColumnType, BaseFile._ColumnModificationTime });
+
+        Uri fileUri = Uri.parse(uri.getLastPathSegment());
+        String appendName = uri.getQueryParameter(BaseFile._ParamAppendName);
+
+        /*
+         * Test ancestor...
+         */
+        String paramIsAncestorOf = uri.getQueryParameter(BaseFile._ParamIsAncestorOf);
+        File fileToTestDescendant = null;
+        if (!TextUtils.isEmpty(paramIsAncestorOf))
+            fileToTestDescendant = new File(Uri.parse(Uri.parse(paramIsAncestorOf).getLastPathSegment()).getPath());
+
+        File file = new File(String.format("%s%s", fileUri.getPath(),
+                !TextUtils.isEmpty(appendName) ? String.format("/%s", appendName) : ""));
+
+        /*
+         * Test ancestor...
+         */
+        if (fileToTestDescendant != null) {
+            if (!file.isDirectory() || !fileToTestDescendant.exists()
+                    || !fileToTestDescendant.getAbsolutePath().startsWith(file.getAbsolutePath()))
+                return null;
+            return new MatrixCursor(new String[0]);
+        }
+
+        if (ProviderUtils.getBooleanQueryParam(uri, BaseFile._ParamGetParent))
+            file = file.getParentFile();
+        if (file == null)
+            return null;
+
+        int type = file.isFile() ? BaseFile._FileTypeFile : (file.isDirectory() ? BaseFile._FileTypeDirectory : (file
+                .exists() ? BaseFile._FileTypeUnknown : BaseFile._FileTypeNotExisted));
+        RowBuilder newRow = matrixCursor.newRow();
+        newRow.add(0);// _ID
+        newRow.add(BaseFile.genContentIdUriBase(LocalFileContract._Authority).buildUpon()
+                .appendPath(Uri.fromFile(file).toString()).build().toString());
+        newRow.add(file.getAbsolutePath());
+        newRow.add(file.getName());
+        newRow.add(file.canRead() ? 1 : 0);
+        newRow.add(file.canWrite() ? 1 : 0);
+        newRow.add(file.length());
+        newRow.add(type);
+        newRow.add(file.lastModified());
+
+        return matrixCursor;
+    }// doRetrieveFileInfo()
 
     /**
      * Lists all file inside {@code dir}.

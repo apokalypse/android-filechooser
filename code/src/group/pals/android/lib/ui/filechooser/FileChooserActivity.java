@@ -570,11 +570,13 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
         String positiveRegex = getIntent().getStringExtra(_PositiveRegexFilter);
         String negativeRegex = getIntent().getStringExtra(_NegativeRegexFilter);
 
-        return new CursorLoader(this, BaseFile
-                .genContentUriBase(mFileProviderAuthority)
+        if (BuildConfig.DEBUG)
+            Log.d(_ClassName, "onCreateLoader() >> path = " + path);
+
+        return new CursorLoader(this, path
                 .buildUpon()
-                .appendPath(path.toString())
                 .appendQueryParameter(BaseFile._ParamTaskId, Integer.toString(_IdLoaderData))
+                .appendQueryParameter(BaseFile._ParamListFiles, Boolean.toString(true))
                 .appendQueryParameter(BaseFile._ParamShowHiddenFiles,
                         Boolean.toString(getIntent().getBooleanExtra(_DisplayHiddenFiles, false)))
                 .appendQueryParameter(BaseFile._ParamFilterMode, Integer.toString(mFilterMode))
@@ -620,9 +622,8 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
          * Footer.
          */
 
-        if (_selectedFile != null && mIsSaveDialog
-                && BaseFileProviderUtils.isFile(this, mFileProviderAuthority, _selectedFile))
-            mTxtSaveas.setText(BaseFileProviderUtils.getFileName(this, mFileProviderAuthority, _selectedFile));
+        if (_selectedFile != null && mIsSaveDialog && BaseFileProviderUtils.isFile(this, _selectedFile))
+            mTxtSaveas.setText(BaseFileProviderUtils.getFileName(this, _selectedFile));
 
         boolean hasMoreFiles = ProviderUtils.getBooleanQueryParam(_uriInfo, BaseFile._ParamHasMoreFiles);
         showFooterView(hasMoreFiles || mFileAdapter.isEmpty(),
@@ -640,24 +641,20 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
             public void run() {
                 int shouldBeSelectedIdx = -1;
                 final Uri _uri = _selectedFile != null ? _selectedFile : _lastPath;
-                if (_uri != null
-                        && BaseFileProviderUtils.fileExists(FileChooserActivity.this, mFileProviderAuthority, _uri)) {
-                    final String _fileName = BaseFileProviderUtils.getFileName(FileChooserActivity.this,
-                            mFileProviderAuthority, _uri);
+                if (_uri != null && BaseFileProviderUtils.fileExists(FileChooserActivity.this, _uri)) {
+                    final String _fileName = BaseFileProviderUtils.getFileName(FileChooserActivity.this, _uri);
                     if (_fileName != null) {
-                        Uri parentUri = BaseFileProviderUtils.getParentFile(FileChooserActivity.this,
-                                mFileProviderAuthority, _uri);
+                        Uri parentUri = BaseFileProviderUtils.getParentFile(FileChooserActivity.this, _uri);
                         if ((_uri == _lastPath && !getCurrentLocation().equals(_lastPath) && BaseFileProviderUtils
-                                .isAncestorOf(FileChooserActivity.this, mFileProviderAuthority, getCurrentLocation(),
-                                        _uri))
+                                .isAncestorOf(FileChooserActivity.this, getCurrentLocation(), _uri))
                                 || getCurrentLocation().equals(parentUri)) {
                             if (data.moveToFirst()) {
                                 while (!data.isLast()) {
                                     Uri subUri = Uri.parse(data.getString(_colUri));
                                     if (_uri == _lastPath) {
                                         if (data.getInt(data.getColumnIndex(BaseFile._ColumnType)) == BaseFile._FileTypeDirectory) {
-                                            if (BaseFileProviderUtils.isAncestorOf(FileChooserActivity.this,
-                                                    mFileProviderAuthority, subUri, _uri)) {
+                                            if (BaseFileProviderUtils.isAncestorOf(FileChooserActivity.this, subUri,
+                                                    _uri)) {
                                                 shouldBeSelectedIdx = Math.max(0, data.getPosition() - 2);
                                                 break;
                                             }
@@ -741,8 +738,8 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
         // selected file
         if (path == null) {
             path = (Uri) getIntent().getParcelableExtra(_SelectFile);
-            if (path != null && BaseFileProviderUtils.fileExists(this, mFileProviderAuthority, path))
-                path = BaseFileProviderUtils.getParentFile(this, mFileProviderAuthority, path);
+            if (path != null && BaseFileProviderUtils.fileExists(this, path))
+                path = BaseFileProviderUtils.getParentFile(this, path);
         }
 
         // last location
@@ -752,9 +749,9 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                 path = Uri.parse(lastLocation);
         }
 
-        if (path == null || !BaseFileProviderUtils.isDirectory(this, mFileProviderAuthority, path)) {
+        if (path == null || !BaseFileProviderUtils.isDirectory(this, path)) {
             path = mRoot;
-            if (path == null || !BaseFileProviderUtils.isDirectory(this, mFileProviderAuthority, path))
+            if (path == null || !BaseFileProviderUtils.isDirectory(this, path))
                 path = BaseFileProviderUtils.getDefaultPath(this, mFileProviderAuthority);
             if (path == null) {
                 doShowCannotConnectToServiceAndFinish();
@@ -762,11 +759,10 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
             }
         }
 
-        if (!BaseFileProviderUtils.fileCanRead(this, mFileProviderAuthority, path)) {
-            Dlg.toast(
-                    FileChooserActivity.this,
-                    getString(R.string.afc_pmsg_cannot_access_dir,
-                            BaseFileProviderUtils.getFileName(this, mFileProviderAuthority, path)), Dlg._LengthShort);
+        if (!BaseFileProviderUtils.fileCanRead(this, path)) {
+            Dlg.toast(FileChooserActivity.this,
+                    getString(R.string.afc_pmsg_cannot_access_dir, BaseFileProviderUtils.getFileName(this, path)),
+                    Dlg._LengthShort);
             finish();
         }
 
@@ -789,8 +785,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
          * Adds a fake path...
          */
         getContentResolver().query(
-                BaseFile.genContentUriBase(mFileProviderAuthority).buildUpon()
-                        .appendPath(Integer.toString(_IdLoaderData))
+                getCurrentLocation().buildUpon()
                         .appendQueryParameter(BaseFile._ParamTaskId, Integer.toString(_IdLoaderData))
                         .appendQueryParameter(BaseFile._ParamCancel, Boolean.toString(true)).build(), null, null, null,
                 null);
@@ -1177,8 +1172,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
             return;
         }
 
-        if (getCurrentLocation() == null
-                || !BaseFileProviderUtils.fileCanWrite(this, mFileProviderAuthority, getCurrentLocation())) {
+        if (getCurrentLocation() == null || !BaseFileProviderUtils.fileCanWrite(this, getCurrentLocation())) {
             Dlg.toast(this, R.string.afc_msg_cannot_create_new_folder_here, Dlg._LengthShort);
             return;
         }
@@ -1220,9 +1214,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                         values.put(BaseFile._ColumnUri, name);
                         values.put(BaseFile._ColumnType, BaseFile._FileTypeDirectory);
 
-                        if (getContentResolver().insert(
-                                BaseFile.genContentUriBase(mFileProviderAuthority).buildUpon()
-                                        .appendPath(getCurrentLocation().toString()).build(), values) != null) {
+                        if (getContentResolver().insert(getCurrentLocation(), values) != null) {
                             Dlg.toast(FileChooserActivity.this, getString(R.string.afc_msg_done), Dlg._LengthShort);
                             goTo(getCurrentLocation());
                         } else
@@ -1312,8 +1304,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
                                     @Override
                                     public boolean accept(Uri item) {
-                                        return !BaseFileProviderUtils.isDirectory(FileChooserActivity.this,
-                                                mFileProviderAuthority, item);
+                                        return !BaseFileProviderUtils.isDirectory(FileChooserActivity.this, item);
                                     }// accept()
                                 });
                                 /*
@@ -1332,8 +1323,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                             @Override
                             protected Object doInBackground(Void... arg0) {
                                 getContentResolver().delete(
-                                        BaseFile.genContentIdUriBase(mFileProviderAuthority).buildUpon()
-                                                .appendPath(_uri.toString())
+                                        _uri.buildUpon()
                                                 .appendQueryParameter(BaseFile._ParamTaskId, Integer.toString(mTaskId))
                                                 .build(), null, null);
 
@@ -1343,14 +1333,12 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                             @Override
                             protected void onCancelled() {
                                 getContentResolver().delete(
-                                        BaseFile.genContentIdUriBase(mFileProviderAuthority).buildUpon()
-                                                .appendPath(_uri.toString())
+                                        _uri.buildUpon()
                                                 .appendQueryParameter(BaseFile._ParamTaskId, Integer.toString(mTaskId))
                                                 .appendQueryParameter(BaseFile._ParamCancel, Boolean.toString(true))
                                                 .build(), null, null);
 
-                                if (BaseFileProviderUtils.fileExists(FileChooserActivity.this, mFileProviderAuthority,
-                                        _uri)) {
+                                if (BaseFileProviderUtils.fileExists(FileChooserActivity.this, _uri)) {
                                     mFileAdapter.markItemAsDeleted(_id, false);
                                     Dlg.toast(FileChooserActivity.this, R.string.afc_msg_cancelled, Dlg._LengthShort);
                                 } else
@@ -1363,8 +1351,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                             protected void onPostExecute(Object result) {
                                 super.onPostExecute(result);
 
-                                if (BaseFileProviderUtils.fileExists(FileChooserActivity.this, mFileProviderAuthority,
-                                        _uri)) {
+                                if (BaseFileProviderUtils.fileExists(FileChooserActivity.this, _uri)) {
                                     mFileAdapter.markItemAsDeleted(_id, false);
                                     Dlg.toast(
                                             FileChooserActivity.this,
@@ -1393,7 +1380,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
      * @since v1.91
      */
     private void doCheckSaveasFilenameAndFinish(String filename) {
-        if (!BaseFileProviderUtils.fileCanWrite(this, mFileProviderAuthority, getCurrentLocation())) {
+        if (!BaseFileProviderUtils.fileCanWrite(this, getCurrentLocation())) {
             Dlg.toast(this, getString(R.string.afc_msg_cannot_save_a_file_here), Dlg._LengthShort);
             return;
         }
@@ -1403,9 +1390,8 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
         }
 
         final Cursor _cursor = getContentResolver().query(
-                BaseFile.genContentIdUriBase(mFileProviderAuthority).buildUpon()
-                        .appendPath(getCurrentLocation().toString())
-                        .appendQueryParameter(BaseFile._ParamAppendName, filename).build(), null, null, null, null);
+                getCurrentLocation().buildUpon().appendQueryParameter(BaseFile._ParamAppendName, filename).build(),
+                null, null, null, null);
         if (_cursor != null) {
             try {
                 if (_cursor.moveToFirst()) {
@@ -1454,7 +1440,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
             return false;
         }
 
-        if (BaseFileProviderUtils.fileCanRead(this, mFileProviderAuthority, dir)) {
+        if (BaseFileProviderUtils.fileCanRead(this, dir)) {
             /*
              * Cancel previous loader if there is one.
              */
@@ -1468,10 +1454,9 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
             return true;
         }
 
-        Dlg.toast(
-                FileChooserActivity.this,
-                getString(R.string.afc_pmsg_cannot_access_dir,
-                        BaseFileProviderUtils.getFileName(this, mFileProviderAuthority, dir)), Dlg._LengthShort);
+        Dlg.toast(FileChooserActivity.this,
+                getString(R.string.afc_pmsg_cannot_access_dir, BaseFileProviderUtils.getFileName(this, dir)),
+                Dlg._LengthShort);
         return false;
     }// goTo()
 
@@ -1479,6 +1464,9 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
      * Updates or inserts {@code path} into history database.
      */
     private void updateDbHistory(Uri path) {
+        if (BuildConfig.DEBUG)
+            Log.d(_ClassName, "updateDbHistory() >> path = " + path);
+
         Calendar cal = Calendar.getInstance();
         final long _beginTodayMillis = cal.getTimeInMillis()
                 - (cal.get(Calendar.HOUR_OF_DAY) * 60 * 60 * 1000 + cal.get(Calendar.MINUTE) * 60 * 1000 + cal
@@ -1536,9 +1524,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
         final int _dim = getResources().getDimensionPixelSize(R.dimen.afc_5dp);
         int count = 0;
 
-        Cursor cursor = getContentResolver().query(
-                BaseFile.genContentIdUriBase(mFileProviderAuthority).buildUpon().appendPath(path.toString()).build(),
-                null, null, null, null);
+        Cursor cursor = getContentResolver().query(path, null, null, null, null);
         while (cursor != null) {
             String lastUri = null;
             if (cursor.moveToFirst()) {
@@ -1573,7 +1559,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
              * Process the parent directory.
              */
             cursor = getContentResolver().query(
-                    BaseFile.genContentIdUriBase(mFileProviderAuthority).buildUpon().appendPath(lastUri)
+                    Uri.parse(lastUri).buildUpon()
                             .appendQueryParameter(BaseFile._ParamGetParent, Boolean.toString(true)).build(), null,
                     null, null, null);
             if (cursor != null) {

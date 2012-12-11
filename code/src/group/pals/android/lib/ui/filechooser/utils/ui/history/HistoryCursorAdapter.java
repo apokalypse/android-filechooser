@@ -12,6 +12,7 @@ import group.pals.android.lib.ui.filechooser.R;
 import group.pals.android.lib.ui.filechooser.providers.BaseFileProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.DbUtils;
 import group.pals.android.lib.ui.filechooser.providers.ProviderUtils;
+import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileContract.BaseFile;
 import group.pals.android.lib.ui.filechooser.providers.history.HistoryContract;
 import group.pals.android.lib.ui.filechooser.utils.DateUtils;
 import group.pals.android.lib.ui.filechooser.utils.Ui;
@@ -139,11 +140,24 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
 
         Uri uri = Uri.parse(cursor.getString(cursor.getColumnIndex(HistoryContract.History._ColumnUri)));
 
+        String fileName = null;
+        String filePath = null;
+        Cursor fileInfo = context.getContentResolver().query(uri, null, null, null, null);
+        try {
+            if (fileInfo != null && fileInfo.moveToFirst()) {
+                fileName = fileInfo.getString(fileInfo.getColumnIndex(BaseFile._ColumnName));
+                filePath = fileInfo.getString(fileInfo.getColumnIndex(BaseFile._ColumnPath));
+            }
+        } finally {
+            if (fileInfo != null)
+                fileInfo.close();
+        }
+
         _b.mTextViewTime.setText(formatTime(view.getContext(), Long.parseLong(cursor.getString(cursor
                 .getColumnIndex(HistoryContract.History._ColumnModificationTime)))));
-        _b.mTextViewName.setText(uri.getLastPathSegment());
+        _b.mTextViewName.setText(fileName);
         Ui.strikeOutText(_b.mTextViewName, _bci.mMarkedAsDeleted);
-        _b.mTextViewPath.setText(uri.getPath());
+        _b.mTextViewPath.setText(filePath);
 
         /*
          * Provider name.

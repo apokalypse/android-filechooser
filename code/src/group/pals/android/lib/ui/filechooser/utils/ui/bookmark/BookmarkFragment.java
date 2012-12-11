@@ -648,7 +648,7 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
                                     DbUtils.formatNumber(new Date().getTime()));
                             context.getContentResolver().update(
                                     Uri.withAppendedPath(BookmarkContract.Bookmark._ContentIdUriBase,
-                                            Integer.toString(id)), values, null, null);
+                                            Uri.encode(Integer.toString(id))), values, null, null);
                         } else {
                             /*
                              * Check if the URI exists or doesn't. If it exists,
@@ -667,9 +667,10 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
                                     values.put(BookmarkContract.Bookmark._ColumnModificationTime,
                                             DbUtils.formatNumber(new Date().getTime()));
                                     context.getContentResolver().update(
-                                            Uri.withAppendedPath(BookmarkContract.Bookmark._ContentIdUriBase, cursor
-                                                    .getString(cursor.getColumnIndex(BookmarkContract.Bookmark._ID))),
-                                            values, null, null);
+                                            Uri.withAppendedPath(BookmarkContract.Bookmark._ContentIdUriBase, Uri
+                                                    .encode(cursor.getString(cursor
+                                                            .getColumnIndex(BookmarkContract.Bookmark._ID)))), values,
+                                            null, null);
                                 } else {
                                     values.put(BookmarkContract.Bookmark._ColumnProviderId, providerId);
                                     values.put(BookmarkContract.Bookmark._ColumnUri, uri.toString());

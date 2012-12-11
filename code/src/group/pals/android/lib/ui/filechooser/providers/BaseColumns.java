@@ -17,17 +17,19 @@ package group.pals.android.lib.ui.filechooser.providers;
 public interface BaseColumns extends android.provider.BaseColumns {
 
     /**
-     * Column name for the creation timestamp
+     * Column name for the creation timestamp.
      * <P>
-     * Type: String (long from {@link java.util.Date#getTime()})
+     * Type: {@code String} ({@code long} from {@link java.util.Date#getTime()}
+     * ).
      * </P>
      */
     public static final String _ColumnCreateTime = "create_time";
 
     /**
-     * Column name for the modification timestamp
+     * Column name for the modification timestamp.
      * <P>
-     * Type: String (long from {@link java.util.Date#getTime()})
+     * Type: {@code String} ({@code long} from {@link java.util.Date#getTime()}
+     * ).
      * </P>
      */
     public static final String _ColumnModificationTime = "modification_time";
