@@ -51,6 +51,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -291,6 +292,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
      * Controls.
      */
 
+    private BookmarkFragment mBookmarkFragment;
     private HorizontalScrollView mViewLocationsContainer;
     private ViewGroup mViewLocations;
     private View mViewGroupFiles;
@@ -327,7 +329,9 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
         initGestureDetector();
 
-        // load configurations
+        /*
+         * Load configurations.
+         */
 
         mFileProviderAuthority = getIntent().getStringExtra(_FileProviderAuthority);
         if (mFileProviderAuthority == null)
@@ -347,7 +351,27 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
         mFileAdapter = new BaseFileAdapter(this, mFilterMode, mIsMultiSelection);
         mFileAdapter.setBuildOptionsMenuListener(mOnBuildOptionsMenuListener);
 
-        // load controls
+        /*
+         * Load BookmarkFragment.
+         */
+
+        View viewBookmarks = findViewById(R.id.afc_filechooser_activity_fragment_bookmarks);
+        if (viewBookmarks != null) {
+            mBookmarkFragment = (BookmarkFragment) getSupportFragmentManager().findFragmentById(
+                    R.id.afc_filechooser_activity_fragment_bookmarks);
+            if (mBookmarkFragment == null) {
+                mBookmarkFragment = BookmarkFragment.newInstance(false);
+                mBookmarkFragment.setOnBookmarkItemClickListener(mBookmarkFragmentOnBookmarkItemClickListener);
+
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.add(R.id.afc_filechooser_activity_fragment_bookmarks, mBookmarkFragment);
+                ft.commit();
+            }
+        }
+
+        /*
+         * Load controls.
+         */
 
         mViewGoBack = (ImageView) findViewById(R.id.afc_filechooser_activity_button_go_back);
         mViewGoForward = (ImageView) findViewById(R.id.afc_filechooser_activity_button_go_forward);
@@ -361,7 +385,9 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
         mTxtSaveas = (EditText) findViewById(R.id.afc_filechooser_activity_textview_saveas_filename);
         mBtnOk = (Button) findViewById(R.id.afc_filechooser_activity_button_ok);
 
-        // history
+        /*
+         * History.
+         */
         if (savedInstanceState != null && savedInstanceState.get(_History) instanceof HistoryStore<?>)
             mHistory = savedInstanceState.getParcelable(_History);
         else
@@ -376,7 +402,9 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
             }// onChanged()
         });
 
-        // make sure RESULT_CANCELED is default
+        /*
+         * Make sure RESULT_CANCELED is default.
+         */
         setResult(RESULT_CANCELED);
 
         setupHeader();
@@ -404,16 +432,28 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
         switch (DisplayPrefs.getSortType(this)) {
         case BaseFile._SortByName:
-            miSort.setIcon(_sortAscending ? R.drawable.afc_ic_menu_sort_by_name_asc
-                    : R.drawable.afc_ic_menu_sort_by_name_desc);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
+                miSort.setIcon(_sortAscending ? R.drawable.afc_ic_menu_sort_by_name_asc
+                        : R.drawable.afc_ic_menu_sort_by_name_desc);
+            else
+                miSort.setIcon(_sortAscending ? R.drawable.afc_ic_menu_sort_by_name_asc_light
+                        : R.drawable.afc_ic_menu_sort_by_name_desc_light);
             break;
         case BaseFile._SortBySize:
-            miSort.setIcon(_sortAscending ? R.drawable.afc_ic_menu_sort_by_size_asc
-                    : R.drawable.afc_ic_menu_sort_by_size_desc);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
+                miSort.setIcon(_sortAscending ? R.drawable.afc_ic_menu_sort_by_size_asc
+                        : R.drawable.afc_ic_menu_sort_by_size_desc);
+            else
+                miSort.setIcon(_sortAscending ? R.drawable.afc_ic_menu_sort_by_size_asc_light
+                        : R.drawable.afc_ic_menu_sort_by_size_desc_light);
             break;
         case BaseFile._SortByModificationTime:
-            miSort.setIcon(_sortAscending ? R.drawable.afc_ic_menu_sort_by_date_asc
-                    : R.drawable.afc_ic_menu_sort_by_date_desc);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
+                miSort.setIcon(_sortAscending ? R.drawable.afc_ic_menu_sort_by_date_asc
+                        : R.drawable.afc_ic_menu_sort_by_date_desc);
+            else
+                miSort.setIcon(_sortAscending ? R.drawable.afc_ic_menu_sort_by_date_asc_light
+                        : R.drawable.afc_ic_menu_sort_by_date_desc_light);
             break;
         }
 
