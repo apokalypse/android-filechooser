@@ -24,6 +24,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.widget.ResourceCursorAdapter;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
@@ -38,7 +39,6 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
     /**
      * Used for debugging...
      */
-    @SuppressWarnings("unused")
     private static final String _ClassName = BaseFileAdapter.class.getName();
 
     /**
@@ -418,12 +418,15 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
+            if (BuildConfig.DEBUG)
+                Log.d(_ClassName, "mImageIconOnTouchListener.onTouch() >> ACTION = " + event.getAction());
+
             switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 v.setBackgroundResource(R.drawable.afc_button_sort_symbol_dark_pressed);
                 break;
             case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_MOVE:
+            case MotionEvent.ACTION_CANCEL:
                 v.setBackgroundResource(0);
                 break;
             }
