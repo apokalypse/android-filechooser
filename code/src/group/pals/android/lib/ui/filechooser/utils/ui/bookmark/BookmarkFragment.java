@@ -34,6 +34,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -626,7 +627,7 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String newName = _txtName.getText().toString().trim();
-                        if (newName.length() == 0) {
+                        if (android.text.TextUtils.isEmpty(newName)) {
                             Dlg.toast(context, R.string.afc_msg_bookmark_name_is_invalid, Dlg._LengthShort);
                             return;
                         }
@@ -639,15 +640,40 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
                         if (id >= 0) {
                             values.put(BookmarkContract.Bookmark._ColumnModificationTime,
                                     DbUtils.formatNumber(new Date().getTime()));
-
                             context.getContentResolver().update(
                                     Uri.withAppendedPath(BookmarkContract.Bookmark._ContentIdUriBase,
                                             Integer.toString(id)), values, null, null);
                         } else {
-                            values.put(BookmarkContract.Bookmark._ColumnProviderId, providerId);
-                            values.put(BookmarkContract.Bookmark._ColumnUri, uri.toString());
+                            /*
+                             * Check if the URI exists or doesn't. If it exists,
+                             * update it instead of inserting the new one.
+                             */
+                            Cursor cursor = context.getContentResolver().query(
+                                    BookmarkContract.Bookmark._ContentUri,
+                                    null,
+                                    String.format("%s = %s and %s like %s",
+                                            BookmarkContract.Bookmark._ColumnProviderId,
+                                            DatabaseUtils.sqlEscapeString(providerId),
+                                            BookmarkContract.Bookmark._ColumnUri,
+                                            DatabaseUtils.sqlEscapeString(uri.toString())), null, null);
+                            try {
+                                if (cursor != null && cursor.moveToFirst()) {
+                                    values.put(BookmarkContract.Bookmark._ColumnModificationTime,
+                                            DbUtils.formatNumber(new Date().getTime()));
+                                    context.getContentResolver().update(
+                                            Uri.withAppendedPath(BookmarkContract.Bookmark._ContentIdUriBase, cursor
+                                                    .getString(cursor.getColumnIndex(BookmarkContract.Bookmark._ID))),
+                                            values, null, null);
+                                } else {
+                                    values.put(BookmarkContract.Bookmark._ColumnProviderId, providerId);
+                                    values.put(BookmarkContract.Bookmark._ColumnUri, uri.toString());
 
-                            context.getContentResolver().insert(BookmarkContract.Bookmark._ContentUri, values);
+                                    context.getContentResolver().insert(BookmarkContract.Bookmark._ContentUri, values);
+                                }
+                            } finally {
+                                if (cursor != null)
+                                    cursor.close();
+                            }
                         }
 
                         Dlg.toast(context, context.getString(R.string.afc_msg_done), Dlg._LengthShort);
@@ -660,30 +686,32 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
         final Button _btnOk = _dlg.getButton(DialogInterface.BUTTON_POSITIVE);
         _btnOk.setEnabled(id < 0);
 
-        /*
-         * If renaming, only enable button OK if new name is not equal to the
-         * old one.
-         */
-        if (id >= 0) {
-            _txtName.addTextChangedListener(new TextWatcher() {
+        _txtName.addTextChangedListener(new TextWatcher() {
 
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    // TODO Auto-generated method stub
-                }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // TODO Auto-generated method stub
+            }
 
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    // TODO Auto-generated method stub
-                }
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // TODO Auto-generated method stub
+            }
 
-                @Override
-                public void afterTextChanged(Editable s) {
-                    String newName = s.toString().trim();
+            @Override
+            public void afterTextChanged(Editable s) {
+                String newName = s.toString().trim();
+                boolean enabled = !android.text.TextUtils.isEmpty(newName);
+                _btnOk.setEnabled(enabled);
+
+                /*
+                 * If renaming, only enable button OK if new name is not equal
+                 * to the old one.
+                 */
+                if (enabled && id >= 0)
                     _btnOk.setEnabled(!newName.equals(name));
-                }
-            });
-        }
+            }
+        });
     }// doEnterNewNameOrRenameBookmark()
 
     private final View.OnClickListener mBtnClearOnClickListener = new View.OnClickListener() {
