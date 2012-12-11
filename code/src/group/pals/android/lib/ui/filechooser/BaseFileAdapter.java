@@ -186,7 +186,7 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
         /*
          * File info.
          */
-        String time = DateUtils.formatDate(mContext,
+        String time = DateUtils.formatDate(context,
                 cursor.getLong(cursor.getColumnIndex(BaseFile._ColumnModificationTime)), mFileTimeDisplay);
         if (BaseFileProviderUtils.isFile(cursor))
             bag.mTxtFileInfo.setText(String.format("%s, %s",
