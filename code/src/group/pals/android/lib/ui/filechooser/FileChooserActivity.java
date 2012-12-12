@@ -1440,6 +1440,15 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
             return false;
         }
 
+        /*
+         * Check if the path of `dir` is same as current location, then set
+         * `dir` to current location. This avoids of pushing two same paths into
+         * history, because we compare the pointers (not the paths) when pushing
+         * it to history.
+         */
+        if (dir.equals(getCurrentLocation()))
+            dir = getCurrentLocation();
+
         if (BaseFileProviderUtils.fileCanRead(this, dir)) {
             /*
              * Cancel previous loader if there is one.
