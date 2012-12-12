@@ -208,6 +208,17 @@ public class LocalFileProvider extends BaseFileProvider {
         }
 
         case _File: {
+            int taskId = ProviderUtils.getIntQueryParam(uri, BaseFile._ParamTaskId, 0);
+            boolean isCancelled = ProviderUtils.getBooleanQueryParam(uri, BaseFile._ParamCancel);
+
+            if (isCancelled) {
+                synchronized (_MapInterruption) {
+                    if (_MapInterruption.indexOfKey(taskId) >= 0)
+                        _MapInterruption.put(taskId, true);
+                }
+                return null;
+            }// client wants to cancel the previous task
+
             if (uri.getQueryParameter(BaseFile._ParamListFiles) != null)
                 return doListFiles(uri);
             return doRetrieveFileInfo(uri);// _File
@@ -298,26 +309,13 @@ public class LocalFileProvider extends BaseFileProvider {
         if (BuildConfig.DEBUG)
             Log.d(_ClassName, "srcFile = " + file);
 
-        /*
-         * Prepare params...
-         */
-        int taskId = ProviderUtils.getIntQueryParam(uri, BaseFile._ParamTaskId, 0);
-        boolean isCancelled = ProviderUtils.getBooleanQueryParam(uri, BaseFile._ParamCancel);
-
-        if (isCancelled) {
-            synchronized (_MapInterruption) {
-                if (_MapInterruption.indexOfKey(taskId) >= 0)
-                    _MapInterruption.put(taskId, true);
-            }
-            return null;
-        }// client wants to cancel the previous task
-
         if (!file.isDirectory() || !file.canRead())
             return null;
 
         /*
          * Prepare params...
          */
+        int taskId = ProviderUtils.getIntQueryParam(uri, BaseFile._ParamTaskId, 0);
         boolean showHiddenFiles = ProviderUtils.getBooleanQueryParam(uri, BaseFile._ParamShowHiddenFiles);
         boolean sortAscending = ProviderUtils.getBooleanQueryParam(uri, BaseFile._ParamSortAscending, true);
         int sortBy = ProviderUtils.getIntQueryParam(uri, BaseFile._ParamSortBy, BaseFile._SortByName);
