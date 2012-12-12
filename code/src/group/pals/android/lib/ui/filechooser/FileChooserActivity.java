@@ -347,7 +347,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
         mDoubleTapToChooseFiles = getIntent().getBooleanExtra(_DoubleTapToChooseFiles, false);
 
-        mRoot = (Uri) getIntent().getSerializableExtra(_Rootpath);
+        mRoot = getIntent().getParcelableExtra(_Rootpath);
         mFilterMode = getIntent().getIntExtra(_FilterMode, BaseFile._FilterFilesOnly);
         mMaxFileCount = getIntent().getIntExtra(_MaxFileCount, 1000);
         mFileAdapter = new BaseFileAdapter(this, mFilterMode, mIsMultiSelection);
