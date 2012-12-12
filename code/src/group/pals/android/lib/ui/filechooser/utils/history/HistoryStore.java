@@ -239,14 +239,14 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
         }
     }// readFromParcel()
 
-    @SuppressWarnings("rawtypes")
-    public static final Parcelable.Creator<HistoryStore> CREATOR = new Parcelable.Creator<HistoryStore>() {
+    public static final Parcelable.Creator<HistoryStore<?>> CREATOR = new Parcelable.Creator<HistoryStore<?>>() {
 
-        public HistoryStore createFromParcel(Parcel in) {
+        @SuppressWarnings("rawtypes")
+        public HistoryStore<?> createFromParcel(Parcel in) {
             return new HistoryStore(in);
         }// createFromParcel()
 
-        public HistoryStore[] newArray(int size) {
+        public HistoryStore<?>[] newArray(int size) {
             return new HistoryStore[size];
         }// newArray()
     };// CREATOR
