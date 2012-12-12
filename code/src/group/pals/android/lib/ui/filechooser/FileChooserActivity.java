@@ -1395,6 +1395,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
         if (_cursor != null) {
             try {
                 if (_cursor.moveToFirst()) {
+                    final Uri _uri = BaseFileProviderUtils.getUri(_cursor);
                     switch (_cursor.getInt(_cursor.getColumnIndex(BaseFile._ColumnType))) {
                     case BaseFile._FileTypeDirectory:
                         Dlg.toast(this, getString(R.string.afc_pmsg_filename_is_directory, filename), Dlg._LengthShort);
@@ -1407,14 +1408,17 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
 
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        doFinish(BaseFileProviderUtils.getUri(_cursor));
+                                        doFinish(_uri);
                                     }// onClick()
                                 });
 
                         break;// _FileTypeFile
 
                     case BaseFile._FileTypeNotExisted:
-                        doFinish(BaseFileProviderUtils.getUri(_cursor));
+                        /*
+                         * TODO file type unknown?
+                         */
+                        doFinish(_uri);
                         break;// _FileTypeNotExisted
                     }
                 }
