@@ -520,21 +520,19 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
                         .parse(cursor.getString(cursor.getColumnIndex(BookmarkContract.Bookmark._ColumnUri)));
                 final String _name = cursor.getString(cursor.getColumnIndex(BookmarkContract.Bookmark._ColumnName));
 
-                ContextMenuUtils
-                        .showContextMenu(getActivity(), R.drawable.afc_bookmarks_dark, TextUtils.quote(cursor
-                                .getString(cursor.getColumnIndex(BookmarkContract.Bookmark._ColumnName))),
-                                new Integer[] { R.string.afc_cmd_rename, R.string.afc_cmd_sort_by_name },
-                                new ContextMenuUtils.OnMenuItemClickListener() {
+                ContextMenuUtils.showContextMenu(getActivity(), R.drawable.afc_bookmarks_dark, TextUtils.quote(_name),
+                        new Integer[] { R.string.afc_cmd_rename, R.string.afc_cmd_sort_by_name },
+                        new ContextMenuUtils.OnMenuItemClickListener() {
 
-                                    @Override
-                                    public void onClick(int resId) {
-                                        if (resId == R.string.afc_cmd_rename) {
-                                            doEnterNewNameOrRenameBookmark(getActivity(), _providerId, _id, _uri, _name);
-                                        } else if (resId == R.string.afc_cmd_sort_by_name) {
-                                            sortBookmarks(_iGroup);
-                                        }
-                                    }// onClick()
-                                });
+                            @Override
+                            public void onClick(int resId) {
+                                if (resId == R.string.afc_cmd_rename) {
+                                    doEnterNewNameOrRenameBookmark(getActivity(), _providerId, _id, _uri, _name);
+                                } else if (resId == R.string.afc_cmd_sort_by_name) {
+                                    sortBookmarks(_iGroup);
+                                }
+                            }// onClick()
+                        });
                 return true;// PACKED_POSITION_TYPE_CHILD
             }
 
