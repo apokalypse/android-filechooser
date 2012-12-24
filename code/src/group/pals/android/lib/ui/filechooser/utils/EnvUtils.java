@@ -5,7 +5,7 @@
  *    permission.
  */
 
-package group.pals.android.lib.ui.filechooser.utils.ui;
+package group.pals.android.lib.ui.filechooser.utils;
 
 import android.os.SystemClock;
 
