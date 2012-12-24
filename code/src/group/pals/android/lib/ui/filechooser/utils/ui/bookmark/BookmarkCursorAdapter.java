@@ -11,17 +11,16 @@ import group.pals.android.lib.ui.filechooser.BuildConfig;
 import group.pals.android.lib.ui.filechooser.R;
 import group.pals.android.lib.ui.filechooser.providers.BaseFileProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.ProviderUtils;
-import group.pals.android.lib.ui.filechooser.providers.bookmark.BookmarkContract;
+import group.pals.android.lib.ui.filechooser.providers.bookmark.BookmarkContract.Bookmark;
 import group.pals.android.lib.ui.filechooser.utils.Ui;
 import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.AsyncQueryHandler;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
+import android.database.MatrixCursor;
 import android.net.Uri;
 import android.util.Log;
 import android.util.SparseArray;
@@ -41,24 +40,6 @@ import android.widget.TextView;
 public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
 
     private static final String _ClassName = BookmarkCursorAdapter.class.getName();
-
-    private final class QueryHandler extends AsyncQueryHandler {
-
-        public QueryHandler(Context context) {
-            super(context.getContentResolver());
-        }// QueryHandler()
-
-        @Override
-        protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
-            try {
-                int groupPosition = (Integer) cookie;
-                BookmarkCursorAdapter.this.setChildrenCursor(groupPosition, cursor);
-            } catch (NullPointerException e) {
-                Log.e(_ClassName, "onQueryComplete() >> " + e);
-                e.printStackTrace();
-            }
-        }// onQueryComplete()
-    }// QueryHandler
 
     /**
      * Advanced selection options: All, None, Invert.
@@ -96,12 +77,30 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
         boolean mMarkedAsDeleted = false;
     }// BagChildInfo
 
-    private final QueryHandler mQueryHandler;
+    /**
+     * This column holds the original position of group cursor in original
+     * cursor.
+     * <p>
+     * Type: {@code Integer}
+     * </p>
+     */
+    private static final String _ColumnOrgGroupPosition = "org_group_position";
+
+    private static final String[] _GroupCursorColumns = { Bookmark._ID, Bookmark._ColumnProviderId,
+            _ColumnOrgGroupPosition };
+
+    private static final String[] _ChildCursorColumns = { Bookmark._ID, Bookmark._ColumnName, Bookmark._ColumnUri,
+            Bookmark._ColumnProviderId, Bookmark._ColumnModificationTime };
+
     /**
      * Map of child IDs to {@link BagChildInfo}.
      */
     private final SparseArray<BagChildInfo> mSelectedChildrenMap = new SparseArray<BagChildInfo>();
     private boolean mEditor;
+
+    private Cursor mOrgCursor;
+    private MatrixCursor mGroupCursor;
+    private SparseArray<MatrixCursor> mChildrenCursor;
 
     /**
      * Creates new instance.
@@ -111,13 +110,109 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
      */
     public BookmarkCursorAdapter(Context context) {
         super(context, null, R.layout.afc_view_bookmark_item, R.layout.afc_view_bookmark_sub_item);
-        mQueryHandler = new QueryHandler(context);
     }// BookmarkCursorAdapter()
+
+    /**
+     * Changes new cursor.
+     * <p>
+     * You have to query the items in descending order of modification time.
+     * </p>
+     * 
+     * @param cursor
+     *            the cursor.
+     * @param notificationUri
+     *            the notification URI.
+     */
+    @Override
+    public synchronized void changeCursor(Cursor cursor) {
+        if (BuildConfig.DEBUG)
+            Log.d(_ClassName, "changeCursor()");
+
+        if (mOrgCursor != null)
+            mOrgCursor.close();
+        mOrgCursor = cursor;
+
+        MatrixCursor newGroupCursor = cursor != null ? new MatrixCursor(_GroupCursorColumns) : null;
+        SparseArray<MatrixCursor> newChildrenCursor = cursor != null ? new SparseArray<MatrixCursor>() : null;
+
+        /*
+         * Build new group cursor.
+         */
+        if (cursor != null) {
+            String lastProviderId = null;
+            cursor.moveToFirst();
+            do {
+                String providerId = cursor.getString(cursor.getColumnIndex(Bookmark._ColumnProviderId));
+
+                if (!providerId.equals(lastProviderId)) {
+                    newGroupCursor
+                            .addRow(new Object[] { cursor.getInt(cursor.getColumnIndex(Bookmark._ID)),
+                                    cursor.getString(cursor.getColumnIndex(Bookmark._ColumnProviderId)),
+                                    cursor.getPosition() });
+                }
+                lastProviderId = providerId;
+            } while (cursor.moveToNext());
+        }
+
+        /*
+         * Clean up children cursor.
+         */
+        if (mChildrenCursor != null) {
+            for (int i = 0; i < mChildrenCursor.size(); i++)
+                mChildrenCursor.valueAt(i).close();
+            mChildrenCursor.clear();
+        }
+
+        /*
+         * Apply new changes... Note that we don't need to close the old group
+         * cursor. The call to `super.changeCursor()` will do that.
+         */
+        mGroupCursor = newGroupCursor;
+        mChildrenCursor = newChildrenCursor;
+        super.changeCursor(mGroupCursor);
+    }// changeCursor()
+
+    @Override
+    protected Cursor getChildrenCursor(Cursor groupCursor) {
+        if (BuildConfig.DEBUG)
+            Log.d(_ClassName, "getChildrenCursor()");
+
+        /*
+         * Try to find the child cursor in the map. If found then it'd be great
+         * :-)
+         */
+        int orgGroupPosition = groupCursor.getInt(groupCursor.getColumnIndex(_ColumnOrgGroupPosition));
+        int idx = mChildrenCursor.indexOfKey(orgGroupPosition);
+        if (idx >= 0)
+            return mChildrenCursor.valueAt(idx);
+
+        /*
+         * If not found, create new cursor.
+         */
+        MatrixCursor childrenCursor = new MatrixCursor(_ChildCursorColumns);
+
+        mOrgCursor.moveToPosition(orgGroupPosition);
+        String providerId = groupCursor.getString(groupCursor.getColumnIndex(Bookmark._ColumnProviderId));
+        do {
+            childrenCursor.addRow(new Object[] { mOrgCursor.getInt(mOrgCursor.getColumnIndex(Bookmark._ID)),
+                    mOrgCursor.getString(mOrgCursor.getColumnIndex(Bookmark._ColumnName)),
+                    mOrgCursor.getString(mOrgCursor.getColumnIndex(Bookmark._ColumnUri)),
+                    mOrgCursor.getString(mOrgCursor.getColumnIndex(Bookmark._ColumnProviderId)),
+                    mOrgCursor.getString(mOrgCursor.getColumnIndex(Bookmark._ColumnModificationTime)) });
+        } while (mOrgCursor.moveToNext()
+                && mOrgCursor.getString(mOrgCursor.getColumnIndex(Bookmark._ColumnProviderId)).equals(providerId));
+
+        /*
+         * Put it to the map.
+         */
+        mChildrenCursor.put(orgGroupPosition, childrenCursor);
+        return childrenCursor;
+    }// getChildrenCursor()
 
     @Override
     protected void bindChildView(View view, Context context, Cursor cursor, boolean isLastChild) {
-        final int _id = cursor.getInt(cursor.getColumnIndex(BookmarkContract.Bookmark._ID));
-        Uri uri = Uri.parse(cursor.getString(cursor.getColumnIndex(BookmarkContract.Bookmark._ColumnUri)));
+        final int _id = cursor.getInt(cursor.getColumnIndex(Bookmark._ID));
+        Uri uri = Uri.parse(cursor.getString(cursor.getColumnIndex(Bookmark._ColumnUri)));
 
         /*
          * Child Info
@@ -147,7 +242,7 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
          * Name.
          */
 
-        bag.mTextName.setText(cursor.getString(cursor.getColumnIndex(BookmarkContract.Bookmark._ColumnName)));
+        bag.mTextName.setText(cursor.getString(cursor.getColumnIndex(Bookmark._ColumnName)));
         Ui.strikeOutText(bag.mTextName, _bci.mMarkedAsDeleted);
 
         /*
@@ -211,29 +306,11 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
         /*
          * Provider name.
          */
-        String providerId = cursor.getString(cursor.getColumnIndex(BookmarkContract.Bookmark._ColumnProviderId));
+        String providerId = cursor.getString(cursor.getColumnIndex(Bookmark._ColumnProviderId));
         if (ProviderUtils.getProviderName(providerId) == null)
             ProviderUtils.setProviderName(providerId, BaseFileProviderUtils.getProviderName(context, providerId));
         b.mTextHeader.setText(ProviderUtils.getProviderName(providerId));
     }// bindGroupView()
-
-    @Override
-    protected Cursor getChildrenCursor(Cursor groupCursor) {
-        if (BuildConfig.DEBUG)
-            Log.d(_ClassName, "getChildrenCursor()");
-
-        mQueryHandler.startQuery(
-                0,
-                groupCursor.getPosition(),
-                BookmarkContract.Bookmark._ContentUri,
-                null,
-                BookmarkContract.Bookmark._ColumnProviderId
-                        + " = "
-                        + DatabaseUtils.sqlEscapeString(groupCursor.getString(groupCursor
-                                .getColumnIndex(BookmarkContract.Bookmark._ColumnProviderId))), null, null);
-
-        return null;
-    }// getChildrenCursor()
 
     @Override
     public void notifyDataSetChanged(boolean releaseCursors) {
@@ -293,7 +370,7 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
         int chidrenCount = getChildrenCount(groupPosition);
         for (int iChild = 0; iChild < chidrenCount; iChild++) {
             Cursor cursor = getChild(groupPosition, iChild);
-            final int _id = cursor.getInt(cursor.getColumnIndex(BookmarkContract.Bookmark._ID));
+            final int _id = cursor.getInt(cursor.getColumnIndex(Bookmark._ID));
             BagChildInfo b = mSelectedChildrenMap.get(_id);
             if (b == null) {
                 b = new BagChildInfo();
@@ -343,7 +420,7 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
         int chidrenCount = getChildrenCount(groupPosition);
         for (int iChild = 0; iChild < chidrenCount; iChild++) {
             Cursor cursor = getChild(groupPosition, iChild);
-            final int _id = cursor.getInt(cursor.getColumnIndex(BookmarkContract.Bookmark._ID));
+            final int _id = cursor.getInt(cursor.getColumnIndex(Bookmark._ID));
             BagChildInfo b = mSelectedChildrenMap.get(_id);
             if (b == null) {
                 b = new BagChildInfo();

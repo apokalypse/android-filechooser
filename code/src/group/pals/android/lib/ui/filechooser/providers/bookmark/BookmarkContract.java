@@ -54,22 +54,6 @@ public final class BookmarkContract {
         public static final String _PathBookmarks = "bookmarks";
 
         /**
-         * Path part for the Bookmark ID URI.
-         */
-        public static final String _PathBookmarkId = "bookmarks";
-
-        /**
-         * 0-relative position of a Bookmark ID segment in the path part of a
-         * Bookmark ID URI.
-         */
-        public static final int _BookmarkIdPathPosition = 1;
-
-        /**
-         * Path part for the Bookmark items (group by same provider) URI.
-         */
-        public static final String _PathBookmarksGroupBySameProvider = "bookmarks_group_by_same_provider";
-
-        /**
          * The content:// style URL for this table.
          */
         public static final Uri _ContentUri = Uri.parse(ProviderUtils._Scheme + _Authority + "/" + _PathBookmarks);
@@ -78,21 +62,8 @@ public final class BookmarkContract {
          * The content URI base for a single Bookmark item. Callers must append
          * a numeric Bookmark id to this Uri to retrieve a Bookmark item.
          */
-        public static final Uri _ContentIdUriBase = Uri.parse(ProviderUtils._Scheme + _Authority + "/"
-                + _PathBookmarkId + "/");
-
-        /**
-         * The content URI match pattern for a single Bookmark item, specified
-         * by its ID. Use this to match incoming URIs or to construct an Intent.
-         */
-        public static final Uri _ContentIdUriPattern = Uri.parse(ProviderUtils._Scheme + _Authority + "/"
-                + _PathBookmarkId + "/#");
-
-        /**
-         * The content URI for all items grouped by same provider.
-         */
-        public static final Uri _ContentUriGroupBySameProvider = Uri.parse(ProviderUtils._Scheme + _Authority + "/"
-                + _PathBookmarksGroupBySameProvider);
+        public static final Uri _ContentIdUriBase = Uri.parse(ProviderUtils._Scheme + _Authority + "/" + _PathBookmarks
+                + "/");
 
         /*
          * MIME type definitions

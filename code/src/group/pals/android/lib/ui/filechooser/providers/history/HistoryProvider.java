@@ -63,7 +63,7 @@ public class HistoryProvider extends ContentProvider {
         _UriMatcher.addURI(HistoryContract._Authority, HistoryContract.History._PathHistory, _History);
         _UriMatcher.addURI(HistoryContract._Authority, HistoryContract.History._PathHistory + "/#", _HistoryId);
 
-        _ColumnMap.put(DbUtils._SqliteFtsColumnRowId, DbUtils._SqliteFtsColumnRowId + " as "
+        _ColumnMap.put(DbUtils._SqliteFtsColumnRowId, DbUtils._SqliteFtsColumnRowId + " AS "
                 + HistoryContract.History._ID);
         _ColumnMap.put(HistoryContract.History._ColumnProviderId, HistoryContract.History._ColumnProviderId);
         _ColumnMap.put(HistoryContract.History._ColumnFileType, HistoryContract.History._ColumnFileType);

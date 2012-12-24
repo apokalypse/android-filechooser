@@ -53,12 +53,6 @@ public class BookmarkProvider extends ContentProvider {
     private static final int _BookmarkId = 2;
 
     /**
-     * The incoming URI matches the bookmarks (grouped by same provider) URI
-     * pattern.
-     */
-    private static final int _BookmarksGroupBySameProvider = 3;
-
-    /**
      * A {@link UriMatcher} instance.
      */
     private static final UriMatcher _UriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -67,11 +61,9 @@ public class BookmarkProvider extends ContentProvider {
 
     static {
         _UriMatcher.addURI(BookmarkContract._Authority, BookmarkContract.Bookmark._PathBookmarks, _Bookmarks);
-        _UriMatcher.addURI(BookmarkContract._Authority, BookmarkContract.Bookmark._PathBookmarkId + "/#", _BookmarkId);
-        _UriMatcher.addURI(BookmarkContract._Authority, BookmarkContract.Bookmark._PathBookmarksGroupBySameProvider,
-                _BookmarksGroupBySameProvider);
+        _UriMatcher.addURI(BookmarkContract._Authority, BookmarkContract.Bookmark._PathBookmarks + "/#", _BookmarkId);
 
-        _ColumnMap.put(DbUtils._SqliteFtsColumnRowId, DbUtils._SqliteFtsColumnRowId + " as "
+        _ColumnMap.put(DbUtils._SqliteFtsColumnRowId, DbUtils._SqliteFtsColumnRowId + " AS "
                 + BookmarkContract.Bookmark._ID);
         _ColumnMap.put(BookmarkContract.Bookmark._ColumnName, BookmarkContract.Bookmark._ColumnName);
         _ColumnMap.put(BookmarkContract.Bookmark._ColumnProviderId, BookmarkContract.Bookmark._ColumnProviderId);
@@ -101,9 +93,6 @@ public class BookmarkProvider extends ContentProvider {
         case _BookmarkId:
             return BookmarkContract.Bookmark._ContentItemType;
 
-        case _BookmarksGroupBySameProvider:
-            return BookmarkContract.Bookmark._ContentType;
-
         default:
             throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -124,22 +113,22 @@ public class BookmarkProvider extends ContentProvider {
          * items, does a delete based on the incoming "where" columns and
          * arguments.
          */
-        case _Bookmarks:
+        case _Bookmarks: {
             count = db.delete(BookmarkContract.Bookmark._TableName, selection, selectionArgs);
-            break;// _Bookmarks
+            break;
+        }// _Bookmarks
 
         /*
          * If the incoming URI matches a single note ID, does the delete based
          * on the incoming data, but modifies the where clause to restrict it to
          * the particular Bookmark item ID.
          */
-        case _BookmarkId:
+        case _BookmarkId: {
             /*
              * Starts a final WHERE clause by restricting it to the desired
              * Bookmark item ID.
              */
-            finalWhere = DbUtils._SqliteFtsColumnRowId + " = "
-                    + uri.getPathSegments().get(BookmarkContract.Bookmark._BookmarkIdPathPosition);
+            finalWhere = DbUtils._SqliteFtsColumnRowId + " = " + uri.getLastPathSegment();
 
             /*
              * If there were additional selection criteria, append them to the
@@ -150,7 +139,8 @@ public class BookmarkProvider extends ContentProvider {
 
             // Performs the delete.
             count = db.delete(BookmarkContract.Bookmark._TableName, finalWhere, selectionArgs);
-            break;// _BookmarkId
+            break;
+        }// _BookmarkId
 
         // If the incoming pattern is invalid, throws an exception.
         default:
@@ -234,7 +224,7 @@ public class BookmarkProvider extends ContentProvider {
          * pattern-matching.
          */
         switch (_UriMatcher.match(uri)) {
-        case _Bookmarks:
+        case _Bookmarks: {
             if (Arrays.equals(projection, new String[] { BookmarkContract.Bookmark._COUNT })) {
                 db = mBookmarkHelper.getReadableDatabase();
                 cursor = db.rawQuery(
@@ -243,7 +233,8 @@ public class BookmarkProvider extends ContentProvider {
                                 selection != null ? String.format("WHERE %s", selection) : "").trim(), null);
             }
 
-            break;// _Bookmarks
+            break;
+        }// _Bookmarks
 
         /*
          * If the incoming URI is for a single Bookmark item identified by its
@@ -251,18 +242,10 @@ public class BookmarkProvider extends ContentProvider {
          * "_ID = <history-item-ID>" to the where clause, so that it selects
          * that single Bookmark item.
          */
-        case _BookmarkId:
-            qb.appendWhere(DbUtils._SqliteFtsColumnRowId + "="
-                    + uri.getPathSegments().get(BookmarkContract.Bookmark._BookmarkIdPathPosition));
-
-            break;// _BookmarkId
-
-        case _BookmarksGroupBySameProvider:
-            db = mBookmarkHelper.getReadableDatabase();
-            cursor = qb.query(db, null, null, null, BookmarkContract.Bookmark._ColumnProviderId, null,
-                    sortOrder != null ? sortOrder : BookmarkContract.Bookmark._DefaultSortOrder);
-
-            break;// _BookmarksGroupBySameProvider
+        case _BookmarkId: {
+            qb.appendWhere(DbUtils._SqliteFtsColumnRowId + " = " + uri.getLastPathSegment());
+            break;
+        }// _BookmarkId
 
         default:
             throw new IllegalArgumentException("Unknown URI " + uri);
@@ -271,11 +254,11 @@ public class BookmarkProvider extends ContentProvider {
         if (TextUtils.isEmpty(sortOrder))
             sortOrder = BookmarkContract.Bookmark._DefaultSortOrder;
 
-        /*
-         * Opens the database object in "read" mode, since no writes need to be
-         * done.
-         */
         if (db == null) {
+            /*
+             * Opens the database object in "read" mode, since no writes need to
+             * be done.
+             */
             db = mBookmarkHelper.getReadableDatabase();
             /*
              * Performs the query. If no problems occur trying to read the
@@ -307,23 +290,23 @@ public class BookmarkProvider extends ContentProvider {
          * If the incoming URI matches the general Bookmark items pattern, does
          * the update based on the incoming data.
          */
-        case _Bookmarks:
+        case _Bookmarks: {
             // Does the update and returns the number of rows updated.
             count = db.update(BookmarkContract.Bookmark._TableName, values, selection, selectionArgs);
             break;
+        }// _Bookmarks
 
         /*
          * If the incoming URI matches a single Bookmark item ID, does the
          * update based on the incoming data, but modifies the where clause to
          * restrict it to the particular history item ID.
          */
-        case _BookmarkId:
+        case _BookmarkId: {
             /*
              * Starts creating the final WHERE clause by restricting it to the
              * incoming item ID.
              */
-            finalWhere = DbUtils._SqliteFtsColumnRowId + " = "
-                    + uri.getPathSegments().get(BookmarkContract.Bookmark._BookmarkIdPathPosition);
+            finalWhere = DbUtils._SqliteFtsColumnRowId + " = " + uri.getLastPathSegment();
 
             /*
              * If there were additional selection criteria, append them to the
@@ -335,6 +318,7 @@ public class BookmarkProvider extends ContentProvider {
             // Does the update and returns the number of rows updated.
             count = db.update(BookmarkContract.Bookmark._TableName, values, finalWhere, selectionArgs);
             break;
+        }// _BookmarkId
 
         // If the incoming pattern is invalid, throws an exception.
         default:
