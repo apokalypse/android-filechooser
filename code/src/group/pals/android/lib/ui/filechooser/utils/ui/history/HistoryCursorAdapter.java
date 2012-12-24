@@ -10,7 +10,6 @@ package group.pals.android.lib.ui.filechooser.utils.ui.history;
 import group.pals.android.lib.ui.filechooser.BuildConfig;
 import group.pals.android.lib.ui.filechooser.R;
 import group.pals.android.lib.ui.filechooser.providers.BaseFileProviderUtils;
-import group.pals.android.lib.ui.filechooser.providers.DbUtils;
 import group.pals.android.lib.ui.filechooser.providers.ProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileContract.BaseFile;
 import group.pals.android.lib.ui.filechooser.providers.history.HistoryContract;
@@ -23,9 +22,9 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 
-import android.content.AsyncQueryHandler;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.net.Uri;
 import android.util.Log;
 import android.util.SparseArray;
@@ -45,24 +44,6 @@ import android.widget.TextView;
 public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
 
     private static final String _ClassName = HistoryCursorAdapter.class.getName();
-
-    private final class QueryHandler extends AsyncQueryHandler {
-
-        public QueryHandler(Context context) {
-            super(context.getContentResolver());
-        }// QueryHandler()
-
-        @Override
-        protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
-            try {
-                int groupPosition = (Integer) cookie;
-                HistoryCursorAdapter.this.setChildrenCursor(groupPosition, cursor);
-            } catch (NullPointerException e) {
-                Log.e(_ClassName, "onQueryComplete() >> " + e);
-                e.printStackTrace();
-            }
-        }// onQueryComplete()
-    }// QueryHandler
 
     /**
      * @see android.text.format.DateUtils#DAY_IN_MILLIS
@@ -95,12 +76,30 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
         boolean mMarkedAsDeleted = false;
     }// BagChildInfo
 
-    private final QueryHandler mQueryHandler;
+    /**
+     * This column holds the original position of group cursor in original
+     * cursor.
+     * <p>
+     * Type: {@code Integer}
+     * </p>
+     */
+    private static final String _ColumnOrgGroupPosition = "org_group_position";
+
+    private static final String[] _GroupCursorColumns = { HistoryContract.History._ID,
+            HistoryContract.History._ColumnModificationTime, _ColumnOrgGroupPosition };
+
+    private static final String[] _ChildCursorColumns = { HistoryContract.History._ID,
+            HistoryContract.History._ColumnUri, HistoryContract.History._ColumnProviderId,
+            HistoryContract.History._ColumnModificationTime };
+
     /**
      * Map of child IDs to {@link BagChildInfo}.
      */
     private final SparseArray<BagChildInfo> mSelectedChildrenMap = new SparseArray<BagChildInfo>();
 
+    private Cursor mOrgCursor;
+    private MatrixCursor mGroupCursor;
+    private SparseArray<MatrixCursor> mChildrenCursor;
     private CharSequence mSearchText;
 
     /**
@@ -111,8 +110,112 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
      */
     public HistoryCursorAdapter(Context context) {
         super(context, null, R.layout.afc_view_history_item, R.layout.afc_view_history_sub_item);
-        mQueryHandler = new QueryHandler(context);
     }// BookmarkCursorAdapter()
+
+    /**
+     * Changes new cursor.
+     * <p>
+     * You have to query the items in descending order of modification time.
+     * </p>
+     * 
+     * @param cursor
+     *            the cursor.
+     * @param notificationUri
+     *            the notification URI.
+     */
+    @Override
+    public synchronized void changeCursor(Cursor cursor) {
+        if (BuildConfig.DEBUG)
+            Log.d(_ClassName, "changeCursor()");
+
+        if (mOrgCursor != null)
+            mOrgCursor.close();
+        mOrgCursor = cursor;
+
+        MatrixCursor newGroupCursor = cursor != null ? new MatrixCursor(_GroupCursorColumns) : null;
+        SparseArray<MatrixCursor> newChildrenCursor = cursor != null ? new SparseArray<MatrixCursor>() : null;
+
+        /*
+         * Build new group cursor.
+         */
+        if (cursor != null) {
+            long lastDayCount = 0;
+            cursor.moveToFirst();
+            do {
+                long dayCount = (long) Math.floor((Long.parseLong(cursor.getString(cursor
+                        .getColumnIndex(HistoryContract.History._ColumnModificationTime))) + TimeZone.getDefault()
+                        .getRawOffset())
+                        / _DayInMillis);
+
+                if (dayCount != lastDayCount || newGroupCursor.getCount() == 0) {
+                    newGroupCursor.addRow(new Object[] {
+                            cursor.getInt(cursor.getColumnIndex(HistoryContract.History._ID)),
+                            cursor.getString(cursor.getColumnIndex(HistoryContract.History._ColumnModificationTime)),
+                            cursor.getPosition() });
+                }
+                lastDayCount = dayCount;
+            } while (cursor.moveToNext());
+        }
+
+        /*
+         * Clean up children cursor.
+         */
+        if (mChildrenCursor != null) {
+            for (int i = 0; i < mChildrenCursor.size(); i++)
+                mChildrenCursor.valueAt(i).close();
+            mChildrenCursor.clear();
+        }
+
+        /*
+         * Apply new changes... Note that we don't need to close the old group
+         * cursor. The call to `super.changeCursor()` will do that.
+         */
+        mGroupCursor = newGroupCursor;
+        mChildrenCursor = newChildrenCursor;
+        super.changeCursor(mGroupCursor);
+    }// changeCursor()
+
+    @Override
+    protected Cursor getChildrenCursor(Cursor groupCursor) {
+        if (BuildConfig.DEBUG)
+            Log.d(_ClassName, "getChildrenCursor()");
+
+        /*
+         * Try to find the child cursor in the map. If found then it'd be great
+         * :-)
+         */
+        int orgGroupPosition = groupCursor.getInt(groupCursor.getColumnIndex(_ColumnOrgGroupPosition));
+        int idx = mChildrenCursor.indexOfKey(orgGroupPosition);
+        if (idx >= 0)
+            return mChildrenCursor.valueAt(idx);
+
+        /*
+         * If not found, create new cursor.
+         */
+        MatrixCursor childrenCursor = new MatrixCursor(_ChildCursorColumns);
+
+        mOrgCursor.moveToPosition(orgGroupPosition);
+        long startOfDay = Long.parseLong(groupCursor.getString(groupCursor
+                .getColumnIndex(HistoryContract.History._ColumnModificationTime)))
+                + TimeZone.getDefault().getRawOffset();
+        startOfDay -= startOfDay % _DayInMillis;
+        do {
+            childrenCursor.addRow(new Object[] {
+                    mOrgCursor.getInt(mOrgCursor.getColumnIndex(HistoryContract.History._ID)),
+                    mOrgCursor.getString(mOrgCursor.getColumnIndex(HistoryContract.History._ColumnUri)),
+                    mOrgCursor.getString(mOrgCursor.getColumnIndex(HistoryContract.History._ColumnProviderId)),
+                    mOrgCursor.getString(mOrgCursor.getColumnIndex(HistoryContract.History._ColumnModificationTime)) });
+        } while (mOrgCursor.moveToNext()
+                && Long.parseLong(mOrgCursor.getString(mOrgCursor
+                        .getColumnIndex(HistoryContract.History._ColumnModificationTime)))
+                        + TimeZone.getDefault().getRawOffset() >= startOfDay);
+
+        /*
+         * Put it to the map.
+         */
+        mChildrenCursor.put(orgGroupPosition, childrenCursor);
+        return childrenCursor;
+    }// getChildrenCursor()
 
     @Override
     protected void bindChildView(View view, Context context, Cursor cursor, boolean isLastChild) {
@@ -215,50 +318,9 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
         } else
             b = (BagGroup) view.getTag();
 
-        b.mTextViewHeader.setText(formatDate(view.getContext(),
-                Long.parseLong(cursor.getString(cursor.getColumnIndex(HistoryContract.History._ColumnDaysOfGroup)))
-                        * _DayInMillis));
+        b.mTextViewHeader.setText(formatDate(view.getContext(), Long.parseLong(cursor.getString(cursor
+                .getColumnIndex(HistoryContract.History._ColumnModificationTime)))));
     }// bindGroupView()
-
-    @Override
-    protected Cursor getChildrenCursor(Cursor groupCursor) {
-        if (BuildConfig.DEBUG)
-            Log.d(_ClassName, "getChildrenCursor()");
-
-        /*
-         * order by %s desc limit %d offset %d
-         */
-        int maxChildCount = groupCursor.getInt(groupCursor.getColumnIndex(HistoryContract.History._COUNT));
-        long date = groupCursor.getLong(groupCursor.getColumnIndex(HistoryContract.History._ColumnDaysOfGroup))
-                * _DayInMillis - TimeZone.getDefault().getRawOffset();
-        if (BuildConfig.DEBUG) {
-            Log.d(_ClassName, String.format("StartDateOfGroup #%s= %s [%,d]", groupCursor.getPosition(),
-                    new java.util.Date(date), date));
-            Log.d(_ClassName, "max child count = " + maxChildCount);
-        }
-
-        String finalWhere = "";
-        if (getSearchText() != null) {
-            finalWhere = DbUtils.rawSqlEscapeString(Uri.encode(getSearchText().toString()));
-            finalWhere = String.format(" AND %s LIKE '%%://%%%s%%'", HistoryContract.History._ColumnUri, finalWhere);
-            if (BuildConfig.DEBUG)
-                Log.d(_ClassName, "finalWhere = " + finalWhere);
-        }
-        if (BuildConfig.DEBUG)
-            Log.d(_ClassName, "FILTER = " + finalWhere);
-
-        mQueryHandler.startQuery(
-                0,
-                groupCursor.getPosition(),
-                HistoryContract.History._ContentUri,
-                null,
-                HistoryContract.History._ColumnModificationTime + " >= '" + DbUtils.formatNumber(date) + "' AND "
-                        + HistoryContract.History._ColumnModificationTime + " < '"
-                        + DbUtils.formatNumber(date + _DayInMillis) + "'" + finalWhere, null,
-                HistoryContract.History._ColumnModificationTime + " desc limit " + maxChildCount);
-
-        return null;
-    }// getChildrenCursor()
 
     @Override
     public void notifyDataSetChanged(boolean releaseCursors) {

@@ -26,6 +26,7 @@ import group.pals.android.lib.ui.filechooser.utils.history.HistoryListener;
 import group.pals.android.lib.ui.filechooser.utils.history.HistoryStore;
 import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.Dlg;
+import group.pals.android.lib.ui.filechooser.utils.ui.EnvUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.LoadingDialog;
 import group.pals.android.lib.ui.filechooser.utils.ui.bookmark.BookmarkFragment;
 import group.pals.android.lib.ui.filechooser.utils.ui.history.HistoryFragment;
@@ -254,7 +255,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
     /**
      * Default loader ID.
      */
-    private static final int _LoaderData = 1;
+    private final int _LoaderData = EnvUtils.genId();
 
     // ====================
     // "CONSTANT" VARIABLES

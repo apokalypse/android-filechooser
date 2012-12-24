@@ -16,6 +16,7 @@ import group.pals.android.lib.ui.filechooser.utils.TextUtils;
 import group.pals.android.lib.ui.filechooser.utils.Ui;
 import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.Dlg;
+import group.pals.android.lib.ui.filechooser.utils.ui.EnvUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.GestureUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.GestureUtils.FlingDirection;
 import group.pals.android.lib.ui.filechooser.utils.ui.history.HistoryFragment;
@@ -94,8 +95,8 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
 
     private static final String _ModeEditor = _ClassName + ".mode_editor";
 
-    private static final int _LoaderHistoryData = 0;
-    private static final int _LoaderHistoryCounter = 1;
+    private final int _LoaderHistoryData = EnvUtils.genId();
+    private final int _LoaderHistoryCounter = EnvUtils.genId();
 
     /**
      * Creates a new instance of {@link HistoryFragment}.
@@ -198,13 +199,11 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if (BuildConfig.DEBUG)
             Log.d(_ClassName, "onCreateLoader()");
-        switch (id) {
-        case _LoaderHistoryCounter:
+        if (id == _LoaderHistoryCounter) {
             return new CursorLoader(getActivity(), BookmarkContract.Bookmark._ContentUri,
                     new String[] { BookmarkContract.Bookmark._COUNT }, null, null, null);
-            // _LoaderHistoryCounter
-
-        case _LoaderHistoryData:
+        } // _LoaderHistoryCounter
+        else if (id == _LoaderHistoryData) {
             mHandler.removeCallbacksAndMessages(null);
             mHandler.postDelayed(mViewLoadingShower, DisplayPrefs._DelayTimeForSimpleAnimation);
 
@@ -212,8 +211,7 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
 
             return new CursorLoader(getActivity(), BookmarkContract.Bookmark._ContentUriGroupBySameProvider, null,
                     null, null, null);
-            // _LoaderHistoryData
-        }
+        }// _LoaderHistoryData
 
         return null;
     }// onCreateLoader()
@@ -223,8 +221,7 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
         if (BuildConfig.DEBUG)
             Log.d(_ClassName, "onLoadFinished() -- data = " + data);
 
-        switch (loader.getId()) {
-        case _LoaderHistoryCounter:
+        if (loader.getId() == _LoaderHistoryCounter) {
             if (mCursorCounter != null)
                 mCursorCounter.close();
 
@@ -240,10 +237,8 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
             }
 
             updateUI();
-
-            break;// _LoaderHistoryCounter
-
-        case _LoaderHistoryData:
+        }// _LoaderHistoryCounter
+        else if (loader.getId() == _LoaderHistoryData) {
             mBookmarkCursorAdapter.setGroupCursor(data);
 
             for (int i = 0; i < mBookmarkCursorAdapter.getGroupCount(); i++)
@@ -264,9 +259,7 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
                     mListView.setSelection(-1);
                 }
             });
-
-            break;// _LoaderHistoryData
-        }
+        }// _LoaderHistoryData
     }// onLoadFinished()
 
     @Override
@@ -274,14 +267,11 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
         if (BuildConfig.DEBUG)
             Log.d(_ClassName, "onLoaderReset()");
 
-        switch (loader.getId()) {
-        case _LoaderHistoryData:
+        if (loader.getId() == _LoaderHistoryData) {
             mBookmarkCursorAdapter.changeCursor(null);
             mViewLoading.setVisibility(View.VISIBLE);
-
-            break;// _LoaderHistoryData
-
-        case _LoaderHistoryCounter:
+        }// _LoaderHistoryData
+        else if (loader.getId() == _LoaderHistoryCounter) {
             /*
              * NOTE: if using an adapter, set its cursor to null to release
              * memory.
@@ -290,9 +280,7 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
                 mCursorCounter.close();
                 mCursorCounter = null;
             }
-
-            break;// _LoaderHistoryCounter
-        }
+        }// _LoaderHistoryCounter
     }// onLoaderReset()
 
     /**

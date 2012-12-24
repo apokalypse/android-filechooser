@@ -16,6 +16,7 @@ import group.pals.android.lib.ui.filechooser.ui.widget.AfcSearchView;
 import group.pals.android.lib.ui.filechooser.utils.Ui;
 import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.Dlg;
+import group.pals.android.lib.ui.filechooser.utils.ui.EnvUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.GestureUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.GestureUtils.FlingDirection;
 
@@ -86,8 +87,8 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
         return new HistoryFragment();
     }// newInstance()
 
-    private static final int _LoaderHistoryData = 0;
-    private static final int _LoaderHistoryCounter = 1;
+    private final int _LoaderHistoryData = EnvUtils.genId();
+    private final int _LoaderHistoryCounter = EnvUtils.genId();
 
     /*
      * Fields.
@@ -198,31 +199,26 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
             selection = String.format("%s LIKE '%%://%%%s%%'", HistoryContract.History._ColumnUri, selection);
         }
 
-        switch (id) {
-        case _LoaderHistoryData:
+        if (id == _LoaderHistoryData) {
             mHandler.removeCallbacksAndMessages(null);
             mHandler.postDelayed(mViewLoadingShower, DisplayPrefs._DelayTimeForSimpleAnimation);
 
             mHistoryCursorAdapter.changeCursor(null);
 
             /*
-             * max items
-             */
-            Uri uri = Uri.withAppendedPath(HistoryContract.History._ContentUriGroupBySameDateBase,
-                    Uri.encode(Integer.toString(mMaxItemsPerPage)));
-            /*
-             * offset
+             * Offset.
              */
             if (mCurrentPage >= mPageCount)
                 mCurrentPage = mPageCount - 1;
             if (mCurrentPage < 0)
                 mCurrentPage = 0;
-            uri = Uri.withAppendedPath(uri, Uri.encode(Integer.toString(mCurrentPage * mMaxItemsPerPage)));
+            int offset = mCurrentPage * mMaxItemsPerPage;
 
-            return new CursorLoader(getActivity(), uri, null, selection, null, null);
-            // _LoaderHistoryData
-
-        case _LoaderHistoryCounter:
+            return new CursorLoader(getActivity(), HistoryContract.History._ContentUri, null, selection, null,
+                    String.format("%s DESC LIMIT %s OFFSET %s", HistoryContract.History._ColumnModificationTime,
+                            mMaxItemsPerPage, offset));
+        } // _LoaderHistoryData
+        else if (id == _LoaderHistoryCounter) {
             mPageCount = 1;
             mCurrentPage = 0;
 
@@ -230,13 +226,12 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
                 mCursorCounter.close();
                 mCursorCounter = null;
             }
+
             return new CursorLoader(getActivity(), HistoryContract.History._ContentUri,
                     new String[] { HistoryContract.History._COUNT }, selection, null, null);
-            // _LoaderHistoryCounter
+        }// _LoaderHistoryCounter
 
-        default:
-            return null;
-        }
+        return null;
     }// onCreateLoader()
 
     @Override
@@ -244,9 +239,8 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
         if (BuildConfig.DEBUG)
             Log.d(_ClassName, "onLoadFinished() -- data = " + data);
 
-        switch (loader.getId()) {
-        case _LoaderHistoryData:
-            mHistoryCursorAdapter.setGroupCursor(data);
+        if (loader.getId() == _LoaderHistoryData) {
+            mHistoryCursorAdapter.changeCursor(data);
 
             for (int i = 0; i < mHistoryCursorAdapter.getGroupCount(); i++)
                 mListView.expandGroup(i);
@@ -266,10 +260,8 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
                     mListView.setSelection(-1);
                 }
             });
-
-            break;// _LoaderHistoryData
-
-        case _LoaderHistoryCounter:
+        }// _LoaderHistoryData
+        else if (loader.getId() == _LoaderHistoryCounter) {
             if (mCursorCounter != null)
                 mCursorCounter.close();
 
@@ -285,9 +277,7 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
                 mBtnNext.setEnabled(false);
                 mBtnPrev.setEnabled(false);
             }
-
-            break;// _LoaderHistoryCounter
-        }
+        }// _LoaderHistoryCounter
 
         enableControls(true);
     }// onLoadFinished()
@@ -297,14 +287,11 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
         if (BuildConfig.DEBUG)
             Log.d(_ClassName, "onLoaderReset()");
 
-        switch (loader.getId()) {
-        case _LoaderHistoryData:
+        if (loader.getId() == _LoaderHistoryData) {
             mHistoryCursorAdapter.changeCursor(null);
             mViewLoading.setVisibility(View.VISIBLE);
-
-            break;// _LoaderHistoryData
-
-        case _LoaderHistoryCounter:
+        }// _LoaderHistoryData
+        else if (loader.getId() == _LoaderHistoryCounter) {
             /*
              * NOTE: if using an adapter, set its cursor to null to release
              * memory.
@@ -313,9 +300,7 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
                 mCursorCounter.close();
                 mCursorCounter = null;
             }
-
-            break;// _LoaderHistoryCounter
-        }
+        }// _LoaderHistoryCounter
     }// onLoaderReset()
 
     /**

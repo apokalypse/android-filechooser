@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TimeZone;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -26,7 +25,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.util.Log;
 
 /**
@@ -55,12 +53,6 @@ public class HistoryProvider extends ContentProvider {
     private static final int _HistoryId = 2;
 
     /**
-     * The incoming URI matches the history items (grouped by same date) URI
-     * pattern.
-     */
-    private static final int _HistoryGroupBySameDate = 3;
-
-    /**
      * A {@link UriMatcher} instance.
      */
     private static final UriMatcher _UriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -69,9 +61,7 @@ public class HistoryProvider extends ContentProvider {
 
     static {
         _UriMatcher.addURI(HistoryContract._Authority, HistoryContract.History._PathHistory, _History);
-        _UriMatcher.addURI(HistoryContract._Authority, HistoryContract.History._PathHistoryId + "/#", _HistoryId);
-        _UriMatcher.addURI(HistoryContract._Authority, HistoryContract.History._PathHistoryGroupBySameDate + "/#/#",
-                _HistoryGroupBySameDate);
+        _UriMatcher.addURI(HistoryContract._Authority, HistoryContract.History._PathHistory + "/#", _HistoryId);
 
         _ColumnMap.put(DbUtils._SqliteFtsColumnRowId, DbUtils._SqliteFtsColumnRowId + " as "
                 + HistoryContract.History._ID);
@@ -81,7 +71,7 @@ public class HistoryProvider extends ContentProvider {
         _ColumnMap.put(HistoryContract.History._ColumnCreateTime, HistoryContract.History._ColumnCreateTime);
         _ColumnMap
                 .put(HistoryContract.History._ColumnModificationTime, HistoryContract.History._ColumnModificationTime);
-    }
+    }// static
 
     private HistoryHelper mHistoryHelper;
 
@@ -102,9 +92,6 @@ public class HistoryProvider extends ContentProvider {
 
         case _HistoryId:
             return HistoryContract.History._ContentItemType;
-
-        case _HistoryGroupBySameDate:
-            return HistoryContract.History._ContentType;
 
         default:
             throw new IllegalArgumentException("Unknown URI " + uri);
@@ -140,8 +127,7 @@ public class HistoryProvider extends ContentProvider {
              * Starts a final WHERE clause by restricting it to the desired
              * history item ID.
              */
-            finalWhere = DbUtils._SqliteFtsColumnRowId + " = "
-                    + uri.getPathSegments().get(HistoryContract.History._HistoryIdPathPosition);
+            finalWhere = DbUtils._SqliteFtsColumnRowId + " = " + uri.getLastPathSegment();
 
             /*
              * If there were additional selection criteria, append them to the
@@ -240,7 +226,7 @@ public class HistoryProvider extends ContentProvider {
          * pattern-matching.
          */
         switch (_UriMatcher.match(uri)) {
-        case _History:
+        case _History: {
             if (Arrays.equals(projection, new String[] { HistoryContract.History._COUNT })) {
                 db = mHistoryHelper.getReadableDatabase();
                 cursor = db.rawQuery(
@@ -249,7 +235,8 @@ public class HistoryProvider extends ContentProvider {
                                 selection != null ? String.format("WHERE %s", selection) : "").trim(), null);
             }
 
-            break;// _History
+            break;
+        }// _History
 
         /*
          * If the incoming URI is for a single history item identified by its
@@ -257,61 +244,11 @@ public class HistoryProvider extends ContentProvider {
          * "_ID = <history-item-ID>" to the where clause, so that it selects
          * that single history item.
          */
-        case _HistoryId:
-            qb.appendWhere(DbUtils._SqliteFtsColumnRowId + "="
-                    + uri.getPathSegments().get(HistoryContract.History._HistoryIdPathPosition));
+        case _HistoryId: {
+            qb.appendWhere(DbUtils._SqliteFtsColumnRowId + " = " + uri.getLastPathSegment());
 
-            break;// _HistoryId
-
-        case _HistoryGroupBySameDate:
-            /*
-             * SELECT *,count(d) FROM (select date, date / 10 as d from test
-             * order by date desc limit 5 offset 0) group by d order by date
-             * desc
-             * 
-             * OR:
-             * 
-             * select _id,last_modified,d,count(d) from (SELECT
-             * _id,last_modified,last_modified/86400000 as d FROM history order
-             * by last_modified desc limit 15 offset 0) group by d order by
-             * last_modified desc limit 21
-             * 
-             * OR:
-             * 
-             * select _id,last_modified,days_of_group,count(days_of_group) as
-             * _count from (select _id,last_modified,cast(((last_modified)/
-             * 86400000)as integer) as days_of_group from history order by
-             * days_of_group desc limit 30 offset 0) group by days_of_group
-             * order by last_modified desc
-             */
-
-            String maxItems = uri.getPathSegments()
-                    .get(HistoryContract.History._HistoryMaxItemsGroupByDatePathPosition);
-            String offset = uri.getPathSegments().get(HistoryContract.History._HistoryOffsetGroupByDatePathPosition);
-            if (BuildConfig.DEBUG)
-                Log.d(_ClassName,
-                        String.format(
-                                "query() -- _HistoryGroupBySameDate -- offset = %s -- timezone in hours = %,d -- SELECTION = '%s'",
-                                offset, java.util.TimeZone.getDefault().getRawOffset() / DateUtils.HOUR_IN_MILLIS,
-                                selection));
-
-            db = mHistoryHelper.getReadableDatabase();
-
-            cursor = db.rawQuery("SELECT " + HistoryContract.History._ID + ","
-                    + HistoryContract.History._ColumnModificationTime + ","
-                    + HistoryContract.History._ColumnDaysOfGroup + ",COUNT("
-                    + HistoryContract.History._ColumnDaysOfGroup + ") AS " + HistoryContract.History._COUNT
-                    + " FROM (SELECT " + DbUtils._SqliteFtsColumnRowId + " AS " + HistoryContract.History._ID + ","
-                    + HistoryContract.History._ColumnModificationTime + ",CAST(( (CAST("
-                    + HistoryContract.History._ColumnModificationTime + " AS REAL) + "
-                    + TimeZone.getDefault().getRawOffset() + ") / " + DateUtils.DAY_IN_MILLIS + ")AS INTEGER) AS "
-                    + HistoryContract.History._ColumnDaysOfGroup + " FROM " + HistoryContract.History._TableName
-                    + (TextUtils.isEmpty(selection) ? "" : " WHERE " + selection) + " ORDER BY "
-                    + HistoryContract.History._ColumnDaysOfGroup + " DESC LIMIT " + maxItems + " OFFSET " + offset
-                    + ") GROUP BY " + HistoryContract.History._ColumnDaysOfGroup + " ORDER BY "
-                    + HistoryContract.History._ColumnModificationTime + " DESC", null);
-
-            break;// _HistoryGroupBySameDate
+            break;
+        }// _HistoryId
 
         default:
             throw new IllegalArgumentException("Unknown URI " + uri);
@@ -383,8 +320,7 @@ public class HistoryProvider extends ContentProvider {
              * Starts creating the final WHERE clause by restricting it to the
              * incoming item ID.
              */
-            finalWhere = DbUtils._SqliteFtsColumnRowId + " = "
-                    + uri.getPathSegments().get(HistoryContract.History._HistoryIdPathPosition);
+            finalWhere = DbUtils._SqliteFtsColumnRowId + " = " + uri.getLastPathSegment();
 
             /*
              * If there were additional selection criteria, append them to the

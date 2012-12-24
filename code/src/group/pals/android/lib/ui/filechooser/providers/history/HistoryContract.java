@@ -55,35 +55,6 @@ public final class HistoryContract {
         public static final String _PathHistory = "history";
 
         /**
-         * Path part for the History ID URI.
-         */
-        public static final String _PathHistoryId = "history";
-
-        /**
-         * 0-relative position of a history ID segment in the path part of a
-         * history ID URI.
-         */
-        public static final int _HistoryIdPathPosition = 1;
-
-        /**
-         * Path part for the History items (group by same date) URI.
-         */
-        public static final String _PathHistoryGroupBySameDate = "history_group_by_same_date";
-
-        /**
-         * 0-relative position of a value of max items which will be grouped by
-         * same date in the path part of history items grouped by same date URI.
-         */
-        public static final int _HistoryMaxItemsGroupByDatePathPosition = 1;
-
-        /**
-         * 0-relative position of the offset which will be taken to query data
-         * for group of items in same date in the path part of history items
-         * grouped by same date URI.
-         */
-        public static final int _HistoryOffsetGroupByDatePathPosition = 2;
-
-        /**
          * The content:// style URL for this table.
          */
         public static final Uri _ContentUri = Uri.parse(ProviderUtils._Scheme + _Authority + "/" + _PathHistory);
@@ -92,21 +63,8 @@ public final class HistoryContract {
          * The content URI base for a single history item. Callers must append a
          * numeric history ID to this Uri to retrieve a history item.
          */
-        public static final Uri _ContentIdUriBase = Uri.parse(ProviderUtils._Scheme + _Authority + "/" + _PathHistoryId
+        public static final Uri _ContentIdUriBase = Uri.parse(ProviderUtils._Scheme + _Authority + "/" + _PathHistory
                 + "/");
-
-        /**
-         * The content URI match pattern for a single history item, specified by
-         * its ID. Use this to match incoming URIs or to construct an Intent.
-         */
-        public static final Uri _ContentIdUriPattern = Uri.parse(ProviderUtils._Scheme + _Authority + "/"
-                + _PathHistoryId + "/#");
-
-        /**
-         * The content URI base for all items grouped by same date.
-         */
-        public static final Uri _ContentUriGroupBySameDateBase = Uri.parse(ProviderUtils._Scheme + _Authority + "/"
-                + _PathHistoryGroupBySameDate + "/");
 
         /*
          * MIME type definitions.
@@ -157,14 +115,5 @@ public final class HistoryContract {
          * </P>
          */
         public static final String _ColumnUri = "uri";
-
-        /**
-         * Column name for <i>days</i> (not date) of group, used with
-         * {@link #_ContentUriGroupBySameDateBase}.
-         * <p>
-         * Type: {@code Integer}
-         * </p>
-         */
-        public static final String _ColumnDaysOfGroup = "days_of_group";
     }// History
 }
