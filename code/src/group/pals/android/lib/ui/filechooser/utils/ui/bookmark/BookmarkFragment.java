@@ -26,9 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -48,6 +46,7 @@ import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -210,7 +209,8 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
             mBookmarkCursorAdapter.changeCursor(null);
 
             return new CursorLoader(getActivity(), BookmarkContract.Bookmark._ContentUri, null, null, null,
-                    BookmarkContract.Bookmark._ColumnProviderId);
+                    String.format("%s, %s DESC", BookmarkContract.Bookmark._ColumnProviderId,
+                            BookmarkContract.Bookmark._ColumnModificationTime));
         }// _LoaderBookmarkData
 
         return null;
@@ -534,15 +534,14 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
          *            the group position.
          */
         private void sortBookmarks(int groupPosition) {
-            Map<String, Integer> bookmarks = new HashMap<String, Integer>();
-
+            SparseArray<String> bookmarks = new SparseArray<String>();
+            List<String> names = new ArrayList<String>();
             for (int i = 0; i < mBookmarkCursorAdapter.getChildrenCount(groupPosition); i++) {
                 Cursor cursor = mBookmarkCursorAdapter.getChild(groupPosition, i);
-                bookmarks.put(cursor.getString(cursor.getColumnIndex(BookmarkContract.Bookmark._ColumnName)),
-                        cursor.getInt(cursor.getColumnIndex(BookmarkContract.Bookmark._ID)));
+                names.add(cursor.getString(cursor.getColumnIndex(BookmarkContract.Bookmark._ColumnName)));
+                bookmarks.put(cursor.getInt(cursor.getColumnIndex(BookmarkContract.Bookmark._ID)), names.get(i));
             }
 
-            List<String> names = new ArrayList<String>(bookmarks.keySet());
             Collections.sort(names, new Comparator<String>() {
 
                 final Collator mCollator = Collator.getInstance();
@@ -561,11 +560,14 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
              * modified.
              */
             ContentValues values = new ContentValues();
-            for (int i = names.size() - 1; i >= 0; i--) {
+            while (names.size() > 0) {
                 values.put(BookmarkContract.Bookmark._ColumnModificationTime,
-                        DbUtils.formatNumber(new Date().getTime() + i));
-                contentResolver.update(BookmarkContract.Bookmark._ContentUri, values,
-                        String.format("%s = %d", DbUtils._SqliteFtsColumnRowId, bookmarks.get(names.get(i))), null);
+                        DbUtils.formatNumber(new Date().getTime() + bookmarks.size() - names.size()));
+                contentResolver.update(
+                        BookmarkContract.Bookmark._ContentUri,
+                        values,
+                        String.format("%s = %d", DbUtils._SqliteFtsColumnRowId,
+                                bookmarks.keyAt(bookmarks.indexOfValue(names.remove(names.size() - 1)))), null);
             }
         }// sortBookmarks()
     };// mListViewOnItemLongClickListener
