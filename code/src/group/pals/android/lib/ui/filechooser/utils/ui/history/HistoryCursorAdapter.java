@@ -138,9 +138,8 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
         /*
          * Build new group cursor.
          */
-        if (cursor != null) {
+        if (cursor != null && cursor.moveToFirst()) {
             long lastDayCount = 0;
-            cursor.moveToFirst();
             do {
                 long dayCount = (long) Math.floor((Long.parseLong(cursor.getString(cursor
                         .getColumnIndex(HistoryContract.History._ColumnModificationTime))) + TimeZone.getDefault()

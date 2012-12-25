@@ -138,9 +138,8 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
         /*
          * Build new group cursor.
          */
-        if (cursor != null) {
+        if (cursor != null && cursor.moveToFirst()) {
             String lastProviderId = null;
-            cursor.moveToFirst();
             do {
                 String providerId = cursor.getString(cursor.getColumnIndex(Bookmark._ColumnProviderId));
 

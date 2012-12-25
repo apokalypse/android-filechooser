@@ -95,7 +95,6 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
     private static final String _ModeEditor = _ClassName + ".mode_editor";
 
     private final int _LoaderBookmarkData = EnvUtils.genId();
-    private final int _LoaderBookmarkCounter = EnvUtils.genId();
 
     /**
      * Creates a new instance of {@link HistoryFragment}.
@@ -133,7 +132,6 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
     private final Handler mHandler = new Handler();
     private boolean mEditor = false;
     private BookmarkCursorAdapter mBookmarkCursorAdapter;
-    private Cursor mCursorCounter;
     /**
      * Initializes to {@code -1} to avoid of re-loading the first load.
      */
@@ -187,7 +185,6 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
          * a new one.
          */
         getLoaderManager().initLoader(_LoaderBookmarkData, null, this);
-        getLoaderManager().initLoader(_LoaderBookmarkCounter, null, this);
     }// onActivityCreated()
 
     /*
@@ -198,11 +195,7 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if (BuildConfig.DEBUG)
             Log.d(_ClassName, "onCreateLoader()");
-        if (id == _LoaderBookmarkCounter) {
-            return new CursorLoader(getActivity(), BookmarkContract.Bookmark._ContentUri,
-                    new String[] { BookmarkContract.Bookmark._COUNT }, null, null, null);
-        } // _LoaderBookmarkCounter
-        else if (id == _LoaderBookmarkData) {
+        if (id == _LoaderBookmarkData) {
             mHandler.removeCallbacksAndMessages(null);
             mHandler.postDelayed(mViewLoadingShower, DisplayPrefs._DelayTimeForSimpleAnimation);
 
@@ -221,24 +214,7 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
         if (BuildConfig.DEBUG)
             Log.d(_ClassName, "onLoadFinished() -- data = " + data);
 
-        if (loader.getId() == _LoaderBookmarkCounter) {
-            if (mCursorCounter != null)
-                mCursorCounter.close();
-
-            mCursorCounter = data;
-            if (mCursorCounter.moveToFirst()) {
-                int newItemCount = mCursorCounter.getInt(mCursorCounter
-                        .getColumnIndex(BookmarkContract.Bookmark._COUNT));
-                if (mItemCount >= 0 && newItemCount != mItemCount)
-                    getLoaderManager().restartLoader(_LoaderBookmarkData, null, this);
-                mItemCount = newItemCount;
-            } else {
-                mItemCount = 0;
-            }
-
-            updateUI();
-        }// _LoaderBookmarkCounter
-        else if (loader.getId() == _LoaderBookmarkData) {
+        if (loader.getId() == _LoaderBookmarkData) {
             mBookmarkCursorAdapter.changeCursor(data);
 
             for (int i = 0; i < mBookmarkCursorAdapter.getGroupCount(); i++)
@@ -271,16 +247,6 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
             mBookmarkCursorAdapter.changeCursor(null);
             mViewLoading.setVisibility(View.VISIBLE);
         }// _LoaderBookmarkData
-        else if (loader.getId() == _LoaderBookmarkCounter) {
-            /*
-             * NOTE: if using an adapter, set its cursor to null to release
-             * memory.
-             */
-            if (mCursorCounter != null) {
-                mCursorCounter.close();
-                mCursorCounter = null;
-            }
-        }// _LoaderBookmarkCounter
     }// onLoaderReset()
 
     /**
