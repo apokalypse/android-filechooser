@@ -11,7 +11,7 @@ import group.pals.android.lib.ui.filechooser.BuildConfig;
 import group.pals.android.lib.ui.filechooser.R;
 import group.pals.android.lib.ui.filechooser.prefs.DisplayPrefs;
 import group.pals.android.lib.ui.filechooser.providers.DbUtils;
-import group.pals.android.lib.ui.filechooser.providers.history.HistoryContract;
+import group.pals.android.lib.ui.filechooser.providers.history.HistoryContract.History;
 import group.pals.android.lib.ui.filechooser.ui.widget.AfcSearchView;
 import group.pals.android.lib.ui.filechooser.utils.EnvUtils;
 import group.pals.android.lib.ui.filechooser.utils.Ui;
@@ -196,7 +196,7 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
         String selection = null;
         if (!TextUtils.isEmpty(mHistoryCursorAdapter.getSearchText())) {
             selection = DbUtils.rawSqlEscapeString(Uri.encode(mHistoryCursorAdapter.getSearchText().toString()));
-            selection = String.format("%s LIKE '%%://%%%s%%'", HistoryContract.History._ColumnUri, selection);
+            selection = String.format("%s LIKE '%%://%%%s%%'", History._ColumnUri, selection);
         }
 
         if (id == _LoaderHistoryData) {
@@ -214,9 +214,8 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
                 mCurrentPage = 0;
             int offset = mCurrentPage * mMaxItemsPerPage;
 
-            return new CursorLoader(getActivity(), HistoryContract.History._ContentUri, null, selection, null,
-                    String.format("%s DESC LIMIT %s OFFSET %s", HistoryContract.History._ColumnModificationTime,
-                            mMaxItemsPerPage, offset));
+            return new CursorLoader(getActivity(), History._ContentUri, null, selection, null, String.format(
+                    "%s DESC LIMIT %s OFFSET %s", History._ColumnModificationTime, mMaxItemsPerPage, offset));
         } // _LoaderHistoryData
         else if (id == _LoaderHistoryCounter) {
             mPageCount = 1;
@@ -227,8 +226,8 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
                 mCursorCounter = null;
             }
 
-            return new CursorLoader(getActivity(), HistoryContract.History._ContentUri,
-                    new String[] { HistoryContract.History._COUNT }, selection, null, null);
+            return new CursorLoader(getActivity(), History._ContentUri, new String[] { History._COUNT }, selection,
+                    null, null);
         }// _LoaderHistoryCounter
 
         return null;
@@ -269,7 +268,7 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
             if (mCursorCounter.moveToFirst()) {
                 if (mItemCount < 0)
                     getLoaderManager().restartLoader(_LoaderHistoryData, null, this);
-                mItemCount = mCursorCounter.getInt(mCursorCounter.getColumnIndex(HistoryContract.History._COUNT));
+                mItemCount = mCursorCounter.getInt(mCursorCounter.getColumnIndex(History._COUNT));
                 mPageCount = (int) Math.ceil((float) mItemCount / mMaxItemsPerPage);
                 mBtnNext.setEnabled(mCurrentPage < mPageCount - 1);
                 mBtnPrev.setEnabled(mCurrentPage > 0);
@@ -367,7 +366,7 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
 
                 List<Integer> ids = new ArrayList<Integer>();
 
-                final int _id = ((Cursor) data).getInt(((Cursor) data).getColumnIndex(HistoryContract.History._ID));
+                final int _id = ((Cursor) data).getInt(((Cursor) data).getColumnIndex(History._ID));
                 if (mHistoryCursorAdapter.isSelected(_id))
                     ids.addAll(mHistoryCursorAdapter.getSelectedItemIds());
                 else
@@ -387,8 +386,7 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
 
                     @Override
                     public void run() {
-                        getActivity().getContentResolver().delete(HistoryContract.History._ContentUri, _sb.toString(),
-                                null);
+                        getActivity().getContentResolver().delete(History._ContentUri, _sb.toString(), null);
                     }
                 }, DisplayPrefs._DelayTimeForVeryShortAnimation);
 
@@ -422,7 +420,7 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
 
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
-                        getActivity().getContentResolver().delete(HistoryContract.History._ContentUri, null, null);
+                        getActivity().getContentResolver().delete(History._ContentUri, null, null);
                         if (getDialog() != null)
                             getDialog().dismiss();
                     }// onClick()
@@ -636,8 +634,8 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
             if (getOnHistoryItemClickListener() != null) {
                 Cursor cursor = mHistoryCursorAdapter.getChild(groupPosition, childPosition);
                 getOnHistoryItemClickListener().onItemClick(
-                        cursor.getString(cursor.getColumnIndex(HistoryContract.History._ColumnProviderId)),
-                        Uri.parse(cursor.getString(cursor.getColumnIndex(HistoryContract.History._ColumnUri))));
+                        cursor.getString(cursor.getColumnIndex(History._ColumnProviderId)),
+                        Uri.parse(cursor.getString(cursor.getColumnIndex(History._ColumnUri))));
             }
 
             if (getDialog() != null)
