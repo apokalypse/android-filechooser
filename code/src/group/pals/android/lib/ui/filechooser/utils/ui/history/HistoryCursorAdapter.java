@@ -12,7 +12,7 @@ import group.pals.android.lib.ui.filechooser.R;
 import group.pals.android.lib.ui.filechooser.providers.BaseFileProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.ProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileContract.BaseFile;
-import group.pals.android.lib.ui.filechooser.providers.history.HistoryContract;
+import group.pals.android.lib.ui.filechooser.providers.history.HistoryContract.History;
 import group.pals.android.lib.ui.filechooser.utils.DateUtils;
 import group.pals.android.lib.ui.filechooser.utils.Ui;
 import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
@@ -85,12 +85,11 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
      */
     private static final String _ColumnOrgGroupPosition = "org_group_position";
 
-    private static final String[] _GroupCursorColumns = { HistoryContract.History._ID,
-            HistoryContract.History._ColumnModificationTime, _ColumnOrgGroupPosition };
+    private static final String[] _GroupCursorColumns = { History._ID, History._ColumnModificationTime,
+            _ColumnOrgGroupPosition };
 
-    private static final String[] _ChildCursorColumns = { HistoryContract.History._ID,
-            HistoryContract.History._ColumnUri, HistoryContract.History._ColumnProviderId,
-            HistoryContract.History._ColumnModificationTime };
+    private static final String[] _ChildCursorColumns = { History._ID, History._ColumnUri, History._ColumnProviderId,
+            History._ColumnModificationTime };
 
     /**
      * Map of child IDs to {@link BagChildInfo}.
@@ -142,14 +141,12 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
             long lastDayCount = 0;
             do {
                 long dayCount = (long) Math.floor((Long.parseLong(cursor.getString(cursor
-                        .getColumnIndex(HistoryContract.History._ColumnModificationTime))) + TimeZone.getDefault()
-                        .getRawOffset())
+                        .getColumnIndex(History._ColumnModificationTime))) + TimeZone.getDefault().getRawOffset())
                         / _DayInMillis);
 
                 if (dayCount != lastDayCount || newGroupCursor.getCount() == 0) {
-                    newGroupCursor.addRow(new Object[] {
-                            cursor.getInt(cursor.getColumnIndex(HistoryContract.History._ID)),
-                            cursor.getString(cursor.getColumnIndex(HistoryContract.History._ColumnModificationTime)),
+                    newGroupCursor.addRow(new Object[] { cursor.getInt(cursor.getColumnIndex(History._ID)),
+                            cursor.getString(cursor.getColumnIndex(History._ColumnModificationTime)),
                             cursor.getPosition() });
                 }
                 lastDayCount = dayCount;
@@ -195,18 +192,15 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
 
         mOrgCursor.moveToPosition(orgGroupPosition);
         long startOfDay = Long.parseLong(groupCursor.getString(groupCursor
-                .getColumnIndex(HistoryContract.History._ColumnModificationTime)))
-                + TimeZone.getDefault().getRawOffset();
+                .getColumnIndex(History._ColumnModificationTime))) + TimeZone.getDefault().getRawOffset();
         startOfDay -= startOfDay % _DayInMillis;
         do {
-            childrenCursor.addRow(new Object[] {
-                    mOrgCursor.getInt(mOrgCursor.getColumnIndex(HistoryContract.History._ID)),
-                    mOrgCursor.getString(mOrgCursor.getColumnIndex(HistoryContract.History._ColumnUri)),
-                    mOrgCursor.getString(mOrgCursor.getColumnIndex(HistoryContract.History._ColumnProviderId)),
-                    mOrgCursor.getString(mOrgCursor.getColumnIndex(HistoryContract.History._ColumnModificationTime)) });
+            childrenCursor.addRow(new Object[] { mOrgCursor.getInt(mOrgCursor.getColumnIndex(History._ID)),
+                    mOrgCursor.getString(mOrgCursor.getColumnIndex(History._ColumnUri)),
+                    mOrgCursor.getString(mOrgCursor.getColumnIndex(History._ColumnProviderId)),
+                    mOrgCursor.getString(mOrgCursor.getColumnIndex(History._ColumnModificationTime)) });
         } while (mOrgCursor.moveToNext()
-                && Long.parseLong(mOrgCursor.getString(mOrgCursor
-                        .getColumnIndex(HistoryContract.History._ColumnModificationTime)))
+                && Long.parseLong(mOrgCursor.getString(mOrgCursor.getColumnIndex(History._ColumnModificationTime)))
                         + TimeZone.getDefault().getRawOffset() >= startOfDay);
 
         /*
@@ -218,7 +212,7 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
 
     @Override
     protected void bindChildView(View view, Context context, Cursor cursor, boolean isLastChild) {
-        final int _id = cursor.getInt(cursor.getColumnIndex(HistoryContract.History._ID));
+        final int _id = cursor.getInt(cursor.getColumnIndex(History._ID));
         final BagChild _b;
 
         if (view.getTag() == null) {
@@ -240,7 +234,7 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
         } else
             _bci = mSelectedChildrenMap.get(_id);
 
-        Uri uri = Uri.parse(cursor.getString(cursor.getColumnIndex(HistoryContract.History._ColumnUri)));
+        Uri uri = Uri.parse(cursor.getString(cursor.getColumnIndex(History._ColumnUri)));
 
         String fileName = null;
         String filePath = null;
@@ -255,8 +249,8 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
                 fileInfo.close();
         }
 
-        _b.mTextViewTime.setText(formatTime(view.getContext(), Long.parseLong(cursor.getString(cursor
-                .getColumnIndex(HistoryContract.History._ColumnModificationTime)))));
+        _b.mTextViewTime.setText(formatTime(view.getContext(),
+                Long.parseLong(cursor.getString(cursor.getColumnIndex(History._ColumnModificationTime)))));
         _b.mTextViewName.setText(fileName);
         Ui.strikeOutText(_b.mTextViewName, _bci.mMarkedAsDeleted);
         _b.mTextViewPath.setText(filePath);
@@ -264,7 +258,7 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
         /*
          * Provider name.
          */
-        String providerId = cursor.getString(cursor.getColumnIndex(HistoryContract.History._ColumnProviderId));
+        String providerId = cursor.getString(cursor.getColumnIndex(History._ColumnProviderId));
         if (ProviderUtils.getProviderName(providerId) == null)
             ProviderUtils.setProviderName(providerId, BaseFileProviderUtils.getProviderName(context, providerId));
         _b.mTextViewType.setText(ProviderUtils.getProviderName(providerId));
@@ -317,8 +311,8 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
         } else
             b = (BagGroup) view.getTag();
 
-        b.mTextViewHeader.setText(formatDate(view.getContext(), Long.parseLong(cursor.getString(cursor
-                .getColumnIndex(HistoryContract.History._ColumnModificationTime)))));
+        b.mTextViewHeader.setText(formatDate(view.getContext(),
+                Long.parseLong(cursor.getString(cursor.getColumnIndex(History._ColumnModificationTime)))));
     }// bindGroupView()
 
     @Override
@@ -374,7 +368,7 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
         int chidrenCount = getChildrenCount(groupPosition);
         for (int iChild = 0; iChild < chidrenCount; iChild++) {
             Cursor cursor = getChild(groupPosition, iChild);
-            final int _id = cursor.getInt(cursor.getColumnIndex(HistoryContract.History._ID));
+            final int _id = cursor.getInt(cursor.getColumnIndex(History._ID));
             BagChildInfo b = mSelectedChildrenMap.get(_id);
             if (b == null) {
                 b = new BagChildInfo();
@@ -424,7 +418,7 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
         int chidrenCount = getChildrenCount(groupPosition);
         for (int iChild = 0; iChild < chidrenCount; iChild++) {
             Cursor cursor = getChild(groupPosition, iChild);
-            final int _id = cursor.getInt(cursor.getColumnIndex(HistoryContract.History._ID));
+            final int _id = cursor.getInt(cursor.getColumnIndex(History._ID));
             BagChildInfo b = mSelectedChildrenMap.get(_id);
             if (b == null) {
                 b = new BagChildInfo();
