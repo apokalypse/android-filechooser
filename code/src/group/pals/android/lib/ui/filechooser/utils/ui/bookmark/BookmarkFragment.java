@@ -132,10 +132,6 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
     private final Handler mHandler = new Handler();
     private boolean mEditor = false;
     private BookmarkCursorAdapter mBookmarkCursorAdapter;
-    /**
-     * Initializes to {@code -1} to avoid of re-loading the first load.
-     */
-    private int mItemCount = -1;
     private OnBookmarkItemClickListener mOnBookmarkItemClickListener;
 
     @Override
@@ -219,6 +215,7 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
 
             for (int i = 0; i < mBookmarkCursorAdapter.getGroupCount(); i++)
                 mListView.expandGroup(i);
+            updateUI();
 
             /*
              * Views visibilities. Always call these to make sure all views are
@@ -345,7 +342,7 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
      */
     private void updateUI() {
         mViewFooter.setVisibility(isEditor() ? View.VISIBLE : View.GONE);
-        mBtnClear.setEnabled(mItemCount > 0);
+        mBtnClear.setEnabled(mBookmarkCursorAdapter.getGroupCount() > 0);
     }// updateUI()
 
     /*
@@ -423,7 +420,7 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
             }
 
             if (getDialog() != null)
-                getDialog().dismiss();
+                dismiss();
 
             return false;
         }// onChildClick()
@@ -697,7 +694,7 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
             getActivity().getContentResolver().delete(BookmarkContract.Bookmark._ContentUri, null, null);
             updateUI();
             if (getDialog() != null)
-                getDialog().dismiss();
+                dismiss();
         }// clearBookmarks()
     };// mBtnClearOnClickListener
 
@@ -706,7 +703,7 @@ public class BookmarkFragment extends DialogFragment implements LoaderManager.Lo
         @Override
         public void onClick(View v) {
             if (getDialog() != null)
-                getDialog().dismiss();
+                dismiss();
             else
                 setEditor(false);
         }// onClick()
