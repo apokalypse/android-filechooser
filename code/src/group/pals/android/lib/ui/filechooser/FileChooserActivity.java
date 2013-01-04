@@ -662,8 +662,7 @@ public class FileChooserActivity extends FragmentActivity implements LoaderManag
                                         }
                                     } else {
                                         if (_uri.equals(subUri)) {
-                                            if (_uri != _lastPath || BaseFileProviderUtils.isDirectory(data))
-                                                shouldBeSelectedIdx = Math.max(0, data.getPosition() - 2);
+                                            shouldBeSelectedIdx = Math.max(0, data.getPosition() - 2);
                                             break;
                                         }
                                     }
