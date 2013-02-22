@@ -27,6 +27,7 @@
     </dependencies>
   
     <build>
+        <finalName>${project.artifactId}</finalName>
         <sourceDirectory>${project.basedir}/src</sourceDirectory>
         <plugins>
             <plugin>
@@ -42,14 +43,17 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-remote-resources-plugin</artifactId>
-                <version>1.4</version>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
                 <executions>
                     <execution>
-                        <id>resource-bundle</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
                         <configuration>
-                            <skip>true</skip>
-                        </configuration>
+                            <classifier>classes</classifier> 
+                        </configuration> 
                     </execution>
                 </executions>
             </plugin>
