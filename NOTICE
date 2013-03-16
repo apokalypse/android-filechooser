@@ -17,7 +17,7 @@ bugs...), your e-mail address will be kept private:
 And here is history:
 
 +++ Version 5.1 beta +++
- - Initialize: October 23, 2012
+ * Initialize: October 23, 2012
 
  * Milestones:
    + Removes key FileChooserActivity._RegexFilenameFilter; adds new key
@@ -28,13 +28,13 @@ And here is history:
      IFileProvider.getFileFilter() as replacements;
 
 +++ Version 5.0 +++
- - Release: October 21, 2012
+ * Release: October 21, 2012
 
  - We don't use Apache License 2.0 anymore. Now the library is released under
    MIT license.
 
 +++ Version 4.9 +++
- - Release: October 20, 2012
+ * Release: October 20, 2012
 
  - Improves the speed of formatting file time;
  - Uses a unique filename of SharedPreferences instead of default application's
@@ -46,22 +46,22 @@ And here is history:
  - Updates NOTICE;
 
 +++ Version 4.9 beta +++
- - Initialize: October 12, 2012
+ * Initialize: October 12, 2012
 
 +++ Version 4.8.1 +++
- - Release: October 12, 2012
+ * Release: October 12, 2012
 
  - Fixes a bug that file item does not draw properly after flinging it to delete
    files;
 
 +++ Version 4.8 +++
- - Release: October 12, 2012
+ * Release: October 12, 2012
 
  - Fixes a small bug that last location or selected file will be not pushed into
    history;
 
 +++ Version 4.7 +++
- - Release: October 12, 2012
+ * Release: October 12, 2012
 
  - All date formatting utilities were moved from /IFileAdapter to
    /utils.DateUtils;
@@ -75,22 +75,22 @@ And here is history:
  - Minor changes;
 
 +++ Version 4.7 beta +++
- - Initialize: October 02, 2012
+ * Initialize: October 02, 2012
 
 +++ Version 4.6.2 +++
- - Release: October 01, 2012
+ * Release: October 01, 2012
 
  - Fixes: View does not reload after changing view type between list view and
    grid view.
 
 +++ Version 4.6.1 +++
- - Release: October 01, 2012
+ * Release: October 01, 2012
 
  - Fixes: View does not reload after changing view type between list view and
    grid view.
 
 +++ Version 4.6 +++
- - Release: October 01, 2012
+ * Release: October 01, 2012
 
  - Updates UI;
  - Removes deprecated method History.push(A, A);
@@ -103,38 +103,38 @@ And here is history:
    + Issue #10;
 
 +++ Version 4.6 beta +++
- - Initialize: September 08, 2012
+ * Initialize: September 08, 2012
 
 +++ Version 4.5 +++
- - Release: September 07, 2012
+ * Release: September 07, 2012
 
  - New icons for menu Home, Reload and for file types audio, image, video,
 plain text and compressed;
 
 +++ Version 4.5 beta +++
- - Initialize: August 31, 2012
+ * Initialize: August 31, 2012
 
 +++ Version 4.4 +++
- - Release: August 30, 2012
+ * Release: August 30, 2012
 
  - Added languages: Spanish, Vietnamese. Special thanks to C. - a kind friend
    who helped us translate the library into Spanish;
 
 +++ Version 4.3 +++
- - Release: August 29, 2012
+ * Release: August 29, 2012
 
- - Fixed issue #2 (http://code.google.com/p/android-filechooser/issues/detail?id=2);
+ - Fixed issue #2 (https://code.google.com/p/android-filechooser/issues/detail?id=2);
  - Upgraded UI;
  - Added history viewer;
  - Improved some minor code;
 
 +++ Version 4.3 beta +++
- - Initialization: May 19, 2012
+ * Initialization: May 19, 2012
 
 +++ Version 4.2 +++
- - Release: May 15, 2012
+ * Release: May 15, 2012
 
- - due to this bug: http://code.google.com/p/android/issues/detail?id=30622,
+ - due to this bug: https://code.google.com/p/android/issues/detail?id=30622,
    so we prefix all resource names with 'afc_';
  - add small text view below location bar, to show current location's full name
    if it is truncated by the view's ellipsize property;
@@ -144,10 +144,10 @@ plain text and compressed;
  - some UI fixes/ updates;
 
 +++ Version 4.2 beta +++
- - Initialization: May 13, 2012
+ * Initialization: May 13, 2012
 
 +++ Version 4.1 +++
- - Release: May 12, 2012
+ * Release: May 12, 2012
 
  - update UI messages;
  - if the app does not have permission WRITE_EXTERNAL_STORAGE, notify user
@@ -156,10 +156,10 @@ plain text and compressed;
    go to;
 
 +++ Version 4.1 beta +++
- - Initialization: May 11, 2012
+ * Initialization: May 11, 2012
 
 +++ Version 4.0 - Tablet +++
- - Release: May 11, 2012
+ * Release: May 11, 2012
 
  - add Home button;
  - add grid view/ list view mode;
@@ -172,16 +172,16 @@ plain text and compressed;
  - some minor changes;
 
 +++ Version 4.0 beta +++
- - Initialization: May 08, 2012
+ * Initialization: May 08, 2012
 
 +++ Version 3.5 +++
- - Release: May 01, 2012
+ * Release: May 01, 2012
 
  - remove button Cancel (use default Back button of system)
  - hello May Day  :-)
 
 +++ Version 3.4 +++
- - Release: March 23, 2012
+ * Release: March 23, 2012
 
  - fix serious bug: hardcode service action name of local file provider;
    the service will be called as a remote service, which will raise
@@ -189,7 +189,7 @@ plain text and compressed;
    on the device;
 
 +++ Version 3.3 +++
- - Release: March 22, 2012
+ * Release: March 22, 2012
 
  - fix bug in LoadingDialog: if the user finishes the owner activity,
    the application can crash if the dialog is going to show up or dismiss;
@@ -197,19 +197,19 @@ plain text and compressed;
    screen size in dialog theme;
 
 +++ Version 3.2 +++
- - Release: March 16, 2012
+ * Release: March 16, 2012
 
  - add package io: IFile and LocalFile;
  - use IFile instead of java.io.File;
  - remove FileContainer and package bean;
 
 +++ Version 3.1 +++
- - Release: March 15, 2012
+ * Release: March 15, 2012
 
  - add FileProviderService;
 
 +++ Version 3.0 +++
- - Release: March 15, 2012
+ * Release: March 15, 2012
 
  - move file listing functions to external service;
  - change project name from FileChooser to android-filechooser  :-D
@@ -220,7 +220,7 @@ plain text and compressed;
    + ...
 
 +++ Version 2.0 +++
- - Release: Feb 22, 2012
+ * Release: Feb 22, 2012
 
  - change default date format to "yyyy.MM.dd hh:mm a";
  - try using sdcard as rootpath if it is not specified; if sdcard is not available, use "/";
@@ -228,27 +228,27 @@ plain text and compressed;
  - show directories' date (last modified);
 
 +++ Version 1.91 +++
- - Release: Feb 06, 2012
+ * Release: Feb 06, 2012
 
  - Add: show file time (last modified);
 
 +++ Version 1.9 +++
- - Release: Feb 06, 2012
+ * Release: Feb 06, 2012
 
  - Fix: crash if cast footer of listview to DataModel;
 
 +++ Version 1.8.2 +++
- - Release: Feb 06, 2012
+ * Release: Feb 06, 2012
 
  - enable fast scroll of the list view;
 
 +++ Version 1.8.1 +++
- - Release: Feb 05, 2012
+ * Release: Feb 05, 2012
 
  - Fix: it doesn't remember the first path (rootpath) in history;
 
 +++ Version 1.8 +++
- - Release: Feb 05, 2012
+ * Release: Feb 05, 2012
 
  - Shows progress dialog while listing files of a directory;
  - Adds flag max file count allowed, in case the directory has thousands of files,
@@ -257,26 +257,26 @@ plain text and compressed;
    It seems this is up to Android developers  :-)
 
 +++ Version 1.7 +++
- - Release: Jan 22, 2012
+ * Release: Jan 22, 2012
 
  - add function to check if filename (in save dialog mode) is valid or not;
  - change name FilesAdapter to FileAdapter;
 
 +++ Version 1.6 +++
- - Release: Jan 13, 2012
+ * Release: Jan 13, 2012
 
  - check and warn user if save as filename is a directory;
  - when finish, return some flags for further use (in case the
    caller needs);
 
 +++ Version 1.5 +++
- - Release: Jan 13, 2012
+ * Release: Jan 13, 2012
 
  - apply Apache License 2.0;
  - set result code to RESULT_CANCELED when user clicks button Cancel;
 
 +++ Version 1.4 +++
- - Release: Jan 08, 2012
+ * Release: Jan 08, 2012
 
  - first publishing;
  - choose file(s) dialog;
