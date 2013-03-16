@@ -12,7 +12,7 @@
     android:orientation="vertical" >
 
     <ListView
-        android:id="@+id/afc_context_menu_view_listview_menu"
+        android:id="@+id/afc_listview_menu"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:divider="@drawable/afc_context_menu_item_divider" >

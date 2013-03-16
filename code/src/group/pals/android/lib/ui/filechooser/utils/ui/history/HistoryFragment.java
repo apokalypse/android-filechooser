@@ -53,7 +53,8 @@ import android.widget.ExpandableListView;
  * @author Hai Bison
  * 
  */
-public class HistoryFragment extends DialogFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class HistoryFragment extends DialogFragment implements
+        LoaderManager.LoaderCallbacks<Cursor> {
 
     /**
      * Used for debugging or something...
@@ -121,7 +122,8 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mMaxItemsPerPage = getResources().getInteger(R.integer.afc_pkey_history_manager_display_items_per_page);
+        mMaxItemsPerPage = getResources().getInteger(
+                R.integer.afc_pkey_history_manager_display_items_per_page);
     }// onCreate()
 
     @Override
@@ -132,14 +134,16 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
 
             @Override
             public boolean onCreateOptionsMenu(Menu menu) {
-                getActivity().getMenuInflater().inflate(R.menu.afc_viewgroup_history, menu);
+                getActivity().getMenuInflater().inflate(
+                        R.menu.afc_viewgroup_history, menu);
                 return super.onCreateOptionsMenu(menu);
             }// onCreateOptionsMenu()
 
             @Override
             public boolean onPrepareOptionsMenu(Menu menu) {
-                menu.findItem(R.id.afc_viewgroup_history_menuitem_clear).setEnabled(
-                        mHistoryCursorAdapter != null && mHistoryCursorAdapter.getGroupCount() > 0);
+                menu.findItem(R.id.afc_menuitem_clear).setEnabled(
+                        mHistoryCursorAdapter != null
+                                && mHistoryCursorAdapter.getGroupCount() > 0);
                 return true;
             }// onPrepareOptionsMenu()
 
@@ -150,7 +154,7 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
 
                 Ui.showSoftKeyboard(mSearchView, false);
 
-                if (item.getItemId() == R.id.afc_viewgroup_history_menuitem_clear)
+                if (item.getItemId() == R.id.afc_menuitem_clear)
                     doConfirmClearHistory();
 
                 return true;
@@ -158,16 +162,19 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
         };
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCanceledOnTouchOutside(true);
-        dialog.setContentView(initContentView(getActivity().getLayoutInflater(), null));
+        dialog.setContentView(initContentView(
+                getActivity().getLayoutInflater(), null));
         dialog.setOnKeyListener(mDialogOnKeyListener);
         return dialog;
     }// onCreateDialog()
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
         if (BuildConfig.DEBUG)
             Log.d(_ClassName, "onCreateView() -- getDialog() = " + getDialog());
-        return getDialog() != null ? null : initContentView(inflater, container);
+        return getDialog() != null ? null
+                : initContentView(inflater, container);
     }// onCreateView()
 
     @Override
@@ -195,13 +202,16 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
 
         String selection = null;
         if (!TextUtils.isEmpty(mHistoryCursorAdapter.getSearchText())) {
-            selection = DbUtils.rawSqlEscapeString(Uri.encode(mHistoryCursorAdapter.getSearchText().toString()));
-            selection = String.format("%s LIKE '%%://%%%s%%'", History._ColumnUri, selection);
+            selection = DbUtils.rawSqlEscapeString(Uri
+                    .encode(mHistoryCursorAdapter.getSearchText().toString()));
+            selection = String.format("%s LIKE '%%://%%%s%%'",
+                    History._ColumnUri, selection);
         }
 
         if (id == _LoaderHistoryData) {
             mHandler.removeCallbacksAndMessages(null);
-            mHandler.postDelayed(mViewLoadingShower, DisplayPrefs._DelayTimeForSimpleAnimation);
+            mHandler.postDelayed(mViewLoadingShower,
+                    DisplayPrefs._DelayTimeForSimpleAnimation);
 
             mHistoryCursorAdapter.changeCursor(null);
 
@@ -214,8 +224,11 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
                 mCurrentPage = 0;
             int offset = mCurrentPage * mMaxItemsPerPage;
 
-            return new CursorLoader(getActivity(), History._ContentUri, null, selection, null, String.format(
-                    "%s DESC LIMIT %s OFFSET %s", History._ColumnModificationTime, mMaxItemsPerPage, offset));
+            return new CursorLoader(getActivity(), History._ContentUri, null,
+                    selection, null, String.format(
+                            "%s DESC LIMIT %s OFFSET %s",
+                            History._ColumnModificationTime, mMaxItemsPerPage,
+                            offset));
         } // _LoaderHistoryData
         else if (id == _LoaderHistoryCounter) {
             mPageCount = 1;
@@ -226,8 +239,8 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
                 mCursorCounter = null;
             }
 
-            return new CursorLoader(getActivity(), History._ContentUri, new String[] { History._COUNT }, selection,
-                    null, null);
+            return new CursorLoader(getActivity(), History._ContentUri,
+                    new String[] { History._COUNT }, selection, null, null);
         }// _LoaderHistoryCounter
 
         return null;
@@ -267,9 +280,12 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
             mCursorCounter = data;
             if (mCursorCounter.moveToFirst()) {
                 if (mItemCount < 0)
-                    getLoaderManager().restartLoader(_LoaderHistoryData, null, this);
-                mItemCount = mCursorCounter.getInt(mCursorCounter.getColumnIndex(History._COUNT));
-                mPageCount = (int) Math.ceil((float) mItemCount / mMaxItemsPerPage);
+                    getLoaderManager().restartLoader(_LoaderHistoryData, null,
+                            this);
+                mItemCount = mCursorCounter.getInt(mCursorCounter
+                        .getColumnIndex(History._COUNT));
+                mPageCount = (int) Math.ceil((float) mItemCount
+                        / mMaxItemsPerPage);
                 mBtnNext.setEnabled(mCurrentPage < mPageCount - 1);
                 mBtnPrev.setEnabled(mCurrentPage > 0);
             } else {
@@ -314,15 +330,18 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
         /*
          * LOADS CONTROLS
          */
-        View mainView = inflater.inflate(R.layout.afc_viewgroup_history, container, false);
+        View mainView = inflater.inflate(R.layout.afc_viewgroup_history,
+                container, false);
 
-        mBtnSearch = mainView.findViewById(R.id.afc_viewgroup_history_button_search);
-        mViewGroupListView = mainView.findViewById(R.id.afc_viewgroup_history_viewgroup_listview);
-        mListView = (ExpandableListView) mainView.findViewById(R.id.afc_viewgroup_history_listview);
-        mSearchView = (AfcSearchView) mainView.findViewById(R.id.afc_viewgroup_history_afc_search_view);
-        mBtnNext = mainView.findViewById(R.id.afc_viewgroup_history_button_go_forward);
-        mBtnPrev = mainView.findViewById(R.id.afc_viewgroup_history_button_go_back);
-        mViewLoading = mainView.findViewById(R.id.afc_viewgroup_history_view_loading);
+        mBtnSearch = mainView.findViewById(R.id.afc_button_search);
+        mViewGroupListView = mainView.findViewById(R.id.afc_viewgroup_listview);
+        mListView = (ExpandableListView) mainView
+                .findViewById(R.id.afc_listview);
+        mSearchView = (AfcSearchView) mainView
+                .findViewById(R.id.afc_afc_search_view);
+        mBtnNext = mainView.findViewById(R.id.afc_button_go_forward);
+        mBtnPrev = mainView.findViewById(R.id.afc_button_go_back);
+        mViewLoading = mainView.findViewById(R.id.afc_view_loading);
 
         /*
          * INITIALIZES CONTROLS
@@ -335,7 +354,7 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
         mSearchView.setOnQueryTextListener(mSearchViewOnQueryTextListener);
         mSearchView.setOnStateChangeListener(mSearchViewOnStateChangeListener);
 
-        mListView.setEmptyView(mainView.findViewById(R.id.afc_viewgroup_history_empty_view));
+        mListView.setEmptyView(mainView.findViewById(R.id.afc_empty_view));
         mListView.setOnChildClickListener(mListViewOnChildClickListener);
         mListView.setOnItemLongClickListener(mListViewOnItemLongClickListener);
         initListViewGestureListener();
@@ -357,42 +376,51 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
      * As the name means.
      */
     private void initListViewGestureListener() {
-        GestureUtils.setupGestureDetector(mListView, new GestureUtils.SimpleOnGestureListener() {
-
-            @Override
-            public boolean onFling(View view, Object data, FlingDirection flingDirection) {
-                if (!(data instanceof Cursor))
-                    return false;
-
-                List<Integer> ids = new ArrayList<Integer>();
-
-                final int _id = ((Cursor) data).getInt(((Cursor) data).getColumnIndex(History._ID));
-                if (mHistoryCursorAdapter.isSelected(_id))
-                    ids.addAll(mHistoryCursorAdapter.getSelectedItemIds());
-                else
-                    ids.add(_id);
-
-                if (ids.size() <= 1)
-                    mHistoryCursorAdapter.markItemAsDeleted(_id, true);
-                else
-                    mHistoryCursorAdapter.markSelectedItemsAsDeleted(true);
-
-                final StringBuilder _sb = new StringBuilder(String.format("%s in (", DbUtils._SqliteFtsColumnRowId));
-                for (int id : ids)
-                    _sb.append(Integer.toString(id)).append(',');
-                _sb.setCharAt(_sb.length() - 1, ')');
-
-                new Handler().postDelayed(new Runnable() {
+        GestureUtils.setupGestureDetector(mListView,
+                new GestureUtils.SimpleOnGestureListener() {
 
                     @Override
-                    public void run() {
-                        getActivity().getContentResolver().delete(History._ContentUri, _sb.toString(), null);
-                    }
-                }, DisplayPrefs._DelayTimeForVeryShortAnimation);
+                    public boolean onFling(View view, Object data,
+                            FlingDirection flingDirection) {
+                        if (!(data instanceof Cursor))
+                            return false;
 
-                return true;
-            }// onFling()
-        });
+                        List<Integer> ids = new ArrayList<Integer>();
+
+                        final int _id = ((Cursor) data).getInt(((Cursor) data)
+                                .getColumnIndex(History._ID));
+                        if (mHistoryCursorAdapter.isSelected(_id))
+                            ids.addAll(mHistoryCursorAdapter
+                                    .getSelectedItemIds());
+                        else
+                            ids.add(_id);
+
+                        if (ids.size() <= 1)
+                            mHistoryCursorAdapter.markItemAsDeleted(_id, true);
+                        else
+                            mHistoryCursorAdapter
+                                    .markSelectedItemsAsDeleted(true);
+
+                        final StringBuilder _sb = new StringBuilder(String
+                                .format("%s in (",
+                                        DbUtils._SqliteFtsColumnRowId));
+                        for (int id : ids)
+                            _sb.append(Integer.toString(id)).append(',');
+                        _sb.setCharAt(_sb.length() - 1, ')');
+
+                        new Handler().postDelayed(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                getActivity().getContentResolver().delete(
+                                        History._ContentUri, _sb.toString(),
+                                        null);
+                            }
+                        }, DisplayPrefs._DelayTimeForVeryShortAnimation);
+
+                        return true;
+                    }// onFling()
+                });
     }// initListViewGestureListener()
 
     /**
@@ -407,7 +435,8 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
 
         for (View v : new View[] { mBtnNext, mBtnPrev }) {
             v.setOnClickListener(enabled ? mBtnNextPrevOnClickListener : null);
-            v.setOnLongClickListener(enabled ? mBtnNextPrevOnLongClickListener : null);
+            v.setOnLongClickListener(enabled ? mBtnNextPrevOnLongClickListener
+                    : null);
         }
     }// enableButtonNavigatorsListeners()
 
@@ -415,12 +444,14 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
      * Asks user to confirm to clear history.
      */
     private void doConfirmClearHistory() {
-        Dlg.confirmYesno(getActivity(), getString(R.string.afc_msg_confirm_clear_history),
+        Dlg.confirmYesno(getActivity(),
+                getString(R.string.afc_msg_confirm_clear_history),
                 new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
-                        getActivity().getContentResolver().delete(History._ContentUri, null, null);
+                        getActivity().getContentResolver().delete(
+                                History._ContentUri, null, null);
                         if (getDialog() != null)
                             getDialog().dismiss();
                     }// onClick()
@@ -433,7 +464,8 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
      * @return {@code true} or {@code false}.
      */
     private boolean isSearchViewOn() {
-        return mSearchView.getVisibility() == View.VISIBLE && !mSearchView.isIconified();
+        return mSearchView.getVisibility() == View.VISIBLE
+                && !mSearchView.isIconified();
     }// isSearchViewShowing()
 
     /**
@@ -481,7 +513,8 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
      * @param listener
      *            {@link OnHistoryItemClickListener}.
      */
-    public void setOnHistoryItemClickListener(OnHistoryItemClickListener listener) {
+    public void setOnHistoryItemClickListener(
+            OnHistoryItemClickListener listener) {
         mOnHistoryItemClickListener = listener;
     }// setOnHistoryItemClickListener()
 
@@ -541,7 +574,8 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
                  * will restart the data loader.
                  */
                 mItemCount = -1;
-                getLoaderManager().restartLoader(_LoaderHistoryCounter, null, HistoryFragment.this);
+                getLoaderManager().restartLoader(_LoaderHistoryCounter, null,
+                        HistoryFragment.this);
             } catch (Throwable t) {
                 Log.e(_ClassName, "onQueryTextSubmit() >> " + t);
                 t.printStackTrace();
@@ -568,7 +602,8 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
                  * will restart the data loader.
                  */
                 mItemCount = -1;
-                getLoaderManager().restartLoader(_LoaderHistoryCounter, null, HistoryFragment.this);
+                getLoaderManager().restartLoader(_LoaderHistoryCounter, null,
+                        HistoryFragment.this);
             }
         }// onClose()
     };// mSearchViewOnStateChangeListener
@@ -579,11 +614,12 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
         public void onClick(View v) {
             Ui.showSoftKeyboard(mSearchView, false);
 
-            if (v.getId() == R.id.afc_viewgroup_history_button_go_forward)
+            if (v.getId() == R.id.afc_button_go_forward)
                 mCurrentPage++;
-            else if (v.getId() == R.id.afc_viewgroup_history_button_go_back)
+            else if (v.getId() == R.id.afc_button_go_back)
                 mCurrentPage--;
-            getLoaderManager().restartLoader(_LoaderHistoryData, null, HistoryFragment.this);
+            getLoaderManager().restartLoader(_LoaderHistoryData, null,
+                    HistoryFragment.this);
         }// onClick()
     };// mBtnNextPrevOnClickListener
 
@@ -593,12 +629,13 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
         public boolean onLongClick(View v) {
             Ui.showSoftKeyboard(mSearchView, false);
 
-            if (v.getId() == R.id.afc_viewgroup_history_button_go_forward)
+            if (v.getId() == R.id.afc_button_go_forward)
                 mCurrentPage = Integer.MAX_VALUE;
-            else if (v.getId() == R.id.afc_viewgroup_history_button_go_back)
+            else if (v.getId() == R.id.afc_button_go_back)
                 mCurrentPage = 0;
 
-            getLoaderManager().restartLoader(_LoaderHistoryData, null, HistoryFragment.this);
+            getLoaderManager().restartLoader(_LoaderHistoryData, null,
+                    HistoryFragment.this);
 
             return true;
         }// onLongClick()
@@ -630,12 +667,16 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
     private final ExpandableListView.OnChildClickListener mListViewOnChildClickListener = new ExpandableListView.OnChildClickListener() {
 
         @Override
-        public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+        public boolean onChildClick(ExpandableListView parent, View v,
+                int groupPosition, int childPosition, long id) {
             if (getOnHistoryItemClickListener() != null) {
-                Cursor cursor = mHistoryCursorAdapter.getChild(groupPosition, childPosition);
+                Cursor cursor = mHistoryCursorAdapter.getChild(groupPosition,
+                        childPosition);
                 getOnHistoryItemClickListener().onItemClick(
-                        cursor.getString(cursor.getColumnIndex(History._ColumnProviderId)),
-                        Uri.parse(cursor.getString(cursor.getColumnIndex(History._ColumnUri))));
+                        cursor.getString(cursor
+                                .getColumnIndex(History._ColumnProviderId)),
+                        Uri.parse(cursor.getString(cursor
+                                .getColumnIndex(History._ColumnUri))));
             }
 
             if (getDialog() != null)
@@ -648,27 +689,35 @@ public class HistoryFragment extends DialogFragment implements LoaderManager.Loa
     private final AdapterView.OnItemLongClickListener mListViewOnItemLongClickListener = new AdapterView.OnItemLongClickListener() {
 
         @Override
-        public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        public boolean onItemLongClick(AdapterView<?> parent, View view,
+                int position, long id) {
             switch (ExpandableListView.getPackedPositionType(id)) {
             case ExpandableListView.PACKED_POSITION_TYPE_GROUP:
-                final int _iGroup = ExpandableListView.getPackedPositionGroup(mListView
-                        .getExpandableListPosition(position));
+                final int _iGroup = ExpandableListView
+                        .getPackedPositionGroup(mListView
+                                .getExpandableListPosition(position));
                 if (!mListView.isGroupExpanded(_iGroup))
                     return false;
 
                 if (BuildConfig.DEBUG)
-                    Log.d(_ClassName, String.format("onItemLongClick() -- group = %,d", _iGroup));
-                ContextMenuUtils.showContextMenu(getActivity(), 0, R.string.afc_title_advanced_selection,
-                        HistoryCursorAdapter._AdvancedSelectionOptions, new ContextMenuUtils.OnMenuItemClickListener() {
+                    Log.d(_ClassName, String.format(
+                            "onItemLongClick() -- group = %,d", _iGroup));
+                ContextMenuUtils.showContextMenu(getActivity(), 0,
+                        R.string.afc_title_advanced_selection,
+                        HistoryCursorAdapter._AdvancedSelectionOptions,
+                        new ContextMenuUtils.OnMenuItemClickListener() {
 
                             @Override
                             public void onClick(final int resId) {
                                 if (resId == R.string.afc_cmd_advanced_selection_all)
-                                    mHistoryCursorAdapter.selectAll(_iGroup, true);
+                                    mHistoryCursorAdapter.selectAll(_iGroup,
+                                            true);
                                 else if (resId == R.string.afc_cmd_advanced_selection_none)
-                                    mHistoryCursorAdapter.selectAll(_iGroup, false);
+                                    mHistoryCursorAdapter.selectAll(_iGroup,
+                                            false);
                                 else if (resId == R.string.afc_cmd_advanced_selection_invert)
-                                    mHistoryCursorAdapter.invertSelection(_iGroup);
+                                    mHistoryCursorAdapter
+                                            .invertSelection(_iGroup);
                             }// onClick()
                         });
 

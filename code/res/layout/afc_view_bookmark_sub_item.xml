@@ -19,29 +19,31 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/afc_view_bookmark_sub_item_text_name"
+            android:id="@+id/afc_text_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:ellipsize="middle"
             android:gravity="center_vertical"
             android:maxLines="@integer/afc_bookmark_filename_max_lines"
-            android:textAppearance="?android:attr/textAppearanceMedium" >
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textIsSelectable="false" >
         </TextView>
 
         <TextView
-            android:id="@+id/afc_view_bookmark_sub_item_text_path"
+            android:id="@+id/afc_text_path"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/afc_2dp"
             android:ellipsize="middle"
             android:maxLines="@integer/afc_bookmark_pathname_max_lines"
+            android:textIsSelectable="false"
             android:visibility="gone" >
         </TextView>
     </LinearLayout>
 
     <CheckBox
-        android:id="@+id/afc_view_bookmark_sub_item_checkbox"
+        android:id="@+id/afc_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="top"

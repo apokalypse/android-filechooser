@@ -40,18 +40,22 @@ public class ContextMenuUtils {
      * @param listener
      *            {@link OnMenuItemClickListener}
      */
-    public static void showContextMenu(Context context, int iconId, String title, final Integer[] itemIds,
+    public static void showContextMenu(Context context, int iconId,
+            String title, final Integer[] itemIds,
             final OnMenuItemClickListener listener) {
         final MenuItemAdapter _adapter = new MenuItemAdapter(context, itemIds);
 
-        View view = LayoutInflater.from(context).inflate(R.layout.afc_context_menu_view, null);
-        ListView listview = (ListView) view.findViewById(R.id.afc_context_menu_view_listview_menu);
+        View view = LayoutInflater.from(context).inflate(
+                R.layout.afc_context_menu_view, null);
+        ListView listview = (ListView) view
+                .findViewById(R.id.afc_listview_menu);
         listview.setAdapter(_adapter);
 
         final AlertDialog _dlg = Dlg.newDlg(context);
 
         // don't use Cancel button
-        _dlg.setButton(DialogInterface.BUTTON_NEGATIVE, null, (DialogInterface.OnClickListener) null);
+        _dlg.setButton(DialogInterface.BUTTON_NEGATIVE, null,
+                (DialogInterface.OnClickListener) null);
         _dlg.setCanceledOnTouchOutside(true);
 
         if (iconId > 0)
@@ -63,7 +67,8 @@ public class ContextMenuUtils {
             listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                 @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                public void onItemClick(AdapterView<?> parent, View view,
+                        int position, long id) {
                     _dlg.dismiss();
                     listener.onClick(itemIds[position]);
                 }// onItemClick()
@@ -77,7 +82,8 @@ public class ContextMenuUtils {
          */
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.copyFrom(_dlg.getWindow().getAttributes());
-        lp.width = context.getResources().getDimensionPixelSize(R.dimen.afc_context_menu_width);
+        lp.width = context.getResources().getDimensionPixelSize(
+                R.dimen.afc_context_menu_width);
         _dlg.getWindow().setAttributes(lp);
     }// showContextMenu()
 
@@ -96,9 +102,11 @@ public class ContextMenuUtils {
      * @param listener
      *            {@link OnMenuItemClickListener}
      */
-    public static void showContextMenu(Context context, int iconId, int titleId, Integer[] itemIds,
-            OnMenuItemClickListener listener) {
-        showContextMenu(context, iconId, titleId > 0 ? context.getString(titleId) : null, itemIds, listener);
+    public static void showContextMenu(Context context, int iconId,
+            int titleId, Integer[] itemIds, OnMenuItemClickListener listener) {
+        showContextMenu(context, iconId,
+                titleId > 0 ? context.getString(titleId) : null, itemIds,
+                listener);
     }// showContextMenu()
 
     // ==========

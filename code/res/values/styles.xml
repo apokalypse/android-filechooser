@@ -81,4 +81,8 @@
         <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
     </style>
 
+    <style name="Afc.Theme.Dark" parent="@android:style/Theme" />
+
+    <style name="Afc.Theme.Dialog.Dark" parent="@android:style/Theme.Dialog" />
+
 </resources>

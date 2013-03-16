@@ -12,7 +12,7 @@
     android:orientation="vertical" >
 
     <EditText
-        android:id="@+id/afc_simple_text_input_view_text1"
+        android:id="@+id/afc_text1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/afc_5dp"

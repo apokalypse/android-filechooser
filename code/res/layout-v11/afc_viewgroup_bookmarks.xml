@@ -11,16 +11,16 @@
     android:layout_height="match_parent" >
 
     <RelativeLayout
-        android:id="@+id/afc_viewgroup_bookmarks_viewgroup_controls"
+        android:id="@+id/afc_viewgroup_controls"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" >
 
         <ExpandableListView
-            android:id="@+id/afc_viewgroup_bookmarks_listview_bookmarks"
+            android:id="@+id/afc_listview_bookmarks"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/afc_viewgroup_bookmarks_viewgroup_footer"
+            android:layout_above="@+id/afc_viewgroup_footer"
             android:layout_alignParentTop="true"
             android:childDivider="@android:color/transparent"
             android:childIndicator="@null"
@@ -28,7 +28,7 @@
             android:groupIndicator="@null" />
 
         <TextView
-            android:id="@+id/afc_viewgroup_bookmarks_empty_view"
+            android:id="@+id/afc_empty_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -38,7 +38,7 @@
             android:visibility="gone" />
 
         <LinearLayout
-            android:id="@+id/afc_viewgroup_bookmarks_viewgroup_footer"
+            android:id="@+id/afc_viewgroup_footer"
             style="?android:attr/buttonBarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
                 android:orientation="horizontal" >
 
                 <Button
-                    android:id="@+id/afc_viewgroup_bookmarks_button_clear"
+                    android:id="@+id/afc_button_clear"
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
                 </Button>
 
                 <Button
-                    android:id="@+id/afc_viewgroup_bookmarks_button_ok"
+                    android:id="@+id/afc_button_ok"
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -81,7 +81,7 @@
     <!-- Must use this to stretch the dialog (if it is used inside a dialog). -->
 
     <RelativeLayout
-        android:id="@+id/afc_viewgroup_bookmarks_view_loading"
+        android:id="@+id/afc_view_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
