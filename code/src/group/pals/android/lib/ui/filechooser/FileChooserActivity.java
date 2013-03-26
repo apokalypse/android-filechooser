@@ -577,7 +577,7 @@ public class FileChooserActivity extends FragmentActivity implements
         return new CursorLoader(this, BaseFile
                 .genContentUriBase(path.getAuthority())
                 .buildUpon()
-                .appendPath(path.toString())
+                .appendPath(path.getLastPathSegment())
                 .appendQueryParameter(BaseFile._ParamTaskId,
                         Integer.toString(mIdLoaderData))
                 .appendQueryParameter(
@@ -1276,7 +1276,8 @@ public class FileChooserActivity extends FragmentActivity implements
                                                         .getAuthority())
                                         .buildUpon()
                                         .appendPath(
-                                                getCurrentLocation().toString())
+                                                getCurrentLocation()
+                                                        .getLastPathSegment())
                                         .appendQueryParameter(
                                                 BaseFile._ParamName, name)
                                         .appendQueryParameter(
@@ -1673,17 +1674,17 @@ public class FileChooserActivity extends FragmentActivity implements
         Cursor cursor = getContentResolver()
                 .query(path, null, null, null, null);
         while (cursor != null) {
-            String lastUri = null;
+            Uri lastUri = null;
             if (cursor.moveToFirst()) {
-                lastUri = cursor.getString(cursor
-                        .getColumnIndex(BaseFile._ColumnUri));
+                lastUri = Uri.parse(cursor.getString(cursor
+                        .getColumnIndex(BaseFile._ColumnUri)));
 
                 TextView btnLoc = (TextView) inflater.inflate(
                         R.layout.afc_button_location, null);
                 String name = BaseFileProviderUtils.getFileName(cursor);
                 btnLoc.setText(TextUtils.isEmpty(name) ? getString(R.string.afc_root)
                         : name);
-                btnLoc.setTag(Uri.parse(lastUri));
+                btnLoc.setTag(lastUri);
                 btnLoc.setOnClickListener(mBtnLocationOnClickListener);
                 btnLoc.setOnLongClickListener(mBtnLocationOnLongClickListener);
                 mViewLocations.addView(btnLoc, 0, lpBtnLoc);
@@ -1705,19 +1706,19 @@ public class FileChooserActivity extends FragmentActivity implements
 
             cursor.close();
 
-            if (TextUtils.isEmpty(lastUri))
+            if (lastUri == null)
                 break;
 
             /*
              * Process the parent directory.
              */
-            cursor = getContentResolver()
-                    .query(BaseFile
-                            .genContentUriApi(Uri.parse(lastUri).getAuthority())
+            cursor = getContentResolver().query(
+                    BaseFile.genContentUriApi(lastUri.getAuthority())
                             .buildUpon()
                             .appendPath(BaseFile._CmdGetParent)
                             .appendQueryParameter(BaseFile._ParamSource,
-                                    lastUri).build(), null, null, null, null);
+                                    lastUri.getLastPathSegment()).build(),
+                    null, null, null, null);
             if (cursor != null) {
                 View divider = inflater.inflate(
                         R.layout.afc_view_locations_divider, null);

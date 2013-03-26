@@ -447,14 +447,13 @@ public class BaseFileProviderUtils {
      * @return the parent file if it exists, {@code null} otherwise.
      */
     public static Uri getParentFile(Context context, Uri uri) {
-        Cursor cursor = context
-                .getContentResolver()
-                .query(BaseFile
-                        .genContentUriApi(uri.getAuthority())
+        Cursor cursor = context.getContentResolver().query(
+                BaseFile.genContentUriApi(uri.getAuthority())
                         .buildUpon()
                         .appendPath(BaseFile._CmdGetParent)
                         .appendQueryParameter(BaseFile._ParamSource,
-                                uri.toString()).build(), null, null, null, null);
+                                uri.getLastPathSegment()).build(), null, null,
+                null, null);
         if (cursor == null)
             return null;
 
@@ -486,10 +485,10 @@ public class BaseFileProviderUtils {
                         .buildUpon()
                         .appendPath(BaseFile._CmdIsAncestorOf)
                         .appendQueryParameter(BaseFile._ParamSource,
-                                uri1.toString())
+                                uri1.getLastPathSegment())
                         .appendQueryParameter(BaseFile._ParamTarget,
-                                uri2.toString()).build(), null, null, null,
-                null);
+                                uri2.getLastPathSegment()).build(), null, null,
+                null, null);
         if (cursor == null)
             return false;
 

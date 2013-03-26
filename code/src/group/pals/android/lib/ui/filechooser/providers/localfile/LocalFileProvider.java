@@ -182,7 +182,7 @@ public class LocalFileProvider extends BaseFileProvider {
 
         switch (_UriMatcher.match(uri)) {
         case _Directory:
-            File file = extractFile(Uri.parse(uri.getLastPathSegment()));
+            File file = extractFile(uri);
             if (!file.isDirectory() || !file.canWrite())
                 return null;
 
@@ -326,9 +326,8 @@ public class LocalFileProvider extends BaseFileProvider {
         else if (BaseFile._CmdIsAncestorOf.equals(uri.getLastPathSegment())) {
             return doCheckAncestor(uri);
         } else if (BaseFile._CmdGetParent.equals(uri.getLastPathSegment())) {
-            File file = extractSourceFile(uri);
-            if (file == null)
-                return null;
+            File file = new File(Uri.parse(
+                    uri.getQueryParameter(BaseFile._ParamSource)).getPath());
             file = file.getParentFile();
             if (file == null)
                 return null;
@@ -373,7 +372,7 @@ public class LocalFileProvider extends BaseFileProvider {
     private MatrixCursor doListFiles(Uri uri) {
         MatrixCursor matrixCursor = BaseFileProviderUtils.newBaseFileCursor();
 
-        File file = extractFile(Uri.parse(uri.getLastPathSegment()));
+        File file = extractFile(uri);
 
         if (BuildConfig.DEBUG)
             Log.d(_ClassName, "srcFile = " + file);
@@ -723,9 +722,10 @@ public class LocalFileProvider extends BaseFileProvider {
      *         <i>non-null but empty</i> cursor if the source is.
      */
     private MatrixCursor doCheckAncestor(Uri uri) {
-        File source = extractSourceFile(uri);
-        File target = extractFile(Uri.parse(uri
-                .getQueryParameter(BaseFile._ParamTarget)));
+        File source = new File(Uri.parse(
+                uri.getQueryParameter(BaseFile._ParamSource)).getPath());
+        File target = new File(Uri.parse(
+                uri.getQueryParameter(BaseFile._ParamTarget)).getPath());
         if (source == null || target == null)
             return null;
 
@@ -742,19 +742,6 @@ public class LocalFileProvider extends BaseFileProvider {
     }// doCheckAncestor()
 
     /**
-     * Extracts source file from request URI (via parameter
-     * {@link BaseFile#_ParamSource}).
-     * 
-     * @param uri
-     *            the request URI.
-     * @return the file. Can be {@code null} if the authority is invalid.
-     */
-    private static File extractSourceFile(Uri uri) {
-        uri = Uri.parse(uri.getQueryParameter(BaseFile._ParamSource));
-        return extractFile(uri);
-    }// extractSourceFile()
-
-    /**
      * Extracts source file from request URI.
      * 
      * @param uri
@@ -765,8 +752,7 @@ public class LocalFileProvider extends BaseFileProvider {
         if (!LocalFileContract._Authority.equals(uri.getAuthority()))
             return null;
 
-        Uri fileUri = Uri.parse(uri.getLastPathSegment());
-        String fileName = fileUri.getPath();
+        String fileName = Uri.parse(uri.getLastPathSegment()).getPath();
         if (uri.getQueryParameter(BaseFile._ParamAppendPath) != null)
             fileName += Uri.parse(
                     uri.getQueryParameter(BaseFile._ParamAppendPath)).getPath();

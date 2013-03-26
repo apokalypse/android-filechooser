@@ -103,15 +103,24 @@ public class BaseFileContract {
          */
 
         /**
+         * <p>
+         * <i>This is internal field.</i>
+         * </p>
          * The path to a single directory's contents. You query this path to get
          * the contents of that directory.
          */
         public static final String _PathDir = "dir";
         /**
+         * <p>
+         * <i>This is internal field.</i>
+         * </p>
          * The path to a single file. This can be a file or a directory.
          */
         public static final String _PathFile = "file";
         /**
+         * <p>
+         * <i>This is internal field.</i>
+         * </p>
          * The path to query the provider's information such as name, ID...
          */
         public static final String _PathApi = "api";
@@ -129,8 +138,8 @@ public class BaseFileContract {
         public static final String _CmdCancel = "cancel";
 
         /**
-         * Use this command along with two parameters: a source directory (
-         * {@link #_ParamSource}) and a target file/ directory (
+         * Use this command along with two parameters: a source directory ID (
+         * {@link #_ParamSource}) and a target file/ directory ID (
          * {@link #_ParamTarget}). It will return a <i>non-null but empty</i>
          * cursor if the given file is a directory and it is ancestor of the
          * file provided by this parameter. Note that you also have to call
@@ -167,7 +176,7 @@ public class BaseFileContract {
 
         /**
          * Use this parameter to get parent file of a file. You provide the
-         * source file with {@link #_ParamSource}.
+         * source file ID with {@link #_ParamSource}.
          * 
          * @see #_ParamSource
          */
@@ -178,7 +187,7 @@ public class BaseFileContract {
          */
 
         /**
-         * Use this parameter to provide the source file.
+         * Use this parameter to provide the source file ID.
          * <p>
          * Type: URI
          * <p>
@@ -186,7 +195,7 @@ public class BaseFileContract {
         public static final String _ParamSource = "source";
 
         /**
-         * Use this parameter to provide the target file.
+         * Use this parameter to provide the target file ID.
          * <p>
          * Type: URI
          * <p>
