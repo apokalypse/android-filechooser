@@ -35,8 +35,12 @@ public class FileObserverEx extends FileObserver {
             | FileObserver.MOVE_SELF | FileObserver.MOVED_FROM
             | FileObserver.MOVED_TO | FileObserver.ATTRIB | FileObserver.MODIFY;
 
-    private static final long _MinTimeBetweenEvents = 10000;
+    private static final long _MinTimeBetweenEvents = 5000;
     private static final int _MsgNotifyChanges = 0;
+    /**
+     * An unknown event, most likely a bug of the system.
+     */
+    private static final int _FileObserver_UnknownEvent = 32768;
 
     private final HandlerThread mHandlerThread = new HandlerThread(_ClassName);
     private final Handler mHandler;
@@ -82,7 +86,7 @@ public class FileObserverEx extends FileObserver {
         /*
          * Some bugs of Android...
          */
-        if (!mWatching || event == 32768 || path == null
+        if (!mWatching || event == _FileObserver_UnknownEvent || path == null
                 || mHandler.hasMessages(_MsgNotifyChanges)
                 || !mHandlerThread.isAlive() || mHandlerThread.isInterrupted())
             return;

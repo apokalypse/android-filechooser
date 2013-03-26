@@ -162,15 +162,8 @@ public class LocalFileProvider extends BaseFileProvider {
         if (BuildConfig.DEBUG)
             Log.d(_ClassName, "delete() >> count = " + count);
 
-        if (count > 0) {
-            /*
-             * Gets a handle to the content resolver object for the current
-             * context, and notifies it that the incoming URI changed. The
-             * object passes this along to the resolver framework, and observers
-             * that have registered themselves for the provider are notified.
-             */
+        if (count > 0)
             getContext().getContentResolver().notifyChange(uri, null);
-        }
 
         return count;
     }// delete()
