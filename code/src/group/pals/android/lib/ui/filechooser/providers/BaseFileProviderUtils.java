@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.net.Uri;
 
 /**
@@ -35,7 +36,8 @@ public class BaseFileProviderUtils {
     private static final Map<String, String> _MapProviderInfo = new HashMap<String, String>();
 
     static {
-        _MapProviderInfo.put(LocalFileContract._ID, LocalFileContract._Authority);
+        _MapProviderInfo.put(LocalFileContract._ID,
+                LocalFileContract._Authority);
     }// static
 
     /**
@@ -77,18 +79,44 @@ public class BaseFileProviderUtils {
         if (authority == null)
             return null;
 
-        Cursor cursor = context.getContentResolver()
-                .query(BaseFile.genContentUriApi(authority), null, null, null, null);
+        Cursor cursor = context.getContentResolver().query(
+                BaseFile.genContentUriApi(authority), null, null, null, null);
         if (cursor == null)
             return null;
         try {
             if (cursor.moveToFirst())
-                return cursor.getString(cursor.getColumnIndex(BaseFile._ColumnProviderName));
+                return cursor.getString(cursor
+                        .getColumnIndex(BaseFile._ColumnProviderName));
             return null;
         } finally {
             cursor.close();
         }
     }// getProviderName()
+
+    /**
+     * Creates new cursor which hold default properties of a base file for
+     * client to access.
+     * 
+     * @return the new empty cursor. The column orders are:
+     *         <p>
+     *         <li>{@link BaseFile#_ID}</li>
+     *         <li>{@link BaseFile#_ColumnUri}</li>
+     *         <li>{@link BaseFile#_ColumnPath}</li>
+     *         <li>{@link BaseFile#_ColumnName}</li>
+     *         <li>{@link BaseFile#_ColumnCanRead}</li>
+     *         <li>{@link BaseFile#_ColumnCanWrite}</li>
+     *         <li>{@link BaseFile#_ColumnSize}</li>
+     *         <li>{@link BaseFile#_ColumnType}</li>
+     *         <li>{@link BaseFile#_ColumnModificationTime}</li>
+     *         </p>
+     */
+    public static MatrixCursor newBaseFileCursor() {
+        return new MatrixCursor(new String[] { BaseFile._ID,
+                BaseFile._ColumnUri, BaseFile._ColumnPath,
+                BaseFile._ColumnName, BaseFile._ColumnCanRead,
+                BaseFile._ColumnCanWrite, BaseFile._ColumnSize,
+                BaseFile._ColumnType, BaseFile._ColumnModificationTime });
+    }// newBaseFileCursor()
 
     /**
      * Checks if {@code uri} is a directory.
@@ -101,7 +129,8 @@ public class BaseFileProviderUtils {
      *         otherwise.
      */
     public static boolean isDirectory(Context context, Uri uri) {
-        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+        Cursor cursor = context.getContentResolver().query(uri, null, null,
+                null, null);
         if (cursor == null)
             return false;
 
@@ -136,7 +165,8 @@ public class BaseFileProviderUtils {
      * @return {@code true} if {@code uri} is a file, {@code false} otherwise.
      */
     public static boolean isFile(Context context, Uri uri) {
-        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+        Cursor cursor = context.getContentResolver().query(uri, null, null,
+                null, null);
         if (cursor == null)
             return false;
 
@@ -170,7 +200,8 @@ public class BaseFileProviderUtils {
      * @return the file name if {@code uri} is a file, {@code null} otherwise.
      */
     public static String getFileName(Context context, Uri uri) {
-        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+        Cursor cursor = context.getContentResolver().query(uri, null, null,
+                null, null);
         if (cursor == null)
             return null;
 
@@ -204,7 +235,8 @@ public class BaseFileProviderUtils {
      * @return the human-readable path of {@code uri}.
      */
     public static String getFilePath(Context context, Uri uri) {
-        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+        Cursor cursor = context.getContentResolver().query(uri, null, null,
+                null, null);
         if (cursor == null)
             return null;
 
@@ -240,7 +272,8 @@ public class BaseFileProviderUtils {
      *         {@link #_FileTypeUnknown}, {@link #_FileTypeNotExisted}.
      */
     public static int getFileType(Context context, Uri uri) {
-        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+        Cursor cursor = context.getContentResolver().query(uri, null, null,
+                null, null);
         if (cursor == null)
             return BaseFile._FileTypeNotExisted;
 
@@ -274,7 +307,8 @@ public class BaseFileProviderUtils {
      * @return the URI.
      */
     public static Uri getUri(Cursor cursor) {
-        return Uri.parse(cursor.getString(cursor.getColumnIndex(BaseFile._ColumnUri)));
+        return Uri.parse(cursor.getString(cursor
+                .getColumnIndex(BaseFile._ColumnUri)));
     }// getFileName()
 
     /**
@@ -287,13 +321,15 @@ public class BaseFileProviderUtils {
      * @return {@code true} or {@code false}.
      */
     public static boolean fileExists(Context context, Uri uri) {
-        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+        Cursor cursor = context.getContentResolver().query(uri, null, null,
+                null, null);
         if (cursor == null)
             return false;
 
         try {
             if (cursor.moveToFirst())
-                return cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnType)) != BaseFile._FileTypeNotExisted;
+                return cursor.getInt(cursor
+                        .getColumnIndex(BaseFile._ColumnType)) != BaseFile._FileTypeNotExisted;
             return false;
         } finally {
             cursor.close();
@@ -310,7 +346,8 @@ public class BaseFileProviderUtils {
      * @return {@code true} or {@code false}.
      */
     public static boolean fileCanRead(Context context, Uri uri) {
-        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+        Cursor cursor = context.getContentResolver().query(uri, null, null,
+                null, null);
         if (cursor == null)
             return false;
 
@@ -346,7 +383,8 @@ public class BaseFileProviderUtils {
      * @return {@code true} or {@code false}.
      */
     public static boolean fileCanWrite(Context context, Uri uri) {
-        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+        Cursor cursor = context.getContentResolver().query(uri, null, null,
+                null, null);
         if (cursor == null)
             return false;
 
@@ -384,14 +422,15 @@ public class BaseFileProviderUtils {
     public static Uri getDefaultPath(Context context, String authority) {
         Cursor cursor = context.getContentResolver().query(
                 BaseFile.genContentUriApi(authority).buildUpon()
-                        .appendQueryParameter(BaseFile._ParamGetDefaultPath, Boolean.toString(true)).build(), null,
+                        .appendPath(BaseFile._CmdGetDefaultPath).build(), null,
                 null, null, null);
         if (cursor == null)
             return null;
 
         try {
             if (cursor.moveToFirst())
-                return Uri.parse(cursor.getString(cursor.getColumnIndex(BaseFile._ColumnUri)));
+                return Uri.parse(cursor.getString(cursor
+                        .getColumnIndex(BaseFile._ColumnUri)));
             return null;
         } finally {
             cursor.close();
@@ -408,15 +447,21 @@ public class BaseFileProviderUtils {
      * @return the parent file if it exists, {@code null} otherwise.
      */
     public static Uri getParentFile(Context context, Uri uri) {
-        Cursor cursor = context.getContentResolver().query(
-                uri.buildUpon().appendQueryParameter(BaseFile._ParamGetParent, Boolean.toString(true)).build(), null,
-                null, null, null);
+        Cursor cursor = context
+                .getContentResolver()
+                .query(BaseFile
+                        .genContentUriApi(uri.getAuthority())
+                        .buildUpon()
+                        .appendPath(BaseFile._CmdGetParent)
+                        .appendQueryParameter(BaseFile._ParamSource,
+                                uri.toString()).build(), null, null, null, null);
         if (cursor == null)
             return null;
 
         try {
             if (cursor.moveToFirst())
-                return Uri.parse(cursor.getString(cursor.getColumnIndex(BaseFile._ColumnUri)));
+                return Uri.parse(cursor.getString(cursor
+                        .getColumnIndex(BaseFile._ColumnUri)));
             return null;
         } finally {
             cursor.close();
@@ -437,8 +482,14 @@ public class BaseFileProviderUtils {
      */
     public static boolean isAncestorOf(Context context, Uri uri1, Uri uri2) {
         Cursor cursor = context.getContentResolver().query(
-                uri1.buildUpon().appendQueryParameter(BaseFile._ParamIsAncestorOf, uri2.toString()).build(), null,
-                null, null, null);
+                BaseFile.genContentUriApi(uri1.getAuthority())
+                        .buildUpon()
+                        .appendPath(BaseFile._CmdIsAncestorOf)
+                        .appendQueryParameter(BaseFile._ParamSource,
+                                uri1.toString())
+                        .appendQueryParameter(BaseFile._ParamTarget,
+                                uri2.toString()).build(), null, null, null,
+                null);
         if (cursor == null)
             return false;
 
@@ -448,4 +499,24 @@ public class BaseFileProviderUtils {
             cursor.close();
         }
     }// isAncestorOf()
+
+    /**
+     * Cancels a task with its ID.
+     * 
+     * @param context
+     *            the context.
+     * @param authority
+     *            the file provider authority.
+     * @param taskId
+     *            the task ID.
+     */
+    public static void cancelTask(Context context, String authority, int taskId) {
+        context.getContentResolver().query(
+                BaseFile.genContentUriApi(authority)
+                        .buildUpon()
+                        .appendPath(BaseFile._CmdCancel)
+                        .appendQueryParameter(BaseFile._ParamTaskId,
+                                Integer.toString(taskId)).build(), null, null,
+                null, null);
+    }// cancelTask()
 }

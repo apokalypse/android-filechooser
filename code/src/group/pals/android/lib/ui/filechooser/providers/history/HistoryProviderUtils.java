@@ -26,7 +26,8 @@ import android.util.Log;
  */
 public class HistoryProviderUtils {
 
-    private static final String _ClassName = HistoryProviderUtils.class.getName();
+    private static final String _ClassName = HistoryProviderUtils.class
+            .getName();
 
     /**
      * Checks and cleans up out-dated history items.
@@ -43,16 +44,19 @@ public class HistoryProviderUtils {
              * NOTE: be careful with math, use long values instead of integer
              * ones.
              */
-            final long _validityInMillis = new Date().getTime()
-                    - (context.getResources().getInteger(R.integer.afc_pkey_history_validity_in_days_def) * DateUtils.DAY_IN_MILLIS);
+            final long validityInMillis = new Date().getTime()
+                    - (context.getResources().getInteger(
+                            R.integer.afc_pkey_history_validity_in_days_def) * DateUtils.DAY_IN_MILLIS);
 
             if (BuildConfig.DEBUG)
-                Log.d(_ClassName, String.format("doCleanupCache() - validity = %,d (%s)", _validityInMillis, new Date(
-                        _validityInMillis)));
+                Log.d(_ClassName, String.format(
+                        "doCleanupCache() - validity = %,d (%s)",
+                        validityInMillis, new Date(validityInMillis)));
             context.getContentResolver().delete(
                     HistoryContract.History._ContentUri,
-                    String.format("%s < '%s'", HistoryContract.History._ColumnModificationTime,
-                            DbUtils.formatNumber(_validityInMillis)), null);
+                    String.format("%s < '%s'",
+                            HistoryContract.History._ColumnModificationTime,
+                            DbUtils.formatNumber(validityInMillis)), null);
         } catch (Throwable t) {
             /*
              * Currently we just ignore it.

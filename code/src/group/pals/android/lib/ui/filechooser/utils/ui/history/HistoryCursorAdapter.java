@@ -235,31 +235,31 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
     @Override
     protected void bindChildView(View view, Context context, Cursor cursor,
             boolean isLastChild) {
-        final int _id = cursor.getInt(cursor.getColumnIndex(History._ID));
-        final BagChild _b;
+        final int id = cursor.getInt(cursor.getColumnIndex(History._ID));
+        final BagChild child;
 
         if (view.getTag() == null) {
-            _b = new BagChild();
-            _b.mTextViewTime = (TextView) view
+            child = new BagChild();
+            child.mTextViewTime = (TextView) view
                     .findViewById(R.id.afc_textview_time);
-            _b.mTextViewName = (TextView) view
+            child.mTextViewName = (TextView) view
                     .findViewById(R.id.afc_textview_name);
-            _b.mTextViewPath = (TextView) view
+            child.mTextViewPath = (TextView) view
                     .findViewById(R.id.afc_textview_path);
-            _b.mTextViewType = (TextView) view
+            child.mTextViewType = (TextView) view
                     .findViewById(R.id.afc_textview_type);
-            _b.mCheckBox = (CheckBox) view.findViewById(R.id.afc_checkbox);
+            child.mCheckBox = (CheckBox) view.findViewById(R.id.afc_checkbox);
 
-            view.setTag(_b);
+            view.setTag(child);
         } else
-            _b = (BagChild) view.getTag();
+            child = (BagChild) view.getTag();
 
-        final BagChildInfo _bci;
-        if (mSelectedChildrenMap.get(_id) == null) {
-            _bci = new BagChildInfo();
-            mSelectedChildrenMap.put(_id, _bci);
+        final BagChildInfo childInfo;
+        if (mSelectedChildrenMap.get(id) == null) {
+            childInfo = new BagChildInfo();
+            mSelectedChildrenMap.put(id, childInfo);
         } else
-            _bci = mSelectedChildrenMap.get(_id);
+            childInfo = mSelectedChildrenMap.get(id);
 
         Uri uri = Uri.parse(cursor.getString(cursor
                 .getColumnIndex(History._ColumnUri)));
@@ -280,12 +280,12 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
                 fileInfo.close();
         }
 
-        _b.mTextViewTime.setText(formatTime(view.getContext(), Long
+        child.mTextViewTime.setText(formatTime(view.getContext(), Long
                 .parseLong(cursor.getString(cursor
                         .getColumnIndex(History._ColumnModificationTime)))));
-        _b.mTextViewName.setText(fileName);
-        Ui.strikeOutText(_b.mTextViewName, _bci.mMarkedAsDeleted);
-        _b.mTextViewPath.setText(filePath);
+        child.mTextViewName.setText(fileName);
+        Ui.strikeOutText(child.mTextViewName, childInfo.mMarkedAsDeleted);
+        child.mTextViewPath.setText(filePath);
 
         /*
          * Provider name.
@@ -295,27 +295,27 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
         if (ProviderUtils.getProviderName(providerId) == null)
             ProviderUtils.setProviderName(providerId,
                     BaseFileProviderUtils.getProviderName(context, providerId));
-        _b.mTextViewType.setText(ProviderUtils.getProviderName(providerId));
+        child.mTextViewType.setText(ProviderUtils.getProviderName(providerId));
 
         /*
          * Check box.
          */
-        _b.mCheckBox.setOnCheckedChangeListener(null);
-        _b.mCheckBox.setChecked(_bci.mChecked);
-        _b.mCheckBox
+        child.mCheckBox.setOnCheckedChangeListener(null);
+        child.mCheckBox.setChecked(childInfo.mChecked);
+        child.mCheckBox
                 .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView,
                             boolean isChecked) {
                         if (BuildConfig.DEBUG)
-                            Log.d(_ClassName, "onCheckedChanged() >> _id = "
-                                    + _id);
-                        _bci.mChecked = isChecked;
+                            Log.d(_ClassName, "onCheckedChanged() >> id = "
+                                    + id);
+                        childInfo.mChecked = isChecked;
                     }// onCheckedChanged()
                 });
 
-        _b.mCheckBox.setOnLongClickListener(new View.OnLongClickListener() {
+        child.mCheckBox.setOnLongClickListener(new View.OnLongClickListener() {
 
             @Override
             public boolean onLongClick(View v) {
@@ -410,13 +410,13 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
         int chidrenCount = getChildrenCount(groupPosition);
         for (int iChild = 0; iChild < chidrenCount; iChild++) {
             Cursor cursor = getChild(groupPosition, iChild);
-            final int _id = cursor.getInt(cursor.getColumnIndex(History._ID));
-            BagChildInfo b = mSelectedChildrenMap.get(_id);
-            if (b == null) {
-                b = new BagChildInfo();
-                mSelectedChildrenMap.put(_id, b);
+            final int id = cursor.getInt(cursor.getColumnIndex(History._ID));
+            BagChildInfo childInfo = mSelectedChildrenMap.get(id);
+            if (childInfo == null) {
+                childInfo = new BagChildInfo();
+                mSelectedChildrenMap.put(id, childInfo);
             }
-            b.mChecked = selected;
+            childInfo.mChecked = selected;
         }// for children
     }// asyncSelectAll()
 
@@ -460,13 +460,13 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
         int chidrenCount = getChildrenCount(groupPosition);
         for (int iChild = 0; iChild < chidrenCount; iChild++) {
             Cursor cursor = getChild(groupPosition, iChild);
-            final int _id = cursor.getInt(cursor.getColumnIndex(History._ID));
-            BagChildInfo b = mSelectedChildrenMap.get(_id);
-            if (b == null) {
-                b = new BagChildInfo();
-                mSelectedChildrenMap.put(_id, b);
+            final int id = cursor.getInt(cursor.getColumnIndex(History._ID));
+            BagChildInfo childInfo = mSelectedChildrenMap.get(id);
+            if (childInfo == null) {
+                childInfo = new BagChildInfo();
+                mSelectedChildrenMap.put(id, childInfo);
             }
-            b.mChecked = !b.mChecked;
+            childInfo.mChecked = !childInfo.mChecked;
         }// for children
     }// asyncInvertSelection()
 
@@ -580,11 +580,11 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(millis);
 
-        final Calendar _yesterday = Calendar.getInstance();
-        _yesterday.add(Calendar.DAY_OF_YEAR, -1);
+        final Calendar yesterday = Calendar.getInstance();
+        yesterday.add(Calendar.DAY_OF_YEAR, -1);
 
-        if (cal.get(Calendar.YEAR) == _yesterday.get(Calendar.YEAR)) {
-            if (cal.get(Calendar.DAY_OF_YEAR) == _yesterday
+        if (cal.get(Calendar.YEAR) == yesterday.get(Calendar.YEAR)) {
+            if (cal.get(Calendar.DAY_OF_YEAR) == yesterday
                     .get(Calendar.DAY_OF_YEAR))
                 return c.getString(R.string.afc_yesterday);
             else

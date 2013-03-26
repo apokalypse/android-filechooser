@@ -34,22 +34,28 @@ public class BookmarkHelper extends SQLiteOpenHelper {
     /**
      * @since v5.1 beta
      */
-    private static final String _PatternDatabaseCreator = String.format("CREATE VIRTUAL TABLE "
-            + BookmarkContract.Bookmark._TableName + " USING %%s(" + BookmarkContract.Bookmark._ColumnCreateTime + ","
-            + BookmarkContract.Bookmark._ColumnModificationTime + "," + BookmarkContract.Bookmark._ColumnProviderId
-            + "," + BookmarkContract.Bookmark._ColumnUri + "," + BookmarkContract.Bookmark._ColumnName
-            + ",tokenize=porter);");
+    private static final String _PatternDatabaseCreator = String
+            .format("CREATE VIRTUAL TABLE "
+                    + BookmarkContract.Bookmark._TableName + " USING %%s("
+                    + BookmarkContract.Bookmark._ColumnCreateTime + ","
+                    + BookmarkContract.Bookmark._ColumnModificationTime + ","
+                    + BookmarkContract.Bookmark._ColumnProviderId + ","
+                    + BookmarkContract.Bookmark._ColumnUri + ","
+                    + BookmarkContract.Bookmark._ColumnName
+                    + ",tokenize=porter);");
 
     public BookmarkHelper(Context context) {
         // always use application context
-        super(context.getApplicationContext(), Prefs.genDatabaseFilename(context, _DatabaseFilename), null,
-                _DatabaseVersion);
+        super(context.getApplicationContext(), Prefs.genDatabaseFilename(
+                context, _DatabaseFilename), null, _DatabaseVersion);
     }// BookmarkHelper()
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(String.format(_PatternDatabaseCreator,
-                Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB ? DbUtils._SqliteFts3 : DbUtils._SqliteFts4));
+        db.execSQL(String
+                .format(_PatternDatabaseCreator,
+                        Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB ? DbUtils._SqliteFts3
+                                : DbUtils._SqliteFts4));
     }// onCreate()
 
     @Override

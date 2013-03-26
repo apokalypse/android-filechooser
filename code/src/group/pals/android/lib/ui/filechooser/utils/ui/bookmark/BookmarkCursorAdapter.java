@@ -233,19 +233,19 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
     @Override
     protected void bindChildView(View view, Context context, Cursor cursor,
             boolean isLastChild) {
-        final int _id = cursor.getInt(cursor.getColumnIndex(Bookmark._ID));
+        final int id = cursor.getInt(cursor.getColumnIndex(Bookmark._ID));
         Uri uri = Uri.parse(cursor.getString(cursor
                 .getColumnIndex(Bookmark._ColumnUri)));
 
         /*
          * Child Info
          */
-        final BagChildInfo _bci;
-        if (mSelectedChildrenMap.get(_id) == null) {
-            _bci = new BagChildInfo();
-            mSelectedChildrenMap.put(_id, _bci);
+        final BagChildInfo childInfo;
+        if (mSelectedChildrenMap.get(id) == null) {
+            childInfo = new BagChildInfo();
+            mSelectedChildrenMap.put(id, childInfo);
         } else
-            _bci = mSelectedChildrenMap.get(_id);
+            childInfo = mSelectedChildrenMap.get(id);
 
         /*
          * Child
@@ -267,7 +267,7 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
 
         bag.mTextName.setText(cursor.getString(cursor
                 .getColumnIndex(Bookmark._ColumnName)));
-        Ui.strikeOutText(bag.mTextName, _bci.mMarkedAsDeleted);
+        Ui.strikeOutText(bag.mTextName, childInfo.mMarkedAsDeleted);
 
         /*
          * Path.
@@ -286,14 +286,14 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
 
         bag.mCheckBox.setVisibility(isEditor() ? View.VISIBLE : View.GONE);
         bag.mCheckBox.setOnCheckedChangeListener(null);
-        bag.mCheckBox.setChecked(_bci.mChecked);
+        bag.mCheckBox.setChecked(childInfo.mChecked);
         bag.mCheckBox
                 .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView,
                             boolean isChecked) {
-                        _bci.mChecked = isChecked;
+                        childInfo.mChecked = isChecked;
                     }// onCheckedChanged()
                 });
 
@@ -403,11 +403,11 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
         int chidrenCount = getChildrenCount(groupPosition);
         for (int iChild = 0; iChild < chidrenCount; iChild++) {
             Cursor cursor = getChild(groupPosition, iChild);
-            final int _id = cursor.getInt(cursor.getColumnIndex(Bookmark._ID));
-            BagChildInfo b = mSelectedChildrenMap.get(_id);
+            final int id = cursor.getInt(cursor.getColumnIndex(Bookmark._ID));
+            BagChildInfo b = mSelectedChildrenMap.get(id);
             if (b == null) {
                 b = new BagChildInfo();
-                mSelectedChildrenMap.put(_id, b);
+                mSelectedChildrenMap.put(id, b);
             }
             b.mChecked = selected;
         }// for children
@@ -453,11 +453,11 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
         int chidrenCount = getChildrenCount(groupPosition);
         for (int iChild = 0; iChild < chidrenCount; iChild++) {
             Cursor cursor = getChild(groupPosition, iChild);
-            final int _id = cursor.getInt(cursor.getColumnIndex(Bookmark._ID));
-            BagChildInfo b = mSelectedChildrenMap.get(_id);
+            final int id = cursor.getInt(cursor.getColumnIndex(Bookmark._ID));
+            BagChildInfo b = mSelectedChildrenMap.get(id);
             if (b == null) {
                 b = new BagChildInfo();
-                mSelectedChildrenMap.put(_id, b);
+                mSelectedChildrenMap.put(id, b);
             }
             b.mChecked = !b.mChecked;
         }// for children

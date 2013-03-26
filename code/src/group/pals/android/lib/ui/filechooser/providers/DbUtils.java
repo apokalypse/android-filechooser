@@ -80,7 +80,7 @@ public class DbUtils {
      * @return the "raw" escaped-string.
      */
     public static String rawSqlEscapeString(String value) {
-        return value == null ? "" : DatabaseUtils.sqlEscapeString(value).replaceFirst("(?msi)^'", "")
-                .replaceFirst("(?msi)'$", "");
+        return value == null ? "" : DatabaseUtils.sqlEscapeString(value)
+                .replaceFirst("(?msi)^'", "").replaceFirst("(?msi)'$", "");
     }// rawSqlEscapeString()
 }

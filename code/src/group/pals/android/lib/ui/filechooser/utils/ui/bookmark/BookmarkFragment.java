@@ -95,7 +95,7 @@ public class BookmarkFragment extends DialogFragment implements
 
     private static final String _ModeEditor = _ClassName + ".mode_editor";
 
-    private final int _LoaderBookmarkData = EnvUtils.genId();
+    private final int mLoaderBookmarkData = EnvUtils.genId();
 
     /**
      * Creates a new instance of {@link HistoryFragment}.
@@ -187,7 +187,7 @@ public class BookmarkFragment extends DialogFragment implements
          * Prepare the loader. Either re-connect with an existing one, or start
          * a new one.
          */
-        getLoaderManager().initLoader(_LoaderBookmarkData, null, this);
+        getLoaderManager().initLoader(mLoaderBookmarkData, null, this);
     }// onActivityCreated()
 
     /*
@@ -198,7 +198,7 @@ public class BookmarkFragment extends DialogFragment implements
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if (BuildConfig.DEBUG)
             Log.d(_ClassName, "onCreateLoader()");
-        if (id == _LoaderBookmarkData) {
+        if (id == mLoaderBookmarkData) {
             mHandler.removeCallbacksAndMessages(null);
             mHandler.postDelayed(mViewLoadingShower,
                     DisplayPrefs._DelayTimeForSimpleAnimation);
@@ -210,7 +210,7 @@ public class BookmarkFragment extends DialogFragment implements
                     String.format("%s, %s DESC",
                             BookmarkContract.Bookmark._ColumnProviderId,
                             BookmarkContract.Bookmark._ColumnModificationTime));
-        }// _LoaderBookmarkData
+        }// mLoaderBookmarkData
 
         return null;
     }// onCreateLoader()
@@ -220,7 +220,7 @@ public class BookmarkFragment extends DialogFragment implements
         if (BuildConfig.DEBUG)
             Log.d(_ClassName, "onLoadFinished() -- data = " + data);
 
-        if (loader.getId() == _LoaderBookmarkData) {
+        if (loader.getId() == mLoaderBookmarkData) {
             mBookmarkCursorAdapter.changeCursor(data);
 
             for (int i = 0; i < mBookmarkCursorAdapter.getGroupCount(); i++)
@@ -242,7 +242,7 @@ public class BookmarkFragment extends DialogFragment implements
                     mListView.setSelection(-1);
                 }
             });
-        }// _LoaderBookmarkData
+        }// mLoaderBookmarkData
     }// onLoadFinished()
 
     @Override
@@ -250,10 +250,10 @@ public class BookmarkFragment extends DialogFragment implements
         if (BuildConfig.DEBUG)
             Log.d(_ClassName, "onLoaderReset()");
 
-        if (loader.getId() == _LoaderBookmarkData) {
+        if (loader.getId() == mLoaderBookmarkData) {
             mBookmarkCursorAdapter.changeCursor(null);
             mViewLoading.setVisibility(View.VISIBLE);
-        }// _LoaderBookmarkData
+        }// mLoaderBookmarkData
     }// onLoaderReset()
 
     /**
@@ -322,26 +322,27 @@ public class BookmarkFragment extends DialogFragment implements
 
                         List<Integer> ids = new ArrayList<Integer>();
 
-                        final int _id = ((Cursor) data).getInt(((Cursor) data)
+                        final int bookmarkId = ((Cursor) data).getInt(((Cursor) data)
                                 .getColumnIndex(BookmarkContract.Bookmark._ID));
-                        if (mBookmarkCursorAdapter.isSelected(_id))
+                        if (mBookmarkCursorAdapter.isSelected(bookmarkId))
                             ids.addAll(mBookmarkCursorAdapter
                                     .getSelectedItemIds());
                         else
-                            ids.add(_id);
+                            ids.add(bookmarkId);
 
                         if (ids.size() <= 1)
-                            mBookmarkCursorAdapter.markItemAsDeleted(_id, true);
+                            mBookmarkCursorAdapter.markItemAsDeleted(
+                                    bookmarkId, true);
                         else
                             mBookmarkCursorAdapter
                                     .markSelectedItemsAsDeleted(true);
 
-                        final StringBuilder _sb = new StringBuilder(String
+                        final StringBuilder sb = new StringBuilder(String
                                 .format("%s in (",
                                         DbUtils._SqliteFtsColumnRowId));
                         for (int id : ids)
-                            _sb.append(Integer.toString(id)).append(',');
-                        _sb.setCharAt(_sb.length() - 1, ')');
+                            sb.append(Integer.toString(id)).append(',');
+                        sb.setCharAt(sb.length() - 1, ')');
 
                         new Handler().postDelayed(new Runnable() {
 
@@ -349,7 +350,7 @@ public class BookmarkFragment extends DialogFragment implements
                             public void run() {
                                 getActivity().getContentResolver().delete(
                                         BookmarkContract.Bookmark._ContentUri,
-                                        _sb.toString(), null);
+                                        sb.toString(), null);
                             }// run()
                         }, DisplayPrefs._DelayTimeForVeryShortAnimation);
 
@@ -458,10 +459,10 @@ public class BookmarkFragment extends DialogFragment implements
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view,
                 int position, long id) {
-            final int _iGroup = ExpandableListView
+            final int iGroup = ExpandableListView
                     .getPackedPositionGroup(mListView
                             .getExpandableListPosition(position));
-            final int _iChild = ExpandableListView
+            final int iChild = ExpandableListView
                     .getPackedPositionChild(mListView
                             .getExpandableListPosition(position));
 
@@ -470,12 +471,12 @@ public class BookmarkFragment extends DialogFragment implements
                 if (!isEditor())
                     return false;
 
-                if (!mListView.isGroupExpanded(_iGroup))
+                if (!mListView.isGroupExpanded(iGroup))
                     return false;
 
                 if (BuildConfig.DEBUG)
                     Log.d(_ClassName, String.format(
-                            "onItemLongClick() -- group = %,d", _iGroup));
+                            "onItemLongClick() -- group = %,d", iGroup));
                 ContextMenuUtils.showContextMenu(getActivity(), 0,
                         R.string.afc_title_advanced_selection,
                         BookmarkCursorAdapter._AdvancedSelectionOptions,
@@ -484,34 +485,33 @@ public class BookmarkFragment extends DialogFragment implements
                             @Override
                             public void onClick(final int resId) {
                                 if (resId == R.string.afc_cmd_advanced_selection_all)
-                                    mBookmarkCursorAdapter.selectAll(_iGroup,
+                                    mBookmarkCursorAdapter.selectAll(iGroup,
                                             true);
                                 else if (resId == R.string.afc_cmd_advanced_selection_none)
-                                    mBookmarkCursorAdapter.selectAll(_iGroup,
+                                    mBookmarkCursorAdapter.selectAll(iGroup,
                                             false);
                                 else if (resId == R.string.afc_cmd_advanced_selection_invert)
                                     mBookmarkCursorAdapter
-                                            .invertSelection(_iGroup);
+                                            .invertSelection(iGroup);
                             }// onClick()
                         });
 
                 return true;// PACKED_POSITION_TYPE_GROUP
 
             case ExpandableListView.PACKED_POSITION_TYPE_CHILD:
-                Cursor cursor = mBookmarkCursorAdapter.getChild(_iGroup,
-                        _iChild);
-                final String _providerId = cursor
+                Cursor cursor = mBookmarkCursorAdapter.getChild(iGroup, iChild);
+                final String providerId = cursor
                         .getString(cursor
                                 .getColumnIndex(BookmarkContract.Bookmark._ColumnProviderId));
-                final int _id = cursor.getInt(cursor
+                final int bookmarkId = cursor.getInt(cursor
                         .getColumnIndex(BookmarkContract.Bookmark._ID));
-                final Uri _uri = Uri.parse(cursor.getString(cursor
+                final Uri uri = Uri.parse(cursor.getString(cursor
                         .getColumnIndex(BookmarkContract.Bookmark._ColumnUri)));
-                final String _name = cursor.getString(cursor
+                final String name = cursor.getString(cursor
                         .getColumnIndex(BookmarkContract.Bookmark._ColumnName));
 
                 ContextMenuUtils.showContextMenu(getActivity(),
-                        R.drawable.afc_bookmarks_dark, TextUtils.quote(_name),
+                        R.drawable.afc_bookmarks_dark, TextUtils.quote(name),
                         new Integer[] { R.string.afc_cmd_rename,
                                 R.string.afc_cmd_sort_by_name },
                         new ContextMenuUtils.OnMenuItemClickListener() {
@@ -520,10 +520,10 @@ public class BookmarkFragment extends DialogFragment implements
                             public void onClick(int resId) {
                                 if (resId == R.string.afc_cmd_rename) {
                                     doEnterNewNameOrRenameBookmark(
-                                            getActivity(), _providerId, _id,
-                                            _uri, _name);
+                                            getActivity(), providerId,
+                                            bookmarkId, uri, name);
                                 } else if (resId == R.string.afc_cmd_sort_by_name) {
-                                    sortBookmarks(_iGroup);
+                                    sortBookmarks(iGroup);
                                 }
                             }// onClick()
                         });
@@ -606,22 +606,22 @@ public class BookmarkFragment extends DialogFragment implements
     public static void doEnterNewNameOrRenameBookmark(final Context context,
             final String providerId, final int id, final Uri uri,
             final String name) {
-        final AlertDialog _dlg = Dlg.newDlg(context);
+        final AlertDialog dialog = Dlg.newDlg(context);
 
         View view = LayoutInflater.from(context).inflate(
                 R.layout.afc_simple_text_input_view, null);
-        final EditText _txtName = (EditText) view.findViewById(R.id.afc_text1);
-        _txtName.setText(name);
-        _txtName.selectAll();
-        _txtName.setHint(R.string.afc_hint_new_name);
-        _txtName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        final EditText textName = (EditText) view.findViewById(R.id.afc_text1);
+        textName.setText(name);
+        textName.selectAll();
+        textName.setHint(R.string.afc_hint_new_name);
+        textName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 
             @Override
             public boolean onEditorAction(TextView v, int actionId,
                     KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    Ui.showSoftKeyboard(_txtName, false);
-                    Button btn = _dlg
+                    Ui.showSoftKeyboard(textName, false);
+                    Button btn = dialog
                             .getButton(DialogInterface.BUTTON_POSITIVE);
                     if (btn.isEnabled())
                         btn.performClick();
@@ -631,17 +631,17 @@ public class BookmarkFragment extends DialogFragment implements
             }// onEditorAction()
         });
 
-        _dlg.setView(view);
-        _dlg.setIcon(R.drawable.afc_bookmarks_dark);
-        _dlg.setTitle(id < 0 ? R.string.afc_title_new_bookmark
+        dialog.setView(view);
+        dialog.setIcon(R.drawable.afc_bookmarks_dark);
+        dialog.setTitle(id < 0 ? R.string.afc_title_new_bookmark
                 : R.string.afc_title_rename);
-        _dlg.setButton(DialogInterface.BUTTON_POSITIVE,
+        dialog.setButton(DialogInterface.BUTTON_POSITIVE,
                 context.getString(android.R.string.ok),
                 new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String newName = _txtName.getText().toString().trim();
+                        String newName = textName.getText().toString().trim();
                         if (android.text.TextUtils.isEmpty(newName)) {
                             Dlg.toast(context,
                                     R.string.afc_msg_bookmark_name_is_invalid,
@@ -649,7 +649,7 @@ public class BookmarkFragment extends DialogFragment implements
                             return;
                         }
 
-                        Ui.showSoftKeyboard(_txtName, false);
+                        Ui.showSoftKeyboard(textName, false);
 
                         ContentValues values = new ContentValues();
                         values.put(BookmarkContract.Bookmark._ColumnName,
@@ -723,13 +723,14 @@ public class BookmarkFragment extends DialogFragment implements
                     }// onClick()
                 });
 
-        _dlg.show();
-        Ui.showSoftKeyboard(_txtName, true);
+        dialog.show();
+        Ui.showSoftKeyboard(textName, true);
 
-        final Button _btnOk = _dlg.getButton(DialogInterface.BUTTON_POSITIVE);
-        _btnOk.setEnabled(id < 0);
+        final Button buttonOk = dialog
+                .getButton(DialogInterface.BUTTON_POSITIVE);
+        buttonOk.setEnabled(id < 0);
 
-        _txtName.addTextChangedListener(new TextWatcher() {
+        textName.addTextChangedListener(new TextWatcher() {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before,
@@ -747,14 +748,14 @@ public class BookmarkFragment extends DialogFragment implements
             public void afterTextChanged(Editable s) {
                 String newName = s.toString().trim();
                 boolean enabled = !android.text.TextUtils.isEmpty(newName);
-                _btnOk.setEnabled(enabled);
+                buttonOk.setEnabled(enabled);
 
                 /*
                  * If renaming, only enable button OK if new name is not equal
                  * to the old one.
                  */
                 if (enabled && id >= 0)
-                    _btnOk.setEnabled(!newName.equals(name));
+                    buttonOk.setEnabled(!newName.equals(name));
             }
         });
     }// doEnterNewNameOrRenameBookmark()

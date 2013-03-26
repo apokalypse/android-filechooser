@@ -33,9 +33,9 @@ public class Ui {
      *            {@link View#removeCallbacks(Runnable)} if you want to cancel.
      */
     public static void showSoftKeyboard(final View view, final boolean show) {
-        final InputMethodManager _imm = (InputMethodManager) view.getContext().getSystemService(
-                Context.INPUT_METHOD_SERVICE);
-        if (_imm == null)
+        final InputMethodManager imm = (InputMethodManager) view.getContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm == null)
             return;
 
         if (show) {
@@ -43,11 +43,11 @@ public class Ui {
 
                 @Override
                 public void run() {
-                    _imm.showSoftInput(view, 0, null);
+                    imm.showSoftInput(view, 0, null);
                 }// run()
             });
         } else
-            _imm.hideSoftInputFromWindow(view.getWindowToken(), 0, null);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0, null);
     }// showSoftKeyboard()
 
     /**
@@ -60,8 +60,10 @@ public class Ui {
      */
     public static void strikeOutText(TextView view, boolean strikeOut) {
         if (strikeOut)
-            view.setPaintFlags(view.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            view.setPaintFlags(view.getPaintFlags()
+                    | Paint.STRIKE_THRU_TEXT_FLAG);
         else
-            view.setPaintFlags(view.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+            view.setPaintFlags(view.getPaintFlags()
+                    & ~Paint.STRIKE_THRU_TEXT_FLAG);
     }// strikeOutText()
 }

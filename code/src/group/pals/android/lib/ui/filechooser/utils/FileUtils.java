@@ -30,16 +30,22 @@ public class FileUtils {
     private static final SparseArray<Pattern> _MapFileIcons = new SparseArray<Pattern>();
 
     static {
-        _MapFileIcons.put(R.drawable.afc_file_audio, Pattern.compile(MimeTypes._RegexFileTypeAudios));
-        _MapFileIcons.put(R.drawable.afc_file_video, Pattern.compile(MimeTypes._RegexFileTypeVideos));
-        _MapFileIcons.put(R.drawable.afc_file_image, Pattern.compile(MimeTypes._RegexFileTypeImages));
-        _MapFileIcons.put(R.drawable.afc_file_plain_text, Pattern.compile(MimeTypes._RegexFileTypePlainTexts));
+        _MapFileIcons.put(R.drawable.afc_file_audio,
+                Pattern.compile(MimeTypes._RegexFileTypeAudios));
+        _MapFileIcons.put(R.drawable.afc_file_video,
+                Pattern.compile(MimeTypes._RegexFileTypeVideos));
+        _MapFileIcons.put(R.drawable.afc_file_image,
+                Pattern.compile(MimeTypes._RegexFileTypeImages));
+        _MapFileIcons.put(R.drawable.afc_file_plain_text,
+                Pattern.compile(MimeTypes._RegexFileTypePlainTexts));
 
         /*
          * APK files are counted before compressed files.
          */
-        _MapFileIcons.put(R.drawable.afc_file_apk, Pattern.compile(MimeTypes._RegexFileTypeApks));
-        _MapFileIcons.put(R.drawable.afc_file_compressed, Pattern.compile(MimeTypes._RegexFileTypeCompressed));
+        _MapFileIcons.put(R.drawable.afc_file_apk,
+                Pattern.compile(MimeTypes._RegexFileTypeApks));
+        _MapFileIcons.put(R.drawable.afc_file_compressed,
+                Pattern.compile(MimeTypes._RegexFileTypeCompressed));
     }
 
     /**

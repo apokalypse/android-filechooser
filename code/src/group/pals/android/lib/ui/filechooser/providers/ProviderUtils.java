@@ -76,7 +76,8 @@ public class ProviderUtils {
      */
     public static boolean getBooleanQueryParam(Uri uri, String key) {
         String param = uri.getQueryParameter(key);
-        if (param == null || "false".equalsIgnoreCase(param) || "0".equalsIgnoreCase(param))
+        if (param == null || "false".equalsIgnoreCase(param)
+                || "0".equalsIgnoreCase(param))
             return false;
         return true;
     }// getLongQueryParam()
@@ -93,7 +94,8 @@ public class ProviderUtils {
      * @return {@code defaultValue} if the parameter does not exist, or it is
      *         either {@code "false"} or {@code "0"}. {@code true} otherwise.
      */
-    public static boolean getBooleanQueryParam(Uri uri, String key, boolean defaultValue) {
+    public static boolean getBooleanQueryParam(Uri uri, String key,
+            boolean defaultValue) {
         String param = uri.getQueryParameter(key);
         if (param == null)
             return defaultValue;

@@ -162,16 +162,16 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
             view.setTag(bag);
         }
 
-        final int _id = cursor.getInt(cursor.getColumnIndex(BaseFile._ID));
-        final Uri _uri = BaseFileProviderUtils.getUri(cursor);
+        final int id = cursor.getInt(cursor.getColumnIndex(BaseFile._ID));
+        final Uri uri = BaseFileProviderUtils.getUri(cursor);
 
-        final BagInfo _bagInfo;
-        if (mSelectedChildrenMap.get(_id) == null) {
-            _bagInfo = new BagInfo();
-            _bagInfo.mUri = _uri;
-            mSelectedChildrenMap.put(_id, _bagInfo);
+        final BagInfo bagInfo;
+        if (mSelectedChildrenMap.get(id) == null) {
+            bagInfo = new BagInfo();
+            bagInfo.mUri = uri;
+            mSelectedChildrenMap.put(id, bagInfo);
         } else
-            _bagInfo = mSelectedChildrenMap.get(_id);
+            bagInfo = mSelectedChildrenMap.get(id);
 
         /*
          * Update views.
@@ -200,7 +200,7 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
          * Filename.
          */
         bag.mTxtFileName.setText(BaseFileProviderUtils.getFileName(cursor));
-        Ui.strikeOutText(bag.mTxtFileName, _bagInfo.mMarkedAsDeleted);
+        Ui.strikeOutText(bag.mTxtFileName, bagInfo.mMarkedAsDeleted);
 
         /*
          * File info.
@@ -226,14 +226,14 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
                 bag.mCheckboxSelection.setVisibility(View.VISIBLE);
 
                 bag.mCheckboxSelection.setOnCheckedChangeListener(null);
-                bag.mCheckboxSelection.setChecked(_bagInfo.mChecked);
+                bag.mCheckboxSelection.setChecked(bagInfo.mChecked);
                 bag.mCheckboxSelection
                         .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
                             @Override
                             public void onCheckedChanged(
                                     CompoundButton buttonView, boolean isChecked) {
-                                _bagInfo.mChecked = isChecked;
+                                bagInfo.mChecked = isChecked;
                             }// onCheckedChanged()
                         });
 
@@ -305,11 +305,11 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
                     || (mFilterMode == BaseFile._FilterFilesOnly && fileType == BaseFile._FileTypeDirectory))
                 continue;
 
-            final int _id = cursor.getInt(cursor.getColumnIndex(BaseFile._ID));
-            BagInfo b = mSelectedChildrenMap.get(_id);
+            final int id = cursor.getInt(cursor.getColumnIndex(BaseFile._ID));
+            BagInfo b = mSelectedChildrenMap.get(id);
             if (b == null) {
                 b = new BagInfo();
-                mSelectedChildrenMap.put(_id, b);
+                mSelectedChildrenMap.put(id, b);
             }
             b.mChecked = selected;
         }// for i
@@ -342,11 +342,11 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
                     || (mFilterMode == BaseFile._FilterFilesOnly && fileType == BaseFile._FileTypeDirectory))
                 continue;
 
-            final int _id = cursor.getInt(cursor.getColumnIndex(BaseFile._ID));
-            BagInfo b = mSelectedChildrenMap.get(_id);
+            final int id = cursor.getInt(cursor.getColumnIndex(BaseFile._ID));
+            BagInfo b = mSelectedChildrenMap.get(id);
             if (b == null) {
                 b = new BagInfo();
-                mSelectedChildrenMap.put(_id, b);
+                mSelectedChildrenMap.put(id, b);
             }
             b.mChecked = !b.mChecked;
         }// for i

@@ -9,6 +9,7 @@ package group.pals.android.lib.ui.filechooser.providers.basefile;
 
 import group.pals.android.lib.ui.filechooser.providers.BaseColumns;
 import group.pals.android.lib.ui.filechooser.providers.ProviderUtils;
+import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 
@@ -102,6 +103,11 @@ public class BaseFileContract {
          */
 
         /**
+         * The path to a single directory's contents. You query this path to get
+         * the contents of that directory.
+         */
+        public static final String _PathDir = "dir";
+        /**
          * The path to a single file. This can be a file or a directory.
          */
         public static final String _PathFile = "file";
@@ -111,21 +117,102 @@ public class BaseFileContract {
         public static final String _PathApi = "api";
 
         /*
-         * Parameters.
+         * COMMANDS.
          */
 
         /**
-         * Use this parameter to cancel a previous task you executed. The value
-         * can be {@code "true"} or {@code "1"} for {@code true},
-         * {@code "false"} or {@code "0"} for {@code false}.<br>
-         * Default: {@code "false"} with all methods.
-         * <p>
-         * Type: {@code Boolean}
-         * </p>
+         * Use this command to cancel a previous task you executed. You set the
+         * task ID with {@link #_ParamTaskId}.
          * 
          * @see #_ParamTaskId
          */
-        public static final String _ParamCancel = "cancel";
+        public static final String _CmdCancel = "cancel";
+
+        /**
+         * Use this command along with two parameters: a source directory (
+         * {@link #_ParamSource}) and a target file/ directory (
+         * {@link #_ParamTarget}). It will return a <i>non-null but empty</i>
+         * cursor if the given file is a directory and it is ancestor of the
+         * file provided by this parameter. Note that you also have to call
+         * {@link Cursor#close()} anyway.
+         * <p>
+         * If the given file is not a directory or is not ancestor of the file
+         * provided by this parameter, the result will be {@code null}.
+         * </p>
+         * <p>
+         * For example, with local file, this query returns {@code true}:
+         * </p>
+         * <p>
+         * {@code content://local-file-authority/api/is_ancestor_of?source="/mnt/sdcard"&target="/mnt/sdcard/Android/data/cache"}
+         * </p>
+         * <p>
+         * Note that no matter how many levels between the ancestor and the
+         * descendant are, it is still the ancestor. This is <b><i>not</i></b>
+         * the same concept as "parent", which will return {@code false} in
+         * above example.
+         * </p>
+         * 
+         * @see #_ParamSource
+         * @see #_ParamTarget
+         */
+        public static final String _CmdIsAncestorOf = "is_ancestor_of";
+
+        /**
+         * Use this command to get default path of a provider.
+         * <p>
+         * Type: {@code String}
+         * </p>
+         */
+        public static final String _CmdGetDefaultPath = "get_default_path";
+
+        /**
+         * Use this parameter to get parent file of a file. You provide the
+         * source file with {@link #_ParamSource}.
+         * 
+         * @see #_ParamSource
+         */
+        public static final String _CmdGetParent = "get_parent";
+
+        /*
+         * PARAMETERS.
+         */
+
+        /**
+         * Use this parameter to provide the source file.
+         * <p>
+         * Type: URI
+         * <p>
+         */
+        public static final String _ParamSource = "source";
+
+        /**
+         * Use this parameter to provide the target file.
+         * <p>
+         * Type: URI
+         * <p>
+         */
+        public static final String _ParamTarget = "target";
+
+        /**
+         * Use this parameter to provide the name of new file/ directory you
+         * want to create.
+         * <p>
+         * Type: {@code String}
+         * </p>
+         * 
+         * @see #_ParamFileType
+         */
+        public static final String _ParamName = "name";
+
+        /**
+         * Use this parameter to provide the type of new file that you want to
+         * create. It can be {@link #_FileTypeDirectory} or
+         * {@link #_FileTypeFile}. If not provided, default is
+         * {@link #_FileTypeDirectory}.
+         * 
+         * @see #_ParamName
+         */
+        public static final String _ParamFileType = "file_type";
 
         /**
          * Use this parameter to set an ID to any task.<br>
@@ -217,16 +304,6 @@ public class BaseFileContract {
         public static final String _ParamLimit = "limit";
 
         /**
-         * Use this parameter to get parent file of a file with {@code query()}.
-         * The value can be anything. That means you just need to add this
-         * parameter to the query URI.
-         * <p>
-         * Type: {@code String}
-         * </p>
-         */
-        public static final String _ParamGetParent = "get_parent";
-
-        /**
          * This parameter is returned from the provider. It's only used for
          * {@code query()} while querying directory contents. Can be
          * {@code "true"} or {@code "1"} for {@code true}, {@code "false"} or
@@ -238,13 +315,45 @@ public class BaseFileContract {
         public static final String _ParamHasMoreFiles = "has_more_files";
 
         /**
-         * Use this to append a file name to a full path of directory (with
-         * {@code query()}) to obtains its full pathname.
+         * Use this parameter to append a file name to a full path of directory
+         * to obtains its full pathname.
+         * <p>
+         * This parameter can be use together with {@link #_ParamAppendPath},
+         * the priority is lesser than that parameter.
+         * </p>
+         * <p>
+         * <li>Scope:
+         * {@link ContentResolver#query(Uri, String[], String, String[], String)}
+         * and related.</li>
+         * </p>
          * <p>
          * Type: {@code String}
          * </p>
          */
         public static final String _ParamAppendName = "append_name";
+
+        /**
+         * Use this parameter to append a partial path to a full path of
+         * directory to obtains its full pathname. The value is a URI, every
+         * path segment of the URI is a partial name. You can build the URI with
+         * scheme {@link ContentResolver#SCHEME_FILE}, appending your paths with
+         * {@link Uri.Builder#appendPath(String)}.
+         * <p>
+         * This parameter can be use together with {@link #_ParamAppendName},
+         * the priority is higher than that parameter.
+         * </p>
+         * <p>
+         * <li>Scope:
+         * {@link ContentResolver#query(Uri, String[], String, String[], String)}
+         * and related.</li>
+         * </p>
+         * <p>
+         * Type: {@code String}
+         * </p>
+         * 
+         * @see #_ParamAppendName
+         */
+        public static final String _ParamAppendPath = "append_path";
 
         /**
          * Use this parameter to set a positive regex to filter filename (with
@@ -267,62 +376,23 @@ public class BaseFileContract {
         public static final String _ParamNegativeRegexFilter = "negative_regex_filter";
 
         /**
-         * Use this parameter along with a file/ directory while querying to a
-         * single file/ directory. It will return a <i>non-null but empty</i>
-         * cursor if the given file is a directory and it is ancestor of the
-         * file provided by this parameter. Note that you also have to call
-         * {@link Cursor#close()} anyway.
+         * Use this parameter to tell the provider to validate files or not.
          * <p>
-         * If the given file is not a directory or is not ancestor of the file
-         * provided by this parameter, the result will be {@code null}.
+         * Type: {@code String} - can be {@code "true"} or {@code "1"} for
+         * {@code true}, {@code "false"} or {@code "0"} for {@code false}.
          * </p>
          * <p>
-         * For example, with local file, this query return {@code true}:
+         * Scope:
+         * {@link ContentResolver#query(Uri, String[], String, String[], String)}
+         * and related.
          * </p>
          * <p>
-         * {@code content://local-file-authority/file/"/mnt/sdcard"?is_ancestor_of="/mnt/sdcard/Android/data/cache"}
-         * </p>
-         * Note that no matter how many levels between the ancestor and the
-         * descendant are, it is still the ancestor. This is <b><i>not</i></b>
-         * the same concept as "parent", which will return {@code false} in
-         * above example.
-         * <p>
-         * Type: {@code String}
-         * </p>
-         */
-        public static final String _ParamIsAncestorOf = "is_ancestor_of";
-
-        /**
-         * Use this parameter to get default path of a provider with
-         * {@code query()}. The value can be anything. That means you just need
-         * to add this parameter to the query URI.
-         * <p>
-         * Type: {@code String}
-         * </p>
-         */
-        public static final String _ParamGetDefaultPath = "get_default_path";
-
-        /**
-         * Use this parameter to get the content of a directory with
-         * {@code query()}. The value can be anything. That means you just need
-         * to add this parameter to the query URI.
-         * <p>
-         * Type: {@code String}
-         * </p>
-         */
-        public static final String _ParamListFiles = "list_files";
-
-        /**
-         * Use this parameter to get the human-readable path of a file
-         * {@code query()}. The value can be anything. That means you just need
-         * to add this parameter to the query URI.
-         * <p>
-         * Type: {@code String}
+         * Default: {@code true}
          * </p>
          * 
-         * @see #_ColumnPath
+         * @see #_CmdIsAncestorOf
          */
-        public static final String _ParamGetPath = "get_path";
+        public static final String _ParamValidate = "validate";
 
         /*
          * URI builders.
@@ -337,7 +407,24 @@ public class BaseFileContract {
          *         and ID.
          */
         public static Uri genContentUriApi(String authority) {
-            return Uri.parse(ProviderUtils._Scheme + authority + "/" + _PathApi);
+            return Uri
+                    .parse(ProviderUtils._Scheme + authority + "/" + _PathApi);
+        }// genContentUriBase()
+
+        /**
+         * Generates content URI base for a single directory's contents. That
+         * means this URI is used to get the content of the given directory,
+         * <b><i>not</b></i> the attributes of its. To get the attributes of a
+         * directory (or a file), use {@link #genContentIdUriBase(String)}.
+         * 
+         * @param authority
+         *            the authority of file provider.
+         * @return The base URI for a single directory. You append it with the
+         *         URI to full path of the directory.
+         */
+        public static Uri genContentUriBase(String authority) {
+            return Uri.parse(ProviderUtils._Scheme + authority + "/" + _PathDir
+                    + "/");
         }// genContentUriBase()
 
         /**
@@ -349,7 +436,8 @@ public class BaseFileContract {
          *         full path of a single file.
          */
         public static Uri genContentIdUriBase(String authority) {
-            return Uri.parse(ProviderUtils._Scheme + authority + "/" + _PathFile + "/");
+            return Uri.parse(ProviderUtils._Scheme + authority + "/"
+                    + _PathFile + "/");
         }// genContentIdUriBase()
 
         /*

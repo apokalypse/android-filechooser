@@ -56,14 +56,16 @@ public final class BookmarkContract {
         /**
          * The content:// style URL for this table.
          */
-        public static final Uri _ContentUri = Uri.parse(ProviderUtils._Scheme + _Authority + "/" + _PathBookmarks);
+        public static final Uri _ContentUri = Uri.parse(ProviderUtils._Scheme
+                + _Authority + "/" + _PathBookmarks);
 
         /**
          * The content URI base for a single Bookmark item. Callers must append
          * a numeric Bookmark id to this Uri to retrieve a Bookmark item.
          */
-        public static final Uri _ContentIdUriBase = Uri.parse(ProviderUtils._Scheme + _Authority + "/" + _PathBookmarks
-                + "/");
+        public static final Uri _ContentIdUriBase = Uri
+                .parse(ProviderUtils._Scheme + _Authority + "/"
+                        + _PathBookmarks + "/");
 
         /*
          * MIME type definitions
@@ -84,7 +86,8 @@ public final class BookmarkContract {
         /**
          * The default sort order for this table.
          */
-        public static final String _DefaultSortOrder = _ColumnModificationTime + " DESC";
+        public static final String _DefaultSortOrder = _ColumnModificationTime
+                + " DESC";
 
         /*
          * Column definitions

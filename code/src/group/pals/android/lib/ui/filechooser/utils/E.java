@@ -29,16 +29,19 @@ public class E {
     public static void show(Context context) {
         String msg = null;
         try {
-            msg = String.format("Hi  :-)\n\n" + "%s v%s\n" + "…by Hai Bison Apps\n\n" + "http://www.haibison.com\n\n"
-                    + "Hope you enjoy this library.", "android-filechooser", "5.1 beta");
+            msg = String.format("Hi  :-)\n\n" + "%s v%s\n"
+                    + "…by Hai Bison Apps\n\n" + "http://www.haibison.com\n\n"
+                    + "Hope you enjoy this library.", "android-filechooser",
+                    "5.1 beta");
         } catch (Exception e) {
             msg = "Oops… You've found a broken Easter egg, try again later  :-(";
         }
 
-        AlertDialog dlg = Dlg.newDlg(context);
-        dlg.setButton(DialogInterface.BUTTON_NEGATIVE, null, (DialogInterface.OnClickListener) null);
-        dlg.setTitle("…");
-        dlg.setMessage(msg);
-        dlg.show();
+        AlertDialog dialog = Dlg.newDlg(context);
+        dialog.setButton(DialogInterface.BUTTON_NEGATIVE, null,
+                (DialogInterface.OnClickListener) null);
+        dialog.setTitle("…");
+        dialog.setMessage(msg);
+        dialog.show();
     }// show()
 }
