@@ -28,6 +28,10 @@ import android.net.Uri;
  */
 public class BaseFileProviderUtils {
 
+    @SuppressWarnings("unused")
+    private static final String _ClassName = BaseFileProviderUtils.class
+            .getName();
+
     /**
      * Map of provider ID to its authority.<br>
      * <b>Note for developers:</b> If you provide your own provider, add its ID
@@ -94,28 +98,35 @@ public class BaseFileProviderUtils {
     }// getProviderName()
 
     /**
+     * Default columns of a base file cursor.
+     * <p>
+     * The column orders are:
+     * <li>{@link BaseFile#_ID}</li>
+     * <li>{@link BaseFile#_ColumnUri}</li>
+     * <li>{@link BaseFile#_ColumnPath}</li>
+     * <li>{@link BaseFile#_ColumnName}</li>
+     * <li>{@link BaseFile#_ColumnCanRead}</li>
+     * <li>{@link BaseFile#_ColumnCanWrite}</li>
+     * <li>{@link BaseFile#_ColumnSize}</li>
+     * <li>{@link BaseFile#_ColumnType}</li>
+     * <li>{@link BaseFile#_ColumnModificationTime}</li>
+     * </p>
+     */
+    public static final String[] _BaseFileCursorColumns = { BaseFile._ID,
+            BaseFile._ColumnUri, BaseFile._ColumnPath, BaseFile._ColumnName,
+            BaseFile._ColumnCanRead, BaseFile._ColumnCanWrite,
+            BaseFile._ColumnSize, BaseFile._ColumnType,
+            BaseFile._ColumnModificationTime };
+
+    /**
      * Creates new cursor which hold default properties of a base file for
      * client to access.
      * 
-     * @return the new empty cursor. The column orders are:
-     *         <p>
-     *         <li>{@link BaseFile#_ID}</li>
-     *         <li>{@link BaseFile#_ColumnUri}</li>
-     *         <li>{@link BaseFile#_ColumnPath}</li>
-     *         <li>{@link BaseFile#_ColumnName}</li>
-     *         <li>{@link BaseFile#_ColumnCanRead}</li>
-     *         <li>{@link BaseFile#_ColumnCanWrite}</li>
-     *         <li>{@link BaseFile#_ColumnSize}</li>
-     *         <li>{@link BaseFile#_ColumnType}</li>
-     *         <li>{@link BaseFile#_ColumnModificationTime}</li>
-     *         </p>
+     * @return the new empty cursor. The columns are
+     *         {@link #_BaseFileCursorColumns}.
      */
     public static MatrixCursor newBaseFileCursor() {
-        return new MatrixCursor(new String[] { BaseFile._ID,
-                BaseFile._ColumnUri, BaseFile._ColumnPath,
-                BaseFile._ColumnName, BaseFile._ColumnCanRead,
-                BaseFile._ColumnCanWrite, BaseFile._ColumnSize,
-                BaseFile._ColumnType, BaseFile._ColumnModificationTime });
+        return new MatrixCursor(_BaseFileCursorColumns);
     }// newBaseFileCursor()
 
     /**

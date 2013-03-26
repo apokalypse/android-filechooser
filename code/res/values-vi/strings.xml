@@ -45,7 +45,7 @@
     <string name="afc_msg_confirm_clear_all_bookmarks">Bạn có chắc muốn xóa hết danh sách ưa thích không?</string>
     <string name="afc_msg_confirm_clear_history">Bạn có chắc muốn xoá hết lịch sử không?</string>
     <string name="afc_msg_done">Xong</string>
-    <string name="afc_msg_empty">…trống</string>
+    <string name="afc_msg_empty">Không có gì</string>
     <string name="afc_msg_failed_please_try_again">Thất bại. Vui lòng thử lại.</string>
     <string name="afc_msg_filename_is_empty">Tên tập tin không hợp lệ</string>
     <string name="afc_msg_loading">Đang tải…</string>

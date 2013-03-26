@@ -209,12 +209,11 @@ public class LocalFileProvider extends BaseFileProvider {
             }
 
             if (newFile.exists()) {
-                Uri newUri = Uri.parse(newFile.toURI().toString());
-                /*
-                 * Notifies observers registered against this provider that the
-                 * data changed.
-                 */
-                getContext().getContentResolver().notifyChange(newUri, null);
+                Uri newUri = BaseFile
+                        .genContentIdUriBase(LocalFileContract._Authority)
+                        .buildUpon()
+                        .appendPath(Uri.fromFile(newFile).toString()).build();
+                getContext().getContentResolver().notifyChange(uri, null);
                 return newUri;
             }
             return null;// _File
@@ -370,7 +369,23 @@ public class LocalFileProvider extends BaseFileProvider {
      * @return the content of a directory, or {@code null} if not available.
      */
     private MatrixCursor doListFiles(Uri uri) {
-        MatrixCursor matrixCursor = BaseFileProviderUtils.newBaseFileCursor();
+        final FileObserverEx[] fileObserverExs = { null };
+        MatrixCursor matrixCursor = new MatrixCursor(
+                BaseFileProviderUtils._BaseFileCursorColumns) {
+
+            @Override
+            public void close() {
+                if (BuildConfig.DEBUG)
+                    Log.d(_ClassName,
+                            String.format(
+                                    "doListFiles() >> MatrixCursor.close() with %,d rows",
+                                    getCount()));
+                if (fileObserverExs[0] != null) {
+                    fileObserverExs[0].stopWatching();
+                    fileObserverExs[0] = null;
+                }
+            }// close()
+        };
 
         File file = extractFile(uri);
 
@@ -468,6 +483,10 @@ public class LocalFileProvider extends BaseFileProvider {
         } finally {
             _MapInterruption.delete(taskId);
         }
+
+        fileObserverExs[0] = new FileObserverEx(getContext(),
+                file.getAbsolutePath(), uri);
+        fileObserverExs[0].startWatching();
 
         /*
          * Tells the Cursor what URI to watch, so it knows when its source data

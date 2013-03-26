@@ -46,7 +46,7 @@
     <string name="afc_msg_confirm_clear_all_bookmarks">Do you really want to clear all bookmarks?</string>
     <string name="afc_msg_confirm_clear_history">Are you sure you want to clear history?</string>
     <string name="afc_msg_done">Done</string>
-    <string name="afc_msg_empty">…empty</string>
+    <string name="afc_msg_empty">Empty</string>
     <string name="afc_msg_failed_please_try_again">Failed. Please try again.</string>
     <string name="afc_msg_filename_is_empty">Filename is empty</string>
     <string name="afc_msg_loading">Loading…</string>

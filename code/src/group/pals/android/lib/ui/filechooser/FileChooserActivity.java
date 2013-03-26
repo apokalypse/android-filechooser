@@ -288,6 +288,7 @@ public class FileChooserActivity extends FragmentActivity implements
     private BaseFileAdapter mFileAdapter;
 
     private boolean mLoading = false;
+    private boolean mNewLoader = true;
 
     /*
      * Controls.
@@ -553,6 +554,7 @@ public class FileChooserActivity extends FragmentActivity implements
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         mLoading = true;
+        mNewLoader = true;
 
         mViewGroupFiles.setVisibility(View.GONE);
         mViewLoadingHandler.postDelayed(new Runnable() {
@@ -647,69 +649,76 @@ public class FileChooserActivity extends FragmentActivity implements
                         : getString(R.string.afc_msg_empty),
                 mFileAdapter.isEmpty());
 
-        /*
-         * Select either the parent path of last path, or the file provided by
-         * key _SelectFile. Use a Runnable to make sure this work. Because if
-         * the list view is handling data, this might not work.
-         */
-        mViewFiles.post(new Runnable() {
+        if (mNewLoader || selectedFile != null) {
+            /*
+             * Select either the parent path of last path, or the file provided
+             * by key _SelectFile. Use a Runnable to make sure this work.
+             * Because if the list view is handling data, this might not work.
+             */
+            mViewFiles.post(new Runnable() {
 
-            @Override
-            public void run() {
-                int shouldBeSelectedIdx = -1;
-                final Uri uri = selectedFile != null ? selectedFile : lastPath;
-                if (uri != null
-                        && BaseFileProviderUtils.fileExists(
-                                FileChooserActivity.this, uri)) {
-                    final String fileName = BaseFileProviderUtils.getFileName(
-                            FileChooserActivity.this, uri);
-                    if (fileName != null) {
-                        Uri parentUri = BaseFileProviderUtils.getParentFile(
-                                FileChooserActivity.this, uri);
-                        if ((uri == lastPath
-                                && !getCurrentLocation().equals(lastPath) && BaseFileProviderUtils
-                                    .isAncestorOf(FileChooserActivity.this,
-                                            getCurrentLocation(), uri))
-                                || getCurrentLocation().equals(parentUri)) {
-                            if (data.moveToFirst()) {
-                                while (!data.isLast()) {
-                                    Uri subUri = Uri.parse(data
-                                            .getString(colUri));
-                                    if (uri == lastPath) {
-                                        if (data.getInt(data
-                                                .getColumnIndex(BaseFile._ColumnType)) == BaseFile._FileTypeDirectory) {
-                                            if (BaseFileProviderUtils
-                                                    .isAncestorOf(
-                                                            FileChooserActivity.this,
-                                                            subUri, uri)) {
+                @Override
+                public void run() {
+                    int shouldBeSelectedIdx = -1;
+                    final Uri uri = selectedFile != null ? selectedFile
+                            : lastPath;
+                    if (uri != null
+                            && BaseFileProviderUtils.fileExists(
+                                    FileChooserActivity.this, uri)) {
+                        final String fileName = BaseFileProviderUtils
+                                .getFileName(FileChooserActivity.this, uri);
+                        if (fileName != null) {
+                            Uri parentUri = BaseFileProviderUtils
+                                    .getParentFile(FileChooserActivity.this,
+                                            uri);
+                            if ((uri == lastPath
+                                    && !getCurrentLocation().equals(lastPath) && BaseFileProviderUtils
+                                        .isAncestorOf(FileChooserActivity.this,
+                                                getCurrentLocation(), uri))
+                                    || getCurrentLocation().equals(parentUri)) {
+                                if (data.moveToFirst()) {
+                                    while (!data.isLast()) {
+                                        Uri subUri = Uri.parse(data
+                                                .getString(colUri));
+                                        if (uri == lastPath) {
+                                            if (data.getInt(data
+                                                    .getColumnIndex(BaseFile._ColumnType)) == BaseFile._FileTypeDirectory) {
+                                                if (BaseFileProviderUtils
+                                                        .isAncestorOf(
+                                                                FileChooserActivity.this,
+                                                                subUri, uri)) {
+                                                    shouldBeSelectedIdx = Math.max(
+                                                            0,
+                                                            data.getPosition() - 2);
+                                                    break;
+                                                }
+                                            }
+                                        } else {
+                                            if (uri.equals(subUri)) {
                                                 shouldBeSelectedIdx = Math.max(
                                                         0,
                                                         data.getPosition() - 2);
                                                 break;
                                             }
                                         }
-                                    } else {
-                                        if (uri.equals(subUri)) {
-                                            shouldBeSelectedIdx = Math.max(0,
-                                                    data.getPosition() - 2);
-                                            break;
-                                        }
-                                    }
 
-                                    data.moveToNext();
+                                        data.moveToNext();
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-                if (shouldBeSelectedIdx >= 0
-                        && shouldBeSelectedIdx < mFileAdapter.getCount())
-                    mViewFiles.setSelection(shouldBeSelectedIdx);
-                else if (!mFileAdapter.isEmpty())
-                    mViewFiles.setSelection(0);
-            }// run()
-        });
+                    if (shouldBeSelectedIdx >= 0
+                            && shouldBeSelectedIdx < mFileAdapter.getCount())
+                        mViewFiles.setSelection(shouldBeSelectedIdx);
+                    else if (!mFileAdapter.isEmpty())
+                        mViewFiles.setSelection(0);
+                }// run()
+            });
+        }
+
+        mNewLoader = false;
     }// onLoadFinished()
 
     @Override
@@ -1287,7 +1296,6 @@ public class FileChooserActivity extends FragmentActivity implements
                             Dlg.toast(FileChooserActivity.this,
                                     getString(R.string.afc_msg_done),
                                     Dlg._LengthShort);
-                            goTo(getCurrentLocation());
                         } else
                             Dlg.toast(
                                     FileChooserActivity.this,
@@ -1409,7 +1417,6 @@ public class FileChooserActivity extends FragmentActivity implements
                                                 isFile ? getString(R.string.afc_file)
                                                         : getString(R.string.afc_folder),
                                                 filename), Dlg._LengthShort);
-                                goTo(getCurrentLocation());
                             }// notifyFileDeleted()
 
                             @Override

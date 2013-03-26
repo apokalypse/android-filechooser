@@ -50,7 +50,7 @@
     <string name="afc_msg_confirm_clear_all_bookmarks">¿Seguro que deseas borrar todos los favoritos?</string>
     <string name="afc_msg_confirm_clear_history">¿Está seguro que desea borrar el historial?</string>
     <string name="afc_msg_done">Hecho</string>
-    <string name="afc_msg_empty">…vacío</string>
+    <string name="afc_msg_empty">Vacío</string>
     <string name="afc_msg_failed_please_try_again">Error. Por favor, inténtelo de nuevo.</string>
     <string name="afc_msg_filename_is_empty">Nombre de fichero vacío</string>
     <string name="afc_msg_loading">Cargando…</string>
