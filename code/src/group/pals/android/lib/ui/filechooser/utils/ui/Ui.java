@@ -5,10 +5,12 @@
  *    permission.
  */
 
-package group.pals.android.lib.ui.filechooser.utils;
+package group.pals.android.lib.ui.filechooser.utils.ui;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Paint;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
@@ -66,4 +68,22 @@ public class Ui {
             view.setPaintFlags(view.getPaintFlags()
                     & ~Paint.STRIKE_THRU_TEXT_FLAG);
     }// strikeOutText()
+
+    /**
+     * Convenient method for {@link Context#getTheme()} and
+     * {@link Resources.Theme#resolveAttribute(int, TypedValue, boolean)}.
+     * 
+     * @param context
+     *            the context.
+     * @param resId
+     *            The resource identifier of the desired theme attribute.
+     * @return the resource ID that {@link TypedValue#resourceId} points to, or
+     *         {@code 0} if not found.
+     */
+    public static int resolveAttribute(Context context, int resId) {
+        TypedValue typedValue = new TypedValue();
+        if (context.getTheme().resolveAttribute(resId, typedValue, true))
+            return typedValue.resourceId;
+        return 0;
+    }// resolveAttribute()
 }

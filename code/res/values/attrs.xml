@@ -25,4 +25,15 @@
         <attr name="hint" format="string" />
     </declare-styleable>
 
+    <attr name="afc_ic_menu_bookmarks" format="reference" />
+    <attr name="afc_ic_menu_home" format="reference" />
+    <attr name="afc_ic_menu_gridview" format="reference" />
+    <attr name="afc_ic_menu_listview" format="reference" />
+    <attr name="afc_ic_menu_sort_by_date_asc" format="reference" />
+    <attr name="afc_ic_menu_sort_by_date_desc" format="reference" />
+    <attr name="afc_ic_menu_sort_by_name_asc" format="reference" />
+    <attr name="afc_ic_menu_sort_by_name_desc" format="reference" />
+    <attr name="afc_ic_menu_sort_by_size_asc" format="reference" />
+    <attr name="afc_ic_menu_sort_by_size_desc" format="reference" />
+
 </resources>

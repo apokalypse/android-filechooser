@@ -14,10 +14,10 @@ import group.pals.android.lib.ui.filechooser.providers.DbUtils;
 import group.pals.android.lib.ui.filechooser.providers.bookmark.BookmarkContract;
 import group.pals.android.lib.ui.filechooser.utils.EnvUtils;
 import group.pals.android.lib.ui.filechooser.utils.TextUtils;
-import group.pals.android.lib.ui.filechooser.utils.Ui;
 import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.Dlg;
 import group.pals.android.lib.ui.filechooser.utils.ui.GestureUtils;
+import group.pals.android.lib.ui.filechooser.utils.ui.Ui;
 import group.pals.android.lib.ui.filechooser.utils.ui.GestureUtils.FlingDirection;
 import group.pals.android.lib.ui.filechooser.utils.ui.history.HistoryFragment;
 

@@ -81,8 +81,30 @@
         <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
     </style>
 
-    <style name="Afc.Theme.Dark" parent="@android:style/Theme" />
+    <style name="Afc.Theme.Dark" parent="@android:style/Theme">
+        <item name="afc_ic_menu_bookmarks">@drawable/afc_ic_menu_bookmarks</item>
+        <item name="afc_ic_menu_home">@drawable/afc_ic_menu_home</item>
+        <item name="afc_ic_menu_gridview">@drawable/afc_ic_menu_gridview</item>
+        <item name="afc_ic_menu_listview">@drawable/afc_ic_menu_listview</item>
+        <item name="afc_ic_menu_sort_by_date_asc">@drawable/afc_ic_menu_sort_by_date_asc</item>
+        <item name="afc_ic_menu_sort_by_date_desc">@drawable/afc_ic_menu_sort_by_date_desc</item>
+        <item name="afc_ic_menu_sort_by_name_asc">@drawable/afc_ic_menu_sort_by_name_asc</item>
+        <item name="afc_ic_menu_sort_by_name_desc">@drawable/afc_ic_menu_sort_by_name_desc</item>
+        <item name="afc_ic_menu_sort_by_size_asc">@drawable/afc_ic_menu_sort_by_size_asc</item>
+        <item name="afc_ic_menu_sort_by_size_desc">@drawable/afc_ic_menu_sort_by_size_desc</item>
+    </style>
 
-    <style name="Afc.Theme.Dialog.Dark" parent="@android:style/Theme.Dialog" />
+    <style name="Afc.Theme.Dialog.Dark" parent="@android:style/Theme.Dialog">
+        <item name="afc_ic_menu_bookmarks">@drawable/afc_ic_menu_bookmarks</item>
+        <item name="afc_ic_menu_home">@drawable/afc_ic_menu_home</item>
+        <item name="afc_ic_menu_gridview">@drawable/afc_ic_menu_gridview</item>
+        <item name="afc_ic_menu_listview">@drawable/afc_ic_menu_listview</item>
+        <item name="afc_ic_menu_sort_by_date_asc">@drawable/afc_ic_menu_sort_by_date_asc</item>
+        <item name="afc_ic_menu_sort_by_date_desc">@drawable/afc_ic_menu_sort_by_date_desc</item>
+        <item name="afc_ic_menu_sort_by_name_asc">@drawable/afc_ic_menu_sort_by_name_asc</item>
+        <item name="afc_ic_menu_sort_by_name_desc">@drawable/afc_ic_menu_sort_by_name_desc</item>
+        <item name="afc_ic_menu_sort_by_size_asc">@drawable/afc_ic_menu_sort_by_size_asc</item>
+        <item name="afc_ic_menu_sort_by_size_desc">@drawable/afc_ic_menu_sort_by_size_desc</item>
+    </style>
 
 </resources>

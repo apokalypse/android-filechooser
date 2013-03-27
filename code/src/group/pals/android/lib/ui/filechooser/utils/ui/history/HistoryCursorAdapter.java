@@ -14,8 +14,8 @@ import group.pals.android.lib.ui.filechooser.providers.ProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileContract.BaseFile;
 import group.pals.android.lib.ui.filechooser.providers.history.HistoryContract.History;
 import group.pals.android.lib.ui.filechooser.utils.DateUtils;
-import group.pals.android.lib.ui.filechooser.utils.Ui;
 import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
+import group.pals.android.lib.ui.filechooser.utils.ui.Ui;
 
 import java.util.ArrayList;
 import java.util.Calendar;

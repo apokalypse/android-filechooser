@@ -19,7 +19,6 @@ import group.pals.android.lib.ui.filechooser.providers.localfile.LocalFileProvid
 import group.pals.android.lib.ui.filechooser.utils.E;
 import group.pals.android.lib.ui.filechooser.utils.EnvUtils;
 import group.pals.android.lib.ui.filechooser.utils.FileUtils;
-import group.pals.android.lib.ui.filechooser.utils.Ui;
 import group.pals.android.lib.ui.filechooser.utils.Utils;
 import group.pals.android.lib.ui.filechooser.utils.history.History;
 import group.pals.android.lib.ui.filechooser.utils.history.HistoryFilter;
@@ -28,6 +27,7 @@ import group.pals.android.lib.ui.filechooser.utils.history.HistoryStore;
 import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.Dlg;
 import group.pals.android.lib.ui.filechooser.utils.ui.LoadingDialog;
+import group.pals.android.lib.ui.filechooser.utils.ui.Ui;
 import group.pals.android.lib.ui.filechooser.utils.ui.bookmark.BookmarkFragment;
 import group.pals.android.lib.ui.filechooser.utils.ui.history.HistoryFragment;
 
@@ -437,28 +437,19 @@ public class FileChooserActivity extends FragmentActivity implements
 
         switch (DisplayPrefs.getSortType(this)) {
         case BaseFile._SortByName:
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
-                miSort.setIcon(sortAscending ? R.drawable.afc_ic_menu_sort_by_name_asc
-                        : R.drawable.afc_ic_menu_sort_by_name_desc);
-            else
-                miSort.setIcon(sortAscending ? R.drawable.afc_ic_menu_sort_by_name_asc_light
-                        : R.drawable.afc_ic_menu_sort_by_name_desc_light);
+            miSort.setIcon(Ui.resolveAttribute(this,
+                    sortAscending ? R.attr.afc_ic_menu_sort_by_name_asc
+                            : R.attr.afc_ic_menu_sort_by_name_desc));
             break;
         case BaseFile._SortBySize:
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
-                miSort.setIcon(sortAscending ? R.drawable.afc_ic_menu_sort_by_size_asc
-                        : R.drawable.afc_ic_menu_sort_by_size_desc);
-            else
-                miSort.setIcon(sortAscending ? R.drawable.afc_ic_menu_sort_by_size_asc_light
-                        : R.drawable.afc_ic_menu_sort_by_size_desc_light);
+            miSort.setIcon(Ui.resolveAttribute(this,
+                    sortAscending ? R.attr.afc_ic_menu_sort_by_size_asc
+                            : R.attr.afc_ic_menu_sort_by_size_desc));
             break;
         case BaseFile._SortByModificationTime:
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
-                miSort.setIcon(sortAscending ? R.drawable.afc_ic_menu_sort_by_date_asc
-                        : R.drawable.afc_ic_menu_sort_by_date_desc);
-            else
-                miSort.setIcon(sortAscending ? R.drawable.afc_ic_menu_sort_by_date_asc_light
-                        : R.drawable.afc_ic_menu_sort_by_date_desc_light);
+            miSort.setIcon(Ui.resolveAttribute(this,
+                    sortAscending ? R.attr.afc_ic_menu_sort_by_date_asc
+                            : R.attr.afc_ic_menu_sort_by_date_desc));
             break;
         }
 
@@ -469,13 +460,13 @@ public class FileChooserActivity extends FragmentActivity implements
         MenuItem menuItem = menu.findItem(R.id.afc_menuitem_switch_viewmode);
         switch (DisplayPrefs.getViewType(this)) {
         case Grid:
-            menuItem.setIcon(Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB ? R.drawable.afc_ic_menu_listview
-                    : R.drawable.afc_ic_menu_listview_light);
+            menuItem.setIcon(Ui.resolveAttribute(this,
+                    R.attr.afc_ic_menu_listview));
             menuItem.setTitle(R.string.afc_cmd_list_view);
             break;
         case List:
-            menuItem.setIcon(Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB ? R.drawable.afc_ic_menu_gridview
-                    : R.drawable.afc_ic_menu_gridview_light);
+            menuItem.setIcon(Ui.resolveAttribute(this,
+                    R.drawable.afc_ic_menu_gridview));
             menuItem.setTitle(R.string.afc_cmd_grid_view);
             break;
         }
@@ -499,8 +490,6 @@ public class FileChooserActivity extends FragmentActivity implements
             doSwitchViewType();
         else if (item.getItemId() == R.id.afc_menuitem_home)
             doGoHome();
-        else if (item.getItemId() == R.id.afc_menuitem_reload)
-            goTo(getCurrentLocation());
         else if (item.getItemId() == R.id.afc_menuitem_history)
             doShowHistoryManager();
         else if (item.getItemId() == R.id.afc_menuitem_bookmarks)

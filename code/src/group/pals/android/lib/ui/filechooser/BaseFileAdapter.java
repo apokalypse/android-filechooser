@@ -14,9 +14,9 @@ import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileContract
 import group.pals.android.lib.ui.filechooser.utils.Converter;
 import group.pals.android.lib.ui.filechooser.utils.DateUtils;
 import group.pals.android.lib.ui.filechooser.utils.FileUtils;
-import group.pals.android.lib.ui.filechooser.utils.Ui;
 import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.LoadingDialog;
+import group.pals.android.lib.ui.filechooser.utils.ui.Ui;
 
 import java.util.ArrayList;
 

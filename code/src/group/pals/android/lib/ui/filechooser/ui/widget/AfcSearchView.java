@@ -9,7 +9,7 @@ package group.pals.android.lib.ui.filechooser.ui.widget;
 
 import group.pals.android.lib.ui.filechooser.BuildConfig;
 import group.pals.android.lib.ui.filechooser.R;
-import group.pals.android.lib.ui.filechooser.utils.Ui;
+import group.pals.android.lib.ui.filechooser.utils.ui.Ui;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Handler;

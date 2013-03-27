@@ -12,8 +12,8 @@ import group.pals.android.lib.ui.filechooser.R;
 import group.pals.android.lib.ui.filechooser.providers.BaseFileProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.ProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.bookmark.BookmarkContract.Bookmark;
-import group.pals.android.lib.ui.filechooser.utils.Ui;
 import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
+import group.pals.android.lib.ui.filechooser.utils.ui.Ui;
 
 import java.util.ArrayList;
 import java.util.List;

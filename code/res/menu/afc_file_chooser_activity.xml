@@ -10,19 +10,14 @@
 
     <item
         android:id="@+id/afc_menuitem_bookmarks"
-        android:icon="@drawable/afc_ic_menu_bookmarks"
+        android:icon="?attr/afc_ic_menu_bookmarks"
         android:showAsAction="ifRoom"
         android:title="@string/afc_title_bookmarks"/>
     <item
         android:id="@+id/afc_menuitem_home"
-        android:icon="@drawable/afc_ic_menu_home"
+        android:icon="?attr/afc_ic_menu_home"
         android:showAsAction="ifRoom"
         android:title="@string/afc_cmd_home"/>
-    <item
-        android:id="@+id/afc_menuitem_reload"
-        android:icon="@drawable/afc_ic_menu_reload"
-        android:showAsAction="ifRoom"
-        android:title="@string/afc_cmd_reload"/>
     <item
         android:id="@+id/afc_menuitem_history"
         android:icon="@android:drawable/ic_menu_recent_history"

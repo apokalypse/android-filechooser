@@ -9,11 +9,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/afc_menuitem_reload"
-        android:icon="@drawable/afc_ic_menu_reload"
-        android:showAsAction="ifRoom"
-        android:title="@string/afc_cmd_reload"/>
-    <item
         android:id="@+id/afc_menuitem_history"
         android:icon="@android:drawable/ic_menu_recent_history"
         android:showAsAction="ifRoom"
