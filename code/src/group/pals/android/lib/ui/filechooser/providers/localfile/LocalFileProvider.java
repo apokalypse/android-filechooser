@@ -70,6 +70,11 @@ public class LocalFileProvider extends BaseFileProvider {
     private static final int _Api = 3;
 
     /**
+     * The incoming URI matches the API command URI pattern.
+     */
+    private static final int _ApiCommand = 4;
+
+    /**
      * A {@link UriMatcher} instance.
      */
     private static final UriMatcher _UriMatcher = new UriMatcher(
@@ -85,8 +90,10 @@ public class LocalFileProvider extends BaseFileProvider {
                 + "/*", _Directory);
         _UriMatcher.addURI(LocalFileContract._Authority, BaseFile._PathFile
                 + "/*", _File);
+        _UriMatcher.addURI(LocalFileContract._Authority, BaseFile._PathApi,
+                _Api);
         _UriMatcher.addURI(LocalFileContract._Authority, BaseFile._PathApi
-                + "/*", _Api);
+                + "/*", _ApiCommand);
     }// static
 
     private final Collator mCollator = Collator.getInstance();
@@ -99,6 +106,7 @@ public class LocalFileProvider extends BaseFileProvider {
          */
         switch (_UriMatcher.match(uri)) {
         case _Api:
+        case _ApiCommand:
         case _Directory:
             return BaseFile._ContentType;
 
@@ -227,7 +235,17 @@ public class LocalFileProvider extends BaseFileProvider {
 
         switch (_UriMatcher.match(uri)) {
         case _Api: {
-            return doAnswerApi(uri);
+            /*
+             * If there is no command given, return provider ID and name.
+             */
+            MatrixCursor matrixCursor = new MatrixCursor(new String[] {
+                    BaseFile._ColumnProviderId, BaseFile._ColumnProviderName });
+            matrixCursor.newRow().add(LocalFileContract._ID)
+                    .add(getContext().getString(R.string.afc_phone));
+            return matrixCursor;
+        }
+        case _ApiCommand: {
+            return doAnswerApiCommand(uri);
         }// _Api
 
         case _Directory: {
@@ -263,7 +281,7 @@ public class LocalFileProvider extends BaseFileProvider {
      *            the request URI.
      * @return the response.
      */
-    private MatrixCursor doAnswerApi(Uri uri) {
+    private MatrixCursor doAnswerApiCommand(Uri uri) {
         MatrixCursor matrixCursor = null;
 
         if (BaseFile._CmdCancel.equals(uri.getLastPathSegment())) {
@@ -342,18 +360,10 @@ public class LocalFileProvider extends BaseFileProvider {
                 mFileObserverEx.stopWatching();
                 mFileObserverEx = null;
             }
-        } else {
-            /*
-             * If there is no command given, return provider ID and name.
-             */
-            matrixCursor = new MatrixCursor(new String[] {
-                    BaseFile._ColumnProviderId, BaseFile._ColumnProviderName });
-            matrixCursor.newRow().add(LocalFileContract._ID)
-                    .add(getContext().getString(R.string.afc_phone));
-        }// default API (returns provider name and ID)
+        }
 
         return matrixCursor;
-    }// doAnswerApi()
+    }// doAnswerApiCommand()
 
     /**
      * Lists the content of a directory, if available.
