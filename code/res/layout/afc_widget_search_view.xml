@@ -11,17 +11,19 @@
     android:layout_height="wrap_content" >
 
     <ImageButton
-        android:id="@+id/afc_button_search"
+        android:id="@+id/afc_widget_search_view_button_search"
         style="@style/afc_widget_search_view_button_search"
         android:layout_centerVertical="true"
-        android:contentDescription="@string/afc_hint_search" />
+        android:contentDescription="@string/afc_hint_search"
+        android:focusable="true"
+        android:focusableInTouchMode="true" />
 
     <EditText
-        android:id="@+id/afc_textview_search"
+        android:id="@+id/afc_widget_search_view_textview_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_toRightOf="@id/afc_button_search"
+        android:layout_toRightOf="@id/afc_widget_search_view_button_search"
         android:gravity="center_vertical"
         android:imeOptions="actionSearch"
         android:inputType="text"
@@ -31,7 +33,7 @@
         android:visibility="gone" />
 
     <ImageButton
-        android:id="@+id/afc_button_clear"
+        android:id="@+id/afc_widget_search_view_button_clear"
         style="@style/afc_widget_search_view_button_clear"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"

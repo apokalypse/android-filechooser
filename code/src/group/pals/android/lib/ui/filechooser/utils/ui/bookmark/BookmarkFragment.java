@@ -17,8 +17,8 @@ import group.pals.android.lib.ui.filechooser.utils.TextUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.Dlg;
 import group.pals.android.lib.ui.filechooser.utils.ui.GestureUtils;
-import group.pals.android.lib.ui.filechooser.utils.ui.Ui;
 import group.pals.android.lib.ui.filechooser.utils.ui.GestureUtils.FlingDirection;
+import group.pals.android.lib.ui.filechooser.utils.ui.Ui;
 import group.pals.android.lib.ui.filechooser.utils.ui.history.HistoryFragment;
 
 import java.text.Collator;
@@ -51,6 +51,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -145,13 +146,15 @@ public class BookmarkFragment extends DialogFragment implements
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         if (BuildConfig.DEBUG)
             Log.d(_ClassName, "onCreateDialog()");
-        return Dlg
-                .newDlgBuilder(getActivity())
-                .setIcon(R.drawable.afc_bookmarks_dark)
-                .setTitle(R.string.afc_title_bookmark_manager)
-                .setView(
-                        initContentView(getActivity().getLayoutInflater(), null))
-                .create();
+
+        Dialog dialog = new Dialog(getActivity(), R.style.Afc_Theme_Dialog_Dark);
+        dialog.requestWindowFeature(Window.FEATURE_LEFT_ICON);
+        dialog.setTitle(R.string.afc_title_bookmark_manager);
+        dialog.setContentView(initContentView(dialog.getLayoutInflater(), null));
+        dialog.setFeatureDrawableResource(Window.FEATURE_LEFT_ICON,
+                R.drawable.afc_bookmarks_dark);
+
+        return dialog;
     }// onCreateDialog()
 
     @Override

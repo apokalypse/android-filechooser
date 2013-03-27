@@ -122,9 +122,9 @@ public class AfcSearchView extends LinearLayout {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.afc_widget_search_view, this, true);
 
-        mButtonSearch = findViewById(R.id.afc_button_search);
-        mTextSearch = (EditText) findViewById(R.id.afc_textview_search);
-        mButtonClear = findViewById(R.id.afc_button_clear);
+        mButtonSearch = findViewById(R.id.afc_widget_search_view_button_search);
+        mTextSearch = (EditText) findViewById(R.id.afc_widget_search_view_textview_search);
+        mButtonClear = findViewById(R.id.afc_widget_search_view_button_clear);
 
         /*
          * ASSIGNS LISTENERS & ATTRIBUTES
@@ -146,8 +146,8 @@ public class AfcSearchView extends LinearLayout {
 
         setDelayTimeSubmission(a.getInt(
                 R.styleable.AfcSearchView_delayTimeSubmission, 0));
-        updateViewsVisibility(a.getBoolean(R.styleable.AfcSearchView_iconified,
-                true));
+        updateViewsVisibility(
+                a.getBoolean(R.styleable.AfcSearchView_iconified, true), false);
         setClosable(a.getBoolean(R.styleable.AfcSearchView_closable, true));
         setEnabled(a.getBoolean(R.styleable.AfcSearchView_enabled, true));
         mTextSearch.setHint(a.getString(R.styleable.AfcSearchView_hint));
@@ -210,9 +210,13 @@ public class AfcSearchView extends LinearLayout {
      * 
      * @param collapsed
      *            {@code true} or {@code false}.
+     * @param showSoftKeyboard
+     *            set to {@code true} if you want to force show the soft
+     *            keyboard in <i>expanded</i> state.
      * @see #isIconified()
      */
-    protected void updateViewsVisibility(boolean collapsed) {
+    protected void updateViewsVisibility(boolean collapsed,
+            boolean showSoftKeyboard) {
         if (BuildConfig.DEBUG)
             Log.d(_ClassName, "updateViewsVisibility() >> " + collapsed);
 
@@ -244,13 +248,15 @@ public class AfcSearchView extends LinearLayout {
             setEnabled(false);
             Ui.showSoftKeyboard(mTextSearch, false);
         } else {
-            mTextSearch.setFocusable(true);
-            mTextSearch.setFocusableInTouchMode(true);
-            mTextSearch.requestFocus();
-
             mTextSearch.addTextChangedListener(mTextSearchTextWatcher);
 
-            Ui.showSoftKeyboard(mTextSearch, true);
+            mTextSearch.setFocusable(true);
+            mTextSearch.setFocusableInTouchMode(true);
+
+            if (showSoftKeyboard) {
+                mTextSearch.requestFocus();
+                Ui.showSoftKeyboard(mTextSearch, true);
+            }
             setEnabled(true);
         }
     }// updateViewsVisibility()
@@ -265,7 +271,7 @@ public class AfcSearchView extends LinearLayout {
      */
     public void close() {
         if (isClosable() && !isIconified())
-            updateViewsVisibility(true);
+            updateViewsVisibility(true, true);
     }// close()
 
     /**
@@ -276,7 +282,7 @@ public class AfcSearchView extends LinearLayout {
      */
     public void open() {
         if (isIconified())
-            updateViewsVisibility(false);
+            updateViewsVisibility(false, false);
     }// open()
 
     /**
@@ -358,7 +364,7 @@ public class AfcSearchView extends LinearLayout {
         @Override
         public void onClick(View v) {
             if (isIconified()) {
-                updateViewsVisibility(false);
+                updateViewsVisibility(false, false);
             } else {
                 mAutoSubmissionHandler.removeCallbacksAndMessages(null);
 

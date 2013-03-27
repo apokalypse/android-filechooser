@@ -95,7 +95,24 @@
         <item name="afc_badge_file_provider_localfile">@drawable/afc_badge_file_provider_localfile_light</item>
     </style>
 
-    <style name="Afc.Theme.Dialog.Dark" parent="@android:style/Theme.Dialog">
+    <style name="Afc.Theme.Dialog.Dark" parent="@android:style/Theme">
+
+        <!-- AOSP -->
+
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowTitleStyle">@style/AOSP_DialogWindowTitle</item>
+        <item name="android:windowBackground">@drawable/aosp_dialog_full_holo_dark</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+
+        <!-- android-filechooser -->
+
         <item name="afc_ic_menu_bookmarks">@drawable/afc_ic_menu_bookmarks</item>
         <item name="afc_ic_menu_home">@drawable/afc_ic_menu_home</item>
         <item name="afc_ic_menu_gridview">@drawable/afc_ic_menu_gridview</item>
@@ -107,6 +124,12 @@
         <item name="afc_ic_menu_sort_by_size_asc">@drawable/afc_ic_menu_sort_by_size_asc</item>
         <item name="afc_ic_menu_sort_by_size_desc">@drawable/afc_ic_menu_sort_by_size_desc</item>
         <item name="afc_badge_file_provider_localfile">@drawable/afc_badge_file_provider_localfile_light</item>
+    </style>
+
+    <style name="AOSP_DialogWindowTitle">
+        <item name="android:maxLines">1</item>
+        <item name="android:scrollHorizontally">true</item>
+        <item name="android:textAppearance">@android:style/TextAppearance.DialogWindowTitle</item>
     </style>
 
 </resources>

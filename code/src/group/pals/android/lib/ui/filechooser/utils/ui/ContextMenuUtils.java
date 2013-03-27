@@ -8,11 +8,12 @@
 package group.pals.android.lib.ui.filechooser.utils.ui;
 
 import group.pals.android.lib.ui.filechooser.R;
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -43,7 +44,17 @@ public class ContextMenuUtils {
     public static void showContextMenu(Context context, int iconId,
             String title, final Integer[] itemIds,
             final OnMenuItemClickListener listener) {
-        final MenuItemAdapter _adapter = new MenuItemAdapter(context, itemIds);
+        final Dialog dialog = new Dialog(context, R.style.Afc_Theme_Dialog_Dark);
+        dialog.setCanceledOnTouchOutside(true);
+        if (iconId > 0)
+            dialog.requestWindowFeature(Window.FEATURE_LEFT_ICON);
+        if (TextUtils.isEmpty(title))
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        else
+            dialog.setTitle(title);
+
+        final MenuItemAdapter _adapter = new MenuItemAdapter(
+                dialog.getContext(), itemIds);
 
         View view = LayoutInflater.from(context).inflate(
                 R.layout.afc_context_menu_view, null);
@@ -51,17 +62,9 @@ public class ContextMenuUtils {
                 .findViewById(R.id.afc_listview_menu);
         listview.setAdapter(_adapter);
 
-        final AlertDialog _dlg = Dlg.newDlg(context);
-
-        // don't use Cancel button
-        _dlg.setButton(DialogInterface.BUTTON_NEGATIVE, null,
-                (DialogInterface.OnClickListener) null);
-        _dlg.setCanceledOnTouchOutside(true);
-
+        dialog.setContentView(view);
         if (iconId > 0)
-            _dlg.setIcon(iconId);
-        _dlg.setTitle(title);
-        _dlg.setView(view);
+            dialog.setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, iconId);
 
         if (listener != null) {
             listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -69,22 +72,22 @@ public class ContextMenuUtils {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view,
                         int position, long id) {
-                    _dlg.dismiss();
+                    dialog.dismiss();
                     listener.onClick(itemIds[position]);
                 }// onItemClick()
             });
         }// if listener != null
 
-        _dlg.show();
+        dialog.show();
 
         /*
          * Hardcode width...
          */
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(_dlg.getWindow().getAttributes());
+        lp.copyFrom(dialog.getWindow().getAttributes());
         lp.width = context.getResources().getDimensionPixelSize(
                 R.dimen.afc_context_menu_width);
-        _dlg.getWindow().setAttributes(lp);
+        dialog.getWindow().setAttributes(lp);
     }// showContextMenu()
 
     /**

@@ -17,8 +17,8 @@ import group.pals.android.lib.ui.filechooser.utils.EnvUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.Dlg;
 import group.pals.android.lib.ui.filechooser.utils.ui.GestureUtils;
-import group.pals.android.lib.ui.filechooser.utils.ui.Ui;
 import group.pals.android.lib.ui.filechooser.utils.ui.GestureUtils.FlingDirection;
+import group.pals.android.lib.ui.filechooser.utils.ui.Ui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -130,7 +130,7 @@ public class HistoryFragment extends DialogFragment implements
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         if (BuildConfig.DEBUG)
             Log.d(_ClassName, "onCreateDialog()");
-        Dialog dialog = new Dialog(getActivity()) {
+        Dialog dialog = new Dialog(getActivity(), R.style.Afc_Theme_Dialog_Dark) {
 
             @Override
             public boolean onCreateOptionsMenu(Menu menu) {
@@ -160,11 +160,12 @@ public class HistoryFragment extends DialogFragment implements
                 return true;
             }// onMenuItemSelected()
         };
+
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCanceledOnTouchOutside(true);
-        dialog.setContentView(initContentView(
-                getActivity().getLayoutInflater(), null));
+        dialog.setContentView(initContentView(dialog.getLayoutInflater(), null));
         dialog.setOnKeyListener(mDialogOnKeyListener);
+
         return dialog;
     }// onCreateDialog()
 

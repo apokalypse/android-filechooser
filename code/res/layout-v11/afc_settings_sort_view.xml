@@ -35,7 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:drawableRight="@drawable/afc_ic_menu_sort_by_name_asc_light" />
+                android:drawableRight="?attr/afc_ic_menu_sort_by_name_asc" />
 
             <Button
                 android:id="@+id/afc_button_sort_by_name_desc"
@@ -43,7 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:drawableRight="@drawable/afc_ic_menu_sort_by_name_desc_light" />
+                android:drawableRight="?attr/afc_ic_menu_sort_by_name_desc" />
         </TableRow>
 
         <TableRow
@@ -64,7 +64,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:drawableRight="@drawable/afc_ic_menu_sort_by_size_asc_light" />
+                android:drawableRight="?attr/afc_ic_menu_sort_by_size_asc" />
 
             <Button
                 android:id="@+id/afc_button_sort_by_size_desc"
@@ -72,7 +72,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:drawableRight="@drawable/afc_ic_menu_sort_by_size_desc_light" />
+                android:drawableRight="?attr/afc_ic_menu_sort_by_size_desc" />
         </TableRow>
 
         <TableRow
@@ -93,7 +93,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:drawableRight="@drawable/afc_ic_menu_sort_by_date_asc_light" />
+                android:drawableRight="?attr/afc_ic_menu_sort_by_date_asc" />
 
             <Button
                 android:id="@+id/afc_button_sort_by_date_desc"
@@ -101,7 +101,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:drawableRight="@drawable/afc_ic_menu_sort_by_date_desc_light" />
+                android:drawableRight="?attr/afc_ic_menu_sort_by_date_desc" />
         </TableRow>
     </TableLayout>
 

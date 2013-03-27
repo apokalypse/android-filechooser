@@ -39,6 +39,7 @@ import java.util.List;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -466,7 +467,7 @@ public class FileChooserActivity extends FragmentActivity implements
             break;
         case List:
             menuItem.setIcon(Ui.resolveAttribute(this,
-                    R.drawable.afc_ic_menu_gridview));
+                    R.attr.afc_ic_menu_gridview));
             menuItem.setTitle(R.string.afc_cmd_grid_view);
             break;
         }
@@ -1129,7 +1130,7 @@ public class FileChooserActivity extends FragmentActivity implements
      * selected an option.
      */
     private void doResortViewFiles() {
-        final AlertDialog dialog = Dlg.newDlg(this);
+        final Dialog dialog = new Dialog(this, R.style.Afc_Theme_Dialog_Dark);
 
         // get the index of button of current sort type
         int btnCurrentSortTypeIdx = 0;
@@ -1199,8 +1200,7 @@ public class FileChooserActivity extends FragmentActivity implements
         }
 
         dialog.setTitle(R.string.afc_title_sort_by);
-        dialog.setView(view);
-
+        dialog.setContentView(view);
         dialog.show();
     }// doResortViewFiles()
 
