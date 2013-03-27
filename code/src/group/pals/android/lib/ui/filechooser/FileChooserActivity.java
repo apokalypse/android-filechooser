@@ -1131,6 +1131,7 @@ public class FileChooserActivity extends FragmentActivity implements
      */
     private void doResortViewFiles() {
         final Dialog dialog = new Dialog(this, R.style.Afc_Theme_Dialog_Dark);
+        dialog.setCanceledOnTouchOutside(true);
 
         // get the index of button of current sort type
         int btnCurrentSortTypeIdx = 0;

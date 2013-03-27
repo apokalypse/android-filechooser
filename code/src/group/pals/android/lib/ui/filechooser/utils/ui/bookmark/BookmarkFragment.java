@@ -148,6 +148,7 @@ public class BookmarkFragment extends DialogFragment implements
             Log.d(_ClassName, "onCreateDialog()");
 
         Dialog dialog = new Dialog(getActivity(), R.style.Afc_Theme_Dialog_Dark);
+        dialog.setCanceledOnTouchOutside(true);
         dialog.requestWindowFeature(Window.FEATURE_LEFT_ICON);
         dialog.setTitle(R.string.afc_title_bookmark_manager);
         dialog.setContentView(initContentView(dialog.getLayoutInflater(), null));
@@ -163,7 +164,6 @@ public class BookmarkFragment extends DialogFragment implements
         if (BuildConfig.DEBUG)
             Log.d(_ClassName, "onCreateView()");
         if (getDialog() != null) {
-            getDialog().setCanceledOnTouchOutside(true);
             getDialog().setOnKeyListener(new DialogInterface.OnKeyListener() {
 
                 @Override
