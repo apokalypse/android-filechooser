@@ -252,27 +252,6 @@ public class LocalFileProvider extends BaseFileProvider {
         throw new UnsupportedOperationException();
     }// update()
 
-    @Override
-    public void shutdown() {
-        if (BuildConfig.DEBUG)
-            Log.d(_ClassName, "shutdown()");
-
-        /*
-         * Stop all tasks.
-         */
-        synchronized (_MapInterruption) {
-            for (int i = 0; i < _MapInterruption.size(); i++)
-                _MapInterruption.put(_MapInterruption.keyAt(i), true);
-        }
-
-        if (mFileObserverEx != null) {
-            mFileObserverEx.stopWatching();
-            mFileObserverEx = null;
-        }
-
-        super.shutdown();
-    }// shutdown()
-
     /*
      * UTILITIES
      */
@@ -351,6 +330,14 @@ public class LocalFileProvider extends BaseFileProvider {
             newRow.add(type);
             newRow.add(file.lastModified());
         } else if (BaseFile._CmdShutdown.equals(uri.getLastPathSegment())) {
+            /*
+             * Stop all tasks.
+             */
+            synchronized (_MapInterruption) {
+                for (int i = 0; i < _MapInterruption.size(); i++)
+                    _MapInterruption.put(_MapInterruption.keyAt(i), true);
+            }
+
             if (mFileObserverEx != null) {
                 mFileObserverEx.stopWatching();
                 mFileObserverEx = null;
