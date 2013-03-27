@@ -35,5 +35,6 @@
     <attr name="afc_ic_menu_sort_by_name_desc" format="reference" />
     <attr name="afc_ic_menu_sort_by_size_asc" format="reference" />
     <attr name="afc_ic_menu_sort_by_size_desc" format="reference" />
+    <attr name="afc_badge_file_provider_localfile" format="reference" />
 
 </resources>

@@ -239,9 +239,11 @@ public class LocalFileProvider extends BaseFileProvider {
              * If there is no command given, return provider ID and name.
              */
             MatrixCursor matrixCursor = new MatrixCursor(new String[] {
-                    BaseFile._ColumnProviderId, BaseFile._ColumnProviderName });
+                    BaseFile._ColumnProviderId, BaseFile._ColumnProviderName,
+                    BaseFile._ColumnProviderIconAttr });
             matrixCursor.newRow().add(LocalFileContract._ID)
-                    .add(getContext().getString(R.string.afc_phone));
+                    .add(getContext().getString(R.string.afc_phone))
+                    .add(R.attr.afc_badge_file_provider_localfile);
             return matrixCursor;
         }
         case _ApiCommand: {

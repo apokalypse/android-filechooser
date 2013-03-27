@@ -35,6 +35,7 @@
         <item name="afc_ic_menu_sort_by_name_desc">@drawable/afc_ic_menu_sort_by_name_desc_light</item>
         <item name="afc_ic_menu_sort_by_size_asc">@drawable/afc_ic_menu_sort_by_size_asc_light</item>
         <item name="afc_ic_menu_sort_by_size_desc">@drawable/afc_ic_menu_sort_by_size_desc_light</item>
+        <item name="afc_badge_file_provider_localfile">@drawable/afc_badge_file_provider_localfile_light</item>
     </style>
 
     <style name="Afc.Theme.Dialog.Dark" parent="@android:style/Theme.Holo.Dialog">
@@ -48,6 +49,7 @@
         <item name="afc_ic_menu_sort_by_name_desc">@drawable/afc_ic_menu_sort_by_name_desc_light</item>
         <item name="afc_ic_menu_sort_by_size_asc">@drawable/afc_ic_menu_sort_by_size_asc_light</item>
         <item name="afc_ic_menu_sort_by_size_desc">@drawable/afc_ic_menu_sort_by_size_desc_light</item>
+        <item name="afc_badge_file_provider_localfile">@drawable/afc_badge_file_provider_localfile_light</item>
     </style>
 
 </resources>

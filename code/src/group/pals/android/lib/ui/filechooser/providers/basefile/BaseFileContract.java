@@ -556,5 +556,13 @@ public class BaseFileContract {
          * </p>
          */
         public static final String _ColumnProviderId = "provider_id";
+
+        /**
+         * The resource ID ({@code R.attr}) of the badge (icon) of the provider.
+         * <p>
+         * Type: {@code Integer}
+         * </p>
+         */
+        public static final String _ColumnProviderIconAttr = "provider_icon_attr";
     }// BaseFile
 }

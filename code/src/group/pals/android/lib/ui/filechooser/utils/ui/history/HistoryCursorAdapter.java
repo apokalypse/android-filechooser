@@ -10,7 +10,6 @@ package group.pals.android.lib.ui.filechooser.utils.ui.history;
 import group.pals.android.lib.ui.filechooser.BuildConfig;
 import group.pals.android.lib.ui.filechooser.R;
 import group.pals.android.lib.ui.filechooser.providers.BaseFileProviderUtils;
-import group.pals.android.lib.ui.filechooser.providers.ProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileContract.BaseFile;
 import group.pals.android.lib.ui.filechooser.providers.history.HistoryContract.History;
 import group.pals.android.lib.ui.filechooser.utils.DateUtils;
@@ -69,7 +68,6 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
         TextView mTextViewTime;
         TextView mTextViewName;
         TextView mTextViewPath;
-        TextView mTextViewType;
         CheckBox mCheckBox;
     }// BagChild
 
@@ -246,8 +244,6 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
                     .findViewById(R.id.afc_textview_name);
             child.mTextViewPath = (TextView) view
                     .findViewById(R.id.afc_textview_path);
-            child.mTextViewType = (TextView) view
-                    .findViewById(R.id.afc_textview_type);
             child.mCheckBox = (CheckBox) view.findViewById(R.id.afc_checkbox);
 
             view.setTag(child);
@@ -288,14 +284,15 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
         child.mTextViewPath.setText(filePath);
 
         /*
-         * Provider name.
+         * Provider ID.
          */
         String providerId = cursor.getString(cursor
                 .getColumnIndex(History._ColumnProviderId));
-        if (ProviderUtils.getProviderName(providerId) == null)
-            ProviderUtils.setProviderName(providerId,
-                    BaseFileProviderUtils.getProviderName(context, providerId));
-        child.mTextViewType.setText(ProviderUtils.getProviderName(providerId));
+        /*
+         * Provider badge icon.
+         */
+        child.mTextViewTime.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0,
+                BaseFileProviderUtils.getProviderIconId(context, providerId));
 
         /*
          * Check box.

@@ -9,6 +9,7 @@ package group.pals.android.lib.ui.filechooser.providers;
 
 import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileContract.BaseFile;
 import group.pals.android.lib.ui.filechooser.providers.localfile.LocalFileContract;
+import group.pals.android.lib.ui.filechooser.utils.ui.Ui;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +19,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
+import android.os.Bundle;
 
 /**
  * Utilities for base file provider.
@@ -37,11 +39,18 @@ public class BaseFileProviderUtils {
      * <b>Note for developers:</b> If you provide your own provider, add its ID
      * and authority to this map, in the {@code static} block below.
      */
-    private static final Map<String, String> _MapProviderInfo = new HashMap<String, String>();
+    private static final Map<String, Bundle> _MapProviderInfo = new HashMap<String, Bundle>();
+
+    private static final String _ColumnAuthority = "authority";
 
     static {
-        _MapProviderInfo.put(LocalFileContract._ID,
-                LocalFileContract._Authority);
+        /*
+         * You provide your provider ID and authority here.
+         */
+
+        Bundle bundle = new Bundle();
+        bundle.putString(_ColumnAuthority, LocalFileContract._Authority);
+        _MapProviderInfo.put(LocalFileContract._ID, bundle);
     }// static
 
     /**
@@ -52,7 +61,7 @@ public class BaseFileProviderUtils {
      * @return the provider authority, or {@code null} if not available.
      */
     public static String getProviderAuthority(String providerId) {
-        return _MapProviderInfo.get(providerId);
+        return _MapProviderInfo.get(providerId).getString(_ColumnAuthority);
     }// getProviderAuthority()
 
     /**
@@ -63,11 +72,28 @@ public class BaseFileProviderUtils {
      * @return the provider ID, or {@code null} if not available.
      */
     public static String getProviderId(String authority) {
-        for (Entry<String, String> entry : _MapProviderInfo.entrySet())
-            if (entry.getValue().equals(authority))
+        for (Entry<String, Bundle> entry : _MapProviderInfo.entrySet())
+            if (entry.getValue().getString(_ColumnAuthority).equals(authority))
                 return entry.getKey();
         return null;
     }// getProviderId()
+
+    /**
+     * Gets provider name from its ID.
+     * <p>
+     * <b>Note:</b> You should always use the method
+     * {@link #getProviderName(Context, String)} rather than this one whenever
+     * possible. Because this method does not guarantee the result.
+     * </p>
+     * 
+     * @param providerId
+     *            the provider ID.
+     * @return the provider name, or {@code null} if not available.
+     */
+    private static String getProviderName(String providerId) {
+        return _MapProviderInfo.get(providerId).getString(
+                BaseFile._ColumnProviderName);
+    }// getProviderName()
 
     /**
      * Gets provider name from its ID.
@@ -79,23 +105,84 @@ public class BaseFileProviderUtils {
      * @return the provider name, can be {@code null} if not provided.
      */
     public static String getProviderName(Context context, String providerId) {
-        String authority = getProviderAuthority(providerId);
-        if (authority == null)
+        if (getProviderAuthority(providerId) == null)
             return null;
 
-        Cursor cursor = context.getContentResolver().query(
-                BaseFile.genContentUriApi(authority), null, null, null, null);
-        if (cursor == null)
-            return null;
-        try {
-            if (cursor.moveToFirst())
-                return cursor.getString(cursor
-                        .getColumnIndex(BaseFile._ColumnProviderName));
-            return null;
-        } finally {
-            cursor.close();
+        String result = getProviderName(providerId);
+
+        if (result == null) {
+            Cursor cursor = context
+                    .getContentResolver()
+                    .query(BaseFile
+                            .genContentUriApi(getProviderAuthority(providerId)),
+                            null, null, null, null);
+            if (cursor == null)
+                return null;
+
+            try {
+                if (cursor.moveToFirst()) {
+                    result = cursor.getString(cursor
+                            .getColumnIndex(BaseFile._ColumnProviderName));
+                    setProviderName(providerId, result);
+                } else
+                    return null;
+            } finally {
+                cursor.close();
+            }
         }
+
+        return result;
     }// getProviderName()
+
+    /**
+     * Sets provider name.
+     * 
+     * @param providerId
+     *            the provider ID.
+     * @param providerName
+     *            the provider name.
+     */
+    private static void setProviderName(String providerId, String providerName) {
+        _MapProviderInfo.get(providerId).putString(
+                BaseFile._ColumnProviderName, providerName);
+    }// setProviderName()
+
+    /**
+     * Gets the provider icon (badge) resource ID.
+     * 
+     * @param context
+     *            the context. The resource ID will be retrieved based on this
+     *            context's theme (for example light or dark).
+     * @param providerId
+     *            the provider ID.
+     * @return the resource ID of the icon (badge).
+     */
+    public static int getProviderIconId(Context context, String providerId) {
+        int attr = _MapProviderInfo.get(providerId).getInt(
+                BaseFile._ColumnProviderIconAttr);
+        if (attr == 0) {
+            Cursor cursor = context
+                    .getContentResolver()
+                    .query(BaseFile
+                            .genContentUriApi(getProviderAuthority(providerId)),
+                            null, null, null, null);
+            if (cursor != null) {
+                try {
+                    if (cursor.moveToFirst()) {
+                        attr = cursor
+                                .getInt(cursor
+                                        .getColumnIndex(BaseFile._ColumnProviderIconAttr));
+                        _MapProviderInfo.get(providerId).putInt(
+                                BaseFile._ColumnProviderIconAttr, attr);
+                    }
+                } finally {
+                    cursor.close();
+                }
+            }
+        }
+
+        return Ui.resolveAttribute(context, attr);
+    }// getProviderIconId()
 
     /**
      * Default columns of a base file cursor.

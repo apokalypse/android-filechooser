@@ -10,7 +10,6 @@ package group.pals.android.lib.ui.filechooser.utils.ui.bookmark;
 import group.pals.android.lib.ui.filechooser.BuildConfig;
 import group.pals.android.lib.ui.filechooser.R;
 import group.pals.android.lib.ui.filechooser.providers.BaseFileProviderUtils;
-import group.pals.android.lib.ui.filechooser.providers.ProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.bookmark.BookmarkContract.Bookmark;
 import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.Ui;
@@ -339,10 +338,14 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
          */
         String providerId = cursor.getString(cursor
                 .getColumnIndex(Bookmark._ColumnProviderId));
-        if (ProviderUtils.getProviderName(providerId) == null)
-            ProviderUtils.setProviderName(providerId,
-                    BaseFileProviderUtils.getProviderName(context, providerId));
-        b.mTextHeader.setText(ProviderUtils.getProviderName(providerId));
+        b.mTextHeader.setText(BaseFileProviderUtils.getProviderName(context,
+                providerId));
+        /*
+         * Provider badge icon.
+         */
+        b.mTextHeader.setCompoundDrawablesWithIntrinsicBounds(
+                BaseFileProviderUtils.getProviderIconId(context, providerId),
+                0, 0, 0);
     }// bindGroupView()
 
     @Override
