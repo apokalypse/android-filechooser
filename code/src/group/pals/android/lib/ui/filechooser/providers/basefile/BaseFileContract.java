@@ -9,6 +9,8 @@ package group.pals.android.lib.ui.filechooser.providers.basefile;
 
 import group.pals.android.lib.ui.filechooser.providers.BaseColumns;
 import group.pals.android.lib.ui.filechooser.providers.ProviderUtils;
+import group.pals.android.lib.ui.filechooser.providers.localfile.FileObserverEx;
+import group.pals.android.lib.ui.filechooser.providers.localfile.LocalFileProvider;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
@@ -181,6 +183,18 @@ public class BaseFileContract {
          * @see #_ParamSource
          */
         public static final String _CmdGetParent = "get_parent";
+
+        /**
+         * Use this command when you don't need to work with the content
+         * provider anymore. Normally <i>Android handles ContentProvider startup
+         * and shutdown automatically</i>. But in case of
+         * {@link LocalFileProvider}, it uses {@link FileObserverEx} to watch
+         * for changes of files. The SDK doesn't clarify the ending events of a
+         * content provider. So the file-observer objects could continue to run
+         * even if your activity has stopped. Hence this command is useful to
+         * let the providers know when they can shutdown the background jobs.
+         */
+        public static final String _CmdShutdown = "shutdown";
 
         /*
          * PARAMETERS.

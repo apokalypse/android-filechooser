@@ -90,6 +90,7 @@ public class LocalFileProvider extends BaseFileProvider {
     }// static
 
     private final Collator mCollator = Collator.getInstance();
+    private FileObserverEx mFileObserverEx;
 
     @Override
     public String getType(Uri uri) {
@@ -264,6 +265,11 @@ public class LocalFileProvider extends BaseFileProvider {
                 _MapInterruption.put(_MapInterruption.keyAt(i), true);
         }
 
+        if (mFileObserverEx != null) {
+            mFileObserverEx.stopWatching();
+            mFileObserverEx = null;
+        }
+
         super.shutdown();
     }// shutdown()
 
@@ -344,7 +350,15 @@ public class LocalFileProvider extends BaseFileProvider {
             newRow.add(file.length());
             newRow.add(type);
             newRow.add(file.lastModified());
+        } else if (BaseFile._CmdShutdown.equals(uri.getLastPathSegment())) {
+            if (mFileObserverEx != null) {
+                mFileObserverEx.stopWatching();
+                mFileObserverEx = null;
+            }
         } else {
+            /*
+             * If there is no command given, return provider ID and name.
+             */
             matrixCursor = new MatrixCursor(new String[] {
                     BaseFile._ColumnProviderId, BaseFile._ColumnProviderName });
             matrixCursor.newRow().add(LocalFileContract._ID)
@@ -362,23 +376,7 @@ public class LocalFileProvider extends BaseFileProvider {
      * @return the content of a directory, or {@code null} if not available.
      */
     private MatrixCursor doListFiles(Uri uri) {
-        final FileObserverEx[] fileObserverExs = { null };
-        MatrixCursor matrixCursor = new MatrixCursor(
-                BaseFileProviderUtils._BaseFileCursorColumns) {
-
-            @Override
-            public void close() {
-                if (BuildConfig.DEBUG)
-                    Log.d(_ClassName,
-                            String.format(
-                                    "doListFiles() >> MatrixCursor.close() with %,d rows",
-                                    getCount()));
-                if (fileObserverExs[0] != null) {
-                    fileObserverExs[0].stopWatching();
-                    fileObserverExs[0] = null;
-                }
-            }// close()
-        };
+        MatrixCursor matrixCursor = BaseFileProviderUtils.newBaseFileCursor();
 
         File file = extractFile(uri);
 
@@ -477,9 +475,11 @@ public class LocalFileProvider extends BaseFileProvider {
             _MapInterruption.delete(taskId);
         }
 
-        fileObserverExs[0] = new FileObserverEx(getContext(),
+        if (mFileObserverEx != null)
+            mFileObserverEx.stopWatching();
+        mFileObserverEx = new FileObserverEx(getContext(),
                 file.getAbsolutePath(), uri);
-        fileObserverExs[0].startWatching();
+        mFileObserverEx.startWatching();
 
         /*
          * Tells the Cursor what URI to watch, so it knows when its source data

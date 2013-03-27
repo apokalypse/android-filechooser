@@ -279,6 +279,7 @@ public class FileChooserActivity extends FragmentActivity implements
     private boolean mDoubleTapToChooseFiles;
 
     private History<Uri> mHistory;
+    private Uri mLastLocation;
     private Uri mCurrentLocation;
     private Handler mViewLoadingHandler = new Handler();
 
@@ -544,6 +545,14 @@ public class FileChooserActivity extends FragmentActivity implements
     protected void onDestroy() {
         super.onDestroy();
         cancelPreviousLoader();
+
+        if (getCurrentLocation() != null)
+            getContentResolver().query(
+                    BaseFile.genContentUriApi(
+                            getCurrentLocation().getAuthority()).buildUpon()
+                            .appendPath(BaseFile._CmdShutdown).build(), null,
+                    null, null, null);
+
         HistoryProviderUtils.doCleanupOutdatedHistoryItems(this);
     }// onDestroy()
 
@@ -621,8 +630,6 @@ public class FileChooserActivity extends FragmentActivity implements
             return;
         }
 
-        final Uri lastPath = mHistory.prevOf(getCurrentLocation());
-
         data.moveToLast();
         final Uri uriInfo = BaseFileProviderUtils.getUri(data);
         final Uri selectedFile = (Uri) getIntent().getParcelableExtra(
@@ -661,7 +668,7 @@ public class FileChooserActivity extends FragmentActivity implements
                 public void run() {
                     int shouldBeSelectedIdx = -1;
                     final Uri uri = selectedFile != null ? selectedFile
-                            : lastPath;
+                            : getLastLocation();
                     if (uri != null
                             && BaseFileProviderUtils.fileExists(
                                     FileChooserActivity.this, uri)) {
@@ -671,8 +678,9 @@ public class FileChooserActivity extends FragmentActivity implements
                             Uri parentUri = BaseFileProviderUtils
                                     .getParentFile(FileChooserActivity.this,
                                             uri);
-                            if ((uri == lastPath
-                                    && !getCurrentLocation().equals(lastPath) && BaseFileProviderUtils
+                            if ((uri == getLastLocation()
+                                    && !getCurrentLocation().equals(
+                                            getLastLocation()) && BaseFileProviderUtils
                                         .isAncestorOf(FileChooserActivity.this,
                                                 getCurrentLocation(), uri))
                                     || getCurrentLocation().equals(parentUri)) {
@@ -680,7 +688,7 @@ public class FileChooserActivity extends FragmentActivity implements
                                     while (!data.isLast()) {
                                         Uri subUri = Uri.parse(data
                                                 .getString(colUri));
-                                        if (uri == lastPath) {
+                                        if (uri == getLastLocation()) {
                                             if (data.getInt(data
                                                     .getColumnIndex(BaseFile._ColumnType)) == BaseFile._FileTypeDirectory) {
                                                 if (BaseFileProviderUtils
@@ -1020,6 +1028,15 @@ public class FileChooserActivity extends FragmentActivity implements
     }// showFooterView()
 
     /**
+     * Gets last location.
+     * 
+     * @return the last location.
+     */
+    private Uri getLastLocation() {
+        return mLastLocation;
+    }// getLastLocation()
+
+    /**
      * Gets current location.
      * 
      * @return the current location.
@@ -1039,11 +1056,11 @@ public class FileChooserActivity extends FragmentActivity implements
          * Do this so history's listener will retrieve the right current
          * location.
          */
-        Uri lastLocation = mCurrentLocation;
+        mLastLocation = mCurrentLocation;
         mCurrentLocation = location;
 
         if (mHistory.indexOf(location) < 0) {
-            mHistory.truncateAfter(lastLocation);
+            mHistory.truncateAfter(mLastLocation);
             mHistory.push(location);
         } else
             mHistory.notifyHistoryChanged();

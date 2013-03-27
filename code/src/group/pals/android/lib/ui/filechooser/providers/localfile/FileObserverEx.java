@@ -103,12 +103,19 @@ public class FileObserverEx extends FileObserver {
                 mHandler.sendEmptyMessage(_MsgNotifyChanges);
         } catch (Throwable t) {
             mWatching = false;
+            if (BuildConfig.DEBUG)
+                Log.e(_ClassName, "onEvent() >> " + t);
         }
     }// onEvent()
 
     @Override
     public void startWatching() {
         super.startWatching();
+
+        if (BuildConfig.DEBUG)
+            Log.d(_ClassName,
+                    String.format("startWatching() >> %s", hashCode()));
+
         mWatching = true;
     }// startWatching()
 
@@ -117,7 +124,7 @@ public class FileObserverEx extends FileObserver {
         super.stopWatching();
 
         if (BuildConfig.DEBUG)
-            Log.d(_ClassName, "stopWatching()");
+            Log.d(_ClassName, String.format("stopWatching() >> %s", hashCode()));
 
         mWatching = false;
 
