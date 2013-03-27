@@ -282,7 +282,7 @@ public class AfcSearchView extends LinearLayout {
      */
     public void open() {
         if (isIconified())
-            updateViewsVisibility(false, false);
+            updateViewsVisibility(false, true);
     }// open()
 
     /**
