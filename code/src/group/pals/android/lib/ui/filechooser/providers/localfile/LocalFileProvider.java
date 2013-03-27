@@ -351,12 +351,15 @@ public class LocalFileProvider extends BaseFileProvider {
             newRow.add(file.lastModified());
         } else if (BaseFile._CmdShutdown.equals(uri.getLastPathSegment())) {
             /*
-             * Stop all tasks.
+             * TODO Stop all tasks. If the activity call this command in
+             * onDestroy(), it seems that this code block will be suspended and
+             * started next time the activity starts. So we comment out this.
+             * Let the Android system do what it wants to do!!!! I hate this.
              */
-            synchronized (_MapInterruption) {
-                for (int i = 0; i < _MapInterruption.size(); i++)
-                    _MapInterruption.put(_MapInterruption.keyAt(i), true);
-            }
+            // synchronized (_MapInterruption) {
+            // for (int i = 0; i < _MapInterruption.size(); i++)
+            // _MapInterruption.put(_MapInterruption.keyAt(i), true);
+            // }
 
             if (mFileObserverEx != null) {
                 mFileObserverEx.stopWatching();
