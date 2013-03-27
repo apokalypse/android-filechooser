@@ -11,5 +11,5 @@
     <item android:drawable="@drawable/afc_button_location_dark_pressed" android:state_pressed="true"/>
     <item android:drawable="@drawable/afc_button_location_dark_pressed" android:state_selected="true"/>
     <item android:drawable="@drawable/afc_button_location_dark_pressed" android:state_focused="true"/>
-    
+
 </selector>

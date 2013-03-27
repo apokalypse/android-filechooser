@@ -35,6 +35,13 @@
     <attr name="afc_ic_menu_sort_by_name_desc" format="reference" />
     <attr name="afc_ic_menu_sort_by_size_asc" format="reference" />
     <attr name="afc_ic_menu_sort_by_size_desc" format="reference" />
+    <attr name="afc_ic_widget_search_view_action_search" format="reference" />
+    <attr name="afc_ic_widget_search_view_action_clear" format="reference" />
     <attr name="afc_badge_file_provider_localfile" format="reference" />
+    <attr name="afc_selector_image_button" format="reference" />
+    <attr name="afc_selector_button_location" format="reference" />
+    <attr name="afc_selector_main_button_navi_left" format="reference" />
+    <attr name="afc_selector_main_button_navi_right" format="reference" />
+    <attr name="afc_selector_button_ok_saveas" format="reference" />
 
 </resources>

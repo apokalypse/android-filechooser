@@ -30,13 +30,13 @@
 
             <ImageButton
                 android:id="@+id/afc_button_sort_by_name_asc"
-                style="@style/afc_button_sort_symbol_dark"
+                style="@style/afc_button_sort"
                 android:contentDescription="@string/afc_title_name"
                 android:src="?attr/afc_ic_menu_sort_by_name_asc" />
 
             <ImageButton
                 android:id="@+id/afc_button_sort_by_name_desc"
-                style="@style/afc_button_sort_symbol_dark"
+                style="@style/afc_button_sort"
                 android:contentDescription="@string/afc_title_name"
                 android:src="?attr/afc_ic_menu_sort_by_name_desc" />
         </TableRow>
@@ -55,13 +55,13 @@
 
             <ImageButton
                 android:id="@+id/afc_button_sort_by_size_asc"
-                style="@style/afc_button_sort_symbol_dark"
+                style="@style/afc_button_sort"
                 android:contentDescription="@string/afc_title_size"
                 android:src="?attr/afc_ic_menu_sort_by_size_asc" />
 
             <ImageButton
                 android:id="@+id/afc_button_sort_by_size_desc"
-                style="@style/afc_button_sort_symbol_dark"
+                style="@style/afc_button_sort"
                 android:contentDescription="@string/afc_title_size"
                 android:src="?attr/afc_ic_menu_sort_by_size_desc" />
         </TableRow>
@@ -80,13 +80,13 @@
 
             <ImageButton
                 android:id="@+id/afc_button_sort_by_date_asc"
-                style="@style/afc_button_sort_symbol_dark"
+                style="@style/afc_button_sort"
                 android:contentDescription="@string/afc_title_date"
                 android:src="?attr/afc_ic_menu_sort_by_date_asc" />
 
             <ImageButton
                 android:id="@+id/afc_button_sort_by_date_desc"
-                style="@style/afc_button_sort_symbol_dark"
+                style="@style/afc_button_sort"
                 android:contentDescription="@string/afc_title_date"
                 android:src="?attr/afc_ic_menu_sort_by_date_desc" />
         </TableRow>

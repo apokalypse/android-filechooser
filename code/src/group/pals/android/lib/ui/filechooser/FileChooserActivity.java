@@ -957,7 +957,8 @@ public class FileChooserActivity extends FragmentActivity implements
 
             mBtnOk.setVisibility(View.VISIBLE);
             mBtnOk.setOnClickListener(mBtnOk_SaveDialog_OnClickListener);
-            mBtnOk.setBackgroundResource(R.drawable.afc_selector_button_ok_saveas);
+            mBtnOk.setBackgroundResource(Ui.resolveAttribute(this,
+                    R.attr.afc_selector_button_ok_saveas));
 
             int size = getResources().getDimensionPixelSize(
                     R.dimen.afc_button_ok_saveas_size);
