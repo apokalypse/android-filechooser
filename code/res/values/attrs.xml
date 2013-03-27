@@ -43,5 +43,7 @@
     <attr name="afc_selector_main_button_navi_left" format="reference" />
     <attr name="afc_selector_main_button_navi_right" format="reference" />
     <attr name="afc_selector_button_ok_saveas" format="reference" />
+    <attr name="afc_selector_action_navi_left_foreground" format="reference" />
+    <attr name="afc_selector_action_navi_right_foreground" format="reference" />
 
 </resources>

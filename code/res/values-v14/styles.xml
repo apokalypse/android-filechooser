@@ -27,6 +27,8 @@
         <item name="afc_selector_main_button_navi_left">@drawable/afc_selector_main_button_navi_left_dark</item>
         <item name="afc_selector_main_button_navi_right">@drawable/afc_selector_main_button_navi_right_dark</item>
         <item name="afc_selector_button_ok_saveas">@drawable/afc_selector_button_ok_saveas_dark</item>
+        <item name="afc_selector_action_navi_left_foreground">@drawable/afc_selector_action_navi_left_dark_foreground</item>
+        <item name="afc_selector_action_navi_right_foreground">@drawable/afc_selector_action_navi_right_dark_foreground</item>
     </style>
 
     <style name="Afc.Theme.Dialog.Dark" parent="@android:style/Theme.DeviceDefault.Dialog">
@@ -48,6 +50,8 @@
         <item name="afc_selector_main_button_navi_left">@drawable/afc_selector_main_button_navi_left_dark</item>
         <item name="afc_selector_main_button_navi_right">@drawable/afc_selector_main_button_navi_right_dark</item>
         <item name="afc_selector_button_ok_saveas">@drawable/afc_selector_button_ok_saveas_dark</item>
+        <item name="afc_selector_action_navi_left_foreground">@drawable/afc_selector_action_navi_left_dark_foreground</item>
+        <item name="afc_selector_action_navi_right_foreground">@drawable/afc_selector_action_navi_right_dark_foreground</item>
     </style>
 
     <style name="afc_button_location" parent="@android:style/Widget.DeviceDefault.TextView">

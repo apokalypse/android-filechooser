@@ -62,12 +62,12 @@
 
             <ImageView
                 android:id="@+id/afc_button_go_back"
-                style="@style/afc_button_navi_left"
+                style="@style/afc_main_button_navi_left"
                 android:layout_alignParentLeft="true" />
 
             <ImageView
                 android:id="@+id/afc_button_go_forward"
-                style="@style/afc_button_navi_right"
+                style="@style/afc_main_button_navi_right"
                 android:layout_toRightOf="@id/afc_button_go_back" />
 
             <RelativeLayout

@@ -27,6 +27,8 @@
         <item name="afc_selector_main_button_navi_left">@drawable/afc_selector_main_button_navi_left_dark</item>
         <item name="afc_selector_main_button_navi_right">@drawable/afc_selector_main_button_navi_right_dark</item>
         <item name="afc_selector_button_ok_saveas">@drawable/afc_selector_button_ok_saveas_dark</item>
+        <item name="afc_selector_action_navi_left_foreground">@drawable/afc_selector_action_navi_left_dark_foreground</item>
+        <item name="afc_selector_action_navi_right_foreground">@drawable/afc_selector_action_navi_right_dark_foreground</item>
     </style>
 
     <style name="Afc.Theme.Dialog.Dark" parent="@android:style/Theme">
@@ -65,6 +67,8 @@
         <item name="afc_selector_main_button_navi_left">@drawable/afc_selector_main_button_navi_left_dark</item>
         <item name="afc_selector_main_button_navi_right">@drawable/afc_selector_main_button_navi_right_dark</item>
         <item name="afc_selector_button_ok_saveas">@drawable/afc_selector_button_ok_saveas_dark</item>
+        <item name="afc_selector_action_navi_left_foreground">@drawable/afc_selector_action_navi_left_dark_foreground</item>
+        <item name="afc_selector_action_navi_right_foreground">@drawable/afc_selector_action_navi_right_dark_foreground</item>
     </style>
 
     <style name="AOSP_DialogWindowTitle">
@@ -73,7 +77,7 @@
         <item name="android:textAppearance">@android:style/TextAppearance.DialogWindowTitle</item>
     </style>
 
-    <style name="afc_button_navi_left">
+    <style name="afc_main_button_navi_left">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:adjustViewBounds">true</item>
@@ -85,7 +89,7 @@
         <item name="android:minHeight">@dimen/afc_button_navigators_min_height</item>
     </style>
 
-    <style name="afc_button_navi_right">
+    <style name="afc_main_button_navi_right">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:adjustViewBounds">true</item>
@@ -96,6 +100,28 @@
         <item name="android:layout_marginTop">@dimen/afc_5dp</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:minHeight">@dimen/afc_button_navigators_min_height</item>
+    </style>
+
+    <style name="afc_action_navi_left">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:scaleType">center</item>
+        <item name="android:background">?attr/afc_selector_image_button</item>
+        <item name="android:src">?attr/afc_selector_action_navi_left_foreground</item>
+        <item name="android:layout_margin">@dimen/afc_2dp</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
+    <style name="afc_action_navi_right">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:scaleType">center</item>
+        <item name="android:background">?attr/afc_selector_image_button</item>
+        <item name="android:src">?attr/afc_selector_action_navi_right_foreground</item>
+        <item name="android:layout_margin">@dimen/afc_2dp</item>
+        <item name="android:layout_gravity">center</item>
     </style>
 
     <style name="afc_button_location" parent="@android:style/Widget.TextView">

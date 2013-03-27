@@ -52,14 +52,14 @@
 
             <ImageView
                 android:id="@+id/afc_button_go_back"
-                style="@style/afc_button_navi_left"
+                style="@style/afc_action_navi_left"
                 android:layout_marginTop="0dp"
                 android:contentDescription="@string/afc_hint_newer"
                 android:enabled="false" />
 
             <ImageView
                 android:id="@+id/afc_button_go_forward"
-                style="@style/afc_button_navi_right"
+                style="@style/afc_action_navi_right"
                 android:layout_marginTop="0dp"
                 android:contentDescription="@string/afc_hint_older"
                 android:enabled="false" />
