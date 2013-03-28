@@ -1195,8 +1195,7 @@ public class FileChooserActivity extends FragmentActivity implements
             v.setOnClickListener(listener);
             if (i == btnCurrentSortTypeIdx) {
                 v.setEnabled(false);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
-                        && v instanceof Button)
+                if (v instanceof Button)
                     ((Button) v).setText(R.string.afc_bullet);
             }
         }
