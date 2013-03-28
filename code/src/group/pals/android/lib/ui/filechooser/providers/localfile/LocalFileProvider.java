@@ -32,6 +32,7 @@ import android.database.MatrixCursor;
 import android.database.MatrixCursor.RowBuilder;
 import android.net.Uri;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 
@@ -750,8 +751,11 @@ public class LocalFileProvider extends BaseFileProvider {
                 return null;
         }
 
-        if (target.getAbsolutePath().startsWith(source.getAbsolutePath()))
+        if (!TextUtils.isEmpty(target.getParent())
+                && (source.equals(target.getParentFile()) || target.getParent()
+                        .startsWith(source.getAbsolutePath())))
             return new MatrixCursor(new String[0]);
+
         return null;
     }// doCheckAncestor()
 

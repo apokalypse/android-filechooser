@@ -681,10 +681,12 @@ public class FileChooserActivity extends FragmentActivity implements
                                         if (uri == getLastLocation()) {
                                             if (data.getInt(data
                                                     .getColumnIndex(BaseFile._ColumnType)) == BaseFile._FileTypeDirectory) {
-                                                if (BaseFileProviderUtils
-                                                        .isAncestorOf(
-                                                                FileChooserActivity.this,
-                                                                subUri, uri)) {
+                                                if (subUri.equals(uri)
+                                                        || BaseFileProviderUtils
+                                                                .isAncestorOf(
+                                                                        FileChooserActivity.this,
+                                                                        subUri,
+                                                                        uri)) {
                                                     shouldBeSelectedIdx = Math.max(
                                                             0,
                                                             data.getPosition() - 2);
