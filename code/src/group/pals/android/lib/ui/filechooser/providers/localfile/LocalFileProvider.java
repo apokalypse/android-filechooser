@@ -618,35 +618,38 @@ public class LocalFileProvider extends BaseFileProvider {
                     if (_MapInterruption.get(taskId))
                         throw new CancellationException();
 
-                    if ((lhs.isDirectory() && rhs.isDirectory())
-                            || (lhs.isFile() && rhs.isFile())) {
-                        // default is to compare by name (case insensitive)
-                        int res = mCollator.compare(lhs.getName(),
-                                rhs.getName());
+                    if (lhs.isDirectory() && !rhs.isDirectory())
+                        return -1;
+                    if (!lhs.isDirectory() && rhs.isDirectory())
+                        return 1;
 
-                        switch (sortBy) {
-                        case BaseFile._SortByName:
-                            break;// SortByName
+                    // default is to compare by name (case insensitive)
+                    int res = mCollator.compare(lhs.getName(), rhs.getName());
 
-                        case BaseFile._SortBySize:
-                            if (lhs.length() > rhs.length())
-                                res = 1;
-                            else if (lhs.length() < rhs.length())
-                                res = -1;
-                            break;// SortBySize
+                    switch (sortBy) {
+                    case BaseFile._SortByName:
+                        break;// SortByName
 
-                        case BaseFile._SortByModificationTime:
-                            if (lhs.lastModified() > rhs.lastModified())
-                                res = 1;
-                            else if (lhs.lastModified() < rhs.lastModified())
-                                res = -1;
-                            break;// SortByDate
-                        }
+                    case BaseFile._SortBySize:
+                        if (lhs.length() > rhs.length())
+                            res = 1;
+                        else if (lhs.length() < rhs.length())
+                            res = -1;
+                        else
+                            res = 0;
+                        break;// SortBySize
 
-                        return ascending ? res : -res;
+                    case BaseFile._SortByModificationTime:
+                        if (lhs.lastModified() > rhs.lastModified())
+                            res = 1;
+                        else if (lhs.lastModified() < rhs.lastModified())
+                            res = -1;
+                        else
+                            res = 0;
+                        break;// SortByDate
                     }
 
-                    return lhs.isDirectory() ? -1 : 1;
+                    return ascending ? res : -res;
                 }// compare()
             });
         } catch (CancellationException e) {
