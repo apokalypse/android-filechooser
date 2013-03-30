@@ -78,7 +78,7 @@ public class ProviderUtils {
                 || "0".equalsIgnoreCase(param))
             return false;
         return true;
-    }// getLongQueryParam()
+    }// getBooleanQueryParam()
 
     /**
      * Gets boolean parameter.
@@ -88,7 +88,7 @@ public class ProviderUtils {
      * @param key
      *            the key of query parameter.
      * @param defaultValue
-     *            the default value if the parameter dies not exist.
+     *            the default value if the parameter does not exist.
      * @return {@code defaultValue} if the parameter does not exist, or it is
      *         either {@code "false"} or {@code "0"}. {@code true} otherwise.
      */
@@ -97,8 +97,8 @@ public class ProviderUtils {
         String param = uri.getQueryParameter(key);
         if (param == null)
             return defaultValue;
-        if ("false".equalsIgnoreCase(param) || "0".equalsIgnoreCase(param))
+        if (param.matches("(?i)false|(0+)"))
             return false;
         return true;
-    }// getLongQueryParam()
+    }// getBooleanQueryParam()
 }
