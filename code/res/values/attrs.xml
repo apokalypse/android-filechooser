@@ -51,5 +51,7 @@
     <attr name="afc_selector_button_ok_saveas" format="reference" />
     <attr name="afc_selector_action_navi_left_foreground" format="reference" />
     <attr name="afc_selector_action_navi_right_foreground" format="reference" />
+    <attr name="afc_button_bar_style" format="reference" />
+    <attr name="afc_button_bar_button_style" format="reference" />
 
 </resources>

@@ -27,6 +27,8 @@
         <item name="afc_ic_button_sort_by_name_desc">@drawable/afc_ic_menu_sort_by_name_desc_light</item>
         <item name="afc_ic_button_sort_by_size_asc">@drawable/afc_ic_menu_sort_by_size_asc_light</item>
         <item name="afc_ic_button_sort_by_size_desc">@drawable/afc_ic_menu_sort_by_size_desc_light</item>
+        <item name="afc_button_bar_style">?android:attr/buttonBarStyle</item>
+        <item name="afc_button_bar_button_style">?android:attr/buttonBarButtonStyle</item>
     </style>
 
     <style name="Afc.BaseTheme.Dialog.Dark" parent="@android:style/Theme.Holo.Dialog"></style>
@@ -48,6 +50,8 @@
         <item name="afc_ic_button_sort_by_name_desc">@drawable/afc_ic_menu_sort_by_name_desc_light</item>
         <item name="afc_ic_button_sort_by_size_asc">@drawable/afc_ic_menu_sort_by_size_asc_light</item>
         <item name="afc_ic_button_sort_by_size_desc">@drawable/afc_ic_menu_sort_by_size_desc_light</item>
+        <item name="afc_button_bar_style">?android:attr/buttonBarStyle</item>
+        <item name="afc_button_bar_button_style">?android:attr/buttonBarButtonStyle</item>
     </style>
 
     <style name="afc_base_button_location" parent="@android:style/Widget.Holo.TextView"></style>

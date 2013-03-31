@@ -158,6 +158,7 @@
 
         <LinearLayout
             android:id="@+id/afc_viewgroup_footer_container"
+            style="?attr/afc_button_bar_style"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -172,6 +173,7 @@
 
             <LinearLayout
                 android:id="@+id/afc_viewgroup_footer"
+                style="?attr/afc_button_bar_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -195,6 +197,7 @@
 
                 <Button
                     android:id="@+id/afc_button_ok"
+                    style="?attr/afc_button_bar_button_style"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"

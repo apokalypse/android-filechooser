@@ -35,6 +35,8 @@
         <item name="afc_ic_button_sort_by_name_desc">@drawable/afc_ic_menu_sort_by_name_desc</item>
         <item name="afc_ic_button_sort_by_size_asc">@drawable/afc_ic_menu_sort_by_size_asc</item>
         <item name="afc_ic_button_sort_by_size_desc">@drawable/afc_ic_menu_sort_by_size_desc</item>
+        <item name="afc_button_bar_style">@null</item>
+        <item name="afc_button_bar_button_style">@null</item>
     </style>
 
     <style name="Afc.BaseTheme.Dialog.Dark" parent="@android:style/Theme"></style>
@@ -73,6 +75,8 @@
         <item name="afc_ic_button_sort_by_name_desc">@drawable/afc_ic_menu_sort_by_name_desc</item>
         <item name="afc_ic_button_sort_by_size_asc">@drawable/afc_ic_menu_sort_by_size_asc</item>
         <item name="afc_ic_button_sort_by_size_desc">@drawable/afc_ic_menu_sort_by_size_desc</item>
+        <item name="afc_button_bar_style">@null</item>
+        <item name="afc_button_bar_button_style">@null</item>
     </style>
 
     <style name="Afc.Theme.Dark" parent="Afc.BaseThemeHelper.Dark">
