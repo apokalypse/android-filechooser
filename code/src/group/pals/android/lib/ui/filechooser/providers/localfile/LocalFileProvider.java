@@ -13,6 +13,7 @@ import group.pals.android.lib.ui.filechooser.providers.BaseFileProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.ProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileContract.BaseFile;
 import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileProvider;
+import group.pals.android.lib.ui.filechooser.utils.TextUtils;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -552,10 +553,8 @@ public class LocalFileProvider extends BaseFileProvider {
             final boolean showHiddenFiles, final int filterMode,
             final int limit, String positiveRegex, String negativeRegex,
             final List<File> results, final boolean hasMoreFiles[]) {
-        final Pattern positivePattern = group.pals.android.lib.ui.filechooser.utils.TextUtils
-                .compileRegex(positiveRegex);
-        final Pattern negativePattern = group.pals.android.lib.ui.filechooser.utils.TextUtils
-                .compileRegex(negativeRegex);
+        final Pattern positivePattern = TextUtils.compileRegex(positiveRegex);
+        final Pattern negativePattern = TextUtils.compileRegex(negativeRegex);
 
         hasMoreFiles[0] = false;
         try {
@@ -623,7 +622,9 @@ public class LocalFileProvider extends BaseFileProvider {
                     if (!lhs.isDirectory() && rhs.isDirectory())
                         return 1;
 
-                    // default is to compare by name (case insensitive)
+                    /*
+                     * Default is to compare by name (case insensitive).
+                     */
                     int res = mCollator.compare(lhs.getName(), rhs.getName());
 
                     switch (sortBy) {
@@ -635,8 +636,6 @@ public class LocalFileProvider extends BaseFileProvider {
                             res = 1;
                         else if (lhs.length() < rhs.length())
                             res = -1;
-                        else
-                            res = 0;
                         break;// SortBySize
 
                     case BaseFile._SortByModificationTime:
@@ -644,8 +643,6 @@ public class LocalFileProvider extends BaseFileProvider {
                             res = 1;
                         else if (lhs.lastModified() < rhs.lastModified())
                             res = -1;
-                        else
-                            res = 0;
                         break;// SortByDate
                     }
 
@@ -769,9 +766,6 @@ public class LocalFileProvider extends BaseFileProvider {
      * @return the file. Can be {@code null} if the authority is invalid.
      */
     private static File extractFile(Uri uri) {
-        if (!LocalFileContract._Authority.equals(uri.getAuthority()))
-            return null;
-
         String fileName = Uri.parse(uri.getLastPathSegment()).getPath();
         if (uri.getQueryParameter(BaseFile._ParamAppendPath) != null)
             fileName += Uri.parse(
