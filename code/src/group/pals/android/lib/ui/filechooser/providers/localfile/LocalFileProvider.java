@@ -13,6 +13,7 @@ import group.pals.android.lib.ui.filechooser.providers.BaseFileProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.ProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileContract.BaseFile;
 import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileProvider;
+import group.pals.android.lib.ui.filechooser.utils.FileUtils;
 import group.pals.android.lib.ui.filechooser.utils.TextUtils;
 
 import java.io.File;
@@ -320,6 +321,7 @@ public class LocalFileProvider extends BaseFileProvider {
             newRow.add(file.length());
             newRow.add(type);
             newRow.add(file.lastModified());
+            newRow.add(FileUtils.getResIcon(type, file.getName()));
         }// get default path
         else if (BaseFile._CmdIsAncestorOf.equals(uri.getLastPathSegment())) {
             return doCheckAncestor(uri);
@@ -350,6 +352,7 @@ public class LocalFileProvider extends BaseFileProvider {
             newRow.add(file.length());
             newRow.add(type);
             newRow.add(file.lastModified());
+            newRow.add(FileUtils.getResIcon(type, file.getName()));
         } else if (BaseFile._CmdShutdown.equals(uri.getLastPathSegment())) {
             /*
              * TODO Stop all tasks. If the activity call this command in
@@ -381,12 +384,12 @@ public class LocalFileProvider extends BaseFileProvider {
     private MatrixCursor doListFiles(Uri uri) {
         MatrixCursor matrixCursor = BaseFileProviderUtils.newBaseFileCursor();
 
-        File file = extractFile(uri);
+        File dir = extractFile(uri);
 
         if (BuildConfig.DEBUG)
-            Log.d(_ClassName, "srcFile = " + file);
+            Log.d(_ClassName, "srcFile = " + dir);
 
-        if (!file.isDirectory() || !file.canRead())
+        if (!dir.isDirectory() || !dir.canRead())
             return null;
 
         /*
@@ -413,7 +416,7 @@ public class LocalFileProvider extends BaseFileProvider {
 
         boolean[] hasMoreFiles = { false };
         List<File> files = new ArrayList<File>();
-        listFiles(taskId, file, showHiddenFiles, filterMode, limit,
+        listFiles(taskId, dir, showHiddenFiles, filterMode, limit,
                 positiveRegex, negativeRegex, files, hasMoreFiles);
         if (!_MapInterruption.get(taskId)) {
             sortFiles(taskId, files, sortAscending, sortBy);
@@ -439,6 +442,7 @@ public class LocalFileProvider extends BaseFileProvider {
                     newRow.add(f.length());
                     newRow.add(type);
                     newRow.add(f.lastModified());
+                    newRow.add(FileUtils.getResIcon(type, f.getName()));
                 }// for files
 
                 /*
@@ -459,12 +463,12 @@ public class LocalFileProvider extends BaseFileProvider {
                 newRow.add(BaseFile
                         .genContentIdUriBase(LocalFileContract._Authority)
                         .buildUpon()
-                        .appendPath(Uri.fromFile(file).toString())
+                        .appendPath(Uri.fromFile(dir).toString())
                         .appendQueryParameter(BaseFile._ParamHasMoreFiles,
                                 Boolean.toString(hasMoreFiles[0])).build()
                         .toString());
-                newRow.add(file.getAbsolutePath());
-                newRow.add(file.getName());
+                newRow.add(dir.getAbsolutePath());
+                newRow.add(dir.getName());
             }
         }
 
@@ -481,7 +485,7 @@ public class LocalFileProvider extends BaseFileProvider {
         if (mFileObserverEx != null)
             mFileObserverEx.stopWatching();
         mFileObserverEx = new FileObserverEx(getContext(),
-                file.getAbsolutePath(), uri);
+                dir.getAbsolutePath(), uri);
         mFileObserverEx.startWatching();
 
         /*
@@ -520,6 +524,7 @@ public class LocalFileProvider extends BaseFileProvider {
         newRow.add(file.length());
         newRow.add(type);
         newRow.add(file.lastModified());
+        newRow.add(FileUtils.getResIcon(type, file.getName()));
 
         return matrixCursor;
     }// doRetrieveFileInfo()
@@ -753,7 +758,7 @@ public class LocalFileProvider extends BaseFileProvider {
         if (source.equals(target.getParentFile())
                 || (target.getParent() != null && target.getParent()
                         .startsWith(source.getAbsolutePath())))
-            return new MatrixCursor(new String[0]);
+            return BaseFileProviderUtils.newClosedCursor();
 
         return null;
     }// doCheckAncestor()

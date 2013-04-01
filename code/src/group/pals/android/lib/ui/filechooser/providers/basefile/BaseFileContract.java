@@ -12,7 +12,6 @@ import group.pals.android.lib.ui.filechooser.providers.ProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.localfile.FileObserverEx;
 import group.pals.android.lib.ui.filechooser.providers.localfile.LocalFileProvider;
 import android.content.ContentResolver;
-import android.database.Cursor;
 import android.net.Uri;
 
 /**
@@ -142,10 +141,9 @@ public class BaseFileContract {
         /**
          * Use this command along with two parameters: a source directory ID (
          * {@link #_ParamSource}) and a target file/ directory ID (
-         * {@link #_ParamTarget}). It will return a <i>non-null but empty</i>
-         * cursor if the given file is a directory and it is ancestor of the
-         * file provided by this parameter. Note that you also have to call
-         * {@link Cursor#close()} anyway.
+         * {@link #_ParamTarget}). It will return <i>a closed</i> cursor if the
+         * given file is a directory and it is ancestor of the file provided by
+         * this parameter.
          * <p>
          * If the given file is not a directory or is not ancestor of the file
          * provided by this parameter, the result will be {@code null}.
@@ -540,6 +538,14 @@ public class BaseFileContract {
          * </p>
          */
         public static final String _ColumnType = "type";
+
+        /**
+         * The resource ID of the file icon.
+         * <p>
+         * Type: {@code Integer}
+         * </p>
+         */
+        public static final String _ColumnIconId = "icon_id";
 
         /**
          * The name of this provider.

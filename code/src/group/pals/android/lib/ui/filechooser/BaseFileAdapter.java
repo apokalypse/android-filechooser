@@ -13,7 +13,6 @@ import group.pals.android.lib.ui.filechooser.providers.BaseFileProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileContract.BaseFile;
 import group.pals.android.lib.ui.filechooser.utils.Converter;
 import group.pals.android.lib.ui.filechooser.utils.DateUtils;
-import group.pals.android.lib.ui.filechooser.utils.FileUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.LoadingDialog;
 import group.pals.android.lib.ui.filechooser.utils.ui.Ui;
@@ -188,9 +187,8 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
         bag.mImageLockedSymbol.setVisibility(cursor.getInt(cursor
                 .getColumnIndex(BaseFile._ColumnCanRead)) > 0 ? View.GONE
                 : View.VISIBLE);
-        bag.mImageIcon.setImageResource(FileUtils.getResIcon(
-                cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnType)),
-                BaseFileProviderUtils.getFileName(cursor)));
+        bag.mImageIcon.setImageResource(cursor.getInt(cursor
+                .getColumnIndex(BaseFile._ColumnIconId)));
         bag.mImageIcon.setOnTouchListener(mImageIconOnTouchListener);
         bag.mImageIcon.setOnClickListener(BaseFileProviderUtils
                 .isDirectory(cursor) ? newImageIconOnClickListener(cursor

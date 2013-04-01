@@ -197,13 +197,14 @@ public class BaseFileProviderUtils {
      * <li>{@link BaseFile#_ColumnSize}</li>
      * <li>{@link BaseFile#_ColumnType}</li>
      * <li>{@link BaseFile#_ColumnModificationTime}</li>
+     * <li>{@link BaseFile#_ColumnIconId}</li>
      * </p>
      */
     public static final String[] _BaseFileCursorColumns = { BaseFile._ID,
             BaseFile._ColumnUri, BaseFile._ColumnPath, BaseFile._ColumnName,
             BaseFile._ColumnCanRead, BaseFile._ColumnCanWrite,
             BaseFile._ColumnSize, BaseFile._ColumnType,
-            BaseFile._ColumnModificationTime };
+            BaseFile._ColumnModificationTime, BaseFile._ColumnIconId };
 
     /**
      * Creates new cursor which hold default properties of a base file for
@@ -215,6 +216,17 @@ public class BaseFileProviderUtils {
     public static MatrixCursor newBaseFileCursor() {
         return new MatrixCursor(_BaseFileCursorColumns);
     }// newBaseFileCursor()
+
+    /**
+     * Creates new cursor, closes it and returns it ^^
+     * 
+     * @return the newly closed cursor.
+     */
+    public static MatrixCursor newClosedCursor() {
+        MatrixCursor cursor = new MatrixCursor(new String[0]);
+        cursor.close();
+        return cursor;
+    }// newClosedCursor()
 
     /**
      * Checks if {@code uri} is a directory.
@@ -578,7 +590,7 @@ public class BaseFileProviderUtils {
      *         {@code false} otherwise.
      */
     public static boolean isAncestorOf(Context context, Uri uri1, Uri uri2) {
-        Cursor cursor = context.getContentResolver().query(
+        return context.getContentResolver().query(
                 BaseFile.genContentUriApi(uri1.getAuthority())
                         .buildUpon()
                         .appendPath(BaseFile._CmdIsAncestorOf)
@@ -586,15 +598,7 @@ public class BaseFileProviderUtils {
                                 uri1.getLastPathSegment())
                         .appendQueryParameter(BaseFile._ParamTarget,
                                 uri2.getLastPathSegment()).build(), null, null,
-                null, null);
-        if (cursor == null)
-            return false;
-
-        try {
-            return true;
-        } finally {
-            cursor.close();
-        }
+                null, null) != null;
     }// isAncestorOf()
 
     /**
