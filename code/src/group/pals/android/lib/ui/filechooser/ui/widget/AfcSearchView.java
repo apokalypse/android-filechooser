@@ -350,6 +350,9 @@ public class AfcSearchView extends LinearLayout {
 
     @Override
     public void setEnabled(boolean enabled) {
+        if (isEnabled() == enabled)
+            return;
+
         for (View v : new View[] { mButtonSearch, mTextSearch, mButtonClear })
             v.setEnabled(enabled);
         super.setEnabled(enabled);

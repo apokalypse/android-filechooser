@@ -25,4 +25,13 @@
     <dimen name="afc_viewgroup_button_locations_bottom_divider_height">1dp</dimen>
     <dimen name="afc_view_history_sub_item_textview_time_min_width">65sp</dimen>
 
+    <!-- Dialog dimensions for large screens -->
+
+    <dimen name="afc_dialog_height_large_base">650dp</dimen>
+    <dimen name="afc_dialog_width_large_base">550dp</dimen>
+    <dimen name="afc_dialog_height_large_land_base">450dp</dimen>
+    <dimen name="afc_dialog_width_large_land_base">550dp</dimen>
+    <dimen name="afc_dialog_height_xlarge_land_base">650dp</dimen>
+    <dimen name="afc_dialog_width_xlarge_land_base">550dp</dimen>
+
 </resources>

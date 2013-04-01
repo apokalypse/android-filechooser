@@ -25,6 +25,7 @@ import java.util.List;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -166,6 +167,8 @@ public class HistoryFragment extends DialogFragment implements
         dialog.setContentView(initContentView(dialog.getLayoutInflater(), null));
         dialog.setOnKeyListener(mDialogOnKeyListener);
 
+        Ui.adjustDialogSizeForLargeScreen(dialog);
+
         return dialog;
     }// onCreateDialog()
 
@@ -189,6 +192,12 @@ public class HistoryFragment extends DialogFragment implements
         getLoaderManager().initLoader(mLoaderIdHistoryCounter, null, this);
         getLoaderManager().initLoader(mLoaderIdHistoryData, null, this);
     }// onActivityCreated()
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Ui.adjustDialogSizeForLargeScreen(getDialog());
+    }// onConfigurationChanged()
 
     /*
      * LOADERMANAGER.LOADERCALLBACKS
@@ -253,6 +262,8 @@ public class HistoryFragment extends DialogFragment implements
             Log.d(_ClassName, "onLoadFinished() -- data = " + data);
 
         if (loader.getId() == mLoaderIdHistoryData) {
+            mSearchView.setEnabled(true);
+
             mHistoryCursorAdapter.changeCursor(data);
 
             for (int i = 0; i < mHistoryCursorAdapter.getGroupCount(); i++)
@@ -434,7 +445,11 @@ public class HistoryFragment extends DialogFragment implements
      *            {@code true} or {@code false}.
      */
     private void enableControls(boolean enabled) {
-        mSearchView.setEnabled(enabled);
+        /*
+         * If the user is typing, disabling search view will turn off the
+         * keyboard. So don't do that.
+         */
+        // mSearchView.setEnabled(enabled);
 
         for (View v : new View[] { mBtnNext, mBtnPrev }) {
             v.setOnClickListener(enabled ? mBtnNextPrevOnClickListener : null);
@@ -571,7 +586,8 @@ public class HistoryFragment extends DialogFragment implements
                 return;
 
             try {
-                mHistoryCursorAdapter.setSearchText(query);
+                mHistoryCursorAdapter.setSearchText(query != null ? query
+                        .trim() : null);
                 /*
                  * Sets total item count to -1, then restarts the counter, it
                  * will restart the data loader.

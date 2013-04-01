@@ -7,11 +7,14 @@
 
 package group.pals.android.lib.ui.filechooser.utils.ui;
 
+import group.pals.android.lib.ui.filechooser.R;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Paint;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
@@ -86,4 +89,34 @@ public class Ui {
             return typedValue.resourceId;
         return 0;
     }// resolveAttribute()
+
+    /**
+     * Uses a fixed size for {@code dialog} in large screens.
+     * 
+     * @param dialog
+     *            the dialog.
+     */
+    public static void adjustDialogSizeForLargeScreen(Dialog dialog) {
+        adjustDialogSizeForLargeScreen(dialog.getWindow());
+    }// adjustDialogSizeForLargeScreen()
+
+    /**
+     * Uses a fixed size for {@code window} in large screens.
+     * 
+     * @param window
+     *            the window.
+     */
+    public static void adjustDialogSizeForLargeScreen(Window window) {
+        if (window.getContext().getResources()
+                .getBoolean(R.bool.afc_is_large_screen))
+            window.setLayout(
+                    window.getContext()
+                            .getResources()
+                            .getDimensionPixelSize(
+                                    R.dimen.afc_dialog_width_large),
+                    window.getContext()
+                            .getResources()
+                            .getDimensionPixelSize(
+                                    R.dimen.afc_dialog_height_large));
+    }// adjustDialogSizeForLargeScreen()
 }
