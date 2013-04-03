@@ -22,6 +22,7 @@
             <groupId>android.support</groupId>
             <artifactId>compatibility-v13</artifactId>
             <version>12</version>
+	    <scope>provided</scope>
         </dependency>
     </dependencies>
   
