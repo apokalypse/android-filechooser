@@ -37,7 +37,8 @@ public class Prefs {
      * @return the global preference filename.
      */
     public static final String genPreferenceFilename(Context context) {
-        return String.format("%s_%s", context.getString(R.string.afc_lib_name), _Uid);
+        return String.format("%s_%s", context.getString(R.string.afc_lib_name),
+                _Uid);
     }
 
     /**
@@ -50,7 +51,8 @@ public class Prefs {
      * @return the global database filename.
      */
     public static final String genDatabaseFilename(Context context, String name) {
-        return String.format("%s_%s_%s", context.getString(R.string.afc_lib_name), _Uid, name);
+        return String.format("%s_%s_%s",
+                context.getString(R.string.afc_lib_name), _Uid, name);
     }
 
     /**
@@ -62,8 +64,8 @@ public class Prefs {
      */
     public static SharedPreferences p(Context context) {
         // always use application context
-        return context.getApplicationContext().getSharedPreferences(genPreferenceFilename(context),
-                Context.MODE_MULTI_PROCESS);
+        return context.getApplicationContext().getSharedPreferences(
+                genPreferenceFilename(context), Context.MODE_MULTI_PROCESS);
     }
 
     /**

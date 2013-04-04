@@ -14,14 +14,14 @@
     android:orientation="horizontal" >
 
     <ProgressBar
-        android:id="@+id/afc_view_loading_progress_bar"
+        android:id="@+id/afc_progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:indeterminateOnly="true" />
 
     <TextView
-        android:id="@+id/afc_view_loading_textview"
+        android:id="@+id/afc_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"

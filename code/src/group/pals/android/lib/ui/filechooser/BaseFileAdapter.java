@@ -13,10 +13,9 @@ import group.pals.android.lib.ui.filechooser.providers.BaseFileProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileContract.BaseFile;
 import group.pals.android.lib.ui.filechooser.utils.Converter;
 import group.pals.android.lib.ui.filechooser.utils.DateUtils;
-import group.pals.android.lib.ui.filechooser.utils.FileUtils;
-import group.pals.android.lib.ui.filechooser.utils.Ui;
 import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
 import group.pals.android.lib.ui.filechooser.utils.ui.LoadingDialog;
+import group.pals.android.lib.ui.filechooser.utils.ui.Ui;
 
 import java.util.ArrayList;
 
@@ -77,24 +76,31 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
     private boolean mMultiSelection;
     private OnBuildOptionsMenuListener mOnBuildOptionsMenuListener;
 
-    public BaseFileAdapter(Context context, int filterMode, boolean multiSelection) {
+    public BaseFileAdapter(Context context, int filterMode,
+            boolean multiSelection) {
         super(context, R.layout.afc_file_item, null, 0);
         mFilterMode = filterMode;
         mMultiSelection = multiSelection;
 
         switch (mFilterMode) {
         case BaseFile._FilterFilesAndDirectories:
-            mAdvancedSelectionOptions = new Integer[] { R.string.afc_cmd_advanced_selection_all,
-                    R.string.afc_cmd_advanced_selection_none, R.string.afc_cmd_advanced_selection_invert,
-                    R.string.afc_cmd_select_all_files, R.string.afc_cmd_select_all_folders };
+            mAdvancedSelectionOptions = new Integer[] {
+                    R.string.afc_cmd_advanced_selection_all,
+                    R.string.afc_cmd_advanced_selection_none,
+                    R.string.afc_cmd_advanced_selection_invert,
+                    R.string.afc_cmd_select_all_files,
+                    R.string.afc_cmd_select_all_folders };
             break;// _FilterFilesAndDirectories
         default:
-            mAdvancedSelectionOptions = new Integer[] { R.string.afc_cmd_advanced_selection_all,
-                    R.string.afc_cmd_advanced_selection_none, R.string.afc_cmd_advanced_selection_invert };
+            mAdvancedSelectionOptions = new Integer[] {
+                    R.string.afc_cmd_advanced_selection_all,
+                    R.string.afc_cmd_advanced_selection_none,
+                    R.string.afc_cmd_advanced_selection_invert };
             break;// _FilterDirectoriesOnly and _FilterFilesOnly
         }
 
-        mFileTimeDisplay = new FileTimeDisplay(DisplayPrefs.isShowTimeForOldDaysThisYear(context),
+        mFileTimeDisplay = new FileTimeDisplay(
+                DisplayPrefs.isShowTimeForOldDaysThisYear(context),
                 DisplayPrefs.isShowTimeForOldDays(context));
     }// BaseFileAdapter()
 
@@ -141,25 +147,30 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
 
         if (bag == null) {
             bag = new Bag();
-            bag.mImageIcon = (ImageView) view.findViewById(R.id.afc_file_item_imageview_icon);
-            bag.mImageLockedSymbol = (ImageView) view.findViewById(R.id.afc_file_item_imageview_locked_symbol);
-            bag.mTxtFileName = (TextView) view.findViewById(R.id.afc_file_item_textview_filename);
-            bag.mTxtFileInfo = (TextView) view.findViewById(R.id.afc_file_item_textview_file_info);
-            bag.mCheckboxSelection = (CheckBox) view.findViewById(R.id.afc_file_item_checkbox_selection);
+            bag.mImageIcon = (ImageView) view
+                    .findViewById(R.id.afc_imageview_icon);
+            bag.mImageLockedSymbol = (ImageView) view
+                    .findViewById(R.id.afc_imageview_locked_symbol);
+            bag.mTxtFileName = (TextView) view
+                    .findViewById(R.id.afc_textview_filename);
+            bag.mTxtFileInfo = (TextView) view
+                    .findViewById(R.id.afc_textview_file_info);
+            bag.mCheckboxSelection = (CheckBox) view
+                    .findViewById(R.id.afc_checkbox_selection);
 
             view.setTag(bag);
         }
 
-        final int _id = cursor.getInt(cursor.getColumnIndex(BaseFile._ID));
-        final Uri _uri = BaseFileProviderUtils.getUri(cursor);
+        final int id = cursor.getInt(cursor.getColumnIndex(BaseFile._ID));
+        final Uri uri = BaseFileProviderUtils.getUri(cursor);
 
-        final BagInfo _bagInfo;
-        if (mSelectedChildrenMap.get(_id) == null) {
-            _bagInfo = new BagInfo();
-            _bagInfo.mUri = _uri;
-            mSelectedChildrenMap.put(_id, _bagInfo);
+        final BagInfo bagInfo;
+        if (mSelectedChildrenMap.get(id) == null) {
+            bagInfo = new BagInfo();
+            bagInfo.mUri = uri;
+            mSelectedChildrenMap.put(id, bagInfo);
         } else
-            _bagInfo = mSelectedChildrenMap.get(_id);
+            bagInfo = mSelectedChildrenMap.get(id);
 
         /*
          * Update views.
@@ -173,30 +184,32 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
         /*
          * File icon.
          */
-        bag.mImageLockedSymbol
-                .setVisibility(cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnCanRead)) > 0 ? View.GONE
-                        : View.VISIBLE);
-        bag.mImageIcon.setImageResource(FileUtils.getResIcon(
-                cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnType)), BaseFileProviderUtils.getFileName(cursor)));
+        bag.mImageLockedSymbol.setVisibility(cursor.getInt(cursor
+                .getColumnIndex(BaseFile._ColumnCanRead)) > 0 ? View.GONE
+                : View.VISIBLE);
+        bag.mImageIcon.setImageResource(cursor.getInt(cursor
+                .getColumnIndex(BaseFile._ColumnIconId)));
         bag.mImageIcon.setOnTouchListener(mImageIconOnTouchListener);
-        bag.mImageIcon
-                .setOnClickListener(BaseFileProviderUtils.isDirectory(cursor) ? newImageIconOnClickListener(cursor
-                        .getPosition()) : null);
+        bag.mImageIcon.setOnClickListener(BaseFileProviderUtils
+                .isDirectory(cursor) ? newImageIconOnClickListener(cursor
+                .getPosition()) : null);
 
         /*
          * Filename.
          */
         bag.mTxtFileName.setText(BaseFileProviderUtils.getFileName(cursor));
-        Ui.strikeOutText(bag.mTxtFileName, _bagInfo.mMarkedAsDeleted);
+        Ui.strikeOutText(bag.mTxtFileName, bagInfo.mMarkedAsDeleted);
 
         /*
          * File info.
          */
-        String time = DateUtils.formatDate(context,
-                cursor.getLong(cursor.getColumnIndex(BaseFile._ColumnModificationTime)), mFileTimeDisplay);
+        String time = DateUtils.formatDate(context, cursor.getLong(cursor
+                .getColumnIndex(BaseFile._ColumnModificationTime)),
+                mFileTimeDisplay);
         if (BaseFileProviderUtils.isFile(cursor))
-            bag.mTxtFileInfo.setText(String.format("%s, %s",
-                    Converter.sizeToStr(cursor.getLong(cursor.getColumnIndex(BaseFile._ColumnSize))), time));
+            bag.mTxtFileInfo.setText(String.format("%s, %s", Converter
+                    .sizeToStr(cursor.getLong(cursor
+                            .getColumnIndex(BaseFile._ColumnSize))), time));
         else
             bag.mTxtFileInfo.setText(time);
 
@@ -204,22 +217,26 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
          * Check box.
          */
         if (mMultiSelection) {
-            if (mFilterMode == BaseFile._FilterFilesOnly && BaseFileProviderUtils.isDirectory(cursor)) {
+            if (mFilterMode == BaseFile._FilterFilesOnly
+                    && BaseFileProviderUtils.isDirectory(cursor)) {
                 bag.mCheckboxSelection.setVisibility(View.GONE);
             } else {
                 bag.mCheckboxSelection.setVisibility(View.VISIBLE);
 
                 bag.mCheckboxSelection.setOnCheckedChangeListener(null);
-                bag.mCheckboxSelection.setChecked(_bagInfo.mChecked);
-                bag.mCheckboxSelection.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                bag.mCheckboxSelection.setChecked(bagInfo.mChecked);
+                bag.mCheckboxSelection
+                        .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        _bagInfo.mChecked = isChecked;
-                    }// onCheckedChanged()
-                });
+                            @Override
+                            public void onCheckedChanged(
+                                    CompoundButton buttonView, boolean isChecked) {
+                                bagInfo.mChecked = isChecked;
+                            }// onCheckedChanged()
+                        });
 
-                bag.mCheckboxSelection.setOnLongClickListener(mCheckboxSelectionOnLongClickListener);
+                bag.mCheckboxSelection
+                        .setOnLongClickListener(mCheckboxSelectionOnLongClickListener);
             }
         } else
             bag.mCheckboxSelection.setVisibility(View.GONE);
@@ -280,16 +297,17 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
         for (int i = 0; i < count; i++) {
             Cursor cursor = (Cursor) getItem(i);
 
-            int fileType = cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnType));
+            int fileType = cursor.getInt(cursor
+                    .getColumnIndex(BaseFile._ColumnType));
             if ((mFilterMode == BaseFile._FilterDirectoriesOnly && fileType == BaseFile._FileTypeFile)
                     || (mFilterMode == BaseFile._FilterFilesOnly && fileType == BaseFile._FileTypeDirectory))
                 continue;
 
-            final int _id = cursor.getInt(cursor.getColumnIndex(BaseFile._ID));
-            BagInfo b = mSelectedChildrenMap.get(_id);
+            final int id = cursor.getInt(cursor.getColumnIndex(BaseFile._ID));
+            BagInfo b = mSelectedChildrenMap.get(id);
             if (b == null) {
                 b = new BagInfo();
-                mSelectedChildrenMap.put(_id, b);
+                mSelectedChildrenMap.put(id, b);
             }
             b.mChecked = selected;
         }// for i
@@ -316,16 +334,17 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
         for (int i = 0; i < count; i++) {
             Cursor cursor = (Cursor) getItem(i);
 
-            int fileType = cursor.getInt(cursor.getColumnIndex(BaseFile._ColumnType));
+            int fileType = cursor.getInt(cursor
+                    .getColumnIndex(BaseFile._ColumnType));
             if ((mFilterMode == BaseFile._FilterDirectoriesOnly && fileType == BaseFile._FileTypeFile)
                     || (mFilterMode == BaseFile._FilterFilesOnly && fileType == BaseFile._FileTypeDirectory))
                 continue;
 
-            final int _id = cursor.getInt(cursor.getColumnIndex(BaseFile._ID));
-            BagInfo b = mSelectedChildrenMap.get(_id);
+            final int id = cursor.getInt(cursor.getColumnIndex(BaseFile._ID));
+            BagInfo b = mSelectedChildrenMap.get(id);
             if (b == null) {
                 b = new BagInfo();
-                mSelectedChildrenMap.put(_id, b);
+                mSelectedChildrenMap.put(id, b);
             }
             b.mChecked = !b.mChecked;
         }// for i
@@ -349,7 +368,8 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
      */
     public boolean isSelected(int id) {
         synchronized (mSelectedChildrenMap) {
-            return mSelectedChildrenMap.get(id) != null ? mSelectedChildrenMap.get(id).mChecked : false;
+            return mSelectedChildrenMap.get(id) != null ? mSelectedChildrenMap
+                    .get(id).mChecked : false;
         }
     }// isSelected()
 
@@ -364,7 +384,8 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
         synchronized (mSelectedChildrenMap) {
             for (int i = 0; i < mSelectedChildrenMap.size(); i++)
                 if (mSelectedChildrenMap.get(mSelectedChildrenMap.keyAt(i)).mChecked)
-                    res.add(mSelectedChildrenMap.get(mSelectedChildrenMap.keyAt(i)).mUri);
+                    res.add(mSelectedChildrenMap.get(mSelectedChildrenMap
+                            .keyAt(i)).mUri);
         }
 
         return res;
@@ -419,11 +440,13 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             if (BuildConfig.DEBUG)
-                Log.d(_ClassName, "mImageIconOnTouchListener.onTouch() >> ACTION = " + event.getAction());
+                Log.d(_ClassName,
+                        "mImageIconOnTouchListener.onTouch() >> ACTION = "
+                                + event.getAction());
 
             switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                v.setBackgroundResource(R.drawable.afc_button_sort_symbol_dark_pressed);
+                v.setBackgroundResource(R.drawable.afc_image_button_dark_pressed);
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
@@ -441,13 +464,15 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
      *            the cursor position.
      * @return the listener.
      */
-    private View.OnClickListener newImageIconOnClickListener(final int cursorPosition) {
+    private View.OnClickListener newImageIconOnClickListener(
+            final int cursorPosition) {
         return new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 if (getOnBuildOptionsMenuListener() != null)
-                    getOnBuildOptionsMenuListener().onBuildOptionsMenu(v, (Cursor) getItem(cursorPosition));
+                    getOnBuildOptionsMenuListener().onBuildOptionsMenu(v,
+                            (Cursor) getItem(cursorPosition));
             }// onClick()
         };
     }// newImageIconOnClickListener()
@@ -456,12 +481,15 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
 
         @Override
         public boolean onLongClick(final View v) {
-            ContextMenuUtils.showContextMenu(v.getContext(), 0, R.string.afc_title_advanced_selection,
-                    mAdvancedSelectionOptions, new ContextMenuUtils.OnMenuItemClickListener() {
+            ContextMenuUtils.showContextMenu(v.getContext(), 0,
+                    R.string.afc_title_advanced_selection,
+                    mAdvancedSelectionOptions,
+                    new ContextMenuUtils.OnMenuItemClickListener() {
 
                         @Override
                         public void onClick(final int resId) {
-                            new LoadingDialog(v.getContext(), R.string.afc_msg_loading, false) {
+                            new LoadingDialog(v.getContext(),
+                                    R.string.afc_msg_loading, false) {
 
                                 @Override
                                 protected Object doInBackground(Void... params) {

@@ -9,7 +9,7 @@ package group.pals.android.lib.ui.filechooser.ui.widget;
 
 import group.pals.android.lib.ui.filechooser.BuildConfig;
 import group.pals.android.lib.ui.filechooser.R;
-import group.pals.android.lib.ui.filechooser.utils.Ui;
+import group.pals.android.lib.ui.filechooser.utils.ui.Ui;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Handler;
@@ -118,7 +118,8 @@ public class AfcSearchView extends LinearLayout {
          * LOADS LAYOUTS
          */
 
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.afc_widget_search_view, this, true);
 
         mButtonSearch = findViewById(R.id.afc_widget_search_view_button_search);
@@ -132,17 +133,21 @@ public class AfcSearchView extends LinearLayout {
         mButtonSearch.setOnClickListener(mButtonSearchOnClickListener);
         mTextSearch.addTextChangedListener(mTextSearchTextWatcher);
         mTextSearch.setOnKeyListener(mTextSearchOnKeyListener);
-        mTextSearch.setOnEditorActionListener(mTextSearchOnEditorActionListener);
+        mTextSearch
+                .setOnEditorActionListener(mTextSearchOnEditorActionListener);
         mButtonClear.setOnClickListener(mButtonClearOnClickListener);
 
         /*
          * LOADS ATTRIBUTES
          */
 
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.AfcSearchView);
+        TypedArray a = context.obtainStyledAttributes(attrs,
+                R.styleable.AfcSearchView);
 
-        setDelayTimeSubmission(a.getInt(R.styleable.AfcSearchView_delayTimeSubmission, 0));
-        updateViewsVisibility(a.getBoolean(R.styleable.AfcSearchView_iconified, true));
+        setDelayTimeSubmission(a.getInt(
+                R.styleable.AfcSearchView_delayTimeSubmission, 0));
+        updateViewsVisibility(
+                a.getBoolean(R.styleable.AfcSearchView_iconified, true), false);
         setClosable(a.getBoolean(R.styleable.AfcSearchView_closable, true));
         setEnabled(a.getBoolean(R.styleable.AfcSearchView_enabled, true));
         mTextSearch.setHint(a.getString(R.styleable.AfcSearchView_hint));
@@ -205,9 +210,13 @@ public class AfcSearchView extends LinearLayout {
      * 
      * @param collapsed
      *            {@code true} or {@code false}.
+     * @param showSoftKeyboard
+     *            set to {@code true} if you want to force show the soft
+     *            keyboard in <i>expanded</i> state.
      * @see #isIconified()
      */
-    protected void updateViewsVisibility(boolean collapsed) {
+    protected void updateViewsVisibility(boolean collapsed,
+            boolean showSoftKeyboard) {
         if (BuildConfig.DEBUG)
             Log.d(_ClassName, "updateViewsVisibility() >> " + collapsed);
 
@@ -239,13 +248,15 @@ public class AfcSearchView extends LinearLayout {
             setEnabled(false);
             Ui.showSoftKeyboard(mTextSearch, false);
         } else {
-            mTextSearch.setFocusable(true);
-            mTextSearch.setFocusableInTouchMode(true);
-            mTextSearch.requestFocus();
-
             mTextSearch.addTextChangedListener(mTextSearchTextWatcher);
 
-            Ui.showSoftKeyboard(mTextSearch, true);
+            mTextSearch.setFocusable(true);
+            mTextSearch.setFocusableInTouchMode(true);
+
+            if (showSoftKeyboard) {
+                mTextSearch.requestFocus();
+                Ui.showSoftKeyboard(mTextSearch, true);
+            }
             setEnabled(true);
         }
     }// updateViewsVisibility()
@@ -260,7 +271,7 @@ public class AfcSearchView extends LinearLayout {
      */
     public void close() {
         if (isClosable() && !isIconified())
-            updateViewsVisibility(true);
+            updateViewsVisibility(true, true);
     }// close()
 
     /**
@@ -271,7 +282,7 @@ public class AfcSearchView extends LinearLayout {
      */
     public void open() {
         if (isIconified())
-            updateViewsVisibility(false);
+            updateViewsVisibility(false, true);
     }// open()
 
     /**
@@ -339,6 +350,9 @@ public class AfcSearchView extends LinearLayout {
 
     @Override
     public void setEnabled(boolean enabled) {
+        if (isEnabled() == enabled)
+            return;
+
         for (View v : new View[] { mButtonSearch, mTextSearch, mButtonClear })
             v.setEnabled(enabled);
         super.setEnabled(enabled);
@@ -353,12 +367,13 @@ public class AfcSearchView extends LinearLayout {
         @Override
         public void onClick(View v) {
             if (isIconified()) {
-                updateViewsVisibility(false);
+                updateViewsVisibility(false, false);
             } else {
                 mAutoSubmissionHandler.removeCallbacksAndMessages(null);
 
                 if (getOnQueryTextListener() != null)
-                    getOnQueryTextListener().onQueryTextSubmit(mTextSearch.getText().toString());
+                    getOnQueryTextListener().onQueryTextSubmit(
+                            mTextSearch.getText().toString());
                 mSearchText = mTextSearch.getText();
             }
         }// onClick()
@@ -379,12 +394,14 @@ public class AfcSearchView extends LinearLayout {
     private final TextWatcher mTextSearchTextWatcher = new TextWatcher() {
 
         @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        public void onTextChanged(CharSequence s, int start, int before,
+                int count) {
             //
         }// onTextChanged()
 
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        public void beforeTextChanged(CharSequence s, int start, int count,
+                int after) {
             if (BuildConfig.DEBUG)
                 Log.d(_ClassName, "beforeTextChanged()");
             mAutoSubmissionHandler.removeCallbacksAndMessages(null);
@@ -393,7 +410,9 @@ public class AfcSearchView extends LinearLayout {
         @Override
         public void afterTextChanged(Editable s) {
             if (BuildConfig.DEBUG)
-                Log.d(_ClassName, "afterTextChanged() >>> delayTimeSubmission = " + getDelayTimeSubmission());
+                Log.d(_ClassName,
+                        "afterTextChanged() >>> delayTimeSubmission = "
+                                + getDelayTimeSubmission());
 
             if (TextUtils.isEmpty(mTextSearch.getText())) {
                 if (!isClosable())
@@ -402,7 +421,8 @@ public class AfcSearchView extends LinearLayout {
                 mButtonClear.setVisibility(VISIBLE);
 
             if (getDelayTimeSubmission() > 0)
-                mAutoSubmissionHandler.postDelayed(mAutoSubmissionRunnable, getDelayTimeSubmission());
+                mAutoSubmissionHandler.postDelayed(mAutoSubmissionRunnable,
+                        getDelayTimeSubmission());
         }// afterTextChanged()
     };// mTextSearchTextWatcher
 

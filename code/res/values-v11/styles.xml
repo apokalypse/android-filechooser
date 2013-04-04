@@ -8,20 +8,52 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="afc_button_location" parent="@android:style/Widget.Holo.TextView">
-        <item name="android:textColor">#ffffff</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:layout_gravity">center_vertical</item>
-        <item name="android:background">@drawable/afc_selector_button_location_dark</item>
-        <item name="android:layout_margin">@dimen/afc_5dp</item>
-        <item name="android:ellipsize">end</item>
-        <item name="android:maxWidth">@dimen/afc_button_location_max_width</item>
-        <item name="android:minWidth">@dimen/afc_button_location_min_width</item>
-        <item name="android:padding">@dimen/afc_5dp</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+    <style name="Afc.BaseTheme.Dark" parent="@android:style/Theme.Holo"></style>
+
+    <style name="Afc.BaseThemeHelper.Dark" parent="Afc.BaseTheme.Dark">
+        <item name="afc_ic_menu_bookmarks">@drawable/afc_ic_menu_bookmarks_light</item>
+        <item name="afc_ic_menu_home">@drawable/afc_ic_menu_home_light</item>
+        <item name="afc_ic_menu_gridview">@drawable/afc_ic_menu_gridview_light</item>
+        <item name="afc_ic_menu_listview">@drawable/afc_ic_menu_listview_light</item>
+        <item name="afc_ic_menu_sort_by_date_asc">@drawable/afc_ic_menu_sort_by_date_asc_light</item>
+        <item name="afc_ic_menu_sort_by_date_desc">@drawable/afc_ic_menu_sort_by_date_desc_light</item>
+        <item name="afc_ic_menu_sort_by_name_asc">@drawable/afc_ic_menu_sort_by_name_asc_light</item>
+        <item name="afc_ic_menu_sort_by_name_desc">@drawable/afc_ic_menu_sort_by_name_desc_light</item>
+        <item name="afc_ic_menu_sort_by_size_asc">@drawable/afc_ic_menu_sort_by_size_asc_light</item>
+        <item name="afc_ic_menu_sort_by_size_desc">@drawable/afc_ic_menu_sort_by_size_desc_light</item>
+        <item name="afc_ic_button_sort_by_date_asc">@drawable/afc_ic_menu_sort_by_date_asc_light</item>
+        <item name="afc_ic_button_sort_by_date_desc">@drawable/afc_ic_menu_sort_by_date_desc_light</item>
+        <item name="afc_ic_button_sort_by_name_asc">@drawable/afc_ic_menu_sort_by_name_asc_light</item>
+        <item name="afc_ic_button_sort_by_name_desc">@drawable/afc_ic_menu_sort_by_name_desc_light</item>
+        <item name="afc_ic_button_sort_by_size_asc">@drawable/afc_ic_menu_sort_by_size_asc_light</item>
+        <item name="afc_ic_button_sort_by_size_desc">@drawable/afc_ic_menu_sort_by_size_desc_light</item>
+        <item name="afc_button_bar_style">?android:attr/buttonBarStyle</item>
+        <item name="afc_button_bar_button_style">?android:attr/buttonBarButtonStyle</item>
     </style>
+
+    <style name="Afc.BaseTheme.Dialog.Dark" parent="@android:style/Theme.Holo.Dialog"></style>
+
+    <style name="Afc.BaseThemeHelper.Dialog.Dark" parent="Afc.BaseTheme.Dialog.Dark">
+        <item name="afc_ic_menu_bookmarks">@drawable/afc_ic_menu_bookmarks_light</item>
+        <item name="afc_ic_menu_home">@drawable/afc_ic_menu_home_light</item>
+        <item name="afc_ic_menu_gridview">@drawable/afc_ic_menu_gridview_light</item>
+        <item name="afc_ic_menu_listview">@drawable/afc_ic_menu_listview_light</item>
+        <item name="afc_ic_menu_sort_by_date_asc">@drawable/afc_ic_menu_sort_by_date_asc_light</item>
+        <item name="afc_ic_menu_sort_by_date_desc">@drawable/afc_ic_menu_sort_by_date_desc_light</item>
+        <item name="afc_ic_menu_sort_by_name_asc">@drawable/afc_ic_menu_sort_by_name_asc_light</item>
+        <item name="afc_ic_menu_sort_by_name_desc">@drawable/afc_ic_menu_sort_by_name_desc_light</item>
+        <item name="afc_ic_menu_sort_by_size_asc">@drawable/afc_ic_menu_sort_by_size_asc_light</item>
+        <item name="afc_ic_menu_sort_by_size_desc">@drawable/afc_ic_menu_sort_by_size_desc_light</item>
+        <item name="afc_ic_button_sort_by_date_asc">@drawable/afc_ic_menu_sort_by_date_asc_light</item>
+        <item name="afc_ic_button_sort_by_date_desc">@drawable/afc_ic_menu_sort_by_date_desc_light</item>
+        <item name="afc_ic_button_sort_by_name_asc">@drawable/afc_ic_menu_sort_by_name_asc_light</item>
+        <item name="afc_ic_button_sort_by_name_desc">@drawable/afc_ic_menu_sort_by_name_desc_light</item>
+        <item name="afc_ic_button_sort_by_size_asc">@drawable/afc_ic_menu_sort_by_size_asc_light</item>
+        <item name="afc_ic_button_sort_by_size_desc">@drawable/afc_ic_menu_sort_by_size_desc_light</item>
+        <item name="afc_button_bar_style">?android:attr/buttonBarStyle</item>
+        <item name="afc_button_bar_button_style">?android:attr/buttonBarButtonStyle</item>
+    </style>
+
+    <style name="afc_base_button_location" parent="@android:style/Widget.Holo.TextView"></style>
 
 </resources>

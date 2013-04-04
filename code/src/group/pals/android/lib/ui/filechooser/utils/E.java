@@ -7,10 +7,15 @@
 
 package group.pals.android.lib.ui.filechooser.utils;
 
-import group.pals.android.lib.ui.filechooser.utils.ui.Dlg;
-import android.app.AlertDialog;
+import group.pals.android.lib.ui.filechooser.R;
+import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
+import android.view.ContextThemeWrapper;
+import android.view.View;
+import android.view.Window;
+import android.widget.TextView;
 
 /**
  * Something funny :-)
@@ -29,16 +34,41 @@ public class E {
     public static void show(Context context) {
         String msg = null;
         try {
-            msg = String.format("Hi  :-)\n\n" + "%s v%s\n" + "…by Hai Bison Apps\n\n" + "http://www.haibison.com\n\n"
-                    + "Hope you enjoy this library.", "android-filechooser", "5.1 beta");
+            msg = String.format("Hi  :-)\n\n" + "%s v%s\n"
+                    + "…by Hai Bison Apps\n\n" + "http://www.haibison.com\n\n"
+                    + "Hope you enjoy this library.", "android-filechooser",
+                    "5.1 beta");
         } catch (Exception e) {
             msg = "Oops… You've found a broken Easter egg, try again later  :-(";
         }
 
-        AlertDialog dlg = Dlg.newDlg(context);
-        dlg.setButton(DialogInterface.BUTTON_NEGATIVE, null, (DialogInterface.OnClickListener) null);
-        dlg.setTitle("…");
-        dlg.setMessage(msg);
-        dlg.show();
+        final Context ctw = new ContextThemeWrapper(context,
+                R.style.Afc_Theme_Dialog_Dark);
+
+        final int padding = ctw.getResources().getDimensionPixelSize(
+                R.dimen.afc_10dp);
+        TextView textView = new TextView(ctw);
+        textView.setText(msg);
+        textView.setPadding(padding, padding, padding, padding);
+        textView.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                try {
+                    ctw.startActivity(new Intent(Intent.ACTION_VIEW, Uri
+                            .parse("http://www.haibison.com")));
+                } catch (Throwable t) {
+                    /*
+                     * Ignore it.
+                     */
+                }
+            }// onClick()
+        });
+
+        Dialog dialog = new Dialog(ctw, R.style.Afc_Theme_Dialog_Dark);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.setContentView(textView);
+        dialog.show();
     }// show()
 }

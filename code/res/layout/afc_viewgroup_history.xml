@@ -12,38 +12,38 @@
     android:layout_height="match_parent" >
 
     <RelativeLayout
-        android:id="@+id/afc_viewgroup_history_viewgroup_header"
+        android:id="@+id/afc_viewgroup_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_margin="@dimen/afc_5dp" >
 
         <TextView
-            android:id="@+id/afc_viewgroup_history_textview_header"
+            android:id="@+id/afc_textview_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/afc_viewgroup_history_button_search"
+            android:layout_toLeftOf="@+id/afc_button_search"
             android:drawableLeft="@android:drawable/ic_menu_recent_history"
             android:gravity="center_vertical"
             android:text="@string/afc_history"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <ImageButton
-            android:id="@+id/afc_viewgroup_history_button_search"
+            android:id="@+id/afc_button_search"
             style="@style/afc_widget_search_view_button_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/afc_15dp"
-            android:layout_toLeftOf="@+id/afc_viewgroup_history_viewgroup_navigators"
+            android:layout_toLeftOf="@+id/afc_viewgroup_navigators"
             android:contentDescription="@string/afc_hint_search"
             android:enabled="false"
             android:visibility="gone" />
 
         <LinearLayout
-            android:id="@+id/afc_viewgroup_history_viewgroup_navigators"
+            android:id="@+id/afc_viewgroup_navigators"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -51,15 +51,15 @@
             android:orientation="horizontal" >
 
             <ImageView
-                android:id="@+id/afc_viewgroup_history_button_go_back"
-                style="@style/afc_button_navi_left"
+                android:id="@+id/afc_button_go_back"
+                style="@style/afc_action_navi_left"
                 android:layout_marginTop="0dp"
                 android:contentDescription="@string/afc_hint_newer"
                 android:enabled="false" />
 
             <ImageView
-                android:id="@+id/afc_viewgroup_history_button_go_forward"
-                style="@style/afc_button_navi_right"
+                android:id="@+id/afc_button_go_forward"
+                style="@style/afc_action_navi_right"
                 android:layout_marginTop="0dp"
                 android:contentDescription="@string/afc_hint_older"
                 android:enabled="false" />
@@ -67,10 +67,10 @@
     </RelativeLayout>
 
     <group.pals.android.lib.ui.filechooser.ui.widget.AfcSearchView
-        android:id="@+id/afc_viewgroup_history_afc_search_view"
+        android:id="@+id/afc_afc_search_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/afc_viewgroup_history_viewgroup_header"
+        android:layout_below="@id/afc_viewgroup_header"
         android:layout_marginBottom="@dimen/afc_5dp"
         android:layout_marginLeft="@dimen/afc_15dp"
         android:layout_marginRight="@dimen/afc_15dp"
@@ -81,26 +81,26 @@
         android:visibility="gone" />
 
     <View
-        android:id="@+id/afc_viewgroup_history_view_header_divider"
+        android:id="@+id/afc_view_header_divider"
         android:layout_width="match_parent"
         android:layout_height="@dimen/afc_viewgroup_button_locations_bottom_divider_height"
-        android:layout_below="@id/afc_viewgroup_history_afc_search_view"
+        android:layout_below="@id/afc_afc_search_view"
         android:background="@color/afc_border_line_dark" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
-        android:layout_below="@id/afc_viewgroup_history_view_header_divider" >
+        android:layout_below="@id/afc_view_header_divider" >
 
         <RelativeLayout
-            android:id="@+id/afc_viewgroup_history_viewgroup_listview"
+            android:id="@+id/afc_viewgroup_listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone" >
 
             <ExpandableListView
-                android:id="@+id/afc_viewgroup_history_listview"
+                android:id="@+id/afc_listview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fastScrollEnabled="true"
@@ -108,7 +108,7 @@
             </ExpandableListView>
 
             <TextView
-                android:id="@+id/afc_viewgroup_history_empty_view"
+                android:id="@+id/afc_empty_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="@dimen/afc_15dp"
@@ -119,7 +119,7 @@
         </RelativeLayout>
 
         <include
-            android:id="@+id/afc_viewgroup_history_view_loading"
+            android:id="@+id/afc_view_loading"
             layout="@layout/afc_view_loading" />
     </RelativeLayout>
 

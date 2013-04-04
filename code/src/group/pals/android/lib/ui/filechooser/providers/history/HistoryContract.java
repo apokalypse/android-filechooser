@@ -57,14 +57,16 @@ public final class HistoryContract {
         /**
          * The content:// style URL for this table.
          */
-        public static final Uri _ContentUri = Uri.parse(ProviderUtils._Scheme + _Authority + "/" + _PathHistory);
+        public static final Uri _ContentUri = Uri.parse(ProviderUtils._Scheme
+                + _Authority + "/" + _PathHistory);
 
         /**
          * The content URI base for a single history item. Callers must append a
          * numeric history ID to this Uri to retrieve a history item.
          */
-        public static final Uri _ContentIdUriBase = Uri.parse(ProviderUtils._Scheme + _Authority + "/" + _PathHistory
-                + "/");
+        public static final Uri _ContentIdUriBase = Uri
+                .parse(ProviderUtils._Scheme + _Authority + "/" + _PathHistory
+                        + "/");
 
         /*
          * MIME type definitions.
@@ -85,7 +87,8 @@ public final class HistoryContract {
         /**
          * The default sort order for this table.
          */
-        public static final String _DefaultSortOrder = _ColumnModificationTime + " DESC";
+        public static final String _DefaultSortOrder = _ColumnModificationTime
+                + " DESC";
 
         /*
          * Column definitions.

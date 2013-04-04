@@ -50,8 +50,11 @@ public class DisplayPrefs extends Prefs {
      * @return {@link ViewType}
      */
     public static ViewType getViewType(Context c) {
-        return ViewType.List.ordinal() == p(c).getInt(c.getString(R.string.afc_pkey_display_view_type),
-                c.getResources().getInteger(R.integer.afc_pkey_display_view_type_def)) ? ViewType.List : ViewType.Grid;
+        return ViewType.List.ordinal() == p(c).getInt(
+                c.getString(R.string.afc_pkey_display_view_type),
+                c.getResources().getInteger(
+                        R.integer.afc_pkey_display_view_type_def)) ? ViewType.List
+                : ViewType.Grid;
     }
 
     /**
@@ -65,7 +68,11 @@ public class DisplayPrefs extends Prefs {
     public static void setViewType(Context c, ViewType v) {
         String key = c.getString(R.string.afc_pkey_display_view_type);
         if (v == null)
-            p(c).edit().putInt(key, c.getResources().getInteger(R.integer.afc_pkey_display_view_type_def)).commit();
+            p(c).edit()
+                    .putInt(key,
+                            c.getResources().getInteger(
+                                    R.integer.afc_pkey_display_view_type_def))
+                    .commit();
         else
             p(c).edit().putInt(key, v.ordinal()).commit();
     }
@@ -79,8 +86,10 @@ public class DisplayPrefs extends Prefs {
      *         {@link BaseFile#_SortByName}, {@link BaseFile#_SortBySize}.
      */
     public static int getSortType(Context c) {
-        return p(c).getInt(c.getString(R.string.afc_pkey_display_sort_type),
-                c.getResources().getInteger(R.integer.afc_pkey_display_sort_type_def));
+        return p(c).getInt(
+                c.getString(R.string.afc_pkey_display_sort_type),
+                c.getResources().getInteger(
+                        R.integer.afc_pkey_display_sort_type_def));
     }
 
     /**
@@ -96,7 +105,11 @@ public class DisplayPrefs extends Prefs {
     public static void setSortType(Context c, Integer v) {
         String key = c.getString(R.string.afc_pkey_display_sort_type);
         if (v == null)
-            p(c).edit().putInt(key, c.getResources().getInteger(R.integer.afc_pkey_display_sort_type_def)).commit();
+            p(c).edit()
+                    .putInt(key,
+                            c.getResources().getInteger(
+                                    R.integer.afc_pkey_display_sort_type_def))
+                    .commit();
         else
             p(c).edit().putInt(key, v).commit();
     }
@@ -109,8 +122,10 @@ public class DisplayPrefs extends Prefs {
      * @return {@code true} if sort is ascending, {@code false} otherwise.
      */
     public static boolean isSortAscending(Context c) {
-        return p(c).getBoolean(c.getString(R.string.afc_pkey_display_sort_ascending),
-                c.getResources().getBoolean(R.bool.afc_pkey_display_sort_ascending_def));
+        return p(c).getBoolean(
+                c.getString(R.string.afc_pkey_display_sort_ascending),
+                c.getResources().getBoolean(
+                        R.bool.afc_pkey_display_sort_ascending_def));
     }
 
     /**
@@ -123,8 +138,12 @@ public class DisplayPrefs extends Prefs {
      */
     public static void setSortAscending(Context c, Boolean v) {
         if (v == null)
-            v = c.getResources().getBoolean(R.bool.afc_pkey_display_sort_ascending_def);
-        p(c).edit().putBoolean(c.getString(R.string.afc_pkey_display_sort_ascending), v).commit();
+            v = c.getResources().getBoolean(
+                    R.bool.afc_pkey_display_sort_ascending_def);
+        p(c).edit()
+                .putBoolean(
+                        c.getString(R.string.afc_pkey_display_sort_ascending),
+                        v).commit();
     }
 
     /**
@@ -137,8 +156,12 @@ public class DisplayPrefs extends Prefs {
      * @since v4.7 beta
      */
     public static boolean isShowTimeForOldDaysThisYear(Context c) {
-        return p(c).getBoolean(c.getString(R.string.afc_pkey_display_show_time_for_old_days_this_year),
-                c.getResources().getBoolean(R.bool.afc_pkey_display_show_time_for_old_days_this_year_def));
+        return p(c)
+                .getBoolean(
+                        c.getString(R.string.afc_pkey_display_show_time_for_old_days_this_year),
+                        c.getResources()
+                                .getBoolean(
+                                        R.bool.afc_pkey_display_show_time_for_old_days_this_year_def));
     }
 
     /**
@@ -153,8 +176,13 @@ public class DisplayPrefs extends Prefs {
      */
     public static void setShowTimeForOldDaysThisYear(Context c, Boolean v) {
         if (v == null)
-            v = c.getResources().getBoolean(R.bool.afc_pkey_display_show_time_for_old_days_this_year_def);
-        p(c).edit().putBoolean(c.getString(R.string.afc_pkey_display_show_time_for_old_days_this_year), v).commit();
+            v = c.getResources()
+                    .getBoolean(
+                            R.bool.afc_pkey_display_show_time_for_old_days_this_year_def);
+        p(c).edit()
+                .putBoolean(
+                        c.getString(R.string.afc_pkey_display_show_time_for_old_days_this_year),
+                        v).commit();
     }
 
     /**
@@ -167,8 +195,10 @@ public class DisplayPrefs extends Prefs {
      * @since v4.7 beta
      */
     public static boolean isShowTimeForOldDays(Context c) {
-        return p(c).getBoolean(c.getString(R.string.afc_pkey_display_show_time_for_old_days),
-                c.getResources().getBoolean(R.bool.afc_pkey_display_show_time_for_old_days_def));
+        return p(c).getBoolean(
+                c.getString(R.string.afc_pkey_display_show_time_for_old_days),
+                c.getResources().getBoolean(
+                        R.bool.afc_pkey_display_show_time_for_old_days_def));
     }
 
     /**
@@ -183,8 +213,12 @@ public class DisplayPrefs extends Prefs {
      */
     public static void setShowTimeForOldDays(Context c, Boolean v) {
         if (v == null)
-            v = c.getResources().getBoolean(R.bool.afc_pkey_display_show_time_for_old_days_def);
-        p(c).edit().putBoolean(c.getString(R.string.afc_pkey_display_show_time_for_old_days), v).commit();
+            v = c.getResources().getBoolean(
+                    R.bool.afc_pkey_display_show_time_for_old_days_def);
+        p(c).edit()
+                .putBoolean(
+                        c.getString(R.string.afc_pkey_display_show_time_for_old_days),
+                        v).commit();
     }
 
     /**
@@ -196,8 +230,10 @@ public class DisplayPrefs extends Prefs {
      * @since v4.7 beta
      */
     public static boolean isRememberLastLocation(Context c) {
-        return p(c).getBoolean(c.getString(R.string.afc_pkey_display_remember_last_location),
-                c.getResources().getBoolean(R.bool.afc_pkey_display_remember_last_location_def));
+        return p(c).getBoolean(
+                c.getString(R.string.afc_pkey_display_remember_last_location),
+                c.getResources().getBoolean(
+                        R.bool.afc_pkey_display_remember_last_location_def));
     }
 
     /**
@@ -212,8 +248,12 @@ public class DisplayPrefs extends Prefs {
      */
     public static void setRememberLastLocation(Context c, Boolean v) {
         if (v == null)
-            v = c.getResources().getBoolean(R.bool.afc_pkey_display_remember_last_location_def);
-        p(c).edit().putBoolean(c.getString(R.string.afc_pkey_display_remember_last_location), v).commit();
+            v = c.getResources().getBoolean(
+                    R.bool.afc_pkey_display_remember_last_location_def);
+        p(c).edit()
+                .putBoolean(
+                        c.getString(R.string.afc_pkey_display_remember_last_location),
+                        v).commit();
     }
 
     /**
@@ -225,7 +265,8 @@ public class DisplayPrefs extends Prefs {
      * @since v4.7 beta
      */
     public static String getLastLocation(Context c) {
-        return p(c).getString(c.getString(R.string.afc_pkey_display_last_location), null);
+        return p(c).getString(
+                c.getString(R.string.afc_pkey_display_last_location), null);
     }
 
     /**
@@ -237,7 +278,10 @@ public class DisplayPrefs extends Prefs {
      *            the last location.
      */
     public static void setLastLocation(Context c, String v) {
-        p(c).edit().putString(c.getString(R.string.afc_pkey_display_last_location), v).commit();
+        p(c).edit()
+                .putString(
+                        c.getString(R.string.afc_pkey_display_last_location), v)
+                .commit();
     }
 
     /*
@@ -264,7 +308,8 @@ public class DisplayPrefs extends Prefs {
          * @param showTimeForOldDaysThisYear
          * @param showTimeForOldDays
          */
-        public FileTimeDisplay(boolean showTimeForOldDaysThisYear, boolean showTimeForOldDays) {
+        public FileTimeDisplay(boolean showTimeForOldDaysThisYear,
+                boolean showTimeForOldDays) {
             mShowTimeForOldDaysThisYear = showTimeForOldDaysThisYear;
             mShowTimeForOldDays = showTimeForOldDays;
         }// FileTimeDisplay()

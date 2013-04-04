@@ -55,22 +55,30 @@ public class HistoryProvider extends ContentProvider {
     /**
      * A {@link UriMatcher} instance.
      */
-    private static final UriMatcher _UriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+    private static final UriMatcher _UriMatcher = new UriMatcher(
+            UriMatcher.NO_MATCH);
 
     private static final Map<String, String> _ColumnMap = new HashMap<String, String>();
 
     static {
-        _UriMatcher.addURI(HistoryContract._Authority, HistoryContract.History._PathHistory, _History);
-        _UriMatcher.addURI(HistoryContract._Authority, HistoryContract.History._PathHistory + "/#", _HistoryId);
+        _UriMatcher.addURI(HistoryContract._Authority,
+                HistoryContract.History._PathHistory, _History);
+        _UriMatcher.addURI(HistoryContract._Authority,
+                HistoryContract.History._PathHistory + "/#", _HistoryId);
 
-        _ColumnMap.put(DbUtils._SqliteFtsColumnRowId, DbUtils._SqliteFtsColumnRowId + " AS "
-                + HistoryContract.History._ID);
-        _ColumnMap.put(HistoryContract.History._ColumnProviderId, HistoryContract.History._ColumnProviderId);
-        _ColumnMap.put(HistoryContract.History._ColumnFileType, HistoryContract.History._ColumnFileType);
-        _ColumnMap.put(HistoryContract.History._ColumnUri, HistoryContract.History._ColumnUri);
-        _ColumnMap.put(HistoryContract.History._ColumnCreateTime, HistoryContract.History._ColumnCreateTime);
-        _ColumnMap
-                .put(HistoryContract.History._ColumnModificationTime, HistoryContract.History._ColumnModificationTime);
+        _ColumnMap.put(DbUtils._SqliteFtsColumnRowId,
+                DbUtils._SqliteFtsColumnRowId + " AS "
+                        + HistoryContract.History._ID);
+        _ColumnMap.put(HistoryContract.History._ColumnProviderId,
+                HistoryContract.History._ColumnProviderId);
+        _ColumnMap.put(HistoryContract.History._ColumnFileType,
+                HistoryContract.History._ColumnFileType);
+        _ColumnMap.put(HistoryContract.History._ColumnUri,
+                HistoryContract.History._ColumnUri);
+        _ColumnMap.put(HistoryContract.History._ColumnCreateTime,
+                HistoryContract.History._ColumnCreateTime);
+        _ColumnMap.put(HistoryContract.History._ColumnModificationTime,
+                HistoryContract.History._ColumnModificationTime);
     }// static
 
     private HistoryHelper mHistoryHelper;
@@ -99,7 +107,8 @@ public class HistoryProvider extends ContentProvider {
     }// getType()
 
     @Override
-    public synchronized int delete(Uri uri, String selection, String[] selectionArgs) {
+    public synchronized int delete(Uri uri, String selection,
+            String[] selectionArgs) {
         // Opens the database object in "write" mode.
         SQLiteDatabase db = mHistoryHelper.getWritableDatabase();
         String finalWhere;
@@ -114,7 +123,8 @@ public class HistoryProvider extends ContentProvider {
          * arguments.
          */
         case _History:
-            count = db.delete(HistoryContract.History._TableName, selection, selectionArgs);
+            count = db.delete(HistoryContract.History._TableName, selection,
+                    selectionArgs);
             break;// _History
 
         /*
@@ -127,7 +137,8 @@ public class HistoryProvider extends ContentProvider {
              * Starts a final WHERE clause by restricting it to the desired
              * history item ID.
              */
-            finalWhere = DbUtils._SqliteFtsColumnRowId + " = " + uri.getLastPathSegment();
+            finalWhere = DbUtils._SqliteFtsColumnRowId + " = "
+                    + uri.getLastPathSegment();
 
             /*
              * If there were additional selection criteria, append them to the
@@ -137,7 +148,8 @@ public class HistoryProvider extends ContentProvider {
                 finalWhere = finalWhere + " AND " + selection;
 
             // Performs the delete.
-            count = db.delete(HistoryContract.History._TableName, finalWhere, selectionArgs);
+            count = db.delete(HistoryContract.History._TableName, finalWhere,
+                    selectionArgs);
             break;// _HistoryId
 
         // If the incoming pattern is invalid, throws an exception.
@@ -173,7 +185,8 @@ public class HistoryProvider extends ContentProvider {
          * If the values map doesn't contain the creation date/ modification
          * date, sets the value to the current time.
          */
-        for (String col : new String[] { HistoryContract.History._ColumnCreateTime,
+        for (String col : new String[] {
+                HistoryContract.History._ColumnCreateTime,
                 HistoryContract.History._ColumnModificationTime })
             if (!values.containsKey(col))
                 values.put(col, DbUtils.formatNumber(now));
@@ -182,7 +195,8 @@ public class HistoryProvider extends ContentProvider {
         SQLiteDatabase db = mHistoryHelper.getWritableDatabase();
 
         // Performs the insert and returns the ID of the new note.
-        long rowId = db.insert(HistoryContract.History._TableName, null, values);
+        long rowId = db
+                .insert(HistoryContract.History._TableName, null, values);
 
         // If the insert succeeded, the row ID exists.
         if (rowId > 0) {
@@ -190,7 +204,8 @@ public class HistoryProvider extends ContentProvider {
              * Creates a URI with the note ID pattern and the new row ID
              * appended to it.
              */
-            Uri noteUri = ContentUris.withAppendedId(HistoryContract.History._ContentIdUriBase, rowId);
+            Uri noteUri = ContentUris.withAppendedId(
+                    HistoryContract.History._ContentIdUriBase, rowId);
 
             /*
              * Notifies observers registered against this provider that the data
@@ -208,11 +223,12 @@ public class HistoryProvider extends ContentProvider {
     }// insert()
 
     @Override
-    public synchronized Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
-            String sortOrder) {
+    public synchronized Cursor query(Uri uri, String[] projection,
+            String selection, String[] selectionArgs, String sortOrder) {
         if (BuildConfig.DEBUG)
-            Log.d(_ClassName,
-                    String.format("query() >> uri = %s, selection = %s, sortOrder = %s", uri, selection, sortOrder));
+            Log.d(_ClassName, String.format(
+                    "query() >> uri = %s, selection = %s, sortOrder = %s", uri,
+                    selection, sortOrder));
 
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables(HistoryContract.History._TableName);
@@ -227,12 +243,16 @@ public class HistoryProvider extends ContentProvider {
          */
         switch (_UriMatcher.match(uri)) {
         case _History: {
-            if (Arrays.equals(projection, new String[] { HistoryContract.History._COUNT })) {
+            if (Arrays.equals(projection,
+                    new String[] { HistoryContract.History._COUNT })) {
                 db = mHistoryHelper.getReadableDatabase();
                 cursor = db.rawQuery(
-                        String.format("SELECT COUNT(*) AS %s FROM %s %s", HistoryContract.History._COUNT,
+                        String.format(
+                                "SELECT COUNT(*) AS %s FROM %s %s",
+                                HistoryContract.History._COUNT,
                                 HistoryContract.History._TableName,
-                                selection != null ? String.format("WHERE %s", selection) : "").trim(), null);
+                                selection != null ? String.format("WHERE %s",
+                                        selection) : "").trim(), null);
             }
 
             break;
@@ -245,7 +265,8 @@ public class HistoryProvider extends ContentProvider {
          * that single history item.
          */
         case _HistoryId: {
-            qb.appendWhere(DbUtils._SqliteFtsColumnRowId + " = " + uri.getLastPathSegment());
+            qb.appendWhere(DbUtils._SqliteFtsColumnRowId + " = "
+                    + uri.getLastPathSegment());
 
             break;
         }// _HistoryId
@@ -262,7 +283,8 @@ public class HistoryProvider extends ContentProvider {
          * done.
          */
         if (BuildConfig.DEBUG)
-            Log.d(_ClassName, String.format("Going to SQLiteQueryBuilder >> db = %s", db));
+            Log.d(_ClassName,
+                    String.format("Going to SQLiteQueryBuilder >> db = %s", db));
         if (db == null) {
             db = mHistoryHelper.getReadableDatabase();
             /*
@@ -271,10 +293,12 @@ public class HistoryProvider extends ContentProvider {
              * variable contains null. If no records were selected, then the
              * Cursor object is empty, and Cursor.getCount() returns 0.
              */
-            cursor = qb.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+            cursor = qb.query(db, projection, selection, selectionArgs, null,
+                    null, sortOrder);
             if (BuildConfig.DEBUG)
-                Log.d(_ClassName,
-                        String.format("cursor = %s" + cursor == null ? null : Integer.toString(cursor.getCount())));
+                Log.d(_ClassName, String
+                        .format("cursor = %s" + cursor == null ? null : Integer
+                                .toString(cursor.getCount())));
             if (BuildConfig.DEBUG && cursor != null && cursor.moveToFirst()) {
                 StringBuilder sb = new StringBuilder("query() >> ");
                 for (String s : cursor.getColumnNames())
@@ -292,7 +316,8 @@ public class HistoryProvider extends ContentProvider {
     }// query()
 
     @Override
-    public synchronized int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+    public synchronized int update(Uri uri, ContentValues values,
+            String selection, String[] selectionArgs) {
         // Opens the database object in "write" mode.
         SQLiteDatabase db = mHistoryHelper.getWritableDatabase();
 
@@ -307,7 +332,8 @@ public class HistoryProvider extends ContentProvider {
          */
         case _History:
             // Does the update and returns the number of rows updated.
-            count = db.update(HistoryContract.History._TableName, values, selection, selectionArgs);
+            count = db.update(HistoryContract.History._TableName, values,
+                    selection, selectionArgs);
             break;
 
         /*
@@ -320,7 +346,8 @@ public class HistoryProvider extends ContentProvider {
              * Starts creating the final WHERE clause by restricting it to the
              * incoming item ID.
              */
-            finalWhere = DbUtils._SqliteFtsColumnRowId + " = " + uri.getLastPathSegment();
+            finalWhere = DbUtils._SqliteFtsColumnRowId + " = "
+                    + uri.getLastPathSegment();
 
             /*
              * If there were additional selection criteria, append them to the
@@ -330,7 +357,8 @@ public class HistoryProvider extends ContentProvider {
                 finalWhere = finalWhere + " AND " + selection;
 
             // Does the update and returns the number of rows updated.
-            count = db.update(HistoryContract.History._TableName, values, finalWhere, selectionArgs);
+            count = db.update(HistoryContract.History._TableName, values,
+                    finalWhere, selectionArgs);
             break;
 
         // If the incoming pattern is invalid, throws an exception.

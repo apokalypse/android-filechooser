@@ -10,12 +10,11 @@ package group.pals.android.lib.ui.filechooser.utils.ui.history;
 import group.pals.android.lib.ui.filechooser.BuildConfig;
 import group.pals.android.lib.ui.filechooser.R;
 import group.pals.android.lib.ui.filechooser.providers.BaseFileProviderUtils;
-import group.pals.android.lib.ui.filechooser.providers.ProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.basefile.BaseFileContract.BaseFile;
 import group.pals.android.lib.ui.filechooser.providers.history.HistoryContract.History;
 import group.pals.android.lib.ui.filechooser.utils.DateUtils;
-import group.pals.android.lib.ui.filechooser.utils.Ui;
 import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
+import group.pals.android.lib.ui.filechooser.utils.ui.Ui;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -43,7 +42,8 @@ import android.widget.TextView;
  */
 public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
 
-    private static final String _ClassName = HistoryCursorAdapter.class.getName();
+    private static final String _ClassName = HistoryCursorAdapter.class
+            .getName();
 
     /**
      * @see android.text.format.DateUtils#DAY_IN_MILLIS
@@ -53,8 +53,10 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
     /**
      * Advanced selection options: All, None, Invert.
      */
-    public static final Integer[] _AdvancedSelectionOptions = new Integer[] { R.string.afc_cmd_advanced_selection_all,
-            R.string.afc_cmd_advanced_selection_none, R.string.afc_cmd_advanced_selection_invert };
+    public static final Integer[] _AdvancedSelectionOptions = new Integer[] {
+            R.string.afc_cmd_advanced_selection_all,
+            R.string.afc_cmd_advanced_selection_none,
+            R.string.afc_cmd_advanced_selection_invert };
 
     private static class BagGroup {
 
@@ -66,7 +68,6 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
         TextView mTextViewTime;
         TextView mTextViewName;
         TextView mTextViewPath;
-        TextView mTextViewType;
         CheckBox mCheckBox;
     }// BagChild
 
@@ -85,10 +86,11 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
      */
     private static final String _ColumnOrgGroupPosition = "org_group_position";
 
-    private static final String[] _GroupCursorColumns = { History._ID, History._ColumnModificationTime,
-            _ColumnOrgGroupPosition };
+    private static final String[] _GroupCursorColumns = { History._ID,
+            History._ColumnModificationTime, _ColumnOrgGroupPosition };
 
-    private static final String[] _ChildCursorColumns = { History._ID, History._ColumnUri, History._ColumnProviderId,
+    private static final String[] _ChildCursorColumns = { History._ID,
+            History._ColumnUri, History._ColumnProviderId,
             History._ColumnModificationTime };
 
     /**
@@ -108,7 +110,8 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
      *            {@link Context}.
      */
     public HistoryCursorAdapter(Context context) {
-        super(context, null, R.layout.afc_view_history_item, R.layout.afc_view_history_sub_item);
+        super(context, null, R.layout.afc_view_history_item,
+                R.layout.afc_view_history_sub_item);
     }// BookmarkCursorAdapter()
 
     /**
@@ -131,8 +134,10 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
             mOrgCursor.close();
         mOrgCursor = cursor;
 
-        MatrixCursor newGroupCursor = cursor != null ? new MatrixCursor(_GroupCursorColumns) : null;
-        SparseArray<MatrixCursor> newChildrenCursor = cursor != null ? new SparseArray<MatrixCursor>() : null;
+        MatrixCursor newGroupCursor = cursor != null ? new MatrixCursor(
+                _GroupCursorColumns) : null;
+        SparseArray<MatrixCursor> newChildrenCursor = cursor != null ? new SparseArray<MatrixCursor>()
+                : null;
 
         /*
          * Build new group cursor.
@@ -140,14 +145,20 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
         if (cursor != null && cursor.moveToFirst()) {
             long lastDayCount = 0;
             do {
-                long dayCount = (long) Math.floor((Long.parseLong(cursor.getString(cursor
-                        .getColumnIndex(History._ColumnModificationTime))) + TimeZone.getDefault().getRawOffset())
-                        / _DayInMillis);
+                long dayCount = (long) Math
+                        .floor((Long.parseLong(cursor.getString(cursor
+                                .getColumnIndex(History._ColumnModificationTime))) + TimeZone
+                                .getDefault().getRawOffset())
+                                / _DayInMillis);
 
                 if (dayCount != lastDayCount || newGroupCursor.getCount() == 0) {
-                    newGroupCursor.addRow(new Object[] { cursor.getInt(cursor.getColumnIndex(History._ID)),
-                            cursor.getString(cursor.getColumnIndex(History._ColumnModificationTime)),
-                            cursor.getPosition() });
+                    newGroupCursor
+                            .addRow(new Object[] {
+                                    cursor.getInt(cursor
+                                            .getColumnIndex(History._ID)),
+                                    cursor.getString(cursor
+                                            .getColumnIndex(History._ColumnModificationTime)),
+                                    cursor.getPosition() });
                 }
                 lastDayCount = dayCount;
             } while (cursor.moveToNext());
@@ -180,7 +191,8 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
          * Try to find the child cursor in the map. If found then it'd be great
          * :-)
          */
-        int orgGroupPosition = groupCursor.getInt(groupCursor.getColumnIndex(_ColumnOrgGroupPosition));
+        int orgGroupPosition = groupCursor.getInt(groupCursor
+                .getColumnIndex(_ColumnOrgGroupPosition));
         int idx = mChildrenCursor.indexOfKey(orgGroupPosition);
         if (idx >= 0)
             return mChildrenCursor.valueAt(idx);
@@ -192,15 +204,23 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
 
         mOrgCursor.moveToPosition(orgGroupPosition);
         long startOfDay = Long.parseLong(groupCursor.getString(groupCursor
-                .getColumnIndex(History._ColumnModificationTime))) + TimeZone.getDefault().getRawOffset();
+                .getColumnIndex(History._ColumnModificationTime)))
+                + TimeZone.getDefault().getRawOffset();
         startOfDay -= startOfDay % _DayInMillis;
         do {
-            childrenCursor.addRow(new Object[] { mOrgCursor.getInt(mOrgCursor.getColumnIndex(History._ID)),
-                    mOrgCursor.getString(mOrgCursor.getColumnIndex(History._ColumnUri)),
-                    mOrgCursor.getString(mOrgCursor.getColumnIndex(History._ColumnProviderId)),
-                    mOrgCursor.getString(mOrgCursor.getColumnIndex(History._ColumnModificationTime)) });
+            childrenCursor
+                    .addRow(new Object[] {
+                            mOrgCursor.getInt(mOrgCursor
+                                    .getColumnIndex(History._ID)),
+                            mOrgCursor.getString(mOrgCursor
+                                    .getColumnIndex(History._ColumnUri)),
+                            mOrgCursor.getString(mOrgCursor
+                                    .getColumnIndex(History._ColumnProviderId)),
+                            mOrgCursor.getString(mOrgCursor
+                                    .getColumnIndex(History._ColumnModificationTime)) });
         } while (mOrgCursor.moveToNext()
-                && Long.parseLong(mOrgCursor.getString(mOrgCursor.getColumnIndex(History._ColumnModificationTime)))
+                && Long.parseLong(mOrgCursor.getString(mOrgCursor
+                        .getColumnIndex(History._ColumnModificationTime)))
                         + TimeZone.getDefault().getRawOffset() >= startOfDay);
 
         /*
@@ -211,79 +231,95 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
     }// getChildrenCursor()
 
     @Override
-    protected void bindChildView(View view, Context context, Cursor cursor, boolean isLastChild) {
-        final int _id = cursor.getInt(cursor.getColumnIndex(History._ID));
-        final BagChild _b;
+    protected void bindChildView(View view, Context context, Cursor cursor,
+            boolean isLastChild) {
+        final int id = cursor.getInt(cursor.getColumnIndex(History._ID));
+        final BagChild child;
 
         if (view.getTag() == null) {
-            _b = new BagChild();
-            _b.mTextViewTime = (TextView) view.findViewById(R.id.afc_view_history_sub_item_textview_time);
-            _b.mTextViewName = (TextView) view.findViewById(R.id.afc_view_history_sub_item_textview_name);
-            _b.mTextViewPath = (TextView) view.findViewById(R.id.afc_view_history_sub_item_textview_path);
-            _b.mTextViewType = (TextView) view.findViewById(R.id.afc_view_history_sub_item_textview_type);
-            _b.mCheckBox = (CheckBox) view.findViewById(R.id.afc_view_history_sub_item_checkbox);
+            child = new BagChild();
+            child.mTextViewTime = (TextView) view
+                    .findViewById(R.id.afc_textview_time);
+            child.mTextViewName = (TextView) view
+                    .findViewById(R.id.afc_textview_name);
+            child.mTextViewPath = (TextView) view
+                    .findViewById(R.id.afc_textview_path);
+            child.mCheckBox = (CheckBox) view.findViewById(R.id.afc_checkbox);
 
-            view.setTag(_b);
+            view.setTag(child);
         } else
-            _b = (BagChild) view.getTag();
+            child = (BagChild) view.getTag();
 
-        final BagChildInfo _bci;
-        if (mSelectedChildrenMap.get(_id) == null) {
-            _bci = new BagChildInfo();
-            mSelectedChildrenMap.put(_id, _bci);
+        final BagChildInfo childInfo;
+        if (mSelectedChildrenMap.get(id) == null) {
+            childInfo = new BagChildInfo();
+            mSelectedChildrenMap.put(id, childInfo);
         } else
-            _bci = mSelectedChildrenMap.get(_id);
+            childInfo = mSelectedChildrenMap.get(id);
 
-        Uri uri = Uri.parse(cursor.getString(cursor.getColumnIndex(History._ColumnUri)));
+        Uri uri = Uri.parse(cursor.getString(cursor
+                .getColumnIndex(History._ColumnUri)));
 
         String fileName = null;
         String filePath = null;
-        Cursor fileInfo = context.getContentResolver().query(uri, null, null, null, null);
+        Cursor fileInfo = context.getContentResolver().query(uri, null, null,
+                null, null);
         try {
             if (fileInfo != null && fileInfo.moveToFirst()) {
-                fileName = fileInfo.getString(fileInfo.getColumnIndex(BaseFile._ColumnName));
-                filePath = fileInfo.getString(fileInfo.getColumnIndex(BaseFile._ColumnPath));
+                fileName = fileInfo.getString(fileInfo
+                        .getColumnIndex(BaseFile._ColumnName));
+                filePath = fileInfo.getString(fileInfo
+                        .getColumnIndex(BaseFile._ColumnPath));
             }
         } finally {
             if (fileInfo != null)
                 fileInfo.close();
         }
 
-        _b.mTextViewTime.setText(formatTime(view.getContext(),
-                Long.parseLong(cursor.getString(cursor.getColumnIndex(History._ColumnModificationTime)))));
-        _b.mTextViewName.setText(fileName);
-        Ui.strikeOutText(_b.mTextViewName, _bci.mMarkedAsDeleted);
-        _b.mTextViewPath.setText(filePath);
+        child.mTextViewTime.setText(formatTime(view.getContext(), Long
+                .parseLong(cursor.getString(cursor
+                        .getColumnIndex(History._ColumnModificationTime)))));
+        child.mTextViewName.setText(fileName);
+        Ui.strikeOutText(child.mTextViewName, childInfo.mMarkedAsDeleted);
+        child.mTextViewPath.setText(filePath);
 
         /*
-         * Provider name.
+         * Provider ID.
          */
-        String providerId = cursor.getString(cursor.getColumnIndex(History._ColumnProviderId));
-        if (ProviderUtils.getProviderName(providerId) == null)
-            ProviderUtils.setProviderName(providerId, BaseFileProviderUtils.getProviderName(context, providerId));
-        _b.mTextViewType.setText(ProviderUtils.getProviderName(providerId));
+        String providerId = cursor.getString(cursor
+                .getColumnIndex(History._ColumnProviderId));
+        /*
+         * Provider badge icon.
+         */
+        child.mTextViewTime.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0,
+                BaseFileProviderUtils.getProviderIconId(context, providerId));
 
         /*
          * Check box.
          */
-        _b.mCheckBox.setOnCheckedChangeListener(null);
-        _b.mCheckBox.setChecked(_bci.mChecked);
-        _b.mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        child.mCheckBox.setOnCheckedChangeListener(null);
+        child.mCheckBox.setChecked(childInfo.mChecked);
+        child.mCheckBox
+                .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (BuildConfig.DEBUG)
-                    Log.d(_ClassName, "onCheckedChanged() >> _id = " + _id);
-                _bci.mChecked = isChecked;
-            }// onCheckedChanged()
-        });
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView,
+                            boolean isChecked) {
+                        if (BuildConfig.DEBUG)
+                            Log.d(_ClassName, "onCheckedChanged() >> id = "
+                                    + id);
+                        childInfo.mChecked = isChecked;
+                    }// onCheckedChanged()
+                });
 
-        _b.mCheckBox.setOnLongClickListener(new View.OnLongClickListener() {
+        child.mCheckBox.setOnLongClickListener(new View.OnLongClickListener() {
 
             @Override
             public boolean onLongClick(View v) {
-                ContextMenuUtils.showContextMenu(v.getContext(), 0, R.string.afc_title_advanced_selection,
-                        _AdvancedSelectionOptions, new ContextMenuUtils.OnMenuItemClickListener() {
+                ContextMenuUtils.showContextMenu(v.getContext(), 0,
+                        R.string.afc_title_advanced_selection,
+                        _AdvancedSelectionOptions,
+                        new ContextMenuUtils.OnMenuItemClickListener() {
 
                             @Override
                             public void onClick(final int resId) {
@@ -301,18 +337,21 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
     }// bindChildView()
 
     @Override
-    protected void bindGroupView(View view, Context context, final Cursor cursor, boolean isExpanded) {
+    protected void bindGroupView(View view, Context context,
+            final Cursor cursor, boolean isExpanded) {
         BagGroup b;
         if (view.getTag() == null) {
             b = new BagGroup();
-            b.mTextViewHeader = (TextView) view.findViewById(R.id.afc_view_history_item_textview_header);
+            b.mTextViewHeader = (TextView) view
+                    .findViewById(R.id.afc_textview_header);
 
             view.setTag(b);
         } else
             b = (BagGroup) view.getTag();
 
-        b.mTextViewHeader.setText(formatDate(view.getContext(),
-                Long.parseLong(cursor.getString(cursor.getColumnIndex(History._ColumnModificationTime)))));
+        b.mTextViewHeader.setText(formatDate(view.getContext(), Long
+                .parseLong(cursor.getString(cursor
+                        .getColumnIndex(History._ColumnModificationTime)))));
     }// bindGroupView()
 
     @Override
@@ -368,13 +407,13 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
         int chidrenCount = getChildrenCount(groupPosition);
         for (int iChild = 0; iChild < chidrenCount; iChild++) {
             Cursor cursor = getChild(groupPosition, iChild);
-            final int _id = cursor.getInt(cursor.getColumnIndex(History._ID));
-            BagChildInfo b = mSelectedChildrenMap.get(_id);
-            if (b == null) {
-                b = new BagChildInfo();
-                mSelectedChildrenMap.put(_id, b);
+            final int id = cursor.getInt(cursor.getColumnIndex(History._ID));
+            BagChildInfo childInfo = mSelectedChildrenMap.get(id);
+            if (childInfo == null) {
+                childInfo = new BagChildInfo();
+                mSelectedChildrenMap.put(id, childInfo);
             }
-            b.mChecked = selected;
+            childInfo.mChecked = selected;
         }// for children
     }// asyncSelectAll()
 
@@ -418,13 +457,13 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
         int chidrenCount = getChildrenCount(groupPosition);
         for (int iChild = 0; iChild < chidrenCount; iChild++) {
             Cursor cursor = getChild(groupPosition, iChild);
-            final int _id = cursor.getInt(cursor.getColumnIndex(History._ID));
-            BagChildInfo b = mSelectedChildrenMap.get(_id);
-            if (b == null) {
-                b = new BagChildInfo();
-                mSelectedChildrenMap.put(_id, b);
+            final int id = cursor.getInt(cursor.getColumnIndex(History._ID));
+            BagChildInfo childInfo = mSelectedChildrenMap.get(id);
+            if (childInfo == null) {
+                childInfo = new BagChildInfo();
+                mSelectedChildrenMap.put(id, childInfo);
             }
-            b.mChecked = !b.mChecked;
+            childInfo.mChecked = !childInfo.mChecked;
         }// for children
     }// asyncInvertSelection()
 
@@ -461,7 +500,8 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
      */
     public boolean isSelected(int id) {
         synchronized (mSelectedChildrenMap) {
-            return mSelectedChildrenMap.get(id) != null ? mSelectedChildrenMap.get(id).mChecked : false;
+            return mSelectedChildrenMap.get(id) != null ? mSelectedChildrenMap
+                    .get(id).mChecked : false;
         }
     }// isSelected()
 
@@ -537,18 +577,20 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(millis);
 
-        final Calendar _yesterday = Calendar.getInstance();
-        _yesterday.add(Calendar.DAY_OF_YEAR, -1);
+        final Calendar yesterday = Calendar.getInstance();
+        yesterday.add(Calendar.DAY_OF_YEAR, -1);
 
-        if (cal.get(Calendar.YEAR) == _yesterday.get(Calendar.YEAR)) {
-            if (cal.get(Calendar.DAY_OF_YEAR) == _yesterday.get(Calendar.DAY_OF_YEAR))
+        if (cal.get(Calendar.YEAR) == yesterday.get(Calendar.YEAR)) {
+            if (cal.get(Calendar.DAY_OF_YEAR) == yesterday
+                    .get(Calendar.DAY_OF_YEAR))
                 return c.getString(R.string.afc_yesterday);
             else
-                return android.text.format.DateUtils.formatDateTime(c, millis, DateUtils._FormatMonthAndDay);
+                return android.text.format.DateUtils.formatDateTime(c, millis,
+                        DateUtils._FormatMonthAndDay);
         }
 
-        return android.text.format.DateUtils.formatDateTime(c, millis, DateUtils._FormatMonthAndDay
-                | DateUtils._FormatYear);
+        return android.text.format.DateUtils.formatDateTime(c, millis,
+                DateUtils._FormatMonthAndDay | DateUtils._FormatYear);
     }// formatDate()
 
     /**
@@ -561,6 +603,7 @@ public class HistoryCursorAdapter extends ResourceCursorTreeAdapter {
      * @return the formatted time.
      */
     private static String formatTime(Context c, long millis) {
-        return android.text.format.DateUtils.formatDateTime(c, millis, DateUtils._FormatShortTime);
+        return android.text.format.DateUtils.formatDateTime(c, millis,
+                DateUtils._FormatShortTime);
     }// formatTime()
 }

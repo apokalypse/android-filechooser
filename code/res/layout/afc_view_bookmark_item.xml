@@ -12,7 +12,7 @@
     android:background="#cc1f1f1f" >
 
     <TextView
-        android:id="@+id/afc_view_bookmark_item_textview_header"
+        android:id="@+id/afc_textview_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
@@ -20,6 +20,7 @@
         android:gravity="center"
         android:maxLines="@integer/afc_bookmark_filename_max_lines"
         android:padding="@dimen/afc_10sp"
+        android:textIsSelectable="false"
         android:textStyle="bold" />
 
 </RelativeLayout>

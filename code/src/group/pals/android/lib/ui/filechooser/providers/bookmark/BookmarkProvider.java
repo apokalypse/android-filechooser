@@ -55,20 +55,28 @@ public class BookmarkProvider extends ContentProvider {
     /**
      * A {@link UriMatcher} instance.
      */
-    private static final UriMatcher _UriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+    private static final UriMatcher _UriMatcher = new UriMatcher(
+            UriMatcher.NO_MATCH);
 
     private static final Map<String, String> _ColumnMap = new HashMap<String, String>();
 
     static {
-        _UriMatcher.addURI(BookmarkContract._Authority, BookmarkContract.Bookmark._PathBookmarks, _Bookmarks);
-        _UriMatcher.addURI(BookmarkContract._Authority, BookmarkContract.Bookmark._PathBookmarks + "/#", _BookmarkId);
+        _UriMatcher.addURI(BookmarkContract._Authority,
+                BookmarkContract.Bookmark._PathBookmarks, _Bookmarks);
+        _UriMatcher.addURI(BookmarkContract._Authority,
+                BookmarkContract.Bookmark._PathBookmarks + "/#", _BookmarkId);
 
-        _ColumnMap.put(DbUtils._SqliteFtsColumnRowId, DbUtils._SqliteFtsColumnRowId + " AS "
-                + BookmarkContract.Bookmark._ID);
-        _ColumnMap.put(BookmarkContract.Bookmark._ColumnName, BookmarkContract.Bookmark._ColumnName);
-        _ColumnMap.put(BookmarkContract.Bookmark._ColumnProviderId, BookmarkContract.Bookmark._ColumnProviderId);
-        _ColumnMap.put(BookmarkContract.Bookmark._ColumnUri, BookmarkContract.Bookmark._ColumnUri);
-        _ColumnMap.put(BookmarkContract.Bookmark._ColumnCreateTime, BookmarkContract.Bookmark._ColumnCreateTime);
+        _ColumnMap.put(DbUtils._SqliteFtsColumnRowId,
+                DbUtils._SqliteFtsColumnRowId + " AS "
+                        + BookmarkContract.Bookmark._ID);
+        _ColumnMap.put(BookmarkContract.Bookmark._ColumnName,
+                BookmarkContract.Bookmark._ColumnName);
+        _ColumnMap.put(BookmarkContract.Bookmark._ColumnProviderId,
+                BookmarkContract.Bookmark._ColumnProviderId);
+        _ColumnMap.put(BookmarkContract.Bookmark._ColumnUri,
+                BookmarkContract.Bookmark._ColumnUri);
+        _ColumnMap.put(BookmarkContract.Bookmark._ColumnCreateTime,
+                BookmarkContract.Bookmark._ColumnCreateTime);
         _ColumnMap.put(BookmarkContract.Bookmark._ColumnModificationTime,
                 BookmarkContract.Bookmark._ColumnModificationTime);
     }// static
@@ -99,7 +107,8 @@ public class BookmarkProvider extends ContentProvider {
     }// getType()
 
     @Override
-    public synchronized int delete(Uri uri, String selection, String[] selectionArgs) {
+    public synchronized int delete(Uri uri, String selection,
+            String[] selectionArgs) {
         // Opens the database object in "write" mode.
         SQLiteDatabase db = mBookmarkHelper.getWritableDatabase();
         String finalWhere;
@@ -114,7 +123,8 @@ public class BookmarkProvider extends ContentProvider {
          * arguments.
          */
         case _Bookmarks: {
-            count = db.delete(BookmarkContract.Bookmark._TableName, selection, selectionArgs);
+            count = db.delete(BookmarkContract.Bookmark._TableName, selection,
+                    selectionArgs);
             break;
         }// _Bookmarks
 
@@ -128,7 +138,8 @@ public class BookmarkProvider extends ContentProvider {
              * Starts a final WHERE clause by restricting it to the desired
              * Bookmark item ID.
              */
-            finalWhere = DbUtils._SqliteFtsColumnRowId + " = " + uri.getLastPathSegment();
+            finalWhere = DbUtils._SqliteFtsColumnRowId + " = "
+                    + uri.getLastPathSegment();
 
             /*
              * If there were additional selection criteria, append them to the
@@ -138,7 +149,8 @@ public class BookmarkProvider extends ContentProvider {
                 finalWhere = finalWhere + " AND " + selection;
 
             // Performs the delete.
-            count = db.delete(BookmarkContract.Bookmark._TableName, finalWhere, selectionArgs);
+            count = db.delete(BookmarkContract.Bookmark._TableName, finalWhere,
+                    selectionArgs);
             break;
         }// _BookmarkId
 
@@ -175,7 +187,8 @@ public class BookmarkProvider extends ContentProvider {
          * If the values map doesn't contain the creation date/ modification
          * date, sets the value to the current time.
          */
-        for (String col : new String[] { BookmarkContract.Bookmark._ColumnCreateTime,
+        for (String col : new String[] {
+                BookmarkContract.Bookmark._ColumnCreateTime,
                 BookmarkContract.Bookmark._ColumnModificationTime })
             if (!values.containsKey(col))
                 values.put(col, DbUtils.formatNumber(now));
@@ -184,7 +197,8 @@ public class BookmarkProvider extends ContentProvider {
         SQLiteDatabase db = mBookmarkHelper.getWritableDatabase();
 
         // Performs the insert and returns the ID of the new note.
-        long rowId = db.insert(BookmarkContract.Bookmark._TableName, null, values);
+        long rowId = db.insert(BookmarkContract.Bookmark._TableName, null,
+                values);
 
         // If the insert succeeded, the row ID exists.
         if (rowId > 0) {
@@ -192,7 +206,8 @@ public class BookmarkProvider extends ContentProvider {
              * Creates a URI with the note ID pattern and the new row ID
              * appended to it.
              */
-            Uri noteUri = ContentUris.withAppendedId(BookmarkContract.Bookmark._ContentIdUriBase, rowId);
+            Uri noteUri = ContentUris.withAppendedId(
+                    BookmarkContract.Bookmark._ContentIdUriBase, rowId);
 
             /*
              * Notifies observers registered against this provider that the data
@@ -210,8 +225,8 @@ public class BookmarkProvider extends ContentProvider {
     }// insert()
 
     @Override
-    public synchronized Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
-            String sortOrder) {
+    public synchronized Cursor query(Uri uri, String[] projection,
+            String selection, String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables(BookmarkContract.Bookmark._TableName);
         qb.setProjectionMap(_ColumnMap);
@@ -225,12 +240,16 @@ public class BookmarkProvider extends ContentProvider {
          */
         switch (_UriMatcher.match(uri)) {
         case _Bookmarks: {
-            if (Arrays.equals(projection, new String[] { BookmarkContract.Bookmark._COUNT })) {
+            if (Arrays.equals(projection,
+                    new String[] { BookmarkContract.Bookmark._COUNT })) {
                 db = mBookmarkHelper.getReadableDatabase();
                 cursor = db.rawQuery(
-                        String.format("SELECT COUNT(*) AS %s FROM %s %s", BookmarkContract.Bookmark._COUNT,
+                        String.format(
+                                "SELECT COUNT(*) AS %s FROM %s %s",
+                                BookmarkContract.Bookmark._COUNT,
                                 BookmarkContract.Bookmark._TableName,
-                                selection != null ? String.format("WHERE %s", selection) : "").trim(), null);
+                                selection != null ? String.format("WHERE %s",
+                                        selection) : "").trim(), null);
             }
 
             break;
@@ -243,7 +262,8 @@ public class BookmarkProvider extends ContentProvider {
          * that single Bookmark item.
          */
         case _BookmarkId: {
-            qb.appendWhere(DbUtils._SqliteFtsColumnRowId + " = " + uri.getLastPathSegment());
+            qb.appendWhere(DbUtils._SqliteFtsColumnRowId + " = "
+                    + uri.getLastPathSegment());
             break;
         }// _BookmarkId
 
@@ -266,7 +286,8 @@ public class BookmarkProvider extends ContentProvider {
              * variable contains null. If no records were selected, then the
              * Cursor object is empty, and Cursor.getCount() returns 0.
              */
-            cursor = qb.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+            cursor = qb.query(db, projection, selection, selectionArgs, null,
+                    null, sortOrder);
         }
 
         /*
@@ -278,7 +299,8 @@ public class BookmarkProvider extends ContentProvider {
     }// query()
 
     @Override
-    public synchronized int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+    public synchronized int update(Uri uri, ContentValues values,
+            String selection, String[] selectionArgs) {
         // Opens the database object in "write" mode.
         SQLiteDatabase db = mBookmarkHelper.getWritableDatabase();
         int count;
@@ -292,7 +314,8 @@ public class BookmarkProvider extends ContentProvider {
          */
         case _Bookmarks: {
             // Does the update and returns the number of rows updated.
-            count = db.update(BookmarkContract.Bookmark._TableName, values, selection, selectionArgs);
+            count = db.update(BookmarkContract.Bookmark._TableName, values,
+                    selection, selectionArgs);
             break;
         }// _Bookmarks
 
@@ -306,7 +329,8 @@ public class BookmarkProvider extends ContentProvider {
              * Starts creating the final WHERE clause by restricting it to the
              * incoming item ID.
              */
-            finalWhere = DbUtils._SqliteFtsColumnRowId + " = " + uri.getLastPathSegment();
+            finalWhere = DbUtils._SqliteFtsColumnRowId + " = "
+                    + uri.getLastPathSegment();
 
             /*
              * If there were additional selection criteria, append them to the
@@ -316,7 +340,8 @@ public class BookmarkProvider extends ContentProvider {
                 finalWhere = finalWhere + " AND " + selection;
 
             // Does the update and returns the number of rows updated.
-            count = db.update(BookmarkContract.Bookmark._TableName, values, finalWhere, selectionArgs);
+            count = db.update(BookmarkContract.Bookmark._TableName, values,
+                    finalWhere, selectionArgs);
             break;
         }// _BookmarkId
 

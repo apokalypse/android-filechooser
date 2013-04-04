@@ -7,9 +7,7 @@
 
 package group.pals.android.lib.ui.filechooser.providers;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import android.content.ContentResolver;
 import android.net.Uri;
 
 /**
@@ -24,7 +22,7 @@ public class ProviderUtils {
     /**
      * The scheme part for default provider's URI.
      */
-    public static final String _Scheme = "content://";
+    public static final String _Scheme = ContentResolver.SCHEME_CONTENT + "://";
 
     /**
      * Gets integer parameter.
@@ -76,10 +74,11 @@ public class ProviderUtils {
      */
     public static boolean getBooleanQueryParam(Uri uri, String key) {
         String param = uri.getQueryParameter(key);
-        if (param == null || "false".equalsIgnoreCase(param) || "0".equalsIgnoreCase(param))
+        if (param == null || "false".equalsIgnoreCase(param)
+                || "0".equalsIgnoreCase(param))
             return false;
         return true;
-    }// getLongQueryParam()
+    }// getBooleanQueryParam()
 
     /**
      * Gets boolean parameter.
@@ -89,45 +88,17 @@ public class ProviderUtils {
      * @param key
      *            the key of query parameter.
      * @param defaultValue
-     *            the default value if the parameter dies not exist.
+     *            the default value if the parameter does not exist.
      * @return {@code defaultValue} if the parameter does not exist, or it is
      *         either {@code "false"} or {@code "0"}. {@code true} otherwise.
      */
-    public static boolean getBooleanQueryParam(Uri uri, String key, boolean defaultValue) {
+    public static boolean getBooleanQueryParam(Uri uri, String key,
+            boolean defaultValue) {
         String param = uri.getQueryParameter(key);
         if (param == null)
             return defaultValue;
-        if ("false".equalsIgnoreCase(param) || "0".equalsIgnoreCase(param))
+        if (param.matches("(?i)false|(0+)"))
             return false;
         return true;
-    }// getLongQueryParam()
-
-    /**
-     * Map of provider IDs to their names, to avoid of querying multiple times
-     * for a same ID.
-     */
-    private static final Map<String, String> _MapProviderName = new HashMap<String, String>();
-
-    /**
-     * Gets provider name from its ID.
-     * 
-     * @param providerId
-     *            the provider ID.
-     * @return the provider name, or {@code null} if not available.
-     */
-    public static String getProviderName(String providerId) {
-        return _MapProviderName.get(providerId);
-    }// getProviderName()
-
-    /**
-     * Sets provider name and ID.
-     * 
-     * @param providerId
-     *            the provider ID.
-     * @param providerName
-     *            the provider name.
-     */
-    public static void setProviderName(String providerId, String providerName) {
-        _MapProviderName.put(providerId, providerName);
-    }// setProviderName()
+    }// getBooleanQueryParam()
 }

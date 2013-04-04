@@ -8,5 +8,5 @@
 
 <Module>
   <ModulePrefs title="screenshots" />
-  <Content type="html" href="http://imgur.com/a/01AYB/embed" />
+  <Content type="url" href="http://imgur.com/a/01AYB/embed" />
 </Module>

@@ -10,10 +10,9 @@ package group.pals.android.lib.ui.filechooser.utils.ui.bookmark;
 import group.pals.android.lib.ui.filechooser.BuildConfig;
 import group.pals.android.lib.ui.filechooser.R;
 import group.pals.android.lib.ui.filechooser.providers.BaseFileProviderUtils;
-import group.pals.android.lib.ui.filechooser.providers.ProviderUtils;
 import group.pals.android.lib.ui.filechooser.providers.bookmark.BookmarkContract.Bookmark;
-import group.pals.android.lib.ui.filechooser.utils.Ui;
 import group.pals.android.lib.ui.filechooser.utils.ui.ContextMenuUtils;
+import group.pals.android.lib.ui.filechooser.utils.ui.Ui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,13 +38,16 @@ import android.widget.TextView;
  */
 public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
 
-    private static final String _ClassName = BookmarkCursorAdapter.class.getName();
+    private static final String _ClassName = BookmarkCursorAdapter.class
+            .getName();
 
     /**
      * Advanced selection options: All, None, Invert.
      */
-    public static final Integer[] _AdvancedSelectionOptions = new Integer[] { R.string.afc_cmd_advanced_selection_all,
-            R.string.afc_cmd_advanced_selection_none, R.string.afc_cmd_advanced_selection_invert };
+    public static final Integer[] _AdvancedSelectionOptions = new Integer[] {
+            R.string.afc_cmd_advanced_selection_all,
+            R.string.afc_cmd_advanced_selection_none,
+            R.string.afc_cmd_advanced_selection_invert };
 
     /**
      * The "view holder".
@@ -86,10 +88,11 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
      */
     private static final String _ColumnOrgGroupPosition = "org_group_position";
 
-    private static final String[] _GroupCursorColumns = { Bookmark._ID, Bookmark._ColumnProviderId,
-            _ColumnOrgGroupPosition };
+    private static final String[] _GroupCursorColumns = { Bookmark._ID,
+            Bookmark._ColumnProviderId, _ColumnOrgGroupPosition };
 
-    private static final String[] _ChildCursorColumns = { Bookmark._ID, Bookmark._ColumnName, Bookmark._ColumnUri,
+    private static final String[] _ChildCursorColumns = { Bookmark._ID,
+            Bookmark._ColumnName, Bookmark._ColumnUri,
             Bookmark._ColumnProviderId, Bookmark._ColumnModificationTime };
 
     /**
@@ -109,7 +112,8 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
      *            {@link Context}.
      */
     public BookmarkCursorAdapter(Context context) {
-        super(context, null, R.layout.afc_view_bookmark_item, R.layout.afc_view_bookmark_sub_item);
+        super(context, null, R.layout.afc_view_bookmark_item,
+                R.layout.afc_view_bookmark_sub_item);
     }// BookmarkCursorAdapter()
 
     /**
@@ -132,8 +136,10 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
             mOrgCursor.close();
         mOrgCursor = cursor;
 
-        MatrixCursor newGroupCursor = cursor != null ? new MatrixCursor(_GroupCursorColumns) : null;
-        SparseArray<MatrixCursor> newChildrenCursor = cursor != null ? new SparseArray<MatrixCursor>() : null;
+        MatrixCursor newGroupCursor = cursor != null ? new MatrixCursor(
+                _GroupCursorColumns) : null;
+        SparseArray<MatrixCursor> newChildrenCursor = cursor != null ? new SparseArray<MatrixCursor>()
+                : null;
 
         /*
          * Build new group cursor.
@@ -141,12 +147,16 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
         if (cursor != null && cursor.moveToFirst()) {
             String lastProviderId = null;
             do {
-                String providerId = cursor.getString(cursor.getColumnIndex(Bookmark._ColumnProviderId));
+                String providerId = cursor.getString(cursor
+                        .getColumnIndex(Bookmark._ColumnProviderId));
 
                 if (!providerId.equals(lastProviderId)) {
                     newGroupCursor
-                            .addRow(new Object[] { cursor.getInt(cursor.getColumnIndex(Bookmark._ID)),
-                                    cursor.getString(cursor.getColumnIndex(Bookmark._ColumnProviderId)),
+                            .addRow(new Object[] {
+                                    cursor.getInt(cursor
+                                            .getColumnIndex(Bookmark._ID)),
+                                    cursor.getString(cursor
+                                            .getColumnIndex(Bookmark._ColumnProviderId)),
                                     cursor.getPosition() });
                 }
                 lastProviderId = providerId;
@@ -180,7 +190,8 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
          * Try to find the child cursor in the map. If found then it'd be great
          * :-)
          */
-        int orgGroupPosition = groupCursor.getInt(groupCursor.getColumnIndex(_ColumnOrgGroupPosition));
+        int orgGroupPosition = groupCursor.getInt(groupCursor
+                .getColumnIndex(_ColumnOrgGroupPosition));
         int idx = mChildrenCursor.indexOfKey(orgGroupPosition);
         if (idx >= 0)
             return mChildrenCursor.valueAt(idx);
@@ -191,15 +202,25 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
         MatrixCursor childrenCursor = new MatrixCursor(_ChildCursorColumns);
 
         mOrgCursor.moveToPosition(orgGroupPosition);
-        String providerId = groupCursor.getString(groupCursor.getColumnIndex(Bookmark._ColumnProviderId));
+        String providerId = groupCursor.getString(groupCursor
+                .getColumnIndex(Bookmark._ColumnProviderId));
         do {
-            childrenCursor.addRow(new Object[] { mOrgCursor.getInt(mOrgCursor.getColumnIndex(Bookmark._ID)),
-                    mOrgCursor.getString(mOrgCursor.getColumnIndex(Bookmark._ColumnName)),
-                    mOrgCursor.getString(mOrgCursor.getColumnIndex(Bookmark._ColumnUri)),
-                    mOrgCursor.getString(mOrgCursor.getColumnIndex(Bookmark._ColumnProviderId)),
-                    mOrgCursor.getString(mOrgCursor.getColumnIndex(Bookmark._ColumnModificationTime)) });
+            childrenCursor
+                    .addRow(new Object[] {
+                            mOrgCursor.getInt(mOrgCursor
+                                    .getColumnIndex(Bookmark._ID)),
+                            mOrgCursor.getString(mOrgCursor
+                                    .getColumnIndex(Bookmark._ColumnName)),
+                            mOrgCursor.getString(mOrgCursor
+                                    .getColumnIndex(Bookmark._ColumnUri)),
+                            mOrgCursor.getString(mOrgCursor
+                                    .getColumnIndex(Bookmark._ColumnProviderId)),
+                            mOrgCursor.getString(mOrgCursor
+                                    .getColumnIndex(Bookmark._ColumnModificationTime)) });
         } while (mOrgCursor.moveToNext()
-                && mOrgCursor.getString(mOrgCursor.getColumnIndex(Bookmark._ColumnProviderId)).equals(providerId));
+                && mOrgCursor.getString(
+                        mOrgCursor.getColumnIndex(Bookmark._ColumnProviderId))
+                        .equals(providerId));
 
         /*
          * Put it to the map.
@@ -209,19 +230,21 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
     }// getChildrenCursor()
 
     @Override
-    protected void bindChildView(View view, Context context, Cursor cursor, boolean isLastChild) {
-        final int _id = cursor.getInt(cursor.getColumnIndex(Bookmark._ID));
-        Uri uri = Uri.parse(cursor.getString(cursor.getColumnIndex(Bookmark._ColumnUri)));
+    protected void bindChildView(View view, Context context, Cursor cursor,
+            boolean isLastChild) {
+        final int id = cursor.getInt(cursor.getColumnIndex(Bookmark._ID));
+        Uri uri = Uri.parse(cursor.getString(cursor
+                .getColumnIndex(Bookmark._ColumnUri)));
 
         /*
          * Child Info
          */
-        final BagChildInfo _bci;
-        if (mSelectedChildrenMap.get(_id) == null) {
-            _bci = new BagChildInfo();
-            mSelectedChildrenMap.put(_id, _bci);
+        final BagChildInfo childInfo;
+        if (mSelectedChildrenMap.get(id) == null) {
+            childInfo = new BagChildInfo();
+            mSelectedChildrenMap.put(id, childInfo);
         } else
-            _bci = mSelectedChildrenMap.get(_id);
+            childInfo = mSelectedChildrenMap.get(id);
 
         /*
          * Child
@@ -230,9 +253,9 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
 
         if (bag == null) {
             bag = new BagChild();
-            bag.mTextName = (TextView) view.findViewById(R.id.afc_view_bookmark_sub_item_text_name);
-            bag.mTextPath = (TextView) view.findViewById(R.id.afc_view_bookmark_sub_item_text_path);
-            bag.mCheckBox = (CheckBox) view.findViewById(R.id.afc_view_bookmark_sub_item_checkbox);
+            bag.mTextName = (TextView) view.findViewById(R.id.afc_text_name);
+            bag.mTextPath = (TextView) view.findViewById(R.id.afc_text_path);
+            bag.mCheckBox = (CheckBox) view.findViewById(R.id.afc_checkbox);
 
             view.setTag(bag);
         }
@@ -241,8 +264,9 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
          * Name.
          */
 
-        bag.mTextName.setText(cursor.getString(cursor.getColumnIndex(Bookmark._ColumnName)));
-        Ui.strikeOutText(bag.mTextName, _bci.mMarkedAsDeleted);
+        bag.mTextName.setText(cursor.getString(cursor
+                .getColumnIndex(Bookmark._ColumnName)));
+        Ui.strikeOutText(bag.mTextName, childInfo.mMarkedAsDeleted);
 
         /*
          * Path.
@@ -250,7 +274,8 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
 
         if (isEditor()) {
             bag.mTextPath.setVisibility(View.VISIBLE);
-            bag.mTextPath.setText(BaseFileProviderUtils.getFilePath(context, uri));
+            bag.mTextPath.setText(BaseFileProviderUtils.getFilePath(context,
+                    uri));
         } else
             bag.mTextPath.setVisibility(View.GONE);
 
@@ -260,21 +285,25 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
 
         bag.mCheckBox.setVisibility(isEditor() ? View.VISIBLE : View.GONE);
         bag.mCheckBox.setOnCheckedChangeListener(null);
-        bag.mCheckBox.setChecked(_bci.mChecked);
-        bag.mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        bag.mCheckBox.setChecked(childInfo.mChecked);
+        bag.mCheckBox
+                .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                _bci.mChecked = isChecked;
-            }// onCheckedChanged()
-        });
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView,
+                            boolean isChecked) {
+                        childInfo.mChecked = isChecked;
+                    }// onCheckedChanged()
+                });
 
         bag.mCheckBox.setOnLongClickListener(new View.OnLongClickListener() {
 
             @Override
             public boolean onLongClick(View v) {
-                ContextMenuUtils.showContextMenu(v.getContext(), 0, R.string.afc_title_advanced_selection,
-                        _AdvancedSelectionOptions, new ContextMenuUtils.OnMenuItemClickListener() {
+                ContextMenuUtils.showContextMenu(v.getContext(), 0,
+                        R.string.afc_title_advanced_selection,
+                        _AdvancedSelectionOptions,
+                        new ContextMenuUtils.OnMenuItemClickListener() {
 
                             @Override
                             public void onClick(final int resId) {
@@ -292,11 +321,13 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
     }// bindChildView()
 
     @Override
-    protected void bindGroupView(View view, Context context, final Cursor cursor, boolean isExpanded) {
+    protected void bindGroupView(View view, Context context,
+            final Cursor cursor, boolean isExpanded) {
         BagGroup b;
         if (view.getTag() == null) {
             b = new BagGroup();
-            b.mTextHeader = (TextView) view.findViewById(R.id.afc_view_bookmark_item_textview_header);
+            b.mTextHeader = (TextView) view
+                    .findViewById(R.id.afc_textview_header);
 
             view.setTag(b);
         } else
@@ -305,10 +336,16 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
         /*
          * Provider name.
          */
-        String providerId = cursor.getString(cursor.getColumnIndex(Bookmark._ColumnProviderId));
-        if (ProviderUtils.getProviderName(providerId) == null)
-            ProviderUtils.setProviderName(providerId, BaseFileProviderUtils.getProviderName(context, providerId));
-        b.mTextHeader.setText(ProviderUtils.getProviderName(providerId));
+        String providerId = cursor.getString(cursor
+                .getColumnIndex(Bookmark._ColumnProviderId));
+        b.mTextHeader.setText(BaseFileProviderUtils.getProviderName(context,
+                providerId));
+        /*
+         * Provider badge icon.
+         */
+        b.mTextHeader.setCompoundDrawablesWithIntrinsicBounds(
+                BaseFileProviderUtils.getProviderIconId(context, providerId),
+                0, 0, 0);
     }// bindGroupView()
 
     @Override
@@ -369,11 +406,11 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
         int chidrenCount = getChildrenCount(groupPosition);
         for (int iChild = 0; iChild < chidrenCount; iChild++) {
             Cursor cursor = getChild(groupPosition, iChild);
-            final int _id = cursor.getInt(cursor.getColumnIndex(Bookmark._ID));
-            BagChildInfo b = mSelectedChildrenMap.get(_id);
+            final int id = cursor.getInt(cursor.getColumnIndex(Bookmark._ID));
+            BagChildInfo b = mSelectedChildrenMap.get(id);
             if (b == null) {
                 b = new BagChildInfo();
-                mSelectedChildrenMap.put(_id, b);
+                mSelectedChildrenMap.put(id, b);
             }
             b.mChecked = selected;
         }// for children
@@ -419,11 +456,11 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
         int chidrenCount = getChildrenCount(groupPosition);
         for (int iChild = 0; iChild < chidrenCount; iChild++) {
             Cursor cursor = getChild(groupPosition, iChild);
-            final int _id = cursor.getInt(cursor.getColumnIndex(Bookmark._ID));
-            BagChildInfo b = mSelectedChildrenMap.get(_id);
+            final int id = cursor.getInt(cursor.getColumnIndex(Bookmark._ID));
+            BagChildInfo b = mSelectedChildrenMap.get(id);
             if (b == null) {
                 b = new BagChildInfo();
-                mSelectedChildrenMap.put(_id, b);
+                mSelectedChildrenMap.put(id, b);
             }
             b.mChecked = !b.mChecked;
         }// for children
@@ -462,7 +499,8 @@ public class BookmarkCursorAdapter extends ResourceCursorTreeAdapter {
      */
     public boolean isSelected(int id) {
         synchronized (mSelectedChildrenMap) {
-            return mSelectedChildrenMap.get(id) != null ? mSelectedChildrenMap.get(id).mChecked : false;
+            return mSelectedChildrenMap.get(id) != null ? mSelectedChildrenMap
+                    .get(id).mChecked : false;
         }
     }// isSelected()
 
